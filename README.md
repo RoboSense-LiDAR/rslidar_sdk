@@ -112,7 +112,7 @@ rslidar_sdk is the lidar driver software kit in Linux environment, which include
 
   Installation： please refer to  http://wiki.ros.org/kinetic/Installation/Ubuntu 
 
-  **If you install ROS kinetic desktop-full，then the correspond PCL, Boost, Eigen and OpenCV will be installed at the same time. If will bring you a lot of convenience since you dont need to handle the version confliction. Thus, its highly recommanded to install ROS kinetic desktop-full. **
+  **If you install ROS kinetic desktop-full，then the correspond PCL, Boost, Eigen and OpenCV will be installed at the same time. If will bring you a lot of convenience since you dont need to handle the version confliction. Thus, its highly recommanded to install ROS kinetic desktop-full**
 
 - Protobuf 
 
@@ -167,7 +167,7 @@ rslidar_sdk is the lidar driver software kit in Linux environment, which include
 
 ### 5. Introduction to parameters
 
-**This part is very important, please read carefully. All the functions of this software kit will be reach by modifying parameters. **
+**This part is very important, please read carefully. All the functions of this software kit will be reach by modifying parameters.**
 
 [Intro to parameters](doc/intro/parameter_intro.md)
 
