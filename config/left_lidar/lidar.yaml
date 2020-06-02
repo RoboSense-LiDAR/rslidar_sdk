@@ -1,0 +1,20 @@
+frame_id: /left_lidar         #@type: string @brief: the frame id of the message
+device_type: RSBP
+device_ip: 192.168.1.200      #@type: string @brief: the lidar ip address
+msop_port: 1990               #@type: uint16_t @brief: the MSOP packets port
+difop_port: 1991              #@type: uint16_t @brief: the DIFOP packets port
+start_angle: 0                #@type: int @brief: the start angle of point cloud area
+end_angle: 360                #@type: int @brief: the end angle of point cloud area
+min_distance: 0.2             #@type: int @brief: the minimum distance of point cloud area
+max_distance: 8             #@type: int @brief: the maximum distance of point cloud area
+mode_split_frame: 1	      #@type: int @brief: 1 - use angle to split frame; 2 - use theoretical packets of frame; 3 - use setting packets to split frame
+num_pkts_split: 0 	      #@type: int @brief: count of setting packets to split frame
+cut_angle: 0                 #@type: int @area 0~360
+                              #@brief: the angle to separate LiDAR scan frame
+pcap: /work_space/bag/lidar.pcap    #@type: string @brief the path of pcap bag
+read_pcap: false              #@type: bool @brief: if ture, the lidar driver will read message from pcap bag
+pcap_repeat: true
+use_lidar_clock: false        #@type: bool @brief: if false--use system clock,if true--use lidar clock
+timeout: 100                  #@type: bool @unit: ms
+                              #@brief: time to detect lidar disconnection
+angle_path: /home/xzd/work/lidar_driver/conf/left_lidar/angle.csv

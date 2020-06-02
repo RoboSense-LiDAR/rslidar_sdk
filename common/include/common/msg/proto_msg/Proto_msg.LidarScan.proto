@@ -1,0 +1,11 @@
+syntax="proto2";
+package Proto_msg;
+
+message LidarScan
+{ 
+ optional double timestamp = 1; 
+ optional uint32 seq=2;
+ repeated bytes data = 3;
+}
+
+

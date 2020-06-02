@@ -1,0 +1,10 @@
+syntax="proto2";
+package Proto_msg;
+
+message LidarPacket
+{ 
+ optional double timestamp = 1; 
+ optional bytes data = 2;
+}
+
+

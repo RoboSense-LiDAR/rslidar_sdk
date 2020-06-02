@@ -1,0 +1,14 @@
+*.cproject
+*.project
+*~
+*.swp
+*.cur_trans
+build
+.vscode
+*.gridmap
+*.rsmap
+*.csv
+build/*
+cmake-build-debug/
+.idea/
+

@@ -1,0 +1,84 @@
+#******************************************************************************
+ # Copyright 2020 RoboSense All rights reserved.
+ # Suteng Innovation Technology Co., Ltd. www.robosense.ai
+
+ # This software is provided to you directly by RoboSense and might
+ # only be used to access RoboSense LiDAR. Any compilation,
+ # modification, exploration, reproduction and redistribution are
+ # restricted without RoboSense's prior consent.
+
+ # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED
+ # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ # OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ # DISCLAIMED. IN NO EVENT SHALL ROBOSENSE BE LIABLE FOR ANY DIRECT,
+ # INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ # (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ # HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ # POSSIBILITY OF SUCH DAMAGE.
+#****************************************************************************/
+
+common:
+    msg_source: 2            #@type: int  @detail: 0--not use Lidar, 1--lidar packet message come from sensor driver
+                              #                     2--lidar packet message come from ROS,3--lidar points message come from ROS, 4--packets from proto, 5--points from proto
+    send_packets_ros: false     #@type: bool @detail: if true, the original lidar packets message will be sent out through ROS
+    send_points_ros: true     #@type: bool @detail: if true, the original lidar points message will be sent out through ROS
+    send_points_proto: false 
+    send_packets_proto: false
+
+lidar:
+  - driver:
+      include: middle_lidar/lidar.yaml
+    ros:
+      ros_recv_points_topic: /rslidar_points
+      ros_recv_packets_topic: /rslidar_packets
+      ros_send_points_topic: /rslidar_points
+      ros_send_packets_topic: /rslidar_packets
+    proto:
+      points_send_port: 60021
+      points_recv_port: 60021
+      points_send_ip: 127.0.0.1
+      msop_send_port: 60022
+      msop_recv_port: 60022
+      difop_send_port: 60023
+      difop_recv_port: 60023
+      packets_send_ip: 127.0.0.1
+  # - driver:
+  #     include: left_lidar/lidar.yaml
+  #   ros:
+  #     ros_recv_points_topic: /rslidar_points
+  #     ros_recv_packets_topic: /right_BPerl/rslidar_packets  
+  #     ros_send_points_topic: /rslidar_points
+  #     ros_send_packets_topic: /rslidar_packets
+  #   proto:
+  #     points_send_port: 60021
+  #     points_recv_port: 60021
+  #     points_send_ip: 127.0.0.1
+  #     msop_send_port: 60022
+  #     msop_recv_port: 60022
+  #     difop_send_port: 60023
+  #     difop_recv_port: 60023
+  #     packets_send_ip: 127.0.0.1
+  # - driver:
+  #     include: right_lidar/lidar.yaml
+  #   ros:
+  #     ros_recv_points_topic: /rslidar_points
+  #     ros_recv_packets_topic: /right_BPerl/rslidar_packets  
+  #     ros_send_points_topic: /rslidar_points
+  #     ros_send_packets_topic: /rslidar_packets
+  #   proto:
+  #     points_send_port: 60021
+  #     points_recv_port: 60021
+  #     points_send_ip: 127.0.0.1
+  #     msop_send_port: 60022
+  #     msop_recv_port: 60022
+  #     difop_send_port: 60023
+  #     difop_recv_port: 60023
+  #     packets_send_ip: 127.0.0.1
+
+
+  
+
+
