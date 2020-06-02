@@ -21,21 +21,22 @@
 #****************************************************************************/
 
 common:
-    msg_source: 1             #0--not use Lidar
+    msg_source: 3             #0--not use Lidar
                               #1--lidar packet message come from online lidar or pcap
                               #2--lidar packet message come from ROS
-                              #3--No use
+                              #3--lidar packet message come from Pcap bag
                               #4--packets from Protobuf-UDP
                               #5--pointcloud from Protobuf-UDP
     send_packets_ros: false   #True--Send packet through ROS(Used to record packet)
     send_points_ros: true     #True--Send pointcloud through ROS
     send_packets_proto: false #True--Send packets through Protobuf-UDP
     send_points_proto: false  #True--Send pointcloud through Protobuf-UDP
+    pcap_directory: /home/xzd/项目/驱动/测试数据/128.pcap    #The path of pcap file
 
 lidar:
   - driver:
-      device_type: RS32                   #The lidar type, must be set correctly
-      frame_id: /middle_lidar             #The frame id of message
+      device_type: RS128                   #The lidar type, must be set correctly
+      frame_id: /rslidar             #The frame id of message
       device_ip: 192.168.1.200            #The device ip address
       msop_port: 6699                     #The mosp port of lidar,default is 6699
       difop_port: 7788                    #The difop port of lidar, default is 7788
@@ -43,12 +44,8 @@ lidar:
       end_angle: 360                      #The end angle of pointcloud area
       min_distance: 0.2                   #The minimum distance of pointcloud area
       max_distance: 200                   #The maximum distance of pointcloud area
-      cut_angle: 0                        #The angle used to split lidar frame
-      pcap: /home/robosense/lidar.pcap    #The path of pcap file
-      read_pcap: false              #@type: bool @brief: if ture, the lidar driver will read message from pcap bag
-      pcap_repeat: false
       use_lidar_clock: false        #@type: bool @brief: if false--use system clock,if true--use lidar clock 
-      angle_path: /home/xzd/work/rs_sdk/config/system_config/sensor_config/lidar/middle_lidar/128/angle.csv
+      angle_path: /home/robosense/angle.csv
     ros:
       ros_recv_packets_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
       ros_send_packets_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS

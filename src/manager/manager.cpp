@@ -209,17 +209,20 @@ namespace robosense
     ErrCode Manager::initLidar(const YAML::Node &lidars_config)
     {
       int msg_source = 0;
-      bool send_points_ros = false;
-      bool send_packets_ros = false;
-      bool send_points_proto = false;
-      bool send_packets_proto = false;
-
+      bool send_points_ros;
+      bool send_packets_ros;
+      bool send_points_proto;
+      bool send_packets_proto;
+      std::string pcap_dir;
+      bool pcap_repeat;
       YAML::Node lidar_common_config = yamlSubNodeAbort(lidars_config, "common");
       yamlRead<int>(lidar_common_config, "msg_source", msg_source, 0);
       yamlRead<bool>(lidar_common_config, "send_packets_ros", send_packets_ros, false);
       yamlRead<bool>(lidar_common_config, "send_points_ros", send_points_ros, false);
       yamlRead<bool>(lidar_common_config, "send_points_proto", send_points_proto, false);
       yamlRead<bool>(lidar_common_config, "send_packets_proto", send_packets_proto, false);
+      yamlRead<std::string>(lidar_common_config, "pcap_directory", pcap_dir, "");
+      yamlRead<bool>(lidar_common_config, "pcap_repeat", pcap_repeat, true);
       YAML::Node lidar_basic_config = yamlSubNodeAbort(lidars_config, "lidar");
       for (uint8_t i = 0; i < lidar_basic_config.size(); ++i)
       {
@@ -254,12 +257,16 @@ namespace robosense
         case 3: //points from ros
           lidarpoints_run_flag_ = true;
           lidarpkts_run_flag_ = false;
-          lidar_basic_config[i]["msg_source"] = 3;
-          send_points_ros = false;
-          send_packets_ros = false;
-          send_packets_proto = false;
-          lidar_points_receivers_.emplace_back(configReceiver<LidarPointsInterface>(lidar_basic_config[i], "lidar_points_" + std::to_string(i), 2));
-          lidar_packets_receivers_.emplace_back(nullptr);
+          lidar_basic_config[i]["msg_source"] = 1;
+          lidar_basic_config[i]["driver"]["read_pcap"] = true;
+          lidar_basic_config[i]["driver"]["pcap_directroy"] = pcap_dir;
+          lidar_basic_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
+
+          lidar_points_receivers_.emplace_back(configReceiver<LidarPointsInterface>(lidar_basic_config[i], "lidar_points_" + std::to_string(i), 1));
+          if (send_packets_ros || send_packets_proto)
+            lidar_packets_receivers_.emplace_back(configReceiver<LidarPacketsInterface>(lidar_basic_config[i], "lidar_pkts_" + std::to_string(i), 1));
+          else
+            lidar_packets_receivers_.emplace_back(nullptr);
           break;
 
         case 4: //packets from proto

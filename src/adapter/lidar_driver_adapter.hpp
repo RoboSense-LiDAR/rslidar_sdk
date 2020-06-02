@@ -66,7 +66,7 @@ namespace robosense
         yamlRead<uint16_t>(driver_config, "difop_port", driver_param.input_param.difop_port, 7788);
         yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
         yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
-        yamlRead<std::string>(driver_config, "pcap", driver_param.input_param.pcap_file_dir, "");
+        yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_file_dir, "");
         if (device_type == "RS16")
         {
           driver_param.lidar_type = lidar::LidarType::RS16;
