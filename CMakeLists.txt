@@ -3,7 +3,7 @@ project(rs_driver_sdk)
 #========================
 # Subdirectory
 #========================
-add_subdirectory(common)
+add_subdirectory(src/common)
 
 include(CheckSymbolExists)
 #========================
@@ -59,19 +59,19 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-include_directories(${PROJECT_SOURCE_DIR})
-include_directories(${PROJECT_SOURCE_DIR}/modules/rs_driver)
+include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver)
 
 #========================
 # Build Setup
 #========================
 add_executable(demo
             demo/demo.cpp
-            manager/manager.cpp
-            adapter/lidar_points_ros_adapter.cpp
-            adapter/lidar_packtes_ros_adapter.cpp      
-            adapter/lidar_points_proto_adapter.cpp
-            adapter/lidar_packets_proto_adapter.cpp
+            src/manager/manager.cpp
+            src/adapter/lidar_points_ros_adapter.cpp
+            src/adapter/lidar_packtes_ros_adapter.cpp      
+            src/adapter/lidar_points_proto_adapter.cpp
+            src/adapter/lidar_packets_proto_adapter.cpp
             )
 
 target_link_libraries(demo                   

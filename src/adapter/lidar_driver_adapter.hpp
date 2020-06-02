@@ -23,7 +23,7 @@
 
 #include <common/interface/sensor/lidar_packets_interface.h>
 #include <common/interface/sensor/lidar_points_interface.h>
-#include <modules/rs_driver/rs_driver/interface/lidar_interface.h>
+#include <rs_driver/interface/lidar_interface.h>
 namespace robosense
 {
   namespace sensor
