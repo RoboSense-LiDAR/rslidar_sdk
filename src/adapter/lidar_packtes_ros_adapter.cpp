@@ -65,14 +65,17 @@ namespace robosense
         {
             lidar_packets_msop_cbs_.emplace_back(callBack);
         }
+
         void LidarPacketsRosAdapter::regRecvCallback(const std::function<void(const common::LidarPacketMsg &)> callBack)
         {
             lidar_packets_difop_cbs_.emplace_back(callBack);
         }
+
         void LidarPacketsRosAdapter::send_msop(const LidarScanMsg &msg) // Will send NavSatStatus and Odometry
         {
             lidar_packets_msop_pub_.publish(toRosMsg(msg));
         }
+
         void LidarPacketsRosAdapter::send_difop(const LidarPacketMsg &msg) // Will send NavSatStatus and Odometry
         {
             lidar_packets_difop_pub_.publish(toRosMsg(msg));
@@ -85,6 +88,7 @@ namespace robosense
                 cb(toRsMsg(msg));
             }
         }
+
         void LidarPacketsRosAdapter::localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket &msg)
         {
             for (auto &cb : lidar_packets_difop_cbs_)

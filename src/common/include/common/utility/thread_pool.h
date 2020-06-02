@@ -33,7 +33,7 @@ namespace robosense
 {
     namespace common
     {
-        const int MAX_THREAD_NUM = 16;
+        const int MAX_THREAD_NUM = 8;
         struct Thread
         {
             Thread()

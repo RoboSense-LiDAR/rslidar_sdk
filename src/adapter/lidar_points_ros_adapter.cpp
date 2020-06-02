@@ -35,11 +35,11 @@ namespace robosense
             bool send_points_ros;
             YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
             nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-            yamlReadAbort(config["driver"], "frame_id", frame_id_);
+            yamlRead<std::string>(config["driver"], "frame_id", frame_id_, "rslidar");
             std::string ros_recv_topic;
-            yamlReadAbort<std::string>(ros_config, "ros_recv_points_topic", ros_recv_topic);
+            yamlRead<std::string>(ros_config, "ros_recv_points_topic", ros_recv_topic, "rslidar_points");
             std::string ros_send_topic;
-            yamlReadAbort<std::string>(ros_config, "ros_send_points_topic", ros_send_topic);
+            yamlRead<std::string>(ros_config, "ros_send_points_topic", ros_send_topic, "rslidar_points");
             yamlRead<int>(config, "msg_source", msg_source);
             yamlRead<bool>(config, "send_points_ros", send_points_ros, false);
             if (msg_source == 3)
@@ -51,13 +51,14 @@ namespace robosense
             }
             if (send_points_ros)
             {
-                DEBUG << "Send Points Through : ROS" << REND;
-                DEBUG << "Send Points Topic: " << ros_send_topic << REND;
+                INFO << "Send Points Through : ROS" << REND;
+                INFO << "Send Points Topic: " << ros_send_topic << REND;
                 lidar_points_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
             }
 
             return ErrCode_Success;
         }
+
         void LidarPointsRosAdapter::regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)
         {
             lidarPointscbs_.emplace_back(callBack);

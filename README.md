@@ -52,15 +52,15 @@
 
 ### 4. 文件结构
 
-|- config												存放所有的参数文件
+|- config												*存放所有的参数文件*
 
-|- demo												存放node代码
+|- demo												*存放node代码*
 
-|- doc													存放相关文档
+|- doc													*存放相关文档*
 
-|- rviz													存放rviz配置文件
+|- rviz													*存放rviz配置文件*
 
-|- src													 存放内核代码，以及ROS，Protobuf功能性代码
+|- src													 *存放内核代码，以及ROS，Protobuf功能性代码*
 
 |- CHANGELOG_CN.md					 
 
@@ -145,15 +145,15 @@ rslidar_sdk is the lidar driver software kit in Linux environment, which include
 
 ### 4. File Structure
 
-|- config												Store all the configure files
+|- config												*Store all the configure files*
 
-|- demo												Store the code of running node 
+|- demo												*Store the code of running node* 
 
-|- doc													Store all the documents
+|- doc													*Store all the documents*
 
-|- rviz													Store the rviz configure file
+|- rviz													*Store the rviz configure file*
 
-|- src													 Store the lidar driver core, ROS related code and Protobuf-UDP related code
+|- src													 *Store the lidar driver core, ROS related code and Protobuf-UDP related code*
 
 |- CHANGELOG_CN.md					 
 

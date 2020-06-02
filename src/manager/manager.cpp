@@ -19,16 +19,12 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-
 #include "manager/manager.h"
-
 namespace robosense
 {
   namespace sensor
   {
-
     using namespace robosense::common;
-
     Manager::~Manager()
     {
       stop();
@@ -125,6 +121,7 @@ namespace robosense
 #else
         ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
         exit(-1);
+
 #endif // ROS_FOUND
       }
 
@@ -136,6 +133,7 @@ namespace robosense
 #else
         ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
         exit(-1);
+        ;
 #endif //PROTO_FOUND
       }
 
@@ -175,6 +173,7 @@ namespace robosense
 #else
         ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
         exit(-1);
+
 #endif //ROS_FOUND
       }
 
@@ -224,14 +223,12 @@ namespace robosense
       YAML::Node lidar_basic_config = yamlSubNodeAbort(lidars_config, "lidar");
       for (uint8_t i = 0; i < lidar_basic_config.size(); ++i)
       {
-        if (msg_source == 0)
-        {
-          INFO << "Message Source is 0. Program Ending..." << REND;
-          exit(-1);
-        }
         /*Receiver*/
         switch (msg_source)
         {
+        case 0:
+          INFO << "Message Source is 0. Program Ending..." << REND;
+          exit(-1);
         case 1: //use driver
           lidarpoints_run_flag_ = true;
           lidarpkts_run_flag_ = false;

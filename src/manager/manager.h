@@ -21,8 +21,6 @@
  *****************************************************************************/
 
 #pragma once
-
-#include <memory>
 #include <common/common.h>
 #include "adapter/lidar_driver_adapter.hpp"
 #include "adapter/lidar_points_ros_adapter.h"

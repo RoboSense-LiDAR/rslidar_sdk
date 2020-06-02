@@ -43,24 +43,15 @@ namespace robosense
       common::ErrCode init(const YAML::Node &config);
       inline common::ErrCode start()
       {
-#if (DEBUG_LEVEL > 1)
-        INFO << "LidarPointsRosAdapter start!" << REND;
-#endif
         return common::ErrCode_Success;
       }
       inline common::ErrCode stop()
       {
-#if (DEBUG_LEVEL > 1)
-        INFO << "LidarPointsRosAdapter stop!" << REND;
-#endif
         return common::ErrCode_Success;
       }
       void regRecvCallback(const std::function<void(const common::LidarPointsMsg &)> callBack);
       inline void regExceptionCallback(const std::function<void(const common::ErrCode &)> excallBack)
       {
-#if (DEBUG_LEVEL > 0)
-        WARNING << "LidarPointsRosAdapter : Exception is not supported !!" << REND;
-#endif
       }
       void send(const common::LidarPointsMsg &msg);
 

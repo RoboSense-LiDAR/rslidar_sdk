@@ -28,7 +28,6 @@ namespace robosense
     namespace sensor
     {
         using namespace robosense::common;
-
         LidarPacketsProtoAdapter::LidarPacketsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
         {
             setName("LidarPacketsProtoAdapter");
@@ -69,10 +68,10 @@ namespace robosense
             }
             if (send_packets_proto)
             {
-                DEBUG << "Send Packets Through : Protobuf-UDP" << REND;
-                DEBUG << "Send MSOP Scan Port: " << msop_send_port << REND;
-                DEBUG << "Send DIFOP Packets Port: " << difop_send_port << REND;
-                DEBUG << "Send IP: " << packets_send_ip << REND;
+                INFO << "Send Packets Through : Protobuf-UDP" << REND;
+                INFO << "Send MSOP Scan Port: " << msop_send_port << REND;
+                INFO << "Send DIFOP Packets Port: " << difop_send_port << REND;
+                INFO << "Send IP: " << packets_send_ip << REND;
                 if ((msop_proto_ptr_->initSender(msop_send_port, packets_send_ip) == -1) || (difop_proto_ptr_->initSender(difop_send_port, packets_send_ip) == -1))
                 {
                     ERROR << "LidarPacketsReceiver: Create UDP Sender Socket Failed ! " << REND;

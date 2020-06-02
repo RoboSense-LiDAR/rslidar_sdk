@@ -20,18 +20,11 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-
 #include <manager/manager.h>
 #include <signal.h>
 using namespace robosense::sensor;
 bool start_ = true;
-/**
- * @brief  signal handler
- * @note   will be called if receive ctrl+c signal from keyboard during the progress
- *         (all the threads in progress will be stopped and the progress end)
- * @param  sig: the input signal
- * @retval None
- */
+
 static void sigHandler(int sig)
 {
 #ifdef ROS_FOUND

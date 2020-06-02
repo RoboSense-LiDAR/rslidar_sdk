@@ -33,6 +33,7 @@
 #include <thread>
 #include <math.h>
 #include <unistd.h>
+#include <memory>
 
 namespace robosense
 {

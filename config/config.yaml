@@ -21,62 +21,48 @@
 #****************************************************************************/
 
 common:
-    msg_source: 2            #@type: int  @detail: 0--not use Lidar, 1--lidar packet message come from sensor driver
-                              #                     2--lidar packet message come from ROS,3--lidar points message come from ROS, 4--packets from proto, 5--points from proto
-    send_packets_ros: false     #@type: bool @detail: if true, the original lidar packets message will be sent out through ROS
-    send_points_ros: true     #@type: bool @detail: if true, the original lidar points message will be sent out through ROS
-    send_points_proto: false 
-    send_packets_proto: false
+    msg_source: 1             #0--not use Lidar
+                              #1--lidar packet message come from online lidar or pcap
+                              #2--lidar packet message come from ROS
+                              #3--No use
+                              #4--packets from Protobuf-UDP
+                              #5--pointcloud from Protobuf-UDP
+    send_packets_ros: false   #True--Send packet through ROS(Used to record packet)
+    send_points_ros: true     #True--Send pointcloud through ROS
+    send_packets_proto: false #True--Send packets through Protobuf-UDP
+    send_points_proto: false  #True--Send pointcloud through Protobuf-UDP
 
 lidar:
   - driver:
-      include: middle_lidar/lidar.yaml
+      device_type: RS32                   #The lidar type, must be set correctly
+      frame_id: /middle_lidar             #The frame id of message
+      device_ip: 192.168.1.200            #The device ip address
+      msop_port: 6699                     #The mosp port of lidar,default is 6699
+      difop_port: 7788                    #The difop port of lidar, default is 7788
+      start_angle: 0                      #The start angle of pointcloud area
+      end_angle: 360                      #The end angle of pointcloud area
+      min_distance: 0.2                   #The minimum distance of pointcloud area
+      max_distance: 200                   #The maximum distance of pointcloud area
+      cut_angle: 0                        #The angle used to split lidar frame
+      pcap: /home/robosense/lidar.pcap    #The path of pcap file
+      read_pcap: false              #@type: bool @brief: if ture, the lidar driver will read message from pcap bag
+      pcap_repeat: false
+      use_lidar_clock: false        #@type: bool @brief: if false--use system clock,if true--use lidar clock 
+      angle_path: /home/xzd/work/rs_sdk/config/system_config/sensor_config/lidar/middle_lidar/128/angle.csv
     ros:
-      ros_recv_points_topic: /rslidar_points
-      ros_recv_packets_topic: /rslidar_packets
-      ros_send_points_topic: /rslidar_points
-      ros_send_packets_topic: /rslidar_packets
+      ros_recv_packets_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packets_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_send_points_topic: /rslidar_points      #The topic which used to send pointcloud through ROS
     proto:
-      points_send_port: 60021
-      points_recv_port: 60021
-      points_send_ip: 127.0.0.1
-      msop_send_port: 60022
-      msop_recv_port: 60022
-      difop_send_port: 60023
-      difop_recv_port: 60023
-      packets_send_ip: 127.0.0.1
-  # - driver:
-  #     include: left_lidar/lidar.yaml
-  #   ros:
-  #     ros_recv_points_topic: /rslidar_points
-  #     ros_recv_packets_topic: /right_BPerl/rslidar_packets  
-  #     ros_send_points_topic: /rslidar_points
-  #     ros_send_packets_topic: /rslidar_packets
-  #   proto:
-  #     points_send_port: 60021
-  #     points_recv_port: 60021
-  #     points_send_ip: 127.0.0.1
-  #     msop_send_port: 60022
-  #     msop_recv_port: 60022
-  #     difop_send_port: 60023
-  #     difop_recv_port: 60023
-  #     packets_send_ip: 127.0.0.1
-  # - driver:
-  #     include: right_lidar/lidar.yaml
-  #   ros:
-  #     ros_recv_points_topic: /rslidar_points
-  #     ros_recv_packets_topic: /right_BPerl/rslidar_packets  
-  #     ros_send_points_topic: /rslidar_points
-  #     ros_send_packets_topic: /rslidar_packets
-  #   proto:
-  #     points_send_port: 60021
-  #     points_recv_port: 60021
-  #     points_send_ip: 127.0.0.1
-  #     msop_send_port: 60022
-  #     msop_recv_port: 60022
-  #     difop_send_port: 60023
-  #     difop_recv_port: 60023
-  #     packets_send_ip: 127.0.0.1
+      points_recv_port: 60021                     #The port number used for receiving pointcloud 
+      points_send_port: 60021                     #The port number which the pointcloud will be send to
+      points_send_ip: 127.0.0.1                   #The ip address which the pointcloud will be send to 
+      msop_recv_port: 60022                       #The port number used for receiving lidar msop packets
+      difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
+      msop_send_port: 60022                       #The port number which the msop packets will be send to 
+      difop_send_port: 60023                      #The port number which the difop packets will be send to 
+      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+
 
 
   

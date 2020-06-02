@@ -33,6 +33,7 @@ namespace robosense
             setName("LidarPointsProtoAdapter");
             thread_pool_ptr_ = ThreadPool::getInstance();
         }
+
         ErrCode LidarPointsProtoAdapter::init(const YAML::Node &config)
         {
             setinitFlag(true);
@@ -60,9 +61,9 @@ namespace robosense
             }
             if (send_points_proto)
             {
-                DEBUG << "Send Points Through : Protobuf-UDP" << REND;
-                DEBUG << "ReceSendive Points Port: " << points_send_port << REND;
-                DEBUG << "ReceSendive Points IP: " << points_send_ip << REND;
+                INFO << "Send Points Through : Protobuf-UDP" << REND;
+                INFO << "ReceSendive Points Port: " << points_send_port << REND;
+                INFO << "ReceSendive Points IP: " << points_send_ip << REND;
                 if (initSender(points_send_port, points_send_ip) == -1)
                 {
                     ERROR << "LidarPointsProtoAdapter: Create UDP Sender Socket Failed ! " << REND;
@@ -79,6 +80,7 @@ namespace robosense
             recv_thread_.m_thread.reset(new std::thread([this]() { recvPoints(); }));
             return ErrCode_Success;
         }
+
         ErrCode LidarPointsProtoAdapter::stop()
         {
             if (recv_thread_.start.load())

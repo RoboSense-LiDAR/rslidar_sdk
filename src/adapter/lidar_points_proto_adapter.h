@@ -44,7 +44,6 @@ namespace robosense
       common::ErrCode init(const YAML::Node &config);
       common::ErrCode start();
       common::ErrCode stop();
-
       inline void regRecvCallback(const std::function<void(const common::LidarPointsMsg &)> callBack)
       {
         points_cb_.emplace_back(callBack);
@@ -63,6 +62,7 @@ namespace robosense
           cb(rs_msg);
         }
       }
+
       inline void reportError(const common::ErrCode &error)
       {
         if (excb_ != NULL)
@@ -71,8 +71,6 @@ namespace robosense
         }
       }
       void sendPoints();
-
-    private:
       void recvPoints();
       void splicePoints();
 

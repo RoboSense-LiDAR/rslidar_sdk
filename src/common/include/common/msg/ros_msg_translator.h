@@ -70,7 +70,6 @@ namespace robosense
         inline LidarPacketMsg toRsMsg(const rslidar_msgs::rslidarPacket &ros_msg)
         {
             LidarPacketMsg rs_msg;
-            //rs_msg.timestamp = ros_msg.stamp.toSec();
             for (size_t i = 0; i < 1248; i++)
             {
                 rs_msg.packet[i] = std::move(ros_msg.data[i]);
@@ -80,7 +79,6 @@ namespace robosense
         inline rslidar_msgs::rslidarPacket toRosMsg(const LidarPacketMsg &rs_msg)
         {
             rslidar_msgs::rslidarPacket ros_msg;
-            //ros_msg.stamp = ros_msg.stamp.fromSec(rs_msg.timestamp);
             for (size_t i = 0; i < 1248; i++)
             {
                 ros_msg.data[i] = std::move(rs_msg.packet[i]);
@@ -115,8 +113,6 @@ namespace robosense
             }
             return ros_msg;
         }
-
     } // namespace common
-
 } // namespace robosense
 #endif // ROS_FOUND
