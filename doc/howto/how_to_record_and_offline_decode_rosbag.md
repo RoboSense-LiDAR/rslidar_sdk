@@ -48,7 +48,9 @@ common:
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
-You can also adjust the packets topic by adjust the *ros_send_packets_topic* in *lidar-ros* part of the config file. This topic represent the topic of the msop, and the topic of the difop will be "msoptopic_difop". e.g., the default topic value is set as *rslidar_packets*, so the msop topic is *rslidar_packets* and the difop topic is *rslidar_packets_difop*. **Note:  If you set send_packets_ros = true, both two kinds of packets will be send to ROS. And the important thing is that you must record both of these two packets.**
+You can also adjust the packets topic by adjust the *ros_send_packets_topic* in *lidar-ros* part of the config file. This topic represent the topic of the msop, and the topic of the difop will be "msoptopic_difop". e.g., the default topic value is set as *rslidar_packets*, so the msop topic is *rslidar_packets* and the difop topic is *rslidar_packets_difop*. 
+
+**Note:  If you set send_packets_ros = true, both two kinds of packets will be send to ROS. And the important thing is that you must record both of these two packets.**
 
 ```sh
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
@@ -62,7 +64,7 @@ rosbag record /rslidar_packets /rslidar_packets_difop -O bag
 
 ### Offline Decode
 
-We suppose you have record a rosbag which contains msop packets with the topic *rslidar_packets* and difop packets with the topic *rslidar_packets_difop*.
+We suppose you have recorded a rosbag which contains msop packets with the topic *rslidar_packets* and difop packets with the topic *rslidar_packets_difop*.
 
 
 
