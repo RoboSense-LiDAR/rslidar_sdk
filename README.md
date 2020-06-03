@@ -84,15 +84,19 @@
 
 [在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_points_ros.md)
 
+[录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag.md)
+
 [离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap.md)
 
-[离线解析ROS数据包](doc/howto/how_to_offline_decode_pcap.md)
-
-[使用Protobuf发送&接收点云](doc/howto/how_to_send_and_receive_points_protobuf.md)
+[使用Protobuf发送&接收点云](doc/howto/how_to_use_protobuf_function.md)
 
 [多雷达](doc/howto/how_to_use_multi_lidars.md)
 
 
+
+### 7. 使用进阶
+
+[隐藏参数介绍](doc/intro/hiding_parameters_intro.md)
 
 
 
@@ -179,11 +183,16 @@ rslidar_sdk is the lidar driver software kit in Linux environment, which include
 
 [Online connect lidar and send pointcloud through ROS](doc/howto/how_to_online_send_points_ros.md)
 
+[Record rosbag & Offline decode rosbag](doc/howto/how_to_record_and_offline_decode_rosbag.md)
+
 [Decode pcap bag and send pointcloud through ROS](doc/howto/how_to_offline_decode_pcap.md)
 
-[Decode rosbag](doc/howto/how_to_offline_decode_pcap.md)
-
-[Use protobuf send & receive pointcloud](doc/howto/how_to_send_and_receive_points_protobuf.md)
+[Use protobuf send & receive](doc/howto/how_to_use_protobuf_function.md)
 
 [Multi-LiDARs](doc/howto/how_to_use_multi_lidars.md)
 
+
+
+### 7. Advanced
+
+[Intro to hiding parameters](doc/intro/hiding_parameters_intro.md)
