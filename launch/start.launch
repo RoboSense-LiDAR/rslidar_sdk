@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="rslidar_sdk" name="demo" type="demo" output="screen">
+  </node>
+  <!-- rviz -->
+  <!-- data show -->
+  <node pkg="rviz" name="rviz" type="rviz" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" />
+</launch>
