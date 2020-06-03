@@ -56,11 +56,11 @@ lidar:
 
 - mode_split_frame -- The mode to split the LiDAR frames. Default value is 1.
 
-  - 1:  Spliting frames depends on the cut_angle
+  - 1 -- Spliting frames depends on the cut_angle
 
-  - 2: Spliting frames depends on the packet rate
+  - 2 -- Spliting frames depends on the packet rate
 
-  - 3: Spliting frames depends on num_pkts_split
+  - 3 -- Spliting frames depends on num_pkts_split
 
 - num_pkts_split: The number of packets in one frame. Only be used when mode_split_frame = 3
 
