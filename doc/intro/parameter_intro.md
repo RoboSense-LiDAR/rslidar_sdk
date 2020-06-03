@@ -2,7 +2,9 @@
 
 There is only one parameter file called config.yaml, which is locate in *rslidar_sdk/config/config.yaml*.  The whole file can be divided into two parts, the *common* part and *lidar* part. In multi-LiDARs case, the parameters in *common* part will be shred by all LiDARs, while the parameters in *lidar* part need to be adjust according to specific LiDAR.  
 
-**The config.yaml is very strict to indentation! Please make sure the indentation is not changed when adjusting the parameters! **
+**The config.yaml is very strict to indentation! Please make sure the indentation is not changed when adjusting the parameters!**
+
+---
 
 
 
@@ -10,16 +12,16 @@ There is only one parameter file called config.yaml, which is locate in *rslidar
 
 This part is used to decide the source of LiDAR data, and whether to send out the result or not.
 
-```yacas
+```yaml
 common:
-    msg_source: 3                                         #0--not use Lidar
+    msg_source: 1                                         #0--not use Lidar
                                                           #1--lidar packet message come from online lidar
                                                           #2--lidar packet message come from ROS
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--pointcloud from Protobuf-UDP
     send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
-    send_points_ros: true                                 #True--Send pointcloud through ROS
+    send_points_ros: false                                 #True--Send pointcloud through ROS
     send_packets_proto: false                             #True--Send packets through Protobuf-UDP
     send_points_proto: false                              #True--Send pointcloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
@@ -47,9 +49,9 @@ common:
 
   False -- Do nothing.
 
-  **Note1:  If the msg_source =2, there is no use to set send_packets_ros to true because the packets come from ROS and there is no reason to send them back to ROS. **
+  **Note1:  If the msg_source =2, there is no use to set send_packets_ros to true because the packets come from ROS and there is no reason to send them back to ROS.**
 
-  **Note2: Since the ROS packet message type is robosense self-defined type, you cant directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than pointcloud. **
+  **Note2: Since the ROS packet message type is robosense self-defined type, you cant directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than pointcloud.**
 
 - send_points_ros
 
@@ -74,4 +76,131 @@ common:
 - pcap_directory
 
   If the *msg_source = 3*, please make sure the pcap_directory is correct. The pcap file will repeat read automatically by the program.
+
+---
+
+
+
+### lidar
+
+This part need to be adjust according to different LiDAR (in multi-LiDARs case). Here is an example for one LiDAR and three LiDARs. 
+
+
+
+**One lidar example**
+
+```yaml
+lidar:
+  - driver:
+      device_type: RS128           #The lidar type, must be set correctly
+      frame_id: /rslidar           #The frame id of message
+      device_ip: 192.168.1.200     #The device ip address
+      msop_port: 6699              #The mosp port of lidar,default is 6699
+      difop_port: 7788             #The difop port of lidar, default is 7788
+      start_angle: 0               #The start angle of pointcloud area
+      end_angle: 360               #The end angle of pointcloud area
+      min_distance: 0.2            #The minimum distance of pointcloud area
+      max_distance: 200            #The maximum distance of pointcloud area
+      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      angle_path: /home/robosense/angle.csv
+    ros:
+      ros_recv_packets_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packets_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_send_points_topic: /rslidar_points      #The topic which used to send pointcloud through ROS
+    proto:
+      points_recv_port: 60021                     #The port number used for receiving pointcloud 
+      points_send_port: 60021                     #The port number which the pointcloud will be send to
+      points_send_ip: 127.0.0.1                   #The ip address which the pointcloud will be send to 
+      msop_recv_port: 60022                       #The port number used for receiving lidar msop packets
+      difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
+      msop_send_port: 60022                       #The port number which the msop packets will be send to 
+      difop_send_port: 60023                      #The port number which the difop packets will be send to 
+      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+
+```
+
+
+
+**Three lidar example**
+
+```yaml
+lidar:
+  - driver:
+      device_type: RS128           #The lidar type, must be set correctly
+      frame_id: /rslidar           #The frame id of message
+      device_ip: 192.168.1.200     #The device ip address
+      msop_port: 6699              #The mosp port of lidar,default is 6699
+      difop_port: 7788             #The difop port of lidar, default is 7788
+      start_angle: 0               #The start angle of pointcloud area
+      end_angle: 360               #The end angle of pointcloud area
+      min_distance: 0.2            #The minimum distance of pointcloud area
+      max_distance: 200            #The maximum distance of pointcloud area
+      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
+    ros:
+      ros_recv_packets_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packets_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_send_points_topic: /rslidar_points      #The topic which used to send pointcloud through ROS
+    proto:
+      points_recv_port: 60021                     #The port number used for receiving pointcloud 
+      points_send_port: 60021                     #The port number which the pointcloud will be send to
+      points_send_ip: 127.0.0.1                   #The ip address which the pointcloud will be send to 
+      msop_recv_port: 60022                       #The port number used for receiving lidar msop packets
+      difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
+      msop_send_port: 60022                       #The port number which the msop packets will be send to 
+      difop_send_port: 60023                      #The port number which the difop packets will be send to 
+      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+  - driver:
+      device_type: RSBP           #The lidar type, must be set correctly
+      frame_id: /rslidar           #The frame id of message
+      device_ip: 192.168.1.200     #The device ip address
+      msop_port: 1990              #The mosp port of lidar,default is 6699
+      difop_port: 1991             #The difop port of lidar, default is 7788
+      start_angle: 0               #The start angle of pointcloud area
+      end_angle: 360               #The end angle of pointcloud area
+      min_distance: 0.2            #The minimum distance of pointcloud area
+      max_distance: 200            #The maximum distance of pointcloud area
+      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
+    ros:
+      ros_recv_packets_topic: /left/rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packets_topic: /left/rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_send_points_topic: /left/rslidar_points      #The topic which used to send pointcloud through ROS
+    proto:
+      points_recv_port: 60024                     #The port number used for receiving pointcloud 
+      points_send_port: 60024                     #The port number which the pointcloud will be send to
+      points_send_ip: 127.0.0.1                   #The ip address which the pointcloud will be send to 
+      msop_recv_port: 60025                       #The port number used for receiving lidar msop packets
+      difop_recv_port: 60026                      #The port number used for receiving lidar difop packets
+      msop_send_port: 60025                       #The port number which the msop packets will be send to 
+      difop_send_port: 60026                      #The port number which the difop packets will be send to 
+      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+  - driver:
+      device_type: RSBP           #The lidar type, must be set correctly
+      frame_id: /rslidar           #The frame id of message
+      device_ip: 192.168.1.200     #The device ip address
+      msop_port: 2000              #The mosp port of lidar,default is 6699
+      difop_port: 2001             #The difop port of lidar, default is 7788
+      start_angle: 0               #The start angle of pointcloud area
+      end_angle: 360               #The end angle of pointcloud area
+      min_distance: 0.2            #The minimum distance of pointcloud area
+      max_distance: 200            #The maximum distance of pointcloud area
+      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
+    ros:
+      ros_recv_packets_topic: /right/rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packets_topic: /right/rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_send_points_topic: /right/rslidar_points      #The topic which used to send pointcloud through ROS
+    proto:
+      points_recv_port: 60027                     #The port number used for receiving pointcloud 
+      points_send_port: 60027                     #The port number which the pointcloud will be send to
+      points_send_ip: 127.0.0.1                   #The ip address which the pointcloud will be send to 
+      msop_recv_port: 60028                       #The port number used for receiving lidar msop packets
+      difop_recv_port: 60029                      #The port number used for receiving lidar difop packets
+      msop_send_port: 60028                       #The port number which the msop packets will be send to 
+      difop_send_port: 60029                      #The port number which the difop packets will be send to 
+      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+
+
+```
 
