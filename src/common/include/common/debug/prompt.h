@@ -54,7 +54,7 @@ namespace robosense
 
 #define INFO (std::cout << BOLDGREEN)
 #define WARNING (std::cout << YELLOW)
-#define ERROR (std::cout << RED)
+#define ERROR (std::cout << BOLDRED)
 #define DEBUG (std::cout << BOLDCYAN)
 #define TITLE (std::cout << BOLDMAGENTA)
 

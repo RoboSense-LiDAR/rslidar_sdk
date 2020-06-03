@@ -37,7 +37,16 @@ int main(int argc, char **argv)
 {
     std::shared_ptr<Manager> demo_ptr = std::make_shared<Manager>();
     robosense::common::YamlParser yp;
-    YAML::Node config = yp.loadFile((std::string)PROJECT_PATH + "/config/config.yaml");
+    YAML::Node config;
+    try
+    {
+        config = yp.loadFile((std::string)PROJECT_PATH + "/config/config.yaml");
+    }
+    catch (...)
+    {
+        ERROR << "Config file format wrong! Please check the format or intendation! " << REND;
+        return 0;
+    }
     signal(SIGINT, sigHandler); ///< bind the ctrl+c signal with the the handler function
 #ifdef ROS_FOUND
     ros::init(argc, argv, "rs_driver", ros::init_options::NoSigintHandler); ///< if use_ros is true, ros::init() will be called

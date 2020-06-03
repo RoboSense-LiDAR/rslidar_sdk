@@ -40,8 +40,7 @@ namespace robosense
 
     ErrCode Manager::init(const YAML::Node &sensor_config)
     {
-      setName("sensor_manager");
-      setinitFlag(true);
+      setName("Manager");
       run_flag_ = false;
       lidarpkts_run_flag_ = false;
       lidarpoints_run_flag_ = false;
@@ -69,15 +68,11 @@ namespace robosense
           }
         }
       }
-
       return ErrCode_Success;
     }
 
     ErrCode Manager::stop()
     {
-#if (DEBUG_LEVEL > 1)
-      INFO << "Sensor Manager stop" << REND;
-#endif
       if (lidarpoints_run_flag_)
       {
         for (auto &iter : lidar_points_receivers_)
@@ -332,15 +327,6 @@ namespace robosense
     R *Manager::construct(const std::string &device_type, const std::string &frame_id)
     {
       uint16_t api_request = R::getApi();
-      std::map<std::string, common::CommonBase *>::iterator sensor_itr;
-      auto device_itr = sensors_.find(device_type);
-
-      if (device_itr != sensors_.end())
-      {
-        sensor_itr = device_itr->second.find(frame_id);
-        if (sensor_itr != device_itr->second.end())
-          return dynamic_cast<R *>(sensor_itr->second);
-      }
       R *ret;
       if (device_type == "RS16" || device_type == "RS32" || device_type == "RSBP" || device_type == "RS128")
       {
