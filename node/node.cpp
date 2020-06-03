@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     }
     signal(SIGINT, sigHandler); ///< bind the ctrl+c signal with the the handler function
 #ifdef ROS_FOUND
-    ros::init(argc, argv, "rs_driver", ros::init_options::NoSigintHandler); ///< if use_ros is true, ros::init() will be called
+    ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler); ///< if use_ros is true, ros::init() will be called
 #endif
     demo_ptr->init(config);
     demo_ptr->start();

@@ -73,8 +73,8 @@ include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver)
 #========================
 # Build Setup
 #========================
-add_executable(demo
-            demo/demo.cpp
+add_executable(rslidar_sdk_node
+            node/node.cpp
             src/manager/manager.cpp
             src/adapter/lidar_points_ros_adapter.cpp
             src/adapter/lidar_packtes_ros_adapter.cpp      
@@ -82,7 +82,7 @@ add_executable(demo
             src/adapter/lidar_packets_proto_adapter.cpp
             )
 
-target_link_libraries(demo                   
+target_link_libraries(rslidar_sdk_node                   
                     ${PCL_LIBRARIES}
                     pthread
                     pcap
@@ -90,9 +90,9 @@ target_link_libraries(demo
                        )
 
 if(roscpp_FOUND)
-target_link_libraries(demo ${roscpp_LIBRARIES})
+target_link_libraries(rslidar_sdk_node ${roscpp_LIBRARIES})
 endif(roscpp_FOUND)
 if(Protobuf_FOUND)
-target_link_libraries(demo proto_msg ${PROTOBUF_LIBRARY})
+target_link_libraries(rslidar_sdk_node proto_msg ${PROTOBUF_LIBRARY})
 endif(Protobuf_FOUND)
 
