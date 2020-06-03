@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.5)
 project(rslidar_sdk)
+set(ROS_COMPILE_SUPPORT false)
 #========================
 # Subdirectory
 #========================
 add_subdirectory(src/common)
-
-include(CheckSymbolExists)
 #========================
 # Project details / setup
 #========================
 set(PROJECT_NAME rslidar_sdk)
 add_definitions(-DPROJECT_PATH="${PROJECT_SOURCE_DIR}")
 cmake_policy(SET CMP0048 NEW)
+include(CheckSymbolExists)
 set(CMAKE_BUILD_TYPE RELEASE)
 add_definitions(-O3)
 add_definitions(-std=c++11)
@@ -54,6 +54,14 @@ else(Protobuf_FOUND)
   message(=============================================================)
 endif(Protobuf_FOUND)
 
+find_package(PCL QUIET)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver)
+
+if(${ROS_COMPILE_SUPPORT})
 find_package(catkin REQUIRED COMPONENTS
         roscpp
         sensor_msgs
@@ -62,13 +70,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
         CATKIN_DEPENDS sensor_msgs
 )
-find_package(PCL QUIET)
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-
-include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver)
+endif(${ROS_COMPILE_SUPPORT})
 
 #========================
 # Build Setup

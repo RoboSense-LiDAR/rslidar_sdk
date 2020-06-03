@@ -41,12 +41,38 @@
 
 ### 3. 编译 & 运行
 
+我们提供两种编译&运行方式
+
+- 不依赖于ROS编译
+
+  按照如下指令即可编译运行程序。 但需要用户在程序启动前手动启动roscore，启动后手动打开rviz。
+
 ```sh
     cd rslidar_sdk
     mkdir build && cd build
     cmake .. && make -j4
     ./demo
 ```
+
+- 依赖于ROS编译
+
+  - 打开工程内的*CMakeLists.txt*文件，将第三行的**set(ROS_COMPILE_SUPPORT false)**改为**set(ROS_COMPILE_SUPPORT true)**
+
+    ```cmake
+    cmake_minimum_required(VERSION 3.5)
+    project(rslidar_sdk)
+    set(ROS_COMPILE_SUPPORT true)
+    ```
+
+  - 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内
+
+  - 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)
+
+    ```sh
+    catkin_make
+    source devel/setup.bash
+    roslaunch rslidar_sdk start.launch 
+    ```
 
 
 
@@ -142,12 +168,38 @@
 
 ### 3. Compile & Run
 
+We offer two ways to compile and run the driver
+
+- Compile with out ROS-catkin
+
+  Excute the commands below. In this way, user need to start roscore before running the driver and need to start rviz manually.
+
 ```sh
     cd rslidar_sdk
     mkdir build && cd build
     cmake .. && make -j4
     ./demo
 ```
+
+- Compile with ROS-catkin
+
+  - Open the *CMakeLists.txt* in the project，modify the 3rd line **set(ROS_COMPILE_SUPPORT false)** to **set(ROS_COMPILE_SUPPORT true)**
+
+    ```cmake
+    cmake_minimum_required(VERSION 3.5)
+    project(rslidar_sdk)
+    set(ROS_COMPILE_SUPPORT true)
+    ```
+
+  - Create a new folder as the workspace, and create a *src* folder in the workspace. Then put the rslidar_sdk project in the *src* folder. 
+
+  - Get to the workspace, excute the following command to compile and run. (if use .zsh, replace the 2nd command with *source devel/setup.zsh*)
+
+    ```sh
+    catkin_make
+    source devel/setup.bash
+    roslaunch rslidar_sdk start.launch 
+    ```
 
 
 
