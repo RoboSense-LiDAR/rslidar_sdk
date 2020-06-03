@@ -31,15 +31,15 @@ common:
 
   0 -- Not use lidar. Basically you will never set this parameter to 0.
 
-  1 -- When connecting with a running lidar, set to 1. For more details, please refer to [Online connect lidar and send pointcloud through ROS](doc/howto/how_to_online_send_points_ros.md)
+  1 -- When connecting with a running lidar, set to 1. For more details, please refer to [Online connect lidar and send pointcloud through ROS](../howto/how_to_online_send_pointcloud_ros.md)
 
   2 -- The lidar packets come from ROS. This will be used in offline decode rosbag.  For more details, please refer to [Record rosbag & Offline decode rosbag](../howto/how_to_record_and_offline_decode_rosbag.md)
 
-  3 -- The lidar packets come from offline pcap bag. For more details, please refer to  [Decode pcap bag and send pointcloud through ROS](doc/howto/how_to_offline_decode_pcap.md)
+  3 -- The lidar packets come from offline pcap bag. For more details, please refer to  [Decode pcap bag and send pointcloud through ROS](../howto/how_to_offline_decode_pcap.md)
 
-  4 -- The lidar packets come from Protobuf-UDP. For more details, please refer to [Use protobuf send & receive](doc/howto/how_to_use_protobuf_function.md)
+  4 -- The lidar packets come from Protobuf-UDP. For more details, please refer to [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
 
-  5 -- The lidar pointcloud come from Protobuf-UDP. For more details, please refer to  [Use protobuf send & receive](doc/howto/how_to_use_protobuf_function.md)
+  5 -- The lidar pointcloud come from Protobuf-UDP. For more details, please refer to  [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
 
 
 

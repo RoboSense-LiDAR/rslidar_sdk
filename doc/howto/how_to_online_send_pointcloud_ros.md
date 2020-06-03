@@ -51,7 +51,9 @@ common:
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
-​	Since the message come from the LiDAR, set *msg_source = 1*. We want to send pointcloud to ROS so set *send_points_ros = true*.
+​	Since the message come from the LiDAR, set *msg_source = 1*. 
+
+​	We want to send pointcloud to ROS so set *send_points_ros = true*.
 
 
 
@@ -75,7 +77,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-​	Set the *device_type* to your LiDAR type. (RS16,RS32,RSBP,RS128)
+​	Set the *device_type*  to your LiDAR type. (RS16,RS32,RSBP,RS128)
 
 ​	Set the *msop_port* and *difop_port*  to your LiDAR's port number. The default is *msop = 6699* and *difop = 7788*.
 
