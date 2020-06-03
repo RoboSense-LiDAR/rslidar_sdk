@@ -29,7 +29,7 @@ namespace robosense
         using namespace robosense::common;
         ErrCode LidarPointsRosAdapter::init(const YAML::Node &config)
         {
-            setName("LiDAR_points_RosAdapter");
+            setName("LidarPointsRosAdapter");
             setinitFlag(true);
             int msg_source;
             bool send_points_ros;

@@ -84,7 +84,7 @@
 
 **以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 用户可通过配置参数改变不同的工作模式。**
 
-[在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_points_ros.md)
+[在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_pointcloud_ros.md)
 
 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag.md)
 
@@ -108,7 +108,7 @@
 
 ### 1. Introduction
 
-rslidar_sdk is the lidar driver software kit in Linux environment, which includes the driver core, ROS functional codes and Protobuf-UDP communication code. For users who want to use lidar driver through ROS, this software kit can be used directly. For users who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core. 
+​	rslidar_sdk is the lidar driver software kit in Linux environment, which includes the driver core, ROS functional codes and Protobuf-UDP communication code. For users who want to use lidar driver through ROS, this software kit can be used directly. For users who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core. 
 
 
 
@@ -183,7 +183,7 @@ rslidar_sdk is the lidar driver software kit in Linux environment, which include
 
 **The followings are some quick guides to using some of the most common features of the rslidar_sdk, but the software kit are not limited to the following modes of operation. Users can use rslidar_sdk in their own way by modifying parameters.**
 
-[Online connect lidar and send pointcloud through ROS](doc/howto/how_to_online_send_points_ros.md)
+[Online connect lidar and send pointcloud through ROS](doc/howto/how_to_online_send_pointcloud_ros.md)
 
 [Record rosbag & Offline decode rosbag](doc/howto/how_to_record_and_offline_decode_rosbag.md)
 

@@ -29,7 +29,7 @@ namespace robosense
         using namespace robosense::common;
         ErrCode LidarPacketsRosAdapter::init(const YAML::Node &config)
         {
-            setName("LiDAR_packets_RosAdapter");
+            setName("LidarPacketsRosAdapter");
             setinitFlag(true);
             int msg_source;
             bool send_packets_ros;
