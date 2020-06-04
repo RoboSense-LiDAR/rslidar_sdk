@@ -56,9 +56,6 @@ namespace robosense
             difop_proto_ptr_.reset(new ProtoCommunicator);
             if (msg_source == 4)
             {
-                INFO << "Receive Packets From : Protobuf-UDP" << REND;
-                INFO << "Receive MSOP Scan Port: " << msop_recv_port << REND;
-                INFO << "Receive DIFOP Packets Port: " << difop_recv_port << REND;
                 if ((msop_proto_ptr_->initReceiver(msop_recv_port) == -1) || (difop_proto_ptr_->initReceiver(difop_recv_port) == -1))
                 {
                     ERROR << "LidarPacketsReceiver: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
@@ -68,10 +65,6 @@ namespace robosense
             }
             if (send_packets_proto)
             {
-                INFO << "Send Packets Through : Protobuf-UDP" << REND;
-                INFO << "Send MSOP Scan Port: " << msop_send_port << REND;
-                INFO << "Send DIFOP Packets Port: " << difop_send_port << REND;
-                INFO << "Send IP: " << packets_send_ip << REND;
                 if ((msop_proto_ptr_->initSender(msop_send_port, packets_send_ip) == -1) || (difop_proto_ptr_->initSender(difop_send_port, packets_send_ip) == -1))
                 {
                     ERROR << "LidarPacketsReceiver: Create UDP Sender Socket Failed ! " << REND;
@@ -103,7 +96,7 @@ namespace robosense
             }
         }
 
-        void LidarPacketsProtoAdapter::send_difop(const LidarPacketMsg &msg) // Will send NavSatStatus and Odometry
+        void LidarPacketsProtoAdapter::sendDifopPkts(const LidarPacketMsg &msg) // Will send NavSatStatus and Odometry
         {
             difop_send_queue_.push(msg);
             if (difop_send_queue_.is_task_finished_.load())
@@ -127,7 +120,7 @@ namespace robosense
             difop_send_queue_.is_task_finished_.store(true);
         }
 
-        void LidarPacketsProtoAdapter::send_msop(const LidarScanMsg &msg) // Will send NavSatStatus and Odometry
+        void LidarPacketsProtoAdapter::sendMsopPkts(const LidarScanMsg &msg) // Will send NavSatStatus and Odometry
         {
             msop_send_queue_.push(msg);
             if (msop_send_queue_.is_task_finished_.load())

@@ -42,17 +42,8 @@ namespace robosense
             yamlRead<std::string>(ros_config, "ros_send_points_topic", ros_send_topic, "rslidar_points");
             yamlRead<int>(config, "msg_source", msg_source);
             yamlRead<bool>(config, "send_points_ros", send_points_ros, false);
-            if (msg_source == 3)
-            {
-                INFO << "Receive Points From : ROS" << REND;
-                INFO << "Receive Points Topic: " << ros_recv_topic << REND;
-                lidar_points_sub_ = nh_->subscribe(ros_recv_topic, 1, &LidarPointsRosAdapter::localLidarPointsCallback, this);
-                send_points_ros = false;
-            }
             if (send_points_ros)
             {
-                INFO << "Send Points Through : ROS" << REND;
-                INFO << "Send Points Topic: " << ros_send_topic << REND;
                 lidar_points_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
             }
         }

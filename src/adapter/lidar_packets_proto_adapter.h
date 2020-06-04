@@ -52,8 +52,8 @@ namespace robosense
       {
         difop_cb_.emplace_back(callBack);
       }
-      void send_msop(const LidarScanMsg &msg);
-      void send_difop(const LidarPacketMsg &msg);
+      void sendMsopPkts(const LidarScanMsg &msg);
+      void sendDifopPkts(const LidarPacketMsg &msg);
 
     private:
       inline void localMsopCallback(const LidarScanMsg &rs_msg)

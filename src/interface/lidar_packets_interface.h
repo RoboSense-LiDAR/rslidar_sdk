@@ -60,13 +60,13 @@ namespace robosense
   * @detail send lidar msop packets message through ROS
   * @param msg--the Robosense LidarScanMsg message
   */
-            virtual void send_msop(const LidarScanMsg &msg) {}
+            virtual void sendMsopPkts(const LidarScanMsg &msg) {}
             /**
   * @brief send function
   * @detail send lidar difop packet message through ROS
   * @param msg--the Robosense LidarPacketMsg message
   */
-            virtual void send_difop(const LidarPacketMsg &msg) {}
+            virtual void sendDifopPkts(const LidarPacketMsg &msg) {}
             /**
   * @brief register receive call back function
   * @detail after registration, the Lidar module can pass lidar msop packet message to other module

@@ -41,6 +41,7 @@
 #define ERROR (std::cout << BOLDRED)
 #define DEBUG (std::cout << BOLDCYAN)
 #define TITLE (std::cout << BOLDMAGENTA)
+#define MSG (std::cout << BOLDWHITE) /* Bold White */
 
 #define END (std::endl)
 #define REND "\033[0m" << std::endl

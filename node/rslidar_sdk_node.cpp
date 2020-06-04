@@ -35,13 +35,13 @@ static void sigHandler(int sig)
 
 int main(int argc, char **argv)
 {
-    std::cout << "\033[1m\033[35m"
-              << "------------------------------------------------------" << std::endl;
-    std::cout << "            RSLidar_Driver Version: V" << VERSION_MAJOR << "."
-              << VERSION_MINOR << "." << VERSION_PATCH << std::endl;
-    std::cout << "\033[1m\033[35m"
-              << "------------------------------------------------------"
-              << "\033[0m" << std::endl;
+    TITLE << "********************************************************" << REND;
+    TITLE << "**********                                    **********" << REND;
+    TITLE << "**********    RSLidar_SDK Version: V" << VERSION_MAJOR << "."
+          << VERSION_MINOR << "." << VERSION_PATCH << "     **********"
+          << REND;
+    TITLE << "**********                                    **********" << REND;
+    TITLE << "********************************************************" << REND;
 
     std::shared_ptr<Manager> demo_ptr = std::make_shared<Manager>();
     YAML::Node config;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 #endif
     demo_ptr->init(config);
     demo_ptr->start();
-    TITLE << "Robosense-LiDAR-Driver is running....." << REND;
+    MSG << "Robosense-LiDAR-Driver is running....." << REND;
 #ifdef ROS_FOUND
     ros::spin();
 #else

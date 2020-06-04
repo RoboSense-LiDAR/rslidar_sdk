@@ -27,10 +27,10 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--pointcloud from Protobuf-UDP
-    send_packets_ros: true                               #True--Send packet through ROS(Used to record packet)
+    send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
     send_points_ros: true                                 #True--Send pointcloud through ROS
     send_packets_proto: false                             #True--Send packets through Protobuf-UDP
-    send_points_proto: false                              #True--Send pointcloud through Protobuf-UDP
+    send_points_proto: true                              #True--Send pointcloud through Protobuf-UDP
     pcap_directory: /home/xzd/Downloads/137_500.pcap            #The path of pcap file
 
 lidar:

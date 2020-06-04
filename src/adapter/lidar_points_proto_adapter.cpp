@@ -51,8 +51,6 @@ namespace robosense
             yamlReadAbort<uint16_t>(proto_config, "points_recv_port", points_recv_port);
             if (msg_source == 5)
             {
-                INFO << "Receive Points From : Protobuf-UDP" << REND;
-                INFO << "Receive Points Port: " << points_recv_port << REND;
                 if (points_proto_ptr_->initReceiver(points_recv_port) == -1)
                 {
                     ERROR << "LidarPointsProtoAdapter: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
@@ -62,9 +60,6 @@ namespace robosense
             }
             if (send_points_proto)
             {
-                INFO << "Send Points Through : Protobuf-UDP" << REND;
-                INFO << "Send Points Port: " << points_send_port << REND;
-                INFO << "Send Points IP: " << points_send_ip << REND;
                 if (points_proto_ptr_->initSender(points_send_port, points_send_ip) == -1)
                 {
                     ERROR << "LidarPointsProtoAdapter: Create UDP Sender Socket Failed ! " << REND;

@@ -43,18 +43,12 @@ namespace robosense
             yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
             if (msg_source == 2)
             {
-                INFO << "Receive Packets From : ROS" << REND;
-                INFO << "Receive MSOP Scan Topic: " << ros_recv_topic << REND;
-                INFO << "Receive DIFOP Packets Topic: " << ros_recv_topic + "_difop" << REND;
                 lidar_packets_difop_sub_ = nh_->subscribe(ros_recv_topic + "_difop", 1, &LidarPacketsRosAdapter::localLidarPacketsdifopCallback, this);
                 lidar_packets_msop_sub_ = nh_->subscribe(ros_recv_topic, 1, &LidarPacketsRosAdapter::localLidarPacketsmsopCallback, this);
                 send_packets_ros = false;
             }
             if (send_packets_ros)
             {
-                INFO << "Send Packets Through : ROS" << REND;
-                INFO << "Send MSOP Scan Topic: " << ros_send_topic << REND;
-                INFO << "Send DIFOP Packets Topic: " << ros_send_topic + "_difop" << REND;
                 lidar_packets_difop_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
                 lidar_packets_msop_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
             }
@@ -70,12 +64,12 @@ namespace robosense
             lidar_packets_difop_cbs_.emplace_back(callBack);
         }
 
-        void LidarPacketsRosAdapter::send_msop(const LidarScanMsg &msg) // Will send NavSatStatus and Odometry
+        void LidarPacketsRosAdapter::sendMsopPkts(const LidarScanMsg &msg) // Will send NavSatStatus and Odometry
         {
             lidar_packets_msop_pub_.publish(toRosMsg(msg));
         }
 
-        void LidarPacketsRosAdapter::send_difop(const LidarPacketMsg &msg) // Will send NavSatStatus and Odometry
+        void LidarPacketsRosAdapter::sendDifopPkts(const LidarPacketMsg &msg) // Will send NavSatStatus and Odometry
         {
             lidar_packets_difop_pub_.publish(toRosMsg(msg));
         }

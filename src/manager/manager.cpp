@@ -59,6 +59,11 @@ namespace robosense
           INFO << "Message Source is 0. Program Ending..." << REND;
           exit(-1);
         case 1: //use driver
+          INFO << "------------------------------------------------------" << REND;
+          INFO << "Receive Packets From : Online LiDAR" << REND;
+          INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << REND;
+          INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << REND;
+          INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = true;
           lidar_config[i]["msg_source"] = 1;
           lidar_points_receivers_.emplace_back(configReceiver<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), 1));
@@ -75,6 +80,11 @@ namespace robosense
           break;
 
         case 2: //pkt from ros
+          INFO << "------------------------------------------------------" << REND;
+          INFO << "Receive Packets From : ROS" << REND;
+          INFO << "Msop Topic: " << lidar_config[i]["ros"]["ros_recv_packets_topic"].as<std::string>() << REND;
+          INFO << "Difop Topic: " << lidar_config[i]["ros"]["ros_recv_packets_topic"].as<std::string>() << "_difop" << REND;
+          INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = false;
           lidarpkts_run_flag_ = true;
           lidar_config[i]["msg_source"] = 2;
@@ -86,6 +96,12 @@ namespace robosense
           break;
 
         case 3: //pcap
+          INFO << "------------------------------------------------------" << REND;
+          INFO << "Receive Packets From : Pcap" << REND;
+          INFO << "Device Ip: " << lidar_config[i]["driver"]["device_ip"].as<std::string>() << REND;
+          INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << REND;
+          INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << REND;
+          INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = true;
           lidar_config[i]["msg_source"] = 1;
           lidar_config[i]["driver"]["read_pcap"] = true;
@@ -105,6 +121,11 @@ namespace robosense
           break;
 
         case 4: //packets from proto
+          INFO << "------------------------------------------------------" << REND;
+          INFO << "Receive Packets From : Protobuf-UDP" << REND;
+          INFO << "Msop Port: " << lidar_config[i]["proto"]["msop_recv_port"].as<uint16_t>() << REND;
+          INFO << "Difop Port: " << lidar_config[i]["proto"]["difop_recv_port"].as<uint16_t>() << REND;
+          INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = false;
           lidarpkts_run_flag_ = true;
           lidar_config[i]["msg_source"] = 4;
@@ -116,6 +137,10 @@ namespace robosense
           break;
 
         case 5: //points from proto
+          INFO << "------------------------------------------------------" << REND;
+          INFO << "Receive Pointcloud From : Protobuf-UDP" << REND;
+          INFO << "Pointcloud Port: " << lidar_config[i]["proto"]["points_recv_port"].as<uint16_t>() << REND;
+          INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = true;
           lidarpkts_run_flag_ = false;
           lidar_config[i]["msg_source"] = 5;
@@ -134,26 +159,46 @@ namespace robosense
         /*Transmitter*/
         if (send_packets_ros)
         {
+          DEBUG << "------------------------------------------------------" << REND;
+          DEBUG << "Send Packets To : ROS" << REND;
+          DEBUG << "Msop Topic: " << lidar_config[i]["ros"]["ros_send_packets_topic"].as<std::string>() << REND;
+          DEBUG << "Difop Topic: " << lidar_config[i]["ros"]["ros_send_packets_topic"].as<std::string>() << "_difop" << REND;
+          DEBUG << "------------------------------------------------------" << REND;
           lidar_config[i]["send_packets_ros"] = true;
           lidar_packets_ros_transmitters_.emplace_back(configTransmitter<LidarPacketsInterface>(lidar_config[i], "lidar_pkts_" + std::to_string(i), send_packets_ros, false));
-          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::send_msop, lidar_packets_ros_transmitters_[i], std::placeholders::_1));
-          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::send_difop, lidar_packets_ros_transmitters_[i], std::placeholders::_1));
+          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::sendMsopPkts, lidar_packets_ros_transmitters_[i], std::placeholders::_1));
+          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::sendDifopPkts, lidar_packets_ros_transmitters_[i], std::placeholders::_1));
         }
         if (send_packets_proto)
         {
+          DEBUG << "------------------------------------------------------" << REND;
+          DEBUG << "Send Packets To : Protobuf-UDP" << REND;
+          DEBUG << "Msop Port:  " << lidar_config[i]["proto"]["msop_send_port"].as<uint16_t>() << REND;
+          DEBUG << "Difop Port: " << lidar_config[i]["proto"]["difop_send_port"].as<uint16_t>() << "_difop" << REND;
+          DEBUG << "Target IP: " << lidar_config[i]["proto"]["packets_send_ip"].as<std::string>() << REND;
+          DEBUG << "------------------------------------------------------" << REND;
           lidar_config[i]["send_packets_proto"] = true;
           lidar_packets_proto_transmitters_.emplace_back(configTransmitter<LidarPacketsInterface>(lidar_config[i], "lidar_pkts_" + std::to_string(i), false, send_packets_proto));
-          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::send_msop, lidar_packets_proto_transmitters_[i], std::placeholders::_1));
-          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::send_difop, lidar_packets_proto_transmitters_[i], std::placeholders::_1));
+          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::sendMsopPkts, lidar_packets_proto_transmitters_[i], std::placeholders::_1));
+          lidar_packets_receivers_[i]->regRecvCallback(std::bind(&LidarPacketsInterface::sendDifopPkts, lidar_packets_proto_transmitters_[i], std::placeholders::_1));
         }
         if (send_points_ros)
         {
+          DEBUG << "------------------------------------------------------" << REND;
+          DEBUG << "Send Pointcloud To : ROS" << REND;
+          DEBUG << "Pointcloud Topic: " << lidar_config[i]["ros"]["ros_send_points_topic"].as<std::string>() << REND;
+          DEBUG << "------------------------------------------------------" << REND;
           lidar_config[i]["send_points_ros"] = true;
           lidar_points_ros_transmitters_.emplace_back(configTransmitter<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), send_points_ros, false));
           lidar_points_receivers_[i]->regRecvCallback(std::bind(&LidarPointsInterface::send, lidar_points_ros_transmitters_[i], std::placeholders::_1));
         }
         if (send_points_proto)
         {
+          DEBUG << "------------------------------------------------------" << REND;
+          DEBUG << "Send Pointcloud To : Protobuf-UDP" << REND;
+          DEBUG << "Pointcloud Port:  " << lidar_config[i]["proto"]["points_send_port"].as<uint16_t>() << REND;
+          DEBUG << "Target IP: " << lidar_config[i]["proto"]["points_send_ip"].as<std::string>() << REND;
+          DEBUG << "------------------------------------------------------" << REND;
           lidar_config[i]["send_points_proto"] = true;
           lidar_points_proto_transmitters_.emplace_back(configTransmitter<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), false, send_points_proto));
           lidar_points_receivers_[i]->regRecvCallback(std::bind(&LidarPointsInterface::send, lidar_points_proto_transmitters_[i], std::placeholders::_1));

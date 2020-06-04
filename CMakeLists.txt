@@ -113,7 +113,7 @@ endif(${ROS_COMPILE_SUPPORT})
 # Build Setup
 #========================
 add_executable(rslidar_sdk_node
-            node/node.cpp
+            node/rslidar_sdk_node.cpp
             src/manager/manager.cpp
             src/adapter/lidar_points_ros_adapter.cpp
             src/adapter/lidar_packtes_ros_adapter.cpp      
@@ -125,8 +125,7 @@ target_link_libraries(rslidar_sdk_node
                     ${PCL_LIBRARIES}
                     ${YAML_CPP_LIBRARIES}
                     pthread
-                    pcap
-                    
+                    pcap  
                        )
 
 if(roscpp_FOUND)

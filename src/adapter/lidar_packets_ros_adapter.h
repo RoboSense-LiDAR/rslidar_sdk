@@ -50,8 +50,8 @@ namespace robosense
       }
       void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack);
       void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack);
-      void send_msop(const LidarScanMsg &msg);
-      void send_difop(const LidarPacketMsg &msg);
+      void sendMsopPkts(const LidarScanMsg &msg);
+      void sendDifopPkts(const LidarPacketMsg &msg);
 
     private:
       void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan &msg);

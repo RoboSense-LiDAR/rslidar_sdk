@@ -51,7 +51,7 @@
     cd rslidar_sdk
     mkdir build && cd build
     cmake .. && make -j4
-    ./demo
+    ./rslidar_sdk_node
 ```
 
 - 依赖于ROS编译
@@ -178,7 +178,7 @@ We offer two ways to compile and run the driver
     cd rslidar_sdk
     mkdir build && cd build
     cmake .. && make -j4
-    ./demo
+    ./rslidar_sdk_node
 ```
 
 - Compile with ROS-catkin
