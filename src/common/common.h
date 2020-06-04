@@ -23,8 +23,6 @@
 #pragma once
 
 #include "common/debug/prompt.h"
-#include "common/yaml/yaml_parser.h"
-#include "common/debug/error_code.h"
 #include "rs_driver/interface/lidar_driver.h"
 #include <chrono>
 #include <mutex>
@@ -32,7 +30,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <memory>
-
+#include <yaml-cpp/yaml.h>
 namespace robosense
 {
   namespace lidar

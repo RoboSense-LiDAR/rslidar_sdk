@@ -24,7 +24,7 @@
 #include <string>
 #include <array>
 #include <vector>
-#include "common/msg/rs_msg/lidar_packet_msg.h"
+#include "msg/rs_msg/lidar_packet_msg.h"
 namespace robosense
 {
   namespace lidar

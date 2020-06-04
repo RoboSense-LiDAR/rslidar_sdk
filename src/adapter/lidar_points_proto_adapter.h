@@ -25,8 +25,8 @@
 #ifdef PROTO_FOUND
 
 #include <common/interface/sensor/lidar_points_interface.h>
-#include <common/msg/proto_msg/Proto_msg.LidarPoints.pb.h>
-#include <common/msg/proto_msg_translator.h>
+#include <msg/proto_msg/Proto_msg.LidarPoints.pb.h>
+#include <msg/proto_msg_translator.h>
 #include <common/proto/proto_base.hpp>
 #include <condition_variable>
 #include <mutex>

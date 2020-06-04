@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(rslidar_sdk)
 set(ROS_COMPILE_SUPPORT false)
-#========================
-# Subdirectory
-#========================
-add_subdirectory(src/common)
+
 #========================
 # Project details / setup
 #========================
@@ -33,7 +30,6 @@ if(roscpp_FOUND)
   message(=============================================================)
   add_definitions(-DROS_FOUND)
   include_directories(${roscpp_INCLUDE_DIRS})
-  set(EXTERNAL_LIBS ${EXTERNAL_LIBS} ${roscpp_LIBRARIES})
 else(roscpp_FOUND)
   message(=============================================================)
   message("-- ROS Not Found, Ros Support is turned Off!")
@@ -47,13 +43,22 @@ if(Protobuf_FOUND)
   message(=============================================================)
   add_definitions(-DPROTO_FOUND)
   include_directories(${PROTOBUF_INCLUDE_DIRS})
-  set(EXTERNAL_LIBS ${EXTERNAL_LIBS} ${PROTOBUF_LIBRARY})
+  SET(PROTO_FILE_PATH ${PROJECT_SOURCE_DIR}/src/msg/proto_msg)
+  file(GLOB PROTOBUF_FILELIST ${PROTO_FILE_PATH}/*.proto)
+  message("-- Protobuf Found, Protobuf Support is turned On!")
+  foreach(proto_file ${PROTOBUF_FILELIST})
+    message(STATUS "COMPILING ${proto_file} USING ${PROTOBUF_PROTOC_EXECUTABLE}")
+    execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
+                    --proto_path=${PROTO_FILE_PATH}
+                    --cpp_out=${PROTO_FILE_PATH}
+                    ${proto_file})
+  endforeach()
 else(Protobuf_FOUND)
   message(=============================================================)
   message("-- Protobuf Not Found, Protobuf Support is turned Off!")
   message(=============================================================)
 endif(Protobuf_FOUND)
-
+find_package(yaml-cpp REQUIRED)
 find_package(PCL QUIET)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
@@ -86,15 +91,21 @@ add_executable(rslidar_sdk_node
 
 target_link_libraries(rslidar_sdk_node                   
                     ${PCL_LIBRARIES}
+                    ${YAML_CPP_LIBRARIES}
                     pthread
                     pcap
-                    common
+                    
                        )
 
 if(roscpp_FOUND)
 target_link_libraries(rslidar_sdk_node ${roscpp_LIBRARIES})
 endif(roscpp_FOUND)
 if(Protobuf_FOUND)
+add_library(proto_msg SHARED
+            ${PROTO_FILE_PATH}/Proto_msg.LidarPoints.pb.cc
+            ${PROTO_FILE_PATH}/Proto_msg.LidarScan.pb.cc
+            ${PROTO_FILE_PATH}/Proto_msg.LidarPacket.pb.cc
+            )
 target_link_libraries(rslidar_sdk_node proto_msg ${PROTOBUF_LIBRARY})
 endif(Protobuf_FOUND)
 

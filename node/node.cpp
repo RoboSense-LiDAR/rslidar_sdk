@@ -36,11 +36,11 @@ static void sigHandler(int sig)
 int main(int argc, char **argv)
 {
     std::shared_ptr<Manager> demo_ptr = std::make_shared<Manager>();
-    YamlParser yp;
     YAML::Node config;
     try
     {
-        config = yp.loadFile((std::string)PROJECT_PATH + "/config/config.yaml");
+        config = YAML::LoadFile((std::string)PROJECT_PATH + "/config/config.yaml");
+        DEBUG << config << REND;
     }
     catch (...)
     {

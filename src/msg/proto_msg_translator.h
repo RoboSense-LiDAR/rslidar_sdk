@@ -23,12 +23,12 @@
 #pragma once
 #ifdef PROTO_FOUND
 
-#include <common/msg/rs_msg/lidar_points_msg.h>
-#include <common/msg/rs_msg/lidar_packet_msg.h>
-#include <common/msg/rs_msg/lidar_scan_msg.h>
-#include <common/msg/proto_msg/Proto_msg.LidarPoints.pb.h>
-#include <common/msg/proto_msg/Proto_msg.LidarPacket.pb.h>
-#include <common/msg/proto_msg/Proto_msg.LidarScan.pb.h>
+#include <msg/rs_msg/lidar_points_msg.h>
+#include <msg/rs_msg/lidar_packet_msg.h>
+#include <msg/rs_msg/lidar_scan_msg.h>
+#include <msg/proto_msg/Proto_msg.LidarPoints.pb.h>
+#include <msg/proto_msg/Proto_msg.LidarPacket.pb.h>
+#include <msg/proto_msg/Proto_msg.LidarScan.pb.h>
 #include <pcl/io/io.h>
 namespace robosense
 {

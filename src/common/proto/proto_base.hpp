@@ -37,7 +37,7 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <common/msg/proto_msg_translator.h>
+#include <msg/proto_msg_translator.h>
 #define SPLIT_SIZE 5000
 #define MAX_RECEIVE_LENGTH 5200
 
