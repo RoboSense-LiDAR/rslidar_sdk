@@ -165,9 +165,6 @@ namespace robosense
       {
         switch (_msg.error_code_type)
         {
-        case lidar::ErrCodeType::INFO_CODE:
-          INFO << _msg.toString() << REND;
-          break;
         case lidar::ErrCodeType::WARNING_CODE:
           WARNING << _msg.toString() << REND;
           break;
