@@ -25,9 +25,7 @@
 #include "common/debug/prompt.h"
 #include "common/yaml/yaml_parser.h"
 #include "common/debug/error_code.h"
-#include "common/utility/thread_pool.h"
-#include "common/utility/time.h"
-#include "common/utility/lock_queue.h"
+#include "rs_driver/interface/lidar_driver.h"
 #include <chrono>
 #include <mutex>
 #include <thread>
@@ -37,7 +35,7 @@
 
 namespace robosense
 {
-  namespace common
+  namespace lidar
   {
     /**
  * @brief  basic class which inheritted by all modules of rs_sdk
@@ -207,5 +205,5 @@ namespace robosense
       bool is_initialized_ = false;
       std::string name_ = "common_default";
     };
-  } // namespace common
+  } // namespace lidar
 } // namespace robosense

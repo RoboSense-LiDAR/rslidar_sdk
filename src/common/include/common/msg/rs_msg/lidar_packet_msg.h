@@ -26,7 +26,7 @@
 
 namespace robosense
 {
-  namespace common
+  namespace lidar
   {
     /**
    * @brief Lidar packet Message for Robosense SDK.
@@ -41,5 +41,5 @@ namespace robosense
       std::array<uint8_t, 1248> packet{}; ///< lidar single packet
     };
 
-  } // namespace common
+  } // namespace lidar
 } // namespace robosense

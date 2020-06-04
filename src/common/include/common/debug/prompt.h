@@ -28,7 +28,7 @@
 
 namespace robosense
 {
-    namespace common
+    namespace lidar
     {
 #define RESET "\033[0m"
 #define BLACK "\033[30m"              /* Black */
@@ -61,6 +61,6 @@ namespace robosense
 #define END (std::endl)
 #define REND "\033[0m" << std::endl
 
-    } // namespace common
+    } // namespace lidar
 } // namespace robosense
 #endif // PROMPT_H

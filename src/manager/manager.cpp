@@ -22,9 +22,9 @@
 #include "manager/manager.h"
 namespace robosense
 {
-  namespace sensor
+  namespace lidar
   {
-    using namespace robosense::common;
+
     Manager::~Manager()
     {
       stop();
@@ -321,7 +321,7 @@ namespace robosense
         }
       }
       return ErrCode_Success;
-    } // namespace sensor
+    } // namespace lidar
 
     template <class R>
     R *Manager::construct(const std::string &device_type, const std::string &frame_id)
@@ -364,5 +364,5 @@ namespace robosense
 
       return ret;
     }
-  } // namespace sensor
+  } // namespace lidar
 } // namespace robosense

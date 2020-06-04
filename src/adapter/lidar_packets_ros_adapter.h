@@ -31,30 +31,30 @@
 
 namespace robosense
 {
-  namespace sensor
+  namespace lidar
   {
-    class LidarPacketsRosAdapter : virtual public common::LidarPacketsInterface
+    class LidarPacketsRosAdapter : virtual public LidarPacketsInterface
     {
     public:
       LidarPacketsRosAdapter() = default;
       ~LidarPacketsRosAdapter() { stop(); }
 
-      common::ErrCode init(const YAML::Node &config);
-      inline common::ErrCode start()
+      ErrCode init(const YAML::Node &config);
+      inline ErrCode start()
       {
-        return common::ErrCode_Success;
+        return ErrCode_Success;
       }
-      inline common::ErrCode stop()
+      inline ErrCode stop()
       {
-        return common::ErrCode_Success;
+        return ErrCode_Success;
       }
-      void regRecvCallback(const std::function<void(const common::LidarScanMsg &)> callBack);
-      void regRecvCallback(const std::function<void(const common::LidarPacketMsg &)> callBack);
-      inline void regExceptionCallback(const std::function<void(const common::ErrCode &)> excallBack)
+      void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack);
+      void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack);
+      inline void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack)
       {
       }
-      void send_msop(const common::LidarScanMsg &msg);
-      void send_difop(const common::LidarPacketMsg &msg);
+      void send_msop(const LidarScanMsg &msg);
+      void send_difop(const LidarPacketMsg &msg);
 
     private:
       void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan &msg);
@@ -62,8 +62,8 @@ namespace robosense
 
     private:
       std::unique_ptr<ros::NodeHandle> nh_;
-      std::vector<std::function<void(const common::LidarScanMsg &)>> lidar_packets_msop_cbs_;
-      std::vector<std::function<void(const common::LidarPacketMsg &)>> lidar_packets_difop_cbs_;
+      std::vector<std::function<void(const LidarScanMsg &)>> lidar_packets_msop_cbs_;
+      std::vector<std::function<void(const LidarPacketMsg &)>> lidar_packets_difop_cbs_;
       ros::Publisher lidar_packets_msop_pub_;
       ros::Publisher lidar_packets_difop_pub_;
       ros::Subscriber lidar_packets_msop_sub_;
@@ -72,6 +72,6 @@ namespace robosense
     private:
       static const uint16_t supported_api_ = 0x0010;
     };
-  } // namespace sensor
+  } // namespace lidar
 } // namespace robosense
 #endif // ROS_FOUND

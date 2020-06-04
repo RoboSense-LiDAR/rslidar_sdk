@@ -32,35 +32,35 @@
 
 namespace robosense
 {
-  namespace sensor
+  namespace lidar
   {
-    class LidarPointsRosAdapter : virtual public common::LidarPointsInterface
+    class LidarPointsRosAdapter : virtual public LidarPointsInterface
     {
     public:
       LidarPointsRosAdapter() = default;
       ~LidarPointsRosAdapter() { stop(); }
 
-      common::ErrCode init(const YAML::Node &config);
-      inline common::ErrCode start()
+      ErrCode init(const YAML::Node &config);
+      inline ErrCode start()
       {
-        return common::ErrCode_Success;
+        return ErrCode_Success;
       }
-      inline common::ErrCode stop()
+      inline ErrCode stop()
       {
-        return common::ErrCode_Success;
+        return ErrCode_Success;
       }
-      void regRecvCallback(const std::function<void(const common::LidarPointsMsg &)> callBack);
-      inline void regExceptionCallback(const std::function<void(const common::ErrCode &)> excallBack)
+      void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack);
+      inline void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack)
       {
       }
-      void send(const common::LidarPointsMsg &msg);
+      void send(const LidarPointsMsg &msg);
 
     private:
       void localLidarPointsCallback(const sensor_msgs::PointCloud2 &msg);
 
     private:
       std::shared_ptr<ros::NodeHandle> nh_;
-      std::vector<std::function<void(const common::LidarPointsMsg &)>> lidarPointscbs_;
+      std::vector<std::function<void(const LidarPointsMsg &)>> lidarPointscbs_;
       ros::Publisher lidar_points_pub_;
       ros::Subscriber lidar_points_sub_;
       std::string frame_id_;
@@ -68,6 +68,6 @@ namespace robosense
     private:
       static const uint16_t supported_api_ = 0x0020;
     };
-  } // namespace sensor
+  } // namespace lidar
 } // namespace robosense
 #endif // ROS_FOUND

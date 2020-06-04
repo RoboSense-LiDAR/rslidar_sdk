@@ -33,29 +33,29 @@
 
 namespace robosense
 {
-  namespace sensor
+  namespace lidar
   {
-    class LidarPointsProtoAdapter : virtual public common::LidarPointsInterface, virtual public common::ProtoBase
+    class LidarPointsProtoAdapter : virtual public LidarPointsInterface, virtual public ProtoBase
     {
     public:
       LidarPointsProtoAdapter();
       ~LidarPointsProtoAdapter() { stop(); }
 
-      common::ErrCode init(const YAML::Node &config);
-      common::ErrCode start();
-      common::ErrCode stop();
-      inline void regRecvCallback(const std::function<void(const common::LidarPointsMsg &)> callBack)
+      ErrCode init(const YAML::Node &config);
+      ErrCode start();
+      ErrCode stop();
+      inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)
       {
         points_cb_.emplace_back(callBack);
       }
-      inline void regExceptionCallback(const std::function<void(const common::ErrCode &)> excallBack)
+      inline void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack)
       {
         excb_ = excallBack;
       }
-      void send(const common::LidarPointsMsg &msg);
+      void send(const LidarPointsMsg &msg);
 
     private:
-      inline void localCallback(const common::LidarPointsMsg &rs_msg)
+      inline void localCallback(const LidarPointsMsg &rs_msg)
       {
         for (auto &cb : points_cb_)
         {
@@ -63,7 +63,7 @@ namespace robosense
         }
       }
 
-      inline void reportError(const common::ErrCode &error)
+      inline void reportError(const ErrCode &error)
       {
         if (excb_ != NULL)
         {
@@ -75,12 +75,12 @@ namespace robosense
       void splicePoints();
 
     private:
-      std::vector<std::function<void(const common::LidarPointsMsg &)>> points_cb_;
-      std::function<void(const common::ErrCode &)> excb_;
-      common::Queue<common::LidarPointsMsg> points_send_queue_;
-      common::Queue<std::pair<void *, common::proto_MsgHeader>> points_recv_queue_;
-      common::ThreadPool::Ptr thread_pool_ptr_;
-      common::Thread recv_thread_;
+      std::vector<std::function<void(const LidarPointsMsg &)>> points_cb_;
+      std::function<void(const ErrCode &)> excb_;
+      lidar::Queue<LidarPointsMsg> points_send_queue_;
+      lidar::Queue<std::pair<void *, proto_MsgHeader>> points_recv_queue_;
+      lidar::ThreadPool::Ptr thread_pool_ptr_;
+      lidar::Thread recv_thread_;
       int old_frmNum_;
       int new_frmNum_;
       void *buff_;
@@ -88,6 +88,6 @@ namespace robosense
     private:
       static const uint16_t supported_api_ = 0x0020;
     };
-  } // namespace sensor
+  } // namespace lidar
 } //namespace robosense
 #endif //PROTO_FOUND

@@ -43,7 +43,7 @@
 
 namespace robosense
 {
-  namespace common
+  namespace lidar
   {
     enum class RS_DATA_ENDIAN_TYPE
     {
@@ -241,7 +241,7 @@ namespace robosense
  * @brief  Protobuf UDP transmission basic class
  * @note   used to initialize socket sender and receiver, and define send function and receive function
  */
-    class ProtoBase : virtual public common::CommonBase
+    class ProtoBase : virtual public CommonBase
     {
     public:
       ProtoBase() = default;
@@ -427,6 +427,6 @@ namespace robosense
       std::unique_ptr<deadline_timer> deadline_;
     };
 
-  } // namespace common
+  } // namespace lidar
 } // namespace robosense
 #endif // PROTO_FOUND

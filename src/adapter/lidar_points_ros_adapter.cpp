@@ -24,9 +24,9 @@
 #include "adapter/lidar_points_ros_adapter.h"
 namespace robosense
 {
-    namespace sensor
+    namespace lidar
     {
-        using namespace robosense::common;
+
         ErrCode LidarPointsRosAdapter::init(const YAML::Node &config)
         {
             setName("LidarPointsRosAdapter");
@@ -76,7 +76,7 @@ namespace robosense
                 cb(toRsMsg(msg, frame_id_));
             }
         }
-    } // namespace sensor
+    } // namespace lidar
 } // namespace robosense
 
 #endif // ROS_FOUND

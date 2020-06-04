@@ -26,14 +26,15 @@
 #include <rs_driver/interface/lidar_driver.h>
 namespace robosense
 {
-  namespace sensor
+  namespace lidar
   {
-    class LidarDriverAdapter : virtual public common::LidarPointsInterface, virtual public common::LidarPacketsInterface
+    class LidarDriverAdapter : virtual public LidarPointsInterface, virtual public LidarPacketsInterface
     {
     public:
       LidarDriverAdapter()
       {
         driver_ptr_.reset(new lidar::LidarDriver<pcl::PointXYZI>());
+        thread_pool_ptr_.reset(new lidar::ThreadPool());
         driver_ptr_->regExceptionCallback(std::bind(&LidarDriverAdapter::localExceptionCallback, this, std::placeholders::_1));
       }
 
@@ -42,7 +43,7 @@ namespace robosense
         driver_ptr_->stop();
       }
 
-      common::ErrCode init(const YAML::Node &config)
+      ErrCode init(const YAML::Node &config)
       {
         setName("LidarDriverAdapter");
         lidar::RSDriverParam driver_param;
@@ -92,51 +93,51 @@ namespace robosense
           driver_ptr_->initDecoderOnly(driver_param);
         }
         setinitFlag(true);
-        return common::ErrCode_Success;
+        return ErrCode_Success;
       }
 
-      common::ErrCode start()
+      ErrCode start()
       {
         driver_ptr_->start();
-        return common::ErrCode_Success;
+        return ErrCode_Success;
       }
 
-      common::ErrCode stop()
+      ErrCode stop()
       {
         driver_ptr_->stop();
-        return common::ErrCode_Success;
+        return ErrCode_Success;
       }
 
-      inline void regRecvCallback(const std::function<void(const common::LidarPointsMsg &)> callBack)
+      inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)
       {
         point_cbs_.emplace_back(callBack);
         driver_ptr_->regPointRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
       }
 
-      inline void regRecvCallback(const std::function<void(const common::LidarScanMsg &)> callBack)
+      inline void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
       {
         scan_cbs_.emplace_back(callBack);
         driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
       }
 
-      inline void regRecvCallback(const std::function<void(const common::LidarPacketMsg &)> callBack)
+      inline void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack)
       {
         pkt_cbs_.emplace_back(callBack);
         driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
       }
 
-      inline void regExceptionCallback(const std::function<void(const common::ErrCode &)> callBack)
+      inline void regExceptionCallback(const std::function<void(const ErrCode &)> callBack)
       {
       }
 
-      void processMsopScan(const common::LidarScanMsg &pkt_msg)
+      void processMsopScan(const LidarScanMsg &pkt_msg)
       {
         lidar::PointcloudMsg<pcl::PointXYZI> pointcloud;
         driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud);
         localPointsCallback(pointcloud);
       }
 
-      void processDifopPackets(const common::LidarPacketMsg &pkt_msg)
+      void processDifopPackets(const LidarPacketMsg &pkt_msg)
       {
         driver_ptr_->decodeDifopPkt(cPkt2LPkt(pkt_msg));
       }
@@ -151,7 +152,7 @@ namespace robosense
       {
         for (auto iter : point_cbs_)
         {
-          common::ThreadPool::getInstance()->commit([this, _msg, iter]() { iter(lPoints2CPoints(_msg)); });
+          thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPoints2CPoints(_msg)); });
         }
       }
 
@@ -159,7 +160,7 @@ namespace robosense
       {
         for (auto iter : scan_cbs_)
         {
-          common::ThreadPool::getInstance()->commit([this, _msg, iter]() { iter(lScan2CScan(_msg)); });
+          thread_pool_ptr_->commit([this, _msg, iter]() { iter(lScan2CScan(_msg)); });
         }
       }
 
@@ -167,7 +168,7 @@ namespace robosense
       {
         for (auto iter : pkt_cbs_)
         {
-          common::ThreadPool::getInstance()->commit([this, _msg, iter]() { iter(lPkt2CPkt(_msg)); });
+          thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPkt2CPkt(_msg)); });
         }
       }
 
@@ -187,35 +188,35 @@ namespace robosense
         }
       }
 
-      common::LidarScanMsg lScan2CScan(const lidar::ScanMsg &_msg)
+      LidarScanMsg lScan2CScan(const lidar::ScanMsg &_msg)
       {
         lidar::ScanMsg tmp_msg = _msg;
-        common::LidarScanMsg *msg = (struct common::LidarScanMsg *)(&tmp_msg);
+        LidarScanMsg *msg = (struct LidarScanMsg *)(&tmp_msg);
         return std::move(*msg);
       }
 
-      lidar::ScanMsg cScan2LScan(const common::LidarScanMsg &_msg)
+      lidar::ScanMsg cScan2LScan(const LidarScanMsg &_msg)
       {
-        common::LidarScanMsg tmp_msg = _msg;
+        LidarScanMsg tmp_msg = _msg;
         lidar::ScanMsg *msg = (struct lidar::ScanMsg *)(&tmp_msg);
         return std::move(*msg);
       }
 
-      common::LidarPacketMsg lPkt2CPkt(const lidar::PacketMsg &_msg)
+      LidarPacketMsg lPkt2CPkt(const lidar::PacketMsg &_msg)
       {
         lidar::PacketMsg tmp_msg = _msg;
-        common::LidarPacketMsg *msg = (struct common::LidarPacketMsg *)(&tmp_msg);
+        LidarPacketMsg *msg = (struct LidarPacketMsg *)(&tmp_msg);
         return std::move(*msg);
       }
 
-      lidar::PacketMsg cPkt2LPkt(const common::LidarPacketMsg &_msg)
+      lidar::PacketMsg cPkt2LPkt(const LidarPacketMsg &_msg)
       {
-        common::LidarPacketMsg tmp_msg = _msg;
+        LidarPacketMsg tmp_msg = _msg;
         lidar::PacketMsg *msg = (struct lidar::PacketMsg *)(&tmp_msg);
         return std::move(*msg);
       }
 
-      common::LidarPointsMsg lPoints2CPoints(const lidar::PointcloudMsg<pcl::PointXYZI> &_msg)
+      LidarPointsMsg lPoints2CPoints(const lidar::PointcloudMsg<pcl::PointXYZI> &_msg)
       {
         PointCloudPtr cloud(new pcl::PointCloud<pcl::PointXYZI>);
         cloud->points.reserve(_msg.pointcloud_ptr->size());
@@ -225,7 +226,7 @@ namespace robosense
         }
         cloud->height = _msg.height;
         cloud->width = _msg.width;
-        common::LidarPointsMsg msg(cloud);
+        LidarPointsMsg msg(cloud);
         msg.frame_id = _msg.frame_id;
         msg.parent_frame_id = _msg.parent_frame_id;
         msg.timestamp = _msg.timestamp;
@@ -240,10 +241,11 @@ namespace robosense
 
     private:
       std::shared_ptr<lidar::LidarDriver<pcl::PointXYZI>> driver_ptr_;
-      std::vector<std::function<void(const common::LidarPointsMsg &)>> point_cbs_;
-      std::vector<std::function<void(const common::LidarScanMsg &)>> scan_cbs_;
-      std::vector<std::function<void(const common::LidarPacketMsg &)>> pkt_cbs_;
+      std::vector<std::function<void(const LidarPointsMsg &)>> point_cbs_;
+      std::vector<std::function<void(const LidarScanMsg &)>> scan_cbs_;
+      std::vector<std::function<void(const LidarPacketMsg &)>> pkt_cbs_;
+      lidar::ThreadPool::Ptr thread_pool_ptr_;
       static const uint16_t supported_api_ = 0x0030; // 0000 0000 0011 0000 (support LiDAR points & packets)
     };
-  } // namespace sensor
+  } // namespace lidar
 } // namespace robosense

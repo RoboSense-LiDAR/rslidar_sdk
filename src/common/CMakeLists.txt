@@ -40,7 +40,6 @@ find_package(yaml-cpp REQUIRED)
 #========================
 add_library(common SHARED
             src/yaml/yaml_parser.cpp
-            src/utility/thread_pool.cpp
             )
 target_link_libraries(common
                       stdc++fs

@@ -40,7 +40,7 @@
 
 namespace robosense
 {
-    namespace common
+    namespace lidar
     {
 
         /************************************************************************/
@@ -113,6 +113,6 @@ namespace robosense
             }
             return ros_msg;
         }
-    } // namespace common
+    } // namespace lidar
 } // namespace robosense
 #endif // ROS_FOUND

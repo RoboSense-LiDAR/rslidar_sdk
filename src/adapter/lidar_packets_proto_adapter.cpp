@@ -25,13 +25,13 @@
 #define PKT_RECEIVE_BUF_SIZE 2000000
 namespace robosense
 {
-    namespace sensor
+    namespace lidar
     {
-        using namespace robosense::common;
+
         LidarPacketsProtoAdapter::LidarPacketsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
         {
             setName("LidarPacketsProtoAdapter");
-            thread_pool_ptr_ = ThreadPool::getInstance();
+            thread_pool_ptr_.reset(new ThreadPool());
         }
 
         ErrCode LidarPacketsProtoAdapter::init(const YAML::Node &config)
@@ -52,8 +52,8 @@ namespace robosense
             yamlReadAbort<std::string>(proto_config, "difop_send_port", difop_send_port);
             yamlReadAbort<uint16_t>(proto_config, "msop_recv_port", msop_recv_port);
             yamlReadAbort<uint16_t>(proto_config, "difop_recv_port", difop_recv_port);
-            msop_proto_ptr_.reset(new common::ProtoBase);
-            difop_proto_ptr_.reset(new common::ProtoBase);
+            msop_proto_ptr_.reset(new ProtoBase);
+            difop_proto_ptr_.reset(new ProtoBase);
             if (msg_source == 4)
             {
                 INFO << "Receive Packets From : Protobuf-UDP" << REND;
@@ -104,55 +104,55 @@ namespace robosense
                 difop_recv_thread_.m_thread->join();
             }
 
-            return common::ErrCode_Success;
+            return ErrCode_Success;
         }
 
         void LidarPacketsProtoAdapter::send_difop(const LidarPacketMsg &msg) // Will send NavSatStatus and Odometry
         {
             difop_send_queue_.push(msg);
-            if (difop_send_queue_.is_task_finished.load())
+            if (difop_send_queue_.is_task_finished_.load())
             {
-                difop_send_queue_.is_task_finished.store(false);
+                difop_send_queue_.is_task_finished_.store(false);
                 thread_pool_ptr_->commit([this]() { sendDifop(); });
             }
         }
 
         void LidarPacketsProtoAdapter::sendDifop()
         {
-            while (difop_send_queue_.m_quque.size() > 0)
+            while (difop_send_queue_.m_quque_.size() > 0)
             {
-                Proto_msg::LidarPacket proto_msg = toProtoMsg(difop_send_queue_.m_quque.front());
+                Proto_msg::LidarPacket proto_msg = toProtoMsg(difop_send_queue_.m_quque_.front());
                 if (!difop_proto_ptr_->sendSingleMsg<Proto_msg::LidarPacket>(proto_msg))
                 {
-                    reportError(ErrCode_LidarPacketsProtoSendError);
+                    WARNING << "Difop packets Protobuf sending error" << REND;
                 }
                 difop_send_queue_.pop();
             }
-            difop_send_queue_.is_task_finished.store(true);
+            difop_send_queue_.is_task_finished_.store(true);
         }
 
         void LidarPacketsProtoAdapter::send_msop(const LidarScanMsg &msg) // Will send NavSatStatus and Odometry
         {
             msop_send_queue_.push(msg);
-            if (msop_send_queue_.is_task_finished.load())
+            if (msop_send_queue_.is_task_finished_.load())
             {
-                msop_send_queue_.is_task_finished.store(false);
+                msop_send_queue_.is_task_finished_.store(false);
                 thread_pool_ptr_->commit([this]() { sendMsop(); });
             }
         }
 
         void LidarPacketsProtoAdapter::sendMsop()
         {
-            while (msop_send_queue_.m_quque.size() > 0)
+            while (msop_send_queue_.m_quque_.size() > 0)
             {
-                Proto_msg::LidarScan proto_msg = toProtoMsg(msop_send_queue_.m_quque.front());
+                Proto_msg::LidarScan proto_msg = toProtoMsg(msop_send_queue_.m_quque_.front());
                 if (!msop_proto_ptr_->sendSplitMsg<Proto_msg::LidarScan>(proto_msg))
                 {
-                    reportError(ErrCode_LidarPacketsProtoSendError);
+                    WARNING << "Msop packets Protobuf sending error" << REND;
                 }
                 msop_send_queue_.pop();
             }
-            msop_send_queue_.is_task_finished.store(true);
+            msop_send_queue_.is_task_finished_.store(true);
         }
 
         void LidarPacketsProtoAdapter::recvMsopPkts()
@@ -176,13 +176,13 @@ namespace robosense
                 }
                 if (ret == -1)
                 {
-                    reportError(ErrCode_LidarPacketsProtoReceiveError);
+                    WARNING << "Packets Protobuf receiving error" << REND;
                     continue;
                 }
                 msop_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
-                if (msop_recv_queue_.is_task_finished.load())
+                if (msop_recv_queue_.is_task_finished_.load())
                 {
-                    msop_recv_queue_.is_task_finished.store(false);
+                    msop_recv_queue_.is_task_finished_.store(false);
                     thread_pool_ptr_->commit([&]() {
                         spliceMsopPkts();
                     });
@@ -192,11 +192,11 @@ namespace robosense
 
         void LidarPacketsProtoAdapter::spliceMsopPkts()
         {
-            while (msop_recv_queue_.m_quque.size() > 0)
+            while (msop_recv_queue_.m_quque_.size() > 0)
             {
                 if (msop_recv_thread_.start.load())
                 {
-                    auto pair = msop_recv_queue_.m_quque.front();
+                    auto pair = msop_recv_queue_.m_quque_.front();
                     old_frmNum_ = new_frmNum_;
                     new_frmNum_ = pair.second.frmNumber;
                     memcpy((uint8_t *)msop_buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
@@ -207,10 +207,10 @@ namespace robosense
                         localMsopCallback(toRsMsg(proto_msg));
                     }
                 }
-                free(msop_recv_queue_.m_quque.front().first);
+                free(msop_recv_queue_.m_quque_.front().first);
                 msop_recv_queue_.pop();
             }
-            msop_recv_queue_.is_task_finished.store(true);
+            msop_recv_queue_.is_task_finished_.store(true);
         }
 
         void LidarPacketsProtoAdapter::recvDifopPkts()
@@ -227,9 +227,9 @@ namespace robosense
                     continue;
                 }
                 difop_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
-                if (difop_recv_queue_.is_task_finished.load())
+                if (difop_recv_queue_.is_task_finished_.load())
                 {
-                    difop_recv_queue_.is_task_finished.store(false);
+                    difop_recv_queue_.is_task_finished_.store(false);
                     thread_pool_ptr_->commit([&]() {
                         spliceDifopPkts();
                     });
@@ -239,21 +239,21 @@ namespace robosense
 
         void LidarPacketsProtoAdapter::spliceDifopPkts()
         {
-            while (difop_recv_queue_.m_quque.size() > 0)
+            while (difop_recv_queue_.m_quque_.size() > 0)
             {
                 if (difop_recv_thread_.start.load())
                 {
-                    auto pair = difop_recv_queue_.m_quque.front();
+                    auto pair = difop_recv_queue_.m_quque_.front();
                     Proto_msg::LidarPacket protomsg;
                     protomsg.ParseFromArray(pair.first, pair.second.msgLen);
                     localDifopCallback(toRsMsg(protomsg));
                 }
-                free(difop_recv_queue_.m_quque.front().first);
+                free(difop_recv_queue_.m_quque_.front().first);
                 difop_recv_queue_.pop();
             }
-            difop_recv_queue_.is_task_finished.store(true);
+            difop_recv_queue_.is_task_finished_.store(true);
         }
 
-    } // namespace sensor
+    } // namespace lidar
 } // namespace robosense
 #endif // ROS_FOUND

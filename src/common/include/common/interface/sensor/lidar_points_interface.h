@@ -28,7 +28,7 @@
 #include "common/msg/rs_msg/lidar_scan_msg.h"
 namespace robosense
 {
-    namespace common
+    namespace lidar
     {
         /**
  * @brief Lidar points message interface
@@ -112,5 +112,5 @@ namespace robosense
   */
             static const uint16_t supported_api_ = 0x0020; // 0000 0000 0010 0000 (only support LiDAR points)
         };
-    } // namespace common
+    } // namespace lidar
 } // namespace robosense

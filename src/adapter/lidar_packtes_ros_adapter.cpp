@@ -24,9 +24,9 @@
 #include "adapter/lidar_packets_ros_adapter.h"
 namespace robosense
 {
-    namespace sensor
+    namespace lidar
     {
-        using namespace robosense::common;
+
         ErrCode LidarPacketsRosAdapter::init(const YAML::Node &config)
         {
             setName("LidarPacketsRosAdapter");
@@ -61,12 +61,12 @@ namespace robosense
             return ErrCode_Success;
         }
 
-        void LidarPacketsRosAdapter::regRecvCallback(const std::function<void(const common::LidarScanMsg &)> callBack)
+        void LidarPacketsRosAdapter::regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
         {
             lidar_packets_msop_cbs_.emplace_back(callBack);
         }
 
-        void LidarPacketsRosAdapter::regRecvCallback(const std::function<void(const common::LidarPacketMsg &)> callBack)
+        void LidarPacketsRosAdapter::regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack)
         {
             lidar_packets_difop_cbs_.emplace_back(callBack);
         }
@@ -96,7 +96,7 @@ namespace robosense
                 cb(toRsMsg(msg));
             }
         }
-    } // namespace sensor
+    } // namespace lidar
 } // namespace robosense
 
 #endif // ROS_FOUND

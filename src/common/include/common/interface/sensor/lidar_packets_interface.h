@@ -28,7 +28,7 @@
 
 namespace robosense
 {
-    namespace common
+    namespace lidar
     {
         /**
  * @brief Lidar packets message interface
@@ -106,5 +106,5 @@ namespace robosense
   */
             static const uint16_t supported_api_ = 0x0010; // 0000 0000 0001 0000 (only support LiDAR packets)
         };
-    } // namespace common
+    } // namespace lidar
 } // namespace robosense

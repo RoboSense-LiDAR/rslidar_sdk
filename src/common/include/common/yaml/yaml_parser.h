@@ -28,7 +28,7 @@
 
 namespace robosense
 {
-  namespace common
+  namespace lidar
   {
     /**
  * @brief  instantiate a YamlParser to load the yaml file (support encrypted & unencypted file )
@@ -52,5 +52,5 @@ namespace robosense
       bool printNodeType(YAML::Node &&);
     };
 
-  } // namespace common
+  } // namespace lidar
 } // namespace robosense

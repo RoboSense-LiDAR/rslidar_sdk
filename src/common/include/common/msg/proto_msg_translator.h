@@ -32,7 +32,7 @@
 #include <pcl/io/io.h>
 namespace robosense
 {
-    namespace common
+    namespace lidar
     {
 
         /************************************************************************/
@@ -145,7 +145,7 @@ namespace robosense
             return rs_msg;
         }
 
-    } // namespace common
+    } // namespace lidar
 
 } // namespace robosense
 #endif // PROTO_FOUND

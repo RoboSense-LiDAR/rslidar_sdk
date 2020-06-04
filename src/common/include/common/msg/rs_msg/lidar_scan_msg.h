@@ -27,7 +27,7 @@
 #include "common/msg/rs_msg/lidar_packet_msg.h"
 namespace robosense
 {
-  namespace common
+  namespace lidar
   {
     /**
    * @brief Lidar Scan Message for Robosense SDK.
@@ -46,5 +46,5 @@ namespace robosense
       std::vector<LidarPacketMsg> packets; ///< a vector which store a scan of packets (the size of the vector is not fix)
     };
 
-  } // namespace common
+  } // namespace lidar
 } // namespace robosense

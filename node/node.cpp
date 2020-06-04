@@ -22,7 +22,7 @@
  *****************************************************************************/
 #include <manager/manager.h>
 #include <signal.h>
-using namespace robosense::sensor;
+using namespace robosense::lidar;
 bool start_ = true;
 
 static void sigHandler(int sig)
@@ -36,7 +36,7 @@ static void sigHandler(int sig)
 int main(int argc, char **argv)
 {
     std::shared_ptr<Manager> demo_ptr = std::make_shared<Manager>();
-    robosense::common::YamlParser yp;
+    YamlParser yp;
     YAML::Node config;
     try
     {

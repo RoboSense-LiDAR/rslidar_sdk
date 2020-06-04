@@ -32,49 +32,49 @@
 
 namespace robosense
 {
-  namespace sensor
+  namespace lidar
   {
-    class LidarPacketsProtoAdapter : virtual public common::LidarPacketsInterface
+    class LidarPacketsProtoAdapter : virtual public LidarPacketsInterface
     {
     public:
       LidarPacketsProtoAdapter();
       ~LidarPacketsProtoAdapter() { stop(); }
 
-      common::ErrCode init(const YAML::Node &config);
-      common::ErrCode start();
-      common::ErrCode stop();
+      ErrCode init(const YAML::Node &config);
+      ErrCode start();
+      ErrCode stop();
 
-      inline void regRecvCallback(const std::function<void(const common::LidarScanMsg &)> callBack)
+      inline void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
       {
         msop_cb_.emplace_back(callBack);
       }
-      inline void regRecvCallback(const std::function<void(const common::LidarPacketMsg &)> callBack)
+      inline void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack)
       {
         difop_cb_.emplace_back(callBack);
       }
-      inline void regExceptionCallback(const std::function<void(const common::ErrCode &)> excallBack)
+      inline void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack)
       {
         excb_ = excallBack;
       }
-      void send_msop(const common::LidarScanMsg &msg);
-      void send_difop(const common::LidarPacketMsg &msg);
+      void send_msop(const LidarScanMsg &msg);
+      void send_difop(const LidarPacketMsg &msg);
 
     private:
-      inline void localMsopCallback(const common::LidarScanMsg &rs_msg)
+      inline void localMsopCallback(const LidarScanMsg &rs_msg)
       {
         for (auto &cb : msop_cb_)
         {
           cb(rs_msg);
         }
       }
-      inline void localDifopCallback(const common::LidarPacketMsg &rs_msg)
+      inline void localDifopCallback(const LidarPacketMsg &rs_msg)
       {
         for (auto &cb : difop_cb_)
         {
           cb(rs_msg);
         }
       }
-      inline void reportError(const common::ErrCode &error)
+      inline void reportError(const ErrCode &error)
       {
         if (excb_ != NULL)
         {
@@ -91,25 +91,25 @@ namespace robosense
       void sendDifop();
 
     private:
-      std::vector<std::function<void(const common::LidarScanMsg &)>> msop_cb_;
-      std::vector<std::function<void(const common::LidarPacketMsg &)>> difop_cb_;
-      std::function<void(const common::ErrCode &)> excb_;
-      std::unique_ptr<common::ProtoBase> msop_proto_ptr_;
-      std::unique_ptr<common::ProtoBase> difop_proto_ptr_;
-      common::ThreadPool::Ptr thread_pool_ptr_;
-      common::Queue<common::LidarScanMsg> msop_send_queue_;
-      common::Queue<common::LidarPacketMsg> difop_send_queue_;
-      common::Queue<std::pair<void *, common::proto_MsgHeader>> msop_recv_queue_;
-      common::Queue<std::pair<void *, common::proto_MsgHeader>> difop_recv_queue_;
-      common::Thread msop_recv_thread_;
-      common::Thread difop_recv_thread_;
+      std::vector<std::function<void(const LidarScanMsg &)>> msop_cb_;
+      std::vector<std::function<void(const LidarPacketMsg &)>> difop_cb_;
+      std::function<void(const ErrCode &)> excb_;
+      std::unique_ptr<ProtoBase> msop_proto_ptr_;
+      std::unique_ptr<ProtoBase> difop_proto_ptr_;
+      lidar::ThreadPool::Ptr thread_pool_ptr_;
+      lidar::Queue<LidarScanMsg> msop_send_queue_;
+      lidar::Queue<LidarPacketMsg> difop_send_queue_;
+      lidar::Queue<std::pair<void *, proto_MsgHeader>> msop_recv_queue_;
+      lidar::Queue<std::pair<void *, proto_MsgHeader>> difop_recv_queue_;
+      lidar::Thread msop_recv_thread_;
+      lidar::Thread difop_recv_thread_;
       int old_frmNum_;
       int new_frmNum_;
       void *msop_buff_;
 
     private:
       static const uint16_t supported_api_ = 0x0010;
-    }; // namespace sensor
-  }    // namespace sensor
+    };
+  } // namespace lidar
 } //namespace robosense
 #endif //PROTO_FOUND

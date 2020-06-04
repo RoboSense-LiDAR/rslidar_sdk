@@ -29,7 +29,7 @@ typedef pcl::PointCloud<pcl::PointXYZI>::Ptr PointCloudPtr;
 typedef pcl::PointCloud<pcl::PointXYZI>::ConstPtr PointCloudConstPtr;
 namespace robosense
 {
-  namespace common
+  namespace lidar
   {
     /**
    * @brief Lidar points Message for Robosense SDK.
@@ -62,5 +62,5 @@ namespace robosense
       typedef std::shared_ptr<const LidarPointsMsg> ConstPtr;
     };
 
-  } // namespace common
+  } // namespace lidar
 } // namespace robosense

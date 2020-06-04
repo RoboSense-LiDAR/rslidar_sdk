@@ -25,13 +25,13 @@
 #define RECEIVE_BUF_SIZE 10000000
 namespace robosense
 {
-    namespace sensor
+    namespace lidar
     {
-        using namespace robosense::common;
+
         LidarPointsProtoAdapter::LidarPointsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
         {
             setName("LidarPointsProtoAdapter");
-            thread_pool_ptr_ = ThreadPool::getInstance();
+            thread_pool_ptr_.reset(new lidar::ThreadPool());
         }
 
         ErrCode LidarPointsProtoAdapter::init(const YAML::Node &config)
@@ -95,25 +95,25 @@ namespace robosense
         void LidarPointsProtoAdapter::send(const LidarPointsMsg &msg) // Will send NavSatStatus and Odometry
         {
             points_send_queue_.push(msg);
-            if (points_send_queue_.is_task_finished.load())
+            if (points_send_queue_.is_task_finished_.load())
             {
-                points_send_queue_.is_task_finished.store(false);
+                points_send_queue_.is_task_finished_.store(false);
                 thread_pool_ptr_->commit([this]() { sendPoints(); });
             }
         }
 
         void LidarPointsProtoAdapter::sendPoints()
         {
-            while (points_send_queue_.m_quque.size() > 0)
+            while (points_send_queue_.m_quque_.size() > 0)
             {
-                Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.m_quque.front());
+                Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.m_quque_.front());
                 if (!sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
                 {
-                    reportError(ErrCode_LidarPointsProtoSendError);
+                    WARNING << "Pointcloud Protobuf sending error" << REND;
                 }
                 points_send_queue_.pop();
             }
-            points_send_queue_.is_task_finished.store(true);
+            points_send_queue_.is_task_finished_.store(true);
         }
 
         void LidarPointsProtoAdapter::recvPoints()
@@ -137,15 +137,15 @@ namespace robosense
                 }
                 if (ret == -1)
                 {
-                    reportError(ErrCode_LidarPointsProtoReceiveError);
+                    WARNING << "Pointcloud Protobuf receiving error" << REND;
                     continue;
                 }
 
                 points_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
 
-                if (points_recv_queue_.is_task_finished.load())
+                if (points_recv_queue_.is_task_finished_.load())
                 {
-                    points_recv_queue_.is_task_finished.store(false);
+                    points_recv_queue_.is_task_finished_.store(false);
                     thread_pool_ptr_->commit([&]() {
                         splicePoints();
                     });
@@ -155,11 +155,11 @@ namespace robosense
 
         void LidarPointsProtoAdapter::splicePoints()
         {
-            while (points_recv_queue_.m_quque.size() > 0)
+            while (points_recv_queue_.m_quque_.size() > 0)
             {
                 if (recv_thread_.start.load())
                 {
-                    auto pair = points_recv_queue_.m_quque.front();
+                    auto pair = points_recv_queue_.m_quque_.front();
                     old_frmNum_ = new_frmNum_;
                     new_frmNum_ = pair.second.frmNumber;
                     memcpy((uint8_t *)buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
@@ -170,12 +170,12 @@ namespace robosense
                         localCallback(toRsMsg(proto_msg));
                     }
                 }
-                free(points_recv_queue_.m_quque.front().first);
+                free(points_recv_queue_.m_quque_.front().first);
                 points_recv_queue_.pop();
             }
-            points_recv_queue_.is_task_finished.store(true);
+            points_recv_queue_.is_task_finished_.store(true);
         }
 
-    } // namespace sensor
+    } // namespace lidar
 } // namespace robosense
 #endif // ROS_FOUND

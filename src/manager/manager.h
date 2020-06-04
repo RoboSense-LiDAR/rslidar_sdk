@@ -30,7 +30,7 @@
 
 namespace robosense
 {
-  namespace sensor
+  namespace lidar
   {
     enum MessageSource
     {
@@ -39,30 +39,30 @@ namespace robosense
       MessageSourceRos = 2,
       MessageSourceProto = 3
     };
-    class Manager : virtual public common::CommonBase
+    class Manager : virtual public CommonBase
     {
     public:
       Manager() = default;
       ~Manager();
 
-      common::ErrCode init(const YAML::Node &sensor_config);
-      common::ErrCode start();
-      common::ErrCode stop();
+      ErrCode init(const YAML::Node &sensor_config);
+      ErrCode start();
+      ErrCode stop();
 
-      inline void regExceptionCallback(const std::function<void(const common::ErrCode &)> &callBack)
+      inline void regExceptionCallback(const std::function<void(const ErrCode &)> &callBack)
       {
         excbs_.emplace_back(callBack);
       }
 
-      inline void regRecvCallback(const std::function<void(const common::LidarPointsMsg &)> &callBack)
+      inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> &callBack)
       {
         lidarPointscbs_.emplace_back(callBack);
       }
 
     private:
-      common::ErrCode initLidar(const YAML::Node &config);
+      ErrCode initLidar(const YAML::Node &config);
 
-      inline void localLidarPointsCallback(const common::LidarPointsMsg &msg)
+      inline void localLidarPointsCallback(const LidarPointsMsg &msg)
       {
         for (auto &cb : lidarPointscbs_)
         {
@@ -70,7 +70,7 @@ namespace robosense
         }
       }
 
-      inline void localExceptionCallback(const common::ErrCode &code)
+      inline void localExceptionCallback(const ErrCode &code)
       {
         for (auto &excb : excbs_)
         {
@@ -102,16 +102,16 @@ namespace robosense
       bool run_flag_;
       bool lidarpkts_run_flag_;
       bool lidarpoints_run_flag_;
-      std::vector<common::LidarPacketsInterface *> lidar_packets_receivers_;
-      std::vector<common::LidarPointsInterface *> lidar_points_receivers_;
-      std::vector<common::LidarPacketsInterface *> lidar_packets_ros_transmitters_;
-      std::vector<common::LidarPacketsInterface *> lidar_packets_proto_transmitters_;
-      std::vector<common::LidarPointsInterface *> lidar_points_ros_transmitters_;
-      std::vector<common::LidarPointsInterface *> lidar_points_proto_transmitters_;
+      std::vector<LidarPacketsInterface *> lidar_packets_receivers_;
+      std::vector<LidarPointsInterface *> lidar_points_receivers_;
+      std::vector<LidarPacketsInterface *> lidar_packets_ros_transmitters_;
+      std::vector<LidarPacketsInterface *> lidar_packets_proto_transmitters_;
+      std::vector<LidarPointsInterface *> lidar_points_ros_transmitters_;
+      std::vector<LidarPointsInterface *> lidar_points_proto_transmitters_;
       std::shared_ptr<std::thread> ros_thread_ptr_;
-      std::vector<std::function<void(const common::ErrCode &)>> excbs_;
-      std::vector<std::function<void(const common::LidarPointsMsg &)>> lidarPointscbs_;
-      std::map<std::string, std::map<std::string, common::CommonBase *>> sensors_;
+      std::vector<std::function<void(const ErrCode &)>> excbs_;
+      std::vector<std::function<void(const LidarPointsMsg &)>> lidarPointscbs_;
+      std::map<std::string, std::map<std::string, CommonBase *>> sensors_;
     };
-  } // namespace sensor
+  } // namespace lidar
 } // namespace robosense

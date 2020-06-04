@@ -24,7 +24,7 @@
 
 namespace robosense
 {
-   namespace common
+   namespace lidar
    {
 
       /**
@@ -39,22 +39,6 @@ namespace robosense
    *
    */
 
-      enum ErrCode
-      {
-         /* Success */
-         ErrCode_Success = 0x0,
-         ErrCode_HeartBeat = 0x1,
-         /* Initialization: 0x1~0xFFF*/
-         ErrCode_WrongUsrConfigNameYaml = 0x801,
-         ErrCode_WrongConfigYaml = 0x802,
-         /* Lidar : 0x1000~0x1FFF*/
-         ErrCode_LidarDriverInterrupt = 0x1401,
-         ErrCode_LidarPointsProtoSendError = 0x1402,
-         ErrCode_LidarPointsProtoReceiveError = 0x1403,
-         ErrCode_LidarPacketsProtoSendError = 0x1404,
-         ErrCode_LidarPacketsProtoReceiveError = 0x1405,
-
-      };
-
-   } // namespace common
+   
+   } // namespace lidar
 } // namespace robosense
