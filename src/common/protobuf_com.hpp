@@ -37,7 +37,6 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <msg/proto_msg_translator.h>
 #define SPLIT_SIZE 5000
 #define MAX_RECEIVE_LENGTH 5200
 
@@ -241,11 +240,11 @@ namespace robosense
  * @brief  Protobuf UDP transmission basic class
  * @note   used to initialize socket sender and receiver, and define send function and receive function
  */
-    class ProtoBase : virtual public CommonBase
+    class ProtoCommunicator
     {
     public:
-      ProtoBase() = default;
-      ~ProtoBase() = default;
+      ProtoCommunicator() = default;
+      ~ProtoCommunicator() = default;
 
       /* Sender & Receiver initialize function */
       /**
@@ -331,7 +330,7 @@ namespace robosense
         std::size_t ret = 0;
         char *pRecvBuffer = (char *)malloc(msgMaxLen + sizeof(proto_MsgHeader));
         recv_sock_ptr_->async_receive(boost::asio::buffer(pRecvBuffer, msgMaxLen + sizeof(proto_MsgHeader)),
-                                      boost::bind(&ProtoBase::handle_receive, _1, _2, &ec, &ret));
+                                      boost::bind(&ProtoCommunicator::handle_receive, _1, _2, &ec, &ret));
         do
         {
           io_service_.run_one();
@@ -408,7 +407,7 @@ namespace robosense
           recv_sock_ptr_->cancel();
           deadline_->expires_at(boost::posix_time::pos_infin);
         }
-        deadline_->async_wait(boost::bind(&ProtoBase::check_deadline, this));
+        deadline_->async_wait(boost::bind(&ProtoCommunicator::check_deadline, this));
       }
       static void handle_receive(
           const boost::system::error_code &ec, std::size_t length,

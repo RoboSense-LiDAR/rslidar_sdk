@@ -52,8 +52,8 @@ namespace robosense
             yamlReadAbort<std::string>(proto_config, "difop_send_port", difop_send_port);
             yamlReadAbort<uint16_t>(proto_config, "msop_recv_port", msop_recv_port);
             yamlReadAbort<uint16_t>(proto_config, "difop_recv_port", difop_recv_port);
-            msop_proto_ptr_.reset(new ProtoBase);
-            difop_proto_ptr_.reset(new ProtoBase);
+            msop_proto_ptr_.reset(new ProtoCommunicator);
+            difop_proto_ptr_.reset(new ProtoCommunicator);
             if (msg_source == 4)
             {
                 INFO << "Receive Packets From : Protobuf-UDP" << REND;

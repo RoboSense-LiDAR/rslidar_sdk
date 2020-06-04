@@ -27,7 +27,7 @@
 #include <common/interface/sensor/lidar_points_interface.h>
 #include <msg/proto_msg/Proto_msg.LidarPoints.pb.h>
 #include <msg/proto_msg_translator.h>
-#include <common/proto/proto_base.hpp>
+#include <common/protobuf_com.hpp>
 #include <condition_variable>
 #include <mutex>
 
@@ -35,7 +35,7 @@ namespace robosense
 {
   namespace lidar
   {
-    class LidarPointsProtoAdapter : virtual public LidarPointsInterface, virtual public ProtoBase
+    class LidarPointsProtoAdapter : virtual public LidarPointsInterface
     {
     public:
       LidarPointsProtoAdapter();
@@ -79,6 +79,7 @@ namespace robosense
       std::function<void(const ErrCode &)> excb_;
       lidar::Queue<LidarPointsMsg> points_send_queue_;
       lidar::Queue<std::pair<void *, proto_MsgHeader>> points_recv_queue_;
+      std::unique_ptr<ProtoCommunicator> points_proto_ptr_;
       lidar::ThreadPool::Ptr thread_pool_ptr_;
       lidar::Thread recv_thread_;
       int old_frmNum_;

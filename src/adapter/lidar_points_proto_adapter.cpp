@@ -42,6 +42,7 @@ namespace robosense
             std::string points_send_port;
             uint16_t points_recv_port;
             std::string points_send_ip;
+            points_proto_ptr_.reset(new ProtoCommunicator);
             YAML::Node proto_config = yamlSubNodeAbort(config, "proto");
             yamlRead<int>(config, "msg_source", msg_source);
             yamlRead<bool>(config, "send_points_proto", send_points_proto, false);
@@ -52,7 +53,7 @@ namespace robosense
             {
                 INFO << "Receive Points From : Protobuf-UDP" << REND;
                 INFO << "Receive Points Port: " << points_recv_port << REND;
-                if (initReceiver(points_recv_port) == -1)
+                if (points_proto_ptr_->initReceiver(points_recv_port) == -1)
                 {
                     ERROR << "LidarPointsProtoAdapter: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
                     exit(-1);
@@ -64,7 +65,7 @@ namespace robosense
                 INFO << "Send Points Through : Protobuf-UDP" << REND;
                 INFO << "ReceSendive Points Port: " << points_send_port << REND;
                 INFO << "ReceSendive Points IP: " << points_send_ip << REND;
-                if (initSender(points_send_port, points_send_ip) == -1)
+                if (points_proto_ptr_->initSender(points_send_port, points_send_ip) == -1)
                 {
                     ERROR << "LidarPointsProtoAdapter: Create UDP Sender Socket Failed ! " << REND;
                     exit(-1);
@@ -107,7 +108,7 @@ namespace robosense
             while (points_send_queue_.m_quque_.size() > 0)
             {
                 Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.m_quque_.front());
-                if (!sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
+                if (!points_proto_ptr_->sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
                 {
                     WARNING << "Pointcloud Protobuf sending error" << REND;
                 }
@@ -123,7 +124,7 @@ namespace robosense
             {
                 void *pMsgData = malloc(MAX_RECEIVE_LENGTH);
                 proto_MsgHeader tmp_header;
-                int ret = receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
+                int ret = points_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
                 if (start_check)
                 {
                     if (tmp_header.msgID == 0)

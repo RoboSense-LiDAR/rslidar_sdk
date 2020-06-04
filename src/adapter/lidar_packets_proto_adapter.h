@@ -26,7 +26,7 @@
 
 #include <common/interface/sensor/lidar_packets_interface.h>
 #include <msg/proto_msg_translator.h>
-#include <common/proto/proto_base.hpp>
+#include <common/protobuf_com.hpp>
 #include <condition_variable>
 #include <mutex>
 
@@ -94,8 +94,8 @@ namespace robosense
       std::vector<std::function<void(const LidarScanMsg &)>> msop_cb_;
       std::vector<std::function<void(const LidarPacketMsg &)>> difop_cb_;
       std::function<void(const ErrCode &)> excb_;
-      std::unique_ptr<ProtoBase> msop_proto_ptr_;
-      std::unique_ptr<ProtoBase> difop_proto_ptr_;
+      std::unique_ptr<ProtoCommunicator> msop_proto_ptr_;
+      std::unique_ptr<ProtoCommunicator> difop_proto_ptr_;
       lidar::ThreadPool::Ptr thread_pool_ptr_;
       lidar::Queue<LidarScanMsg> msop_send_queue_;
       lidar::Queue<LidarPacketMsg> difop_send_queue_;
