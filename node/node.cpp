@@ -35,6 +35,14 @@ static void sigHandler(int sig)
 
 int main(int argc, char **argv)
 {
+    std::cout << "\033[1m\033[35m"
+              << "------------------------------------------------------" << std::endl;
+    std::cout << "            RSLidar_Driver Version: V" << VERSION_MAJOR << "."
+              << VERSION_MINOR << "." << VERSION_PATCH << std::endl;
+    std::cout << "\033[1m\033[35m"
+              << "------------------------------------------------------"
+              << "\033[0m" << std::endl;
+
     std::shared_ptr<Manager> demo_ptr = std::make_shared<Manager>();
     YAML::Node config;
     try

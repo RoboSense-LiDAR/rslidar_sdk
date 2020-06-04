@@ -52,13 +52,13 @@ namespace robosense
             }
             if (send_packets_ros)
             {
-                DEBUG << "Send Packets Through : ROS" << REND;
-                DEBUG << "Send MSOP Scan Topic: " << ros_send_topic << REND;
-                DEBUG << "Send DIFOP Packets Topic: " << ros_send_topic + "_difop" << REND;
+                INFO << "Send Packets Through : ROS" << REND;
+                INFO << "Send MSOP Scan Topic: " << ros_send_topic << REND;
+                INFO << "Send DIFOP Packets Topic: " << ros_send_topic + "_difop" << REND;
                 lidar_packets_difop_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
                 lidar_packets_msop_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
             }
-                }
+        }
 
         void LidarPacketsRosAdapter::regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
         {
