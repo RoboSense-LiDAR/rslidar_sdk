@@ -27,7 +27,7 @@ namespace robosense
     namespace lidar
     {
 
-        ErrCode LidarPointsRosAdapter::init(const YAML::Node &config)
+        void LidarPointsRosAdapter::init(const YAML::Node &config)
         {
             setName("LidarPointsRosAdapter");
             setinitFlag(true);
@@ -55,8 +55,6 @@ namespace robosense
                 INFO << "Send Points Topic: " << ros_send_topic << REND;
                 lidar_points_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
             }
-
-            return ErrCode_Success;
         }
 
         void LidarPointsRosAdapter::regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)

@@ -24,10 +24,10 @@
 
 #ifdef PROTO_FOUND
 
-#include <common/interface/sensor/lidar_points_interface.h>
+#include <common/lidar_points_interface.h>
 #include <msg/proto_msg/Proto_msg.LidarPoints.pb.h>
 #include <msg/proto_msg_translator.h>
-#include <common/protobuf_com.hpp>
+#include <common/protobuf_communicator.hpp>
 #include <condition_variable>
 #include <mutex>
 
@@ -41,16 +41,12 @@ namespace robosense
       LidarPointsProtoAdapter();
       ~LidarPointsProtoAdapter() { stop(); }
 
-      ErrCode init(const YAML::Node &config);
-      ErrCode start();
-      ErrCode stop();
+      void init(const YAML::Node &config);
+      void start();
+      void stop();
       inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)
       {
         points_cb_.emplace_back(callBack);
-      }
-      inline void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack)
-      {
-        excb_ = excallBack;
       }
       void send(const LidarPointsMsg &msg);
 
@@ -63,20 +59,12 @@ namespace robosense
         }
       }
 
-      inline void reportError(const ErrCode &error)
-      {
-        if (excb_ != NULL)
-        {
-          excb_(error);
-        }
-      }
       void sendPoints();
       void recvPoints();
       void splicePoints();
 
     private:
       std::vector<std::function<void(const LidarPointsMsg &)>> points_cb_;
-      std::function<void(const ErrCode &)> excb_;
       lidar::Queue<LidarPointsMsg> points_send_queue_;
       lidar::Queue<std::pair<void *, proto_MsgHeader>> points_recv_queue_;
       std::unique_ptr<ProtoCommunicator> points_proto_ptr_;

@@ -22,74 +22,64 @@
 
 #pragma once
 
-#include "common/common.h"
-#include "msg/rs_msg/lidar_points_msg.h"
+#include "common/lidar_base.h"
+#include "common/yaml_reader.hpp"
 #include "msg/rs_msg/lidar_packet_msg.h"
 #include "msg/rs_msg/lidar_scan_msg.h"
+
 namespace robosense
 {
     namespace lidar
     {
         /**
- * @brief Lidar points message interface
- * @detail 1, Will be inheritted by lidar points ROS message adapter and lidar points Proto message adapter
- *         2, Will be inheritted by driver base which relate to lidar points messages(eg: LidarBase)
+ * @brief Lidar packets message interface
+ * @detail 1, Will be inheritted by Lidar packets ROS message adapter
+ *         2, Will be inheritted by driver base which relate to Lidar packets messages(eg: LidarBase)
  */
-        class LidarPointsInterface : virtual public CommonBase
+        class LidarPacketsInterface : virtual public LidarBase
         {
         public:
-            LidarPointsInterface() = default;
-            virtual ~LidarPointsInterface() = default;
+            LidarPacketsInterface() = default;
+            virtual ~LidarPacketsInterface() = default;
 
             /**
   * @brief initialize function
   * @param config--yaml node
   */
-            virtual ErrCode init(const YAML::Node &config) = 0;
+            virtual void init(const YAML::Node &config) = 0;
             /**
   * @brief start function
   */
-            virtual ErrCode start() = 0;
+            virtual void start() = 0;
             /**
   * @brief stop function
   */
-            virtual ErrCode stop() = 0;
+            virtual void stop() = 0;
             /**
   * @brief send function
-  * @detail send lidar points message through ROS or Proto
-  * @param msg--the Robosense lidar points message
+  * @detail send lidar msop packets message through ROS
+  * @param msg--the Robosense LidarScanMsg message
   */
-            virtual void send(const LidarPointsMsg &msg) {}
+            virtual void send_msop(const LidarScanMsg &msg) {}
+            /**
+  * @brief send function
+  * @detail send lidar difop packet message through ROS
+  * @param msg--the Robosense LidarPacketMsg message
+  */
+            virtual void send_difop(const LidarPacketMsg &msg) {}
             /**
   * @brief register receive call back function
-  * @detail after registration, the lidar points module can pass lidar points message to other module
+  * @detail after registration, the Lidar module can pass lidar msop packet message to other module
   * @param callBack--the function pointer of the call back function
   */
-            virtual void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack) = 0;
+            virtual void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack) = 0;
             /**
-  * @brief register exception call back function
-  * @detail after register the exception call back function, the lidar points module can pass the error code to other module
-  * @param callBack--the function pointer of the exception call back function
+  * @brief register receive call back function
+  * @detail after registration, the Lidar module can pass lidar difop packet message to other module
+  * @param callBack--the function pointer of the call back function
   */
-            virtual void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack) = 0;
-            /**
-  * @brief the function to depack the msop packets to get pointcloud
-  * @detail will be registered to lidar packet receiver to process msop packets and get pointcloud
-  * @param pkt_msg--Robosense LidarScanMsg message
-  */
-            virtual void processMsopScan(const LidarScanMsg &pkt_msg) {}
-            /**
-  * @brief the function to depack the difop packets to get parameters for pointcloud
-  * @detail will be registered to lidar packet receiver to process difop packets
-  * @param pkt_msg--Robosense LidarPacketMsg message
-  */
-            virtual void processDifopPackets(const LidarPacketMsg &pkt_msg) {}
-            /**
-  * @brief the function to set the config file path
-  * @detail since each lidar may have some .csv config files, the path should be set
-  * @param config_pth--the path of the config file (may be relative or absolute)
-  */
-            virtual void setPath(const std::string &config_path) {}
+            virtual void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack) = 0;
+
             /**
   * @brief get the api of the module
   * @detail return the supported_api_
@@ -110,7 +100,7 @@ namespace robosense
   *       Thus, it's supported_api_ should be set to 0000 0000 0000 0011 --support Odom & Gnss
   *       Through this varible(supported_api_), you can easily know what messages type the module supports 
   */
-            static const uint16_t supported_api_ = 0x0020; // 0000 0000 0010 0000 (only support LiDAR points)
+            static const uint16_t supported_api_ = 0x0010; // 0000 0000 0001 0000 (only support LiDAR packets)
         };
     } // namespace lidar
 } // namespace robosense

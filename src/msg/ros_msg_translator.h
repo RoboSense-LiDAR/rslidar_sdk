@@ -31,7 +31,7 @@
 #include "msg/rs_msg/lidar_packet_msg.h"
 #include "msg/rs_msg/lidar_scan_msg.h"
 #include "msg/ros_msg/lidar_scan_ros.h"
-#include "common/common.h"
+#include "common/lidar_base.h"
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_types.h>
 #include <pcl/PCLPointCloud2.h>

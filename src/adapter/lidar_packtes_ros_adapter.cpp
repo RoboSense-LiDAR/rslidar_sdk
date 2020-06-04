@@ -27,7 +27,7 @@ namespace robosense
     namespace lidar
     {
 
-        ErrCode LidarPacketsRosAdapter::init(const YAML::Node &config)
+        void LidarPacketsRosAdapter::init(const YAML::Node &config)
         {
             setName("LidarPacketsRosAdapter");
             setinitFlag(true);
@@ -58,8 +58,7 @@ namespace robosense
                 lidar_packets_difop_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
                 lidar_packets_msop_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
             }
-            return ErrCode_Success;
-        }
+                }
 
         void LidarPacketsRosAdapter::regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
         {

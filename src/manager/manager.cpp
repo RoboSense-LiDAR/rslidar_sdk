@@ -38,17 +38,16 @@ namespace robosense
       sensors_.clear();
     }
 
-    ErrCode Manager::init(const YAML::Node &sensor_config)
+    void Manager::init(const YAML::Node &sensor_config)
     {
       setName("Manager");
       run_flag_ = false;
       lidarpkts_run_flag_ = false;
       lidarpoints_run_flag_ = false;
       initLidar(sensor_config);
-      return ErrCode_Success;
     }
 
-    ErrCode Manager::start()
+    void Manager::start()
     {
       if (lidarpoints_run_flag_)
       {
@@ -68,10 +67,9 @@ namespace robosense
           }
         }
       }
-      return ErrCode_Success;
     }
 
-    ErrCode Manager::stop()
+    void Manager::stop()
     {
       if (lidarpoints_run_flag_)
       {
@@ -91,7 +89,6 @@ namespace robosense
           }
         }
       }
-      return ErrCode_Success;
     }
 
     template <typename T>
@@ -147,9 +144,6 @@ namespace robosense
         ERROR << "Manager : Failed to creat a " << type << " message receiver" << REND;
         exit(-1);
       }
-
-      receiver->regExceptionCallback(std::bind(&Manager::localExceptionCallback, this, std::placeholders::_1));
-
       return receiver;
     }
 
@@ -197,11 +191,10 @@ namespace robosense
         ERROR << "Manager : Failder to creat a  " << type << " message transmitter!" << REND;
         exit(-1);
       }
-      transmitter->regExceptionCallback(std::bind(&Manager::localExceptionCallback, this, std::placeholders::_1));
       return transmitter;
     }
 
-    ErrCode Manager::initLidar(const YAML::Node &lidars_config)
+    void Manager::initLidar(const YAML::Node &lidars_config)
     {
       int msg_source = 0;
       bool send_points_ros;
@@ -320,7 +313,7 @@ namespace robosense
           lidar_points_receivers_[i]->regRecvCallback(std::bind(&LidarPointsInterface::send, lidar_points_proto_transmitters_[i], std::placeholders::_1));
         }
       }
-      return ErrCode_Success;
+
     } // namespace lidar
 
     template <class R>

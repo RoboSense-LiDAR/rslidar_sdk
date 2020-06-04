@@ -22,7 +22,7 @@
 #pragma once
 
 #ifdef ROS_FOUND
-#include <common/interface/sensor/lidar_packets_interface.h>
+#include <common/lidar_packets_interface.h>
 #include <msg/ros_msg_translator.h>
 #include <ros/ros.h>
 #include <ros/publisher.h>
@@ -39,20 +39,17 @@ namespace robosense
       LidarPacketsRosAdapter() = default;
       ~LidarPacketsRosAdapter() { stop(); }
 
-      ErrCode init(const YAML::Node &config);
-      inline ErrCode start()
+      void init(const YAML::Node &config);
+      inline void start()
       {
-        return ErrCode_Success;
+        return;
       }
-      inline ErrCode stop()
+      inline void stop()
       {
-        return ErrCode_Success;
+        return;
       }
       void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack);
       void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack);
-      inline void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack)
-      {
-      }
       void send_msop(const LidarScanMsg &msg);
       void send_difop(const LidarPacketMsg &msg);
 

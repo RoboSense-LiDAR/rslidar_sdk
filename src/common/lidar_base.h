@@ -19,52 +19,53 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
+
 #pragma once
-
-#ifdef ROS_FOUND
-
-#include <common/lidar_points_interface.h>
-#include <msg/ros_msg_translator.h>
-#include <ros/ros.h>
-#include <ros/publisher.h>
-#include <ros/subscriber.h>
-#include <sensor_msgs/PointCloud2.h>
-
+#include "common/common.h"
 namespace robosense
 {
   namespace lidar
   {
-    class LidarPointsRosAdapter : virtual public LidarPointsInterface
+    /**
+ * @brief  basic class which inheritted by all modules of rs_sdk
+ * @note   define the basic functions such like yaml read and so on 
+ */
+    class LidarBase
     {
     public:
-      LidarPointsRosAdapter() = default;
-      ~LidarPointsRosAdapter() { stop(); }
+      LidarBase() = default;
+      virtual ~LidarBase() = default;
 
-      void init(const YAML::Node &config);
-      inline void start()
-      {
-        return;
-      }
-      inline void stop()
-      {
-        return;
-      }
-      void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack);
-      void send(const LidarPointsMsg &msg);
+    public:
+      /**
+   * @brief  check a module is initialized or not
+   * @retval true: is initialied false: not initialized
+   */
+      virtual inline bool isInitialized(void) { return is_initialized_; }
+      /**
+   * @brief  get the name of the module
+   * @retval name of the module
+   */
+      virtual inline std::string name(void) { return name_; }
+
+    protected:
+      /**
+   * @brief  set the name of current module
+   * @param  &name: the name to be set
+   * @retval None
+   */
+      inline void setName(const std::string &name) { name_ = name; }
+      /**
+   * @brief  set the varible is_initialized_
+   * @note   call this function in the module's initializing function, and set the flag to be true
+   * @param  flag: the flag to check initilization
+   * @retval None
+   */
+      inline void setinitFlag(bool flag) { is_initialized_ = flag; }
 
     private:
-      void localLidarPointsCallback(const sensor_msgs::PointCloud2 &msg);
-
-    private:
-      std::shared_ptr<ros::NodeHandle> nh_;
-      std::vector<std::function<void(const LidarPointsMsg &)>> lidarPointscbs_;
-      ros::Publisher lidar_points_pub_;
-      ros::Subscriber lidar_points_sub_;
-      std::string frame_id_;
-
-    private:
-      static const uint16_t supported_api_ = 0x0020;
+      bool is_initialized_ = false;
+      std::string name_ = "lidar_base";
     };
   } // namespace lidar
 } // namespace robosense
-#endif // ROS_FOUND

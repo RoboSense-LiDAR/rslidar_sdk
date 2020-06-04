@@ -24,9 +24,9 @@
 
 #ifdef PROTO_FOUND
 
-#include <common/interface/sensor/lidar_packets_interface.h>
+#include <common/lidar_packets_interface.h>
 #include <msg/proto_msg_translator.h>
-#include <common/protobuf_com.hpp>
+#include <common/protobuf_communicator.hpp>
 #include <condition_variable>
 #include <mutex>
 
@@ -40,9 +40,9 @@ namespace robosense
       LidarPacketsProtoAdapter();
       ~LidarPacketsProtoAdapter() { stop(); }
 
-      ErrCode init(const YAML::Node &config);
-      ErrCode start();
-      ErrCode stop();
+      void init(const YAML::Node &config);
+      void start();
+      void stop();
 
       inline void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
       {
@@ -51,10 +51,6 @@ namespace robosense
       inline void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack)
       {
         difop_cb_.emplace_back(callBack);
-      }
-      inline void regExceptionCallback(const std::function<void(const ErrCode &)> excallBack)
-      {
-        excb_ = excallBack;
       }
       void send_msop(const LidarScanMsg &msg);
       void send_difop(const LidarPacketMsg &msg);
@@ -74,13 +70,6 @@ namespace robosense
           cb(rs_msg);
         }
       }
-      inline void reportError(const ErrCode &error)
-      {
-        if (excb_ != NULL)
-        {
-          excb_(error);
-        }
-      }
 
     private:
       void recvDifopPkts();
@@ -93,7 +82,6 @@ namespace robosense
     private:
       std::vector<std::function<void(const LidarScanMsg &)>> msop_cb_;
       std::vector<std::function<void(const LidarPacketMsg &)>> difop_cb_;
-      std::function<void(const ErrCode &)> excb_;
       std::unique_ptr<ProtoCommunicator> msop_proto_ptr_;
       std::unique_ptr<ProtoCommunicator> difop_proto_ptr_;
       lidar::ThreadPool::Ptr thread_pool_ptr_;

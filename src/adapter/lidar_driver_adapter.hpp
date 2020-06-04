@@ -21,8 +21,8 @@
  *****************************************************************************/
 #pragma once
 
-#include <common/interface/sensor/lidar_packets_interface.h>
-#include <common/interface/sensor/lidar_points_interface.h>
+#include <common/lidar_packets_interface.h>
+#include <common/lidar_points_interface.h>
 #include <rs_driver/interface/lidar_driver.h>
 namespace robosense
 {
@@ -43,7 +43,7 @@ namespace robosense
         driver_ptr_->stop();
       }
 
-      ErrCode init(const YAML::Node &config)
+      void init(const YAML::Node &config)
       {
         setName("LidarDriverAdapter");
         lidar::RSDriverParam driver_param;
@@ -93,19 +93,16 @@ namespace robosense
           driver_ptr_->initDecoderOnly(driver_param);
         }
         setinitFlag(true);
-        return ErrCode_Success;
       }
 
-      ErrCode start()
+      void start()
       {
         driver_ptr_->start();
-        return ErrCode_Success;
       }
 
-      ErrCode stop()
+      void stop()
       {
         driver_ptr_->stop();
-        return ErrCode_Success;
       }
 
       inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)
@@ -124,10 +121,6 @@ namespace robosense
       {
         pkt_cbs_.emplace_back(callBack);
         driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
-      }
-
-      inline void regExceptionCallback(const std::function<void(const ErrCode &)> callBack)
-      {
       }
 
       void processMsopScan(const LidarScanMsg &pkt_msg)

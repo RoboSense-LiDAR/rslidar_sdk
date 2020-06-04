@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 #pragma once
-#include <common/common.h>
+#include "common/lidar_base.h"
+#include "common/yaml_reader.hpp"
 #include "adapter/lidar_driver_adapter.hpp"
 #include "adapter/lidar_points_ros_adapter.h"
 #include "adapter/lidar_packets_ros_adapter.h"
@@ -39,20 +40,15 @@ namespace robosense
       MessageSourceRos = 2,
       MessageSourceProto = 3
     };
-    class Manager : virtual public CommonBase
+    class Manager : virtual public LidarBase
     {
     public:
       Manager() = default;
       ~Manager();
 
-      ErrCode init(const YAML::Node &sensor_config);
-      ErrCode start();
-      ErrCode stop();
-
-      inline void regExceptionCallback(const std::function<void(const ErrCode &)> &callBack)
-      {
-        excbs_.emplace_back(callBack);
-      }
+      void init(const YAML::Node &sensor_config);
+      void start();
+      void stop();
 
       inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> &callBack)
       {
@@ -60,7 +56,7 @@ namespace robosense
       }
 
     private:
-      ErrCode initLidar(const YAML::Node &config);
+      void initLidar(const YAML::Node &config);
 
       inline void localLidarPointsCallback(const LidarPointsMsg &msg)
       {
@@ -70,13 +66,6 @@ namespace robosense
         }
       }
 
-      inline void localExceptionCallback(const ErrCode &code)
-      {
-        for (auto &excb : excbs_)
-        {
-          excb(code);
-        }
-      }
       template <typename T>
       T *configReceiver(const YAML::Node &sensor_config, const std::string &type, const int &msg_source);
 
@@ -109,9 +98,8 @@ namespace robosense
       std::vector<LidarPointsInterface *> lidar_points_ros_transmitters_;
       std::vector<LidarPointsInterface *> lidar_points_proto_transmitters_;
       std::shared_ptr<std::thread> ros_thread_ptr_;
-      std::vector<std::function<void(const ErrCode &)>> excbs_;
       std::vector<std::function<void(const LidarPointsMsg &)>> lidarPointscbs_;
-      std::map<std::string, std::map<std::string, CommonBase *>> sensors_;
+      std::map<std::string, std::map<std::string, LidarBase *>> sensors_;
     };
   } // namespace lidar
 } // namespace robosense

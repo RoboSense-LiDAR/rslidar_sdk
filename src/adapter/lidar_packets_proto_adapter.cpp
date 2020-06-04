@@ -34,7 +34,7 @@ namespace robosense
             thread_pool_ptr_.reset(new ThreadPool());
         }
 
-        ErrCode LidarPacketsProtoAdapter::init(const YAML::Node &config)
+        void LidarPacketsProtoAdapter::init(const YAML::Node &config)
         {
             setinitFlag(true);
             bool send_packets_proto;
@@ -78,19 +78,17 @@ namespace robosense
                     exit(-1);
                 }
             }
-            return ErrCode_Success;
         }
 
-        ErrCode LidarPacketsProtoAdapter::start()
+        void LidarPacketsProtoAdapter::start()
         {
             msop_buff_ = malloc(PKT_RECEIVE_BUF_SIZE);
             msop_recv_thread_.start = true;
             msop_recv_thread_.m_thread.reset(new std::thread([this]() { recvMsopPkts(); }));
             difop_recv_thread_.start = true;
             difop_recv_thread_.m_thread.reset(new std::thread([this]() { recvDifopPkts(); }));
-            return ErrCode_Success;
         }
-        ErrCode LidarPacketsProtoAdapter::stop()
+        void LidarPacketsProtoAdapter::stop()
         {
             if (msop_recv_thread_.start.load())
             {
@@ -103,8 +101,6 @@ namespace robosense
                 difop_recv_thread_.start.store(false);
                 difop_recv_thread_.m_thread->join();
             }
-
-            return ErrCode_Success;
         }
 
         void LidarPacketsProtoAdapter::send_difop(const LidarPacketMsg &msg) // Will send NavSatStatus and Odometry
