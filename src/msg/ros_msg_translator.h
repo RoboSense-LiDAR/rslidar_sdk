@@ -22,16 +22,16 @@
 
 #pragma once
 #ifdef ROS_FOUND
+#include "interface/lidar_base.h"
+#include "msg/rs_msg/lidar_points_msg.h"
+#include "msg/rs_msg/lidar_packet_msg.h"
+#include "msg/rs_msg/lidar_scan_msg.h"
+#include "msg/ros_msg/lidar_scan_ros.h"
 #include <ros/duration.h>
 #include <ros/rate.h>
 #include <Eigen/Dense>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
-#include "msg/rs_msg/lidar_points_msg.h"
-#include "msg/rs_msg/lidar_packet_msg.h"
-#include "msg/rs_msg/lidar_scan_msg.h"
-#include "msg/ros_msg/lidar_scan_ros.h"
-#include "common/lidar_base.h"
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_types.h>
 #include <pcl/PCLPointCloud2.h>

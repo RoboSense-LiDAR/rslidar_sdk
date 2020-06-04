@@ -23,7 +23,7 @@
 
 #ifdef ROS_FOUND
 
-#include <common/lidar_points_interface.h>
+#include "interface/lidar_points_interface.h"
 #include <msg/ros_msg_translator.h>
 #include <ros/ros.h>
 #include <ros/publisher.h>

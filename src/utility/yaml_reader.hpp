@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 #pragma once
+#include "utility/common.h"
 #include <yaml-cpp/yaml.h>
-#include "common/common.h"
 namespace robosense
 {
   namespace lidar

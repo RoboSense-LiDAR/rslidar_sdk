@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 #pragma once
-#include "common/lidar_base.h"
-#include "common/yaml_reader.hpp"
+#include "interface/lidar_base.h"
+#include "utility/yaml_reader.hpp"
 #include "adapter/lidar_driver_adapter.hpp"
 #include "adapter/lidar_points_ros_adapter.h"
 #include "adapter/lidar_packets_ros_adapter.h"
@@ -99,7 +99,6 @@ namespace robosense
       std::vector<LidarPointsInterface *> lidar_points_proto_transmitters_;
       std::shared_ptr<std::thread> ros_thread_ptr_;
       std::vector<std::function<void(const LidarPointsMsg &)>> lidarPointscbs_;
-      std::map<std::string, std::map<std::string, LidarBase *>> sensors_;
     };
   } // namespace lidar
 } // namespace robosense

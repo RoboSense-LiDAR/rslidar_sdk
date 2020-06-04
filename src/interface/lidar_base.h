@@ -21,15 +21,12 @@
  *****************************************************************************/
 
 #pragma once
-#include "common/common.h"
+#include "utility/common.h"
 namespace robosense
 {
   namespace lidar
   {
-    /**
- * @brief  basic class which inheritted by all modules of rs_sdk
- * @note   define the basic functions such like yaml read and so on 
- */
+
     class LidarBase
     {
     public:

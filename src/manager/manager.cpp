@@ -28,14 +28,6 @@ namespace robosense
     Manager::~Manager()
     {
       stop();
-      for (auto &sensor_itr : sensors_)
-      {
-        for (auto &dev_itr : sensor_itr.second)
-        {
-          delete dev_itr.second;
-        }
-      }
-      sensors_.clear();
     }
 
     void Manager::init(const YAML::Node &sensor_config)
@@ -350,11 +342,6 @@ namespace robosense
         ERROR << "Device type: " << device_type << " not found! Please check the device type !" << REND;
         exit(-1);
       }
-      if (ret != nullptr)
-      {
-        sensors_[device_type].emplace(frame_id, ret);
-      }
-
       return ret;
     }
   } // namespace lidar
