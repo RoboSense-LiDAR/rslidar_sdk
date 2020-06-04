@@ -63,8 +63,8 @@ namespace robosense
             if (send_points_proto)
             {
                 INFO << "Send Points Through : Protobuf-UDP" << REND;
-                INFO << "ReceSendive Points Port: " << points_send_port << REND;
-                INFO << "ReceSendive Points IP: " << points_send_ip << REND;
+                INFO << "Send Points Port: " << points_send_port << REND;
+                INFO << "Send Points IP: " << points_send_ip << REND;
                 if (points_proto_ptr_->initSender(points_send_port, points_send_ip) == -1)
                 {
                     ERROR << "LidarPointsProtoAdapter: Create UDP Sender Socket Failed ! " << REND;

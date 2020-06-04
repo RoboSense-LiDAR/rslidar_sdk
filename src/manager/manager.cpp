@@ -208,7 +208,6 @@ namespace robosense
     template <typename T>
     T *Manager::configReceiver(const YAML::Node &sensor_config, const std::string &type, const int &msg_source)
     {
-      bool success = false;
       std::string receiver_type = "";
       std::string frame_id = "";
       YAML::Node receiver_config;
@@ -247,13 +246,9 @@ namespace robosense
 
       if (receiver)
       {
-        if (!receiver->isInitialized())
-        {
-          receiver->init(sensor_config); // TODO: Check if init success
-        }
-        success = true;
+        receiver->init(sensor_config); // TODO: Check if init success
       }
-      if (success == false)
+      else
       {
         ERROR << "Manager : Failed to creat a " << type << " message receiver" << REND;
         exit(-1);
