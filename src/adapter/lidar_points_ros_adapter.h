@@ -62,8 +62,6 @@ namespace robosense
       ros::Subscriber lidar_points_sub_;
       std::string frame_id_;
 
-    private:
-      static const uint16_t supported_api_ = 0x0020;
     };
   } // namespace lidar
 } // namespace robosense

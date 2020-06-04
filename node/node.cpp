@@ -40,7 +40,6 @@ int main(int argc, char **argv)
     try
     {
         config = YAML::LoadFile((std::string)PROJECT_PATH + "/config/config.yaml");
-        DEBUG << config << REND;
     }
     catch (...)
     {

@@ -135,11 +135,6 @@ namespace robosense
         driver_ptr_->decodeDifopPkt(cPkt2LPkt(pkt_msg));
       }
 
-      static uint16_t getApi()
-      {
-        return supported_api_;
-      }
-
     private:
       void localPointsCallback(const lidar::PointcloudMsg<pcl::PointXYZI> &_msg)
       {
@@ -238,7 +233,6 @@ namespace robosense
       std::vector<std::function<void(const LidarScanMsg &)>> scan_cbs_;
       std::vector<std::function<void(const LidarPacketMsg &)>> pkt_cbs_;
       lidar::ThreadPool::Ptr thread_pool_ptr_;
-      static const uint16_t supported_api_ = 0x0030; // 0000 0000 0011 0000 (support LiDAR points & packets)
     };
   } // namespace lidar
 } // namespace robosense

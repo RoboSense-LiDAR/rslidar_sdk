@@ -94,9 +94,6 @@ namespace robosense
       int old_frmNum_;
       int new_frmNum_;
       void *msop_buff_;
-
-    private:
-      static const uint16_t supported_api_ = 0x0010;
     };
   } // namespace lidar
 } //namespace robosense

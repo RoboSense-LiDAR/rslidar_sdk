@@ -40,7 +40,7 @@ namespace robosense
       MessageSourceRos = 2,
       MessageSourceProto = 3
     };
-    class Manager : virtual public LidarBase
+    class Manager
     {
     public:
       Manager() = default;
@@ -50,22 +50,7 @@ namespace robosense
       void start();
       void stop();
 
-      inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> &callBack)
-      {
-        lidarPointscbs_.emplace_back(callBack);
-      }
-
     private:
-      void initLidar(const YAML::Node &config);
-
-      inline void localLidarPointsCallback(const LidarPointsMsg &msg)
-      {
-        for (auto &cb : lidarPointscbs_)
-        {
-          cb(msg);
-        }
-      }
-
       template <typename T>
       T *configReceiver(const YAML::Node &sensor_config, const std::string &type, const int &msg_source);
 
@@ -73,22 +58,9 @@ namespace robosense
       T *configTransmitter(const YAML::Node &sensor_config, const std::string &type, bool send_msg_ros, bool send_msg_proto);
 
       template <class R>
-      R *construct(const std::string &device_type, const std::string &frame_id);
-      template <class R, class T>
-      inline R *localConstruct(uint16_t api_request)
-      {
-        if ((api_request | T::getApi()) != 0)
-        {
-          return dynamic_cast<R *>(new T);
-        }
-        else
-        {
-          return NULL;
-        }
-      }
+      R *construct(const std::string &device_type);
 
     private:
-      bool run_flag_;
       bool lidarpkts_run_flag_;
       bool lidarpoints_run_flag_;
       std::vector<LidarPacketsInterface *> lidar_packets_receivers_;
@@ -97,8 +69,6 @@ namespace robosense
       std::vector<LidarPacketsInterface *> lidar_packets_proto_transmitters_;
       std::vector<LidarPointsInterface *> lidar_points_ros_transmitters_;
       std::vector<LidarPointsInterface *> lidar_points_proto_transmitters_;
-      std::shared_ptr<std::thread> ros_thread_ptr_;
-      std::vector<std::function<void(const LidarPointsMsg &)>> lidarPointscbs_;
     };
   } // namespace lidar
 } // namespace robosense

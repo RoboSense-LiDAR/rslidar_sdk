@@ -65,9 +65,6 @@ namespace robosense
       ros::Publisher lidar_packets_difop_pub_;
       ros::Subscriber lidar_packets_msop_sub_;
       ros::Subscriber lidar_packets_difop_sub_;
-
-    private:
-      static const uint16_t supported_api_ = 0x0010;
     };
   } // namespace lidar
 } // namespace robosense

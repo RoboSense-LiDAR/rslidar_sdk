@@ -58,7 +58,7 @@ namespace robosense
             {
                 INFO << "Receive Packets From : Protobuf-UDP" << REND;
                 INFO << "Receive MSOP Scan Port: " << msop_recv_port << REND;
-                INFO << "Receive DIFOP Packets Port: " << msop_recv_port << REND;
+                INFO << "Receive DIFOP Packets Port: " << difop_recv_port << REND;
                 if ((msop_proto_ptr_->initReceiver(msop_recv_port) == -1) || (difop_proto_ptr_->initReceiver(difop_recv_port) == -1))
                 {
                     ERROR << "LidarPacketsReceiver: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
