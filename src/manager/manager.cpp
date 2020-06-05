@@ -194,7 +194,7 @@ void Manager::init(const YAML::Node& config)
       DEBUG << "------------------------------------------------------" << REND;
       DEBUG << "Send Packets To : Protobuf-UDP" << REND;
       DEBUG << "Msop Port:  " << lidar_config[i]["proto"]["msop_send_port"].as<uint16_t>() << REND;
-      DEBUG << "Difop Port: " << lidar_config[i]["proto"]["difop_send_port"].as<uint16_t>() << "_difop" << REND;
+      DEBUG << "Difop Port: " << lidar_config[i]["proto"]["difop_send_port"].as<uint16_t>() << REND;
       DEBUG << "Target IP: " << lidar_config[i]["proto"]["packets_send_ip"].as<std::string>() << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_packets_proto"] = true;
