@@ -96,7 +96,7 @@ namespace robosense
             for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
             {
                 LidarPacketMsg tmp = toRsMsg(ros_msg.packets[i]);
-                rs_msg.packets.emplace_back(tmp);
+                rs_msg.packets.emplace_back(std::move(tmp));
             }
             return rs_msg;
         }
@@ -109,7 +109,7 @@ namespace robosense
             for (uint32_t i = 0; i < rs_msg.packets.size(); i++)
             {
                 rslidar_msgs::rslidarPacket tmp = toRosMsg(rs_msg.packets[i]);
-                ros_msg.packets.emplace_back(tmp);
+                ros_msg.packets.emplace_back(std::move(tmp));
             }
             return ros_msg;
         }

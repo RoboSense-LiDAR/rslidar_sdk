@@ -108,7 +108,7 @@ namespace robosense
 
         void LidarPacketsProtoAdapter::sendDifop()
         {
-            while (difop_send_queue_.m_quque_.size() > 0)
+            while (difop_send_queue_.size() > 0)
             {
                 Proto_msg::LidarPacket proto_msg = toProtoMsg(difop_send_queue_.m_quque_.front());
                 if (!difop_proto_ptr_->sendSingleMsg<Proto_msg::LidarPacket>(proto_msg))
@@ -132,7 +132,7 @@ namespace robosense
 
         void LidarPacketsProtoAdapter::sendMsop()
         {
-            while (msop_send_queue_.m_quque_.size() > 0)
+            while (msop_send_queue_.size() > 0)
             {
                 Proto_msg::LidarScan proto_msg = toProtoMsg(msop_send_queue_.m_quque_.front());
                 if (!msop_proto_ptr_->sendSplitMsg<Proto_msg::LidarScan>(proto_msg))
@@ -181,7 +181,7 @@ namespace robosense
 
         void LidarPacketsProtoAdapter::spliceMsopPkts()
         {
-            while (msop_recv_queue_.m_quque_.size() > 0)
+            while (msop_recv_queue_.size() > 0)
             {
                 if (msop_recv_thread_.start.load())
                 {
@@ -228,7 +228,7 @@ namespace robosense
 
         void LidarPacketsProtoAdapter::spliceDifopPkts()
         {
-            while (difop_recv_queue_.m_quque_.size() > 0)
+            while (difop_recv_queue_.size() > 0)
             {
                 if (difop_recv_thread_.start.load())
                 {

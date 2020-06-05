@@ -120,7 +120,7 @@ namespace robosense
                 std::string data_str = proto_msg.data(i);
                 LidarPacketMsg tmp_pkt;
                 memcpy(tmp_pkt.packet.data(), data_str.data(), data_str.size());
-                rs_msg.packets.emplace_back(tmp_pkt);
+                rs_msg.packets.emplace_back(std::move(tmp_pkt));
             }
             return rs_msg;
         }

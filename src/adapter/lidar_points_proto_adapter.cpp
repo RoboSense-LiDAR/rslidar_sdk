@@ -97,7 +97,7 @@ namespace robosense
 
         void LidarPointsProtoAdapter::sendPoints()
         {
-            while (points_send_queue_.m_quque_.size() > 0)
+            while (points_send_queue_.size() > 0)
             {
                 Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.m_quque_.front());
                 if (!points_proto_ptr_->sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
@@ -148,7 +148,7 @@ namespace robosense
 
         void LidarPointsProtoAdapter::splicePoints()
         {
-            while (points_recv_queue_.m_quque_.size() > 0)
+            while (points_recv_queue_.size() > 0)
             {
                 if (recv_thread_.start.load())
                 {

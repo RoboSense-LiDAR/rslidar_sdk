@@ -94,6 +94,10 @@ namespace robosense
         {
           driver_ptr_->initDecoderOnly(driver_param);
         }
+        driver_ptr_->regPointRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
+        driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
+        driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
+
         setinitFlag(true);
       }
 
@@ -110,19 +114,16 @@ namespace robosense
       inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)
       {
         point_cbs_.emplace_back(callBack);
-        driver_ptr_->regPointRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
       }
 
       inline void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
       {
         scan_cbs_.emplace_back(callBack);
-        driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
       }
 
       inline void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack)
       {
         pkt_cbs_.emplace_back(callBack);
-        driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
       }
 
       void processMsopScan(const LidarScanMsg &pkt_msg)
