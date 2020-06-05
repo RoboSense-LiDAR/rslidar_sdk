@@ -365,6 +365,8 @@ namespace robosense
         tmp_header.msgLen = SPLIT_SIZE;
         tmp_header.totalMsgCnt = pkt_num;
         tmp_header.totalMsgLen = msg.ByteSize();
+        struct timeval time;
+        time.tv_usec = 10;
         for (int i = 0; i < pkt_num; i++)
         {
           tmp_header.msgID = i;
@@ -377,7 +379,7 @@ namespace robosense
             return false;
           }
           free(tmp_buf);
-          usleep(5);
+          select(0, NULL, NULL, NULL, &time);
         }
         free(buf);
         return true;
