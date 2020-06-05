@@ -33,47 +33,50 @@
 
 namespace robosense
 {
-  namespace lidar
+namespace lidar
+{
+class LidarPointsProtoAdapter : virtual public LidarPointsInterface
+{
+public:
+  LidarPointsProtoAdapter();
+  ~LidarPointsProtoAdapter()
   {
-    class LidarPointsProtoAdapter : virtual public LidarPointsInterface
+    stop();
+  }
+
+  void init(const YAML::Node& config);
+  void start();
+  void stop();
+  inline void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  {
+    points_cb_.emplace_back(callBack);
+  }
+  void send(const LidarPointsMsg& msg);
+
+private:
+  inline void localCallback(const LidarPointsMsg& rs_msg)
+  {
+    for (auto& cb : points_cb_)
     {
-    public:
-      LidarPointsProtoAdapter();
-      ~LidarPointsProtoAdapter() { stop(); }
+      cb(rs_msg);
+    }
+  }
 
-      void init(const YAML::Node &config);
-      void start();
-      void stop();
-      inline void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack)
-      {
-        points_cb_.emplace_back(callBack);
-      }
-      void send(const LidarPointsMsg &msg);
+  void sendPoints();
+  void recvPoints();
+  void splicePoints();
 
-    private:
-      inline void localCallback(const LidarPointsMsg &rs_msg)
-      {
-        for (auto &cb : points_cb_)
-        {
-          cb(rs_msg);
-        }
-      }
-
-      void sendPoints();
-      void recvPoints();
-      void splicePoints();
-
-    private:
-      std::vector<std::function<void(const LidarPointsMsg &)>> points_cb_;
-      lidar::Queue<LidarPointsMsg> points_send_queue_;
-      lidar::Queue<std::pair<void *, proto_MsgHeader>> points_recv_queue_;
-      std::unique_ptr<ProtoCommunicator> points_proto_ptr_;
-      lidar::ThreadPool::Ptr thread_pool_ptr_;
-      lidar::Thread recv_thread_;
-      int old_frmNum_;
-      int new_frmNum_;
-      void *buff_;
-    };
-  } // namespace lidar
-} //namespace robosense
-#endif //PROTO_FOUND
+private:
+  std::vector<std::function<void(const LidarPointsMsg&)>> points_cb_;
+  lidar::Queue<LidarPointsMsg> points_send_queue_;
+  lidar::Queue<std::pair<void*, proto_MsgHeader>> points_recv_queue_;
+  std::unique_ptr<ProtoCommunicator> points_proto_ptr_;
+  lidar::ThreadPool::Ptr thread_pool_ptr_;
+  lidar::Thread recv_thread_;
+  int old_frmNum_;
+  int new_frmNum_;
+  void* buff_;
+};
+}  // namespace lidar
+}  // namespace robosense
+#endif  // PROTO_FOUND

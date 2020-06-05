@@ -8,6 +8,7 @@ build
 *.gridmap
 *.rsmap
 *.csv
+.clang-format
 build/*
 cmake-build-debug/
 .idea/

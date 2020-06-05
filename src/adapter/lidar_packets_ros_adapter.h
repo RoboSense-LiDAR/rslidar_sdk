@@ -31,41 +31,44 @@
 
 namespace robosense
 {
-  namespace lidar
+namespace lidar
+{
+class LidarPacketsRosAdapter : virtual public LidarPacketsInterface
+{
+public:
+  LidarPacketsRosAdapter() = default;
+  ~LidarPacketsRosAdapter()
   {
-    class LidarPacketsRosAdapter : virtual public LidarPacketsInterface
-    {
-    public:
-      LidarPacketsRosAdapter() = default;
-      ~LidarPacketsRosAdapter() { stop(); }
+    stop();
+  }
 
-      void init(const YAML::Node &config);
-      inline void start()
-      {
-        return;
-      }
-      inline void stop()
-      {
-        return;
-      }
-      void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack);
-      void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack);
-      void sendMsopPkts(const LidarScanMsg &msg);
-      void sendDifopPkts(const LidarPacketMsg &msg);
+  void init(const YAML::Node& config);
+  inline void start()
+  {
+    return;
+  }
+  inline void stop()
+  {
+    return;
+  }
+  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack);
+  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack);
+  void sendMsopPkts(const LidarScanMsg& msg);
+  void sendDifopPkts(const LidarPacketMsg& msg);
 
-    private:
-      void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan &msg);
-      void localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket &msg);
+private:
+  void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan& msg);
+  void localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket& msg);
 
-    private:
-      std::unique_ptr<ros::NodeHandle> nh_;
-      std::vector<std::function<void(const LidarScanMsg &)>> lidar_packets_msop_cbs_;
-      std::vector<std::function<void(const LidarPacketMsg &)>> lidar_packets_difop_cbs_;
-      ros::Publisher lidar_packets_msop_pub_;
-      ros::Publisher lidar_packets_difop_pub_;
-      ros::Subscriber lidar_packets_msop_sub_;
-      ros::Subscriber lidar_packets_difop_sub_;
-    };
-  } // namespace lidar
-} // namespace robosense
-#endif // ROS_FOUND
+private:
+  std::unique_ptr<ros::NodeHandle> nh_;
+  std::vector<std::function<void(const LidarScanMsg&)>> lidar_packets_msop_cbs_;
+  std::vector<std::function<void(const LidarPacketMsg&)>> lidar_packets_difop_cbs_;
+  ros::Publisher lidar_packets_msop_pub_;
+  ros::Publisher lidar_packets_difop_pub_;
+  ros::Subscriber lidar_packets_msop_sub_;
+  ros::Subscriber lidar_packets_difop_sub_;
+};
+}  // namespace lidar
+}  // namespace robosense
+#endif  // ROS_FOUND

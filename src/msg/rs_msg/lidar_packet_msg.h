@@ -26,20 +26,20 @@
 
 namespace robosense
 {
-  namespace lidar
-  {
-    /**
-   * @brief Lidar packet Message for Robosense SDK.
-   * @detail Robosense LidarPacketMsg is defined for passing lidar single packet such like difop packet accross different modules
-   *         If ROS is turned on , we provide translation functions between ROS message and Robosense message
-   */
+namespace lidar
+{
+/**
+ * @brief Lidar packet Message for Robosense SDK.
+ * @detail Robosense LidarPacketMsg is defined for passing lidar single packet such like difop packet accross different
+ * modules If ROS is turned on , we provide translation functions between ROS message and Robosense message
+ */
 
-    struct alignas(16) LidarPacketMsg
-    {
-      double timestamp = 0.0;
-      std::string frame_id = "";
-      std::array<uint8_t, 1248> packet{}; ///< lidar single packet
-    };
+struct alignas(16) LidarPacketMsg
+{
+  double timestamp = 0.0;
+  std::string frame_id = "";
+  std::array<uint8_t, 1248> packet{};  ///< lidar single packet
+};
 
-  } // namespace lidar
-} // namespace robosense
+}  // namespace lidar
+}  // namespace robosense

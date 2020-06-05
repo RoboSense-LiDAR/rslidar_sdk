@@ -32,37 +32,39 @@
 
 namespace robosense
 {
-  namespace lidar
+namespace lidar
+{
+class LidarPointsRosAdapter : virtual public LidarPointsInterface
+{
+public:
+  LidarPointsRosAdapter() = default;
+  ~LidarPointsRosAdapter()
   {
-    class LidarPointsRosAdapter : virtual public LidarPointsInterface
-    {
-    public:
-      LidarPointsRosAdapter() = default;
-      ~LidarPointsRosAdapter() { stop(); }
+    stop();
+  }
 
-      void init(const YAML::Node &config);
-      inline void start()
-      {
-        return;
-      }
-      inline void stop()
-      {
-        return;
-      }
-      void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack);
-      void send(const LidarPointsMsg &msg);
+  void init(const YAML::Node& config);
+  inline void start()
+  {
+    return;
+  }
+  inline void stop()
+  {
+    return;
+  }
+  void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack);
+  void send(const LidarPointsMsg& msg);
 
-    private:
-      void localLidarPointsCallback(const sensor_msgs::PointCloud2 &msg);
+private:
+  void localLidarPointsCallback(const sensor_msgs::PointCloud2& msg);
 
-    private:
-      std::shared_ptr<ros::NodeHandle> nh_;
-      std::vector<std::function<void(const LidarPointsMsg &)>> lidarPointscbs_;
-      ros::Publisher lidar_points_pub_;
-      ros::Subscriber lidar_points_sub_;
-      std::string frame_id_;
-
-    };
-  } // namespace lidar
-} // namespace robosense
-#endif // ROS_FOUND
+private:
+  std::shared_ptr<ros::NodeHandle> nh_;
+  std::vector<std::function<void(const LidarPointsMsg&)>> lidarPointscbs_;
+  ros::Publisher lidar_points_pub_;
+  ros::Subscriber lidar_points_sub_;
+  std::string frame_id_;
+};
+}  // namespace lidar
+}  // namespace robosense
+#endif  // ROS_FOUND

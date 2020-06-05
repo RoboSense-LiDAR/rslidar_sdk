@@ -40,79 +40,78 @@
 
 namespace robosense
 {
-    namespace lidar
-    {
+namespace lidar
+{
+/************************************************************************/
+/**Translation functions between Robosense message and ROS message**/
+/************************************************************************/
+inline LidarPointsMsg toRsMsg(const sensor_msgs::PointCloud2& ros_msg, std::string frame_id = "/rslidar_points")
+{
+  LidarPointsMsg rs_msg;
+  PointCloud* ptr_tmp = new PointCloud();
+  pcl::fromROSMsg(ros_msg, *ptr_tmp);
+  rs_msg.seq = ros_msg.header.seq;
+  rs_msg.timestamp = ros_msg.header.stamp.toSec();
+  rs_msg.parent_frame_id = ros_msg.header.frame_id;
+  rs_msg.frame_id = frame_id;
+  rs_msg.cloudPtr.reset(ptr_tmp);
+  return rs_msg;
+}
+inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointsMsg& rs_msg)
+{
+  sensor_msgs::PointCloud2 ros_msg;
+  pcl::toROSMsg(*rs_msg.cloudPtr, ros_msg);
+  ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
+  ros_msg.header.frame_id = rs_msg.parent_frame_id;
+  ros_msg.header.seq = rs_msg.seq;
+  return ros_msg;
+}
+inline LidarPacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
+{
+  LidarPacketMsg rs_msg;
+  for (size_t i = 0; i < 1248; i++)
+  {
+    rs_msg.packet[i] = std::move(ros_msg.data[i]);
+  }
+  return rs_msg;
+}
+inline rslidar_msgs::rslidarPacket toRosMsg(const LidarPacketMsg& rs_msg)
+{
+  rslidar_msgs::rslidarPacket ros_msg;
+  for (size_t i = 0; i < 1248; i++)
+  {
+    ros_msg.data[i] = std::move(rs_msg.packet[i]);
+  }
+  return ros_msg;
+}
+inline LidarScanMsg toRsMsg(const rslidar_msgs::rslidarScan& ros_msg)
+{
+  LidarScanMsg rs_msg;
+  rs_msg.seq = ros_msg.header.seq;
+  rs_msg.timestamp = ros_msg.header.stamp.toSec();
+  rs_msg.parent_frame_id = ros_msg.header.frame_id;
+  rs_msg.frame_id = "/lidar_scan";
 
-        /************************************************************************/
-        /**Translation functions between Robosense message and ROS message**/
-        /************************************************************************/
-        inline LidarPointsMsg toRsMsg(const sensor_msgs::PointCloud2 &ros_msg, std::string frame_id = "/rslidar_points")
-        {
-            LidarPointsMsg rs_msg;
-            PointCloud *ptr_tmp = new PointCloud();
-            pcl::fromROSMsg(ros_msg, *ptr_tmp);
-            rs_msg.seq = ros_msg.header.seq;
-            rs_msg.timestamp = ros_msg.header.stamp.toSec();
-            rs_msg.parent_frame_id = ros_msg.header.frame_id;
-            rs_msg.frame_id = frame_id;
-            rs_msg.cloudPtr.reset(ptr_tmp);
-            return rs_msg;
-        }
-        inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointsMsg &rs_msg)
-        {
-            sensor_msgs::PointCloud2 ros_msg;
-            pcl::toROSMsg(*rs_msg.cloudPtr, ros_msg);
-            ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
-            ros_msg.header.frame_id = rs_msg.parent_frame_id;
-            ros_msg.header.seq = rs_msg.seq;
-            return ros_msg;
-        }
-        inline LidarPacketMsg toRsMsg(const rslidar_msgs::rslidarPacket &ros_msg)
-        {
-            LidarPacketMsg rs_msg;
-            for (size_t i = 0; i < 1248; i++)
-            {
-                rs_msg.packet[i] = std::move(ros_msg.data[i]);
-            }
-            return rs_msg;
-        }
-        inline rslidar_msgs::rslidarPacket toRosMsg(const LidarPacketMsg &rs_msg)
-        {
-            rslidar_msgs::rslidarPacket ros_msg;
-            for (size_t i = 0; i < 1248; i++)
-            {
-                ros_msg.data[i] = std::move(rs_msg.packet[i]);
-            }
-            return ros_msg;
-        }
-        inline LidarScanMsg toRsMsg(const rslidar_msgs::rslidarScan &ros_msg)
-        {
-            LidarScanMsg rs_msg;
-            rs_msg.seq = ros_msg.header.seq;
-            rs_msg.timestamp = ros_msg.header.stamp.toSec();
-            rs_msg.parent_frame_id = ros_msg.header.frame_id;
-            rs_msg.frame_id = "/lidar_scan";
-
-            for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
-            {
-                LidarPacketMsg tmp = toRsMsg(ros_msg.packets[i]);
-                rs_msg.packets.emplace_back(std::move(tmp));
-            }
-            return rs_msg;
-        }
-        inline rslidar_msgs::rslidarScan toRosMsg(const LidarScanMsg &rs_msg)
-        {
-            rslidar_msgs::rslidarScan ros_msg;
-            ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
-            ros_msg.header.frame_id = rs_msg.parent_frame_id;
-            ros_msg.header.seq = rs_msg.seq;
-            for (uint32_t i = 0; i < rs_msg.packets.size(); i++)
-            {
-                rslidar_msgs::rslidarPacket tmp = toRosMsg(rs_msg.packets[i]);
-                ros_msg.packets.emplace_back(std::move(tmp));
-            }
-            return ros_msg;
-        }
-    } // namespace lidar
-} // namespace robosense
-#endif // ROS_FOUND
+  for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
+  {
+    LidarPacketMsg tmp = toRsMsg(ros_msg.packets[i]);
+    rs_msg.packets.emplace_back(std::move(tmp));
+  }
+  return rs_msg;
+}
+inline rslidar_msgs::rslidarScan toRosMsg(const LidarScanMsg& rs_msg)
+{
+  rslidar_msgs::rslidarScan ros_msg;
+  ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
+  ros_msg.header.frame_id = rs_msg.parent_frame_id;
+  ros_msg.header.seq = rs_msg.seq;
+  for (uint32_t i = 0; i < rs_msg.packets.size(); i++)
+  {
+    rslidar_msgs::rslidarPacket tmp = toRosMsg(rs_msg.packets[i]);
+    ros_msg.packets.emplace_back(std::move(tmp));
+  }
+  return ros_msg;
+}
+}  // namespace lidar
+}  // namespace robosense
+#endif  // ROS_FOUND

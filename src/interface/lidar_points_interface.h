@@ -29,56 +29,62 @@
 #include "msg/rs_msg/lidar_scan_msg.h"
 namespace robosense
 {
-    namespace lidar
-    {
-        /**
+namespace lidar
+{
+/**
  * @brief Lidar points message interface
  * @detail 1, Will be inheritted by lidar points ROS message adapter and lidar points Proto message adapter
  *         2, Will be inheritted by driver base which relate to lidar points messages(eg: LidarBase)
  */
-        class LidarPointsInterface : virtual public LidarBase
-        {
-        public:
-            LidarPointsInterface() = default;
-            virtual ~LidarPointsInterface() = default;
+class LidarPointsInterface : virtual public LidarBase
+{
+public:
+  LidarPointsInterface() = default;
+  virtual ~LidarPointsInterface() = default;
 
-            /**
-  * @brief initialize function
-  * @param config--yaml node
-  */
-            virtual void init(const YAML::Node &config) = 0;
-            /**
-  * @brief start function
-  */
-            virtual void start() = 0;
-            /**
-  * @brief stop function
-  */
-            virtual void stop() = 0;
-            /**
-  * @brief send function
-  * @detail send lidar points message through ROS or Proto
-  * @param msg--the Robosense lidar points message
-  */
-            virtual void send(const LidarPointsMsg &msg) {}
-            /**
-  * @brief register receive call back function
-  * @detail after registration, the lidar points module can pass lidar points message to other module
-  * @param callBack--the function pointer of the call back function
-  */
-            virtual void regRecvCallback(const std::function<void(const LidarPointsMsg &)> callBack) = 0;
-            /**
-  * @brief the function to depack the msop packets to get pointcloud
-  * @detail will be registered to lidar packet receiver to process msop packets and get pointcloud
-  * @param pkt_msg--Robosense LidarScanMsg message
-  */
-            virtual void processMsopScan(const LidarScanMsg &pkt_msg) {}
-            /**
-  * @brief the function to depack the difop packets to get parameters for pointcloud
-  * @detail will be registered to lidar packet receiver to process difop packets
-  * @param pkt_msg--Robosense LidarPacketMsg message
-  */
-            virtual void processDifopPackets(const LidarPacketMsg &pkt_msg) {}
-        };
-    } // namespace lidar
-} // namespace robosense
+  /**
+   * @brief initialize function
+   * @param config--yaml node
+   */
+  virtual void init(const YAML::Node& config) = 0;
+  /**
+   * @brief start function
+   */
+  virtual void start() = 0;
+  /**
+   * @brief stop function
+   */
+  virtual void stop() = 0;
+  /**
+   * @brief send function
+   * @detail send lidar points message through ROS or Proto
+   * @param msg--the Robosense lidar points message
+   */
+  virtual void send(const LidarPointsMsg& msg)
+  {
+  }
+  /**
+   * @brief register receive call back function
+   * @detail after registration, the lidar points module can pass lidar points message to other module
+   * @param callBack--the function pointer of the call back function
+   */
+  virtual void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack) = 0;
+  /**
+   * @brief the function to depack the msop packets to get pointcloud
+   * @detail will be registered to lidar packet receiver to process msop packets and get pointcloud
+   * @param pkt_msg--Robosense LidarScanMsg message
+   */
+  virtual void processMsopScan(const LidarScanMsg& pkt_msg)
+  {
+  }
+  /**
+   * @brief the function to depack the difop packets to get parameters for pointcloud
+   * @detail will be registered to lidar packet receiver to process difop packets
+   * @param pkt_msg--Robosense LidarPacketMsg message
+   */
+  virtual void processDifopPackets(const LidarPacketMsg& pkt_msg)
+  {
+  }
+};
+}  // namespace lidar
+}  // namespace robosense

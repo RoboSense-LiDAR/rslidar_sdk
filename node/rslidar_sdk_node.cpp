@@ -28,47 +28,47 @@ bool start_ = true;
 static void sigHandler(int sig)
 {
 #ifdef ROS_FOUND
-    ros::shutdown();
+  ros::shutdown();
 #endif
-    start_ = false;
+  start_ = false;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-    TITLE << "********************************************************" << REND;
-    TITLE << "**********                                    **********" << REND;
-    TITLE << "**********    RSLidar_SDK Version: V" << VERSION_MAJOR << "."
-          << VERSION_MINOR << "." << VERSION_PATCH << "     **********"
-          << REND;
-    TITLE << "**********                                    **********" << REND;
-    TITLE << "********************************************************" << REND;
+  TITLE << "********************************************************" << REND;
+  TITLE << "**********                                    **********" << REND;
+  TITLE << "**********    RSLidar_SDK Version: V" << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH
+        << "     **********" << REND;
+  TITLE << "**********                                    **********" << REND;
+  TITLE << "********************************************************" << REND;
 
-    std::shared_ptr<Manager> demo_ptr = std::make_shared<Manager>();
-    YAML::Node config;
-    try
-    {
-        config = YAML::LoadFile((std::string)PROJECT_PATH + "/config/config.yaml");
-    }
-    catch (...)
-    {
-        ERROR << "Config file format wrong! Please check the format or intendation! " << REND;
-        return 0;
-    }
-    signal(SIGINT, sigHandler); ///< bind the ctrl+c signal with the the handler function
-#ifdef ROS_FOUND
-    ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler); ///< if use_ros is true, ros::init() will be called
-#endif
-    demo_ptr->init(config);
-    demo_ptr->start();
-    MSG << "Robosense-LiDAR-Driver is running....." << REND;
-#ifdef ROS_FOUND
-    ros::spin();
-#else
-    while (start_)
-    {
-        sleep(1);
-    }
-#endif
-    demo_ptr.reset();
+  std::shared_ptr<Manager> demo_ptr = std::make_shared<Manager>();
+  YAML::Node config;
+  try
+  {
+    config = YAML::LoadFile((std::string)PROJECT_PATH + "/config/config.yaml");
+  }
+  catch (...)
+  {
+    ERROR << "Config file format wrong! Please check the format or intendation! " << REND;
     return 0;
+  }
+  signal(SIGINT, sigHandler);  ///< bind the ctrl+c signal with the the handler function
+#ifdef ROS_FOUND
+  ros::init(argc, argv, "rslidar_sdk_node",
+            ros::init_options::NoSigintHandler);  ///< if use_ros is true, ros::init() will be called
+#endif
+  demo_ptr->init(config);
+  demo_ptr->start();
+  MSG << "Robosense-LiDAR-Driver is running....." << REND;
+#ifdef ROS_FOUND
+  ros::spin();
+#else
+  while (start_)
+  {
+    sleep(1);
+  }
+#endif
+  demo_ptr.reset();
+  return 0;
 }

@@ -31,44 +31,45 @@
 
 namespace robosense
 {
-  namespace lidar
-  {
-    enum MessageSource
-    {
-      MessageSourceNotUsed = 0,
-      MessageSourceRsDriver = 1,
-      MessageSourceRos = 2,
-      MessageSourceProto = 3
-    };
-    class Manager
-    {
-    public:
-      Manager() = default;
-      ~Manager();
+namespace lidar
+{
+enum MessageSource
+{
+  MessageSourceNotUsed = 0,
+  MessageSourceRsDriver = 1,
+  MessageSourceRos = 2,
+  MessageSourceProto = 3
+};
+class Manager
+{
+public:
+  Manager() = default;
+  ~Manager();
 
-      void init(const YAML::Node &sensor_config);
-      void start();
-      void stop();
+  void init(const YAML::Node& sensor_config);
+  void start();
+  void stop();
 
-    private:
-      template <typename T>
-      T *configReceiver(const YAML::Node &sensor_config, const std::string &type, const int &msg_source);
+private:
+  template <typename T>
+  T* configReceiver(const YAML::Node& sensor_config, const std::string& type, const int& msg_source);
 
-      template <typename T>
-      T *configTransmitter(const YAML::Node &sensor_config, const std::string &type, bool send_msg_ros, bool send_msg_proto);
+  template <typename T>
+  T* configTransmitter(const YAML::Node& sensor_config, const std::string& type, bool send_msg_ros,
+                       bool send_msg_proto);
 
-      template <class R>
-      R *construct(const std::string &device_type);
+  template <class R>
+  R* construct(const std::string& device_type);
 
-    private:
-      bool lidarpkts_run_flag_;
-      bool lidarpoints_run_flag_;
-      std::vector<LidarPacketsInterface *> lidar_packets_receivers_;
-      std::vector<LidarPointsInterface *> lidar_points_receivers_;
-      std::vector<LidarPacketsInterface *> lidar_packets_ros_transmitters_;
-      std::vector<LidarPacketsInterface *> lidar_packets_proto_transmitters_;
-      std::vector<LidarPointsInterface *> lidar_points_ros_transmitters_;
-      std::vector<LidarPointsInterface *> lidar_points_proto_transmitters_;
-    };
-  } // namespace lidar
-} // namespace robosense
+private:
+  bool lidarpkts_run_flag_;
+  bool lidarpoints_run_flag_;
+  std::vector<LidarPacketsInterface*> lidar_packets_receivers_;
+  std::vector<LidarPointsInterface*> lidar_points_receivers_;
+  std::vector<LidarPacketsInterface*> lidar_packets_ros_transmitters_;
+  std::vector<LidarPacketsInterface*> lidar_packets_proto_transmitters_;
+  std::vector<LidarPointsInterface*> lidar_points_ros_transmitters_;
+  std::vector<LidarPointsInterface*> lidar_points_proto_transmitters_;
+};
+}  // namespace lidar
+}  // namespace robosense

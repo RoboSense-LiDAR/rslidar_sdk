@@ -27,24 +27,24 @@
 #include "msg/rs_msg/lidar_packet_msg.h"
 namespace robosense
 {
-  namespace lidar
-  {
-    /**
-   * @brief Lidar Scan Message for Robosense SDK.
-   * @detail Robosense LidarScanMsg is defined for passing lidar packets scan accross different modules
-   *         If ROS is turned on , we provide translation functions between ROS message and Robosense message
-   *         If Proto is turned on , we provide translation functions between Protobuf message and Robosense message
-   */
+namespace lidar
+{
+/**
+ * @brief Lidar Scan Message for Robosense SDK.
+ * @detail Robosense LidarScanMsg is defined for passing lidar packets scan accross different modules
+ *         If ROS is turned on , we provide translation functions between ROS message and Robosense message
+ *         If Proto is turned on , we provide translation functions between Protobuf message and Robosense message
+ */
 
-    struct alignas(16) LidarScanMsg
-    {
-      double timestamp = 0.0;
-      uint32_t seq = 0;
-      std::string parent_frame_id = "";
-      std::string frame_id = "";
+struct alignas(16) LidarScanMsg
+{
+  double timestamp = 0.0;
+  uint32_t seq = 0;
+  std::string parent_frame_id = "";
+  std::string frame_id = "";
 
-      std::vector<LidarPacketMsg> packets; ///< a vector which store a scan of packets (the size of the vector is not fix)
-    };
+  std::vector<LidarPacketMsg> packets;  ///< a vector which store a scan of packets (the size of the vector is not fix)
+};
 
-  } // namespace lidar
-} // namespace robosense
+}  // namespace lidar
+}  // namespace robosense

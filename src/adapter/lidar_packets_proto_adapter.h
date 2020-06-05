@@ -32,69 +32,72 @@
 
 namespace robosense
 {
-  namespace lidar
+namespace lidar
+{
+class LidarPacketsProtoAdapter : virtual public LidarPacketsInterface
+{
+public:
+  LidarPacketsProtoAdapter();
+  ~LidarPacketsProtoAdapter()
   {
-    class LidarPacketsProtoAdapter : virtual public LidarPacketsInterface
+    stop();
+  }
+
+  void init(const YAML::Node& config);
+  void start();
+  void stop();
+
+  inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  {
+    msop_cb_.emplace_back(callBack);
+  }
+  inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  {
+    difop_cb_.emplace_back(callBack);
+  }
+  void sendMsopPkts(const LidarScanMsg& msg);
+  void sendDifopPkts(const LidarPacketMsg& msg);
+
+private:
+  inline void localMsopCallback(const LidarScanMsg& rs_msg)
+  {
+    for (auto& cb : msop_cb_)
     {
-    public:
-      LidarPacketsProtoAdapter();
-      ~LidarPacketsProtoAdapter() { stop(); }
+      cb(rs_msg);
+    }
+  }
+  inline void localDifopCallback(const LidarPacketMsg& rs_msg)
+  {
+    for (auto& cb : difop_cb_)
+    {
+      cb(rs_msg);
+    }
+  }
 
-      void init(const YAML::Node &config);
-      void start();
-      void stop();
+private:
+  void recvDifopPkts();
+  void spliceDifopPkts();
+  void recvMsopPkts();
+  void spliceMsopPkts();
+  void sendMsop();
+  void sendDifop();
 
-      inline void regRecvCallback(const std::function<void(const LidarScanMsg &)> callBack)
-      {
-        msop_cb_.emplace_back(callBack);
-      }
-      inline void regRecvCallback(const std::function<void(const LidarPacketMsg &)> callBack)
-      {
-        difop_cb_.emplace_back(callBack);
-      }
-      void sendMsopPkts(const LidarScanMsg &msg);
-      void sendDifopPkts(const LidarPacketMsg &msg);
-
-    private:
-      inline void localMsopCallback(const LidarScanMsg &rs_msg)
-      {
-        for (auto &cb : msop_cb_)
-        {
-          cb(rs_msg);
-        }
-      }
-      inline void localDifopCallback(const LidarPacketMsg &rs_msg)
-      {
-        for (auto &cb : difop_cb_)
-        {
-          cb(rs_msg);
-        }
-      }
-
-    private:
-      void recvDifopPkts();
-      void spliceDifopPkts();
-      void recvMsopPkts();
-      void spliceMsopPkts();
-      void sendMsop();
-      void sendDifop();
-
-    private:
-      std::vector<std::function<void(const LidarScanMsg &)>> msop_cb_;
-      std::vector<std::function<void(const LidarPacketMsg &)>> difop_cb_;
-      std::unique_ptr<ProtoCommunicator> msop_proto_ptr_;
-      std::unique_ptr<ProtoCommunicator> difop_proto_ptr_;
-      lidar::ThreadPool::Ptr thread_pool_ptr_;
-      lidar::Queue<LidarScanMsg> msop_send_queue_;
-      lidar::Queue<LidarPacketMsg> difop_send_queue_;
-      lidar::Queue<std::pair<void *, proto_MsgHeader>> msop_recv_queue_;
-      lidar::Queue<std::pair<void *, proto_MsgHeader>> difop_recv_queue_;
-      lidar::Thread msop_recv_thread_;
-      lidar::Thread difop_recv_thread_;
-      int old_frmNum_;
-      int new_frmNum_;
-      void *msop_buff_;
-    };
-  } // namespace lidar
-} //namespace robosense
-#endif //PROTO_FOUND
+private:
+  std::vector<std::function<void(const LidarScanMsg&)>> msop_cb_;
+  std::vector<std::function<void(const LidarPacketMsg&)>> difop_cb_;
+  std::unique_ptr<ProtoCommunicator> msop_proto_ptr_;
+  std::unique_ptr<ProtoCommunicator> difop_proto_ptr_;
+  lidar::ThreadPool::Ptr thread_pool_ptr_;
+  lidar::Queue<LidarScanMsg> msop_send_queue_;
+  lidar::Queue<LidarPacketMsg> difop_send_queue_;
+  lidar::Queue<std::pair<void*, proto_MsgHeader>> msop_recv_queue_;
+  lidar::Queue<std::pair<void*, proto_MsgHeader>> difop_recv_queue_;
+  lidar::Thread msop_recv_thread_;
+  lidar::Thread difop_recv_thread_;
+  int old_frmNum_;
+  int new_frmNum_;
+  void* msop_buff_;
+};
+}  // namespace lidar
+}  // namespace robosense
+#endif  // PROTO_FOUND
