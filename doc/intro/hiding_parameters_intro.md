@@ -25,9 +25,15 @@ common:
     send_points_proto: false                              #True--Send pointcloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
     pcap_repeat: true									  #If true, the pcap file will repeatedly read.
+    pcap_rate:	1										  #The rate of reading pcap	
+
 ```
 
-​	There is only one hiding parameter in this part which is the *pcap_repeat*. The default value is *true* , you can add it back and set to false to prevent pcap read repeatedly.
+​	There are two  hiding parameters in this part.
+
+- pcap_repeat -- The default value is *true* , you can add it back and set to false to prevent pcap read repeatedly.
+
+- pcap_rate -- The default value is *1*, you can adjust this value to control the frequency of reading pcap.
 
 
 
