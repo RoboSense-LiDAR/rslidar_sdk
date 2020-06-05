@@ -40,6 +40,7 @@ namespace robosense
       bool send_points_proto;
       bool send_packets_proto;
       std::string pcap_dir;
+      double pcap_rate;
       bool pcap_repeat;
       YAML::Node common_config = yamlSubNodeAbort(config, "common");
       yamlRead<int>(common_config, "msg_source", msg_source, 0);
@@ -48,6 +49,7 @@ namespace robosense
       yamlRead<bool>(common_config, "send_points_proto", send_points_proto, false);
       yamlRead<bool>(common_config, "send_packets_proto", send_packets_proto, false);
       yamlRead<std::string>(common_config, "pcap_directory", pcap_dir, "");
+      yamlRead<double>(common_config, "pcap_rate", pcap_rate, 1);
       yamlRead<bool>(common_config, "pcap_repeat", pcap_repeat, true);
       YAML::Node lidar_config = yamlSubNodeAbort(config, "lidar");
       for (uint8_t i = 0; i < lidar_config.size(); ++i)
@@ -106,6 +108,7 @@ namespace robosense
           lidar_config[i]["msg_source"] = 1;
           lidar_config[i]["driver"]["read_pcap"] = true;
           lidar_config[i]["driver"]["pcap_directroy"] = pcap_dir;
+          lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
           lidar_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
           lidar_points_receivers_.emplace_back(configReceiver<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), 1));
           if (send_packets_ros || send_packets_proto)
