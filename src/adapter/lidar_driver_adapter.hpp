@@ -23,7 +23,7 @@
 
 #include "interface/lidar_packets_interface.h"
 #include "interface/lidar_points_interface.h"
-#include "rs_driver/interface/lidar_driver.h"
+#include "rs_driver/api/lidar_driver.h"
 namespace robosense
 {
   namespace lidar
@@ -88,7 +88,11 @@ namespace robosense
         }
         if (msg_source == 1)
         {
-          driver_ptr_->init(driver_param);
+          if (!driver_ptr_->init(driver_param))
+          {
+            ERROR << "Driver Initialize Error...." << REND;
+            exit(-1);
+          }
         }
         else
         {
