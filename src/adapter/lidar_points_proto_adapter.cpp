@@ -86,6 +86,10 @@ void LidarPointsProtoAdapter::stop()
 
 void LidarPointsProtoAdapter::send(const LidarPointsMsg& msg)  // Will send NavSatStatus and Odometry
 {
+  if (points_send_queue_.size() > 10)
+  {
+    points_send_queue_.clear();
+  }
   points_send_queue_.push(msg);
   if (points_send_queue_.is_task_finished_.load())
   {
