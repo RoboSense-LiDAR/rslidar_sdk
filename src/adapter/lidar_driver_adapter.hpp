@@ -87,6 +87,10 @@ public:
     {
       driver_param.lidar_type = lidar::LidarType::RS128;
     }
+    else if (device_type == "RSAUTO")
+    {
+      driver_param.lidar_type = lidar::LidarType::RSAUTO;
+    }
     if (msg_source == 1)
     {
       if (!driver_ptr_->init(driver_param))

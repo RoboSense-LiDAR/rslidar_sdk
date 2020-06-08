@@ -85,7 +85,7 @@ common:
 
 This part need to be adjust according to different LiDAR (in multi-LiDARs case). Here is an example for one LiDAR and three LiDARs. 
 
-**Note: Please pay attention to the indentation!**
+**NOTE: About the device_type. If set to RSAUTO, the driver can check the lidar type automatically, but this function only support the latest version LiDARs. If you found the pointcloud is not correct, please set the device type manually**
 
 
 

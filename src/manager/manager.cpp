@@ -380,7 +380,7 @@ template <class R>
 R* Manager::construct(const std::string& device_type)
 {
   R* ret;
-  if (device_type == "RS16" || device_type == "RS32" || device_type == "RSBP" || device_type == "RS128")
+  if (device_type == "RS16" || device_type == "RS32" || device_type == "RSBP" || device_type == "RS128"|| device_type == "RSAUTO")
   {
     ret = dynamic_cast<R*>(new LidarDriverAdapter);
   }
