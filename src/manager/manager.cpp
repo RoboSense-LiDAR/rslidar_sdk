@@ -68,17 +68,12 @@ void Manager::init(const YAML::Node& config)
         lidarpoints_run_flag_ = true;
         lidar_config[i]["msg_source"] = 1;
         lidar_points_receivers_.emplace_back(
-            configReceiver<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), 1));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
         if (send_packets_ros || send_packets_proto)
         {
           lidar_packets_receivers_.emplace_back(
-              configReceiver<LidarPacketsInterface>(lidar_config[i], "lidar_pkts_" + std::to_string(i), 1));
+              createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
           lidarpkts_run_flag_ = true;
-        }
-        else
-        {
-          lidar_packets_receivers_.emplace_back(nullptr);
-          lidarpkts_run_flag_ = false;
         }
         break;
 
@@ -94,9 +89,9 @@ void Manager::init(const YAML::Node& config)
         lidar_config[i]["msg_source"] = 2;
         send_packets_ros = false;
         lidar_points_receivers_.emplace_back(
-            configReceiver<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), 1));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
         lidar_packets_receivers_.emplace_back(
-            configReceiver<LidarPacketsInterface>(lidar_config[i], "lidar_pkts_" + std::to_string(i), 2));
+            createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::PacketsRosAdapter));
         lidar_packets_receivers_[i]->regRecvCallback(
             std::bind(&LidarPointsInterface::processMsopScan, lidar_points_receivers_[i], std::placeholders::_1));
         lidar_packets_receivers_[i]->regRecvCallback(
@@ -117,17 +112,12 @@ void Manager::init(const YAML::Node& config)
         lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
         lidar_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
         lidar_points_receivers_.emplace_back(
-            configReceiver<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), 1));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
         if (send_packets_ros || send_packets_proto)
         {
           lidar_packets_receivers_.emplace_back(
-              configReceiver<LidarPacketsInterface>(lidar_config[i], "lidar_pkts_" + std::to_string(i), 1));
+              createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
           lidarpkts_run_flag_ = true;
-        }
-        else
-        {
-          lidar_packets_receivers_.emplace_back(nullptr);
-          lidarpkts_run_flag_ = false;
         }
         break;
 
@@ -142,9 +132,9 @@ void Manager::init(const YAML::Node& config)
         lidar_config[i]["msg_source"] = 4;
         send_packets_proto = false;
         lidar_points_receivers_.emplace_back(
-            configReceiver<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), 1));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
         lidar_packets_receivers_.emplace_back(
-            configReceiver<LidarPacketsInterface>(lidar_config[i], "lidar_pkts_" + std::to_string(i), 3));
+            createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::PacketsProtoAdapter));
         lidar_packets_receivers_[i]->regRecvCallback(
             std::bind(&LidarPointsInterface::processMsopScan, lidar_points_receivers_[i], std::placeholders::_1));
         lidar_packets_receivers_[i]->regRecvCallback(
@@ -163,7 +153,7 @@ void Manager::init(const YAML::Node& config)
         send_packets_ros = false;
         send_packets_proto = false;
         lidar_points_receivers_.emplace_back(
-            configReceiver<LidarPointsInterface>(lidar_config[i], "lidar_points_" + std::to_string(i), 3));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::PointcloudProtoAdapter));
         lidar_packets_receivers_.emplace_back(nullptr);
         break;
 
@@ -182,12 +172,13 @@ void Manager::init(const YAML::Node& config)
             << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_packets_ros"] = true;
-      lidar_packets_ros_transmitters_.emplace_back(configTransmitter<LidarPacketsInterface>(
-          lidar_config[i], "lidar_pkts_" + std::to_string(i), send_packets_ros, false));
+      LidarPacketsInterface* transmitter_ptr = createTransmitter<LidarPacketsInterface>(
+          lidar_config[i], AdapterType::PacketsRosAdapter);
+      lidar_packets_transmitters_.emplace_back(transmitter_ptr);
       lidar_packets_receivers_[i]->regRecvCallback(
-          std::bind(&LidarPacketsInterface::sendMsopPkts, lidar_packets_ros_transmitters_[i], std::placeholders::_1));
+          std::bind(&LidarPacketsInterface::sendMsopPkts, transmitter_ptr, std::placeholders::_1));
       lidar_packets_receivers_[i]->regRecvCallback(
-          std::bind(&LidarPacketsInterface::sendDifopPkts, lidar_packets_ros_transmitters_[i], std::placeholders::_1));
+          std::bind(&LidarPacketsInterface::sendDifopPkts, transmitter_ptr, std::placeholders::_1));
     }
     if (send_packets_proto)
     {
@@ -198,12 +189,13 @@ void Manager::init(const YAML::Node& config)
       DEBUG << "Target IP: " << lidar_config[i]["proto"]["packets_send_ip"].as<std::string>() << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_packets_proto"] = true;
-      lidar_packets_proto_transmitters_.emplace_back(configTransmitter<LidarPacketsInterface>(
-          lidar_config[i], "lidar_pkts_" + std::to_string(i), false, send_packets_proto));
+      LidarPacketsInterface* transmitter_ptr = createTransmitter<LidarPacketsInterface>(
+          lidar_config[i], AdapterType::PacketsProtoAdapter);
+      lidar_packets_transmitters_.emplace_back(transmitter_ptr);
       lidar_packets_receivers_[i]->regRecvCallback(
-          std::bind(&LidarPacketsInterface::sendMsopPkts, lidar_packets_proto_transmitters_[i], std::placeholders::_1));
-      lidar_packets_receivers_[i]->regRecvCallback(std::bind(
-          &LidarPacketsInterface::sendDifopPkts, lidar_packets_proto_transmitters_[i], std::placeholders::_1));
+          std::bind(&LidarPacketsInterface::sendMsopPkts, transmitter_ptr, std::placeholders::_1));
+      lidar_packets_receivers_[i]->regRecvCallback(
+          std::bind(&LidarPacketsInterface::sendDifopPkts, transmitter_ptr, std::placeholders::_1));
     }
     if (send_points_ros)
     {
@@ -212,10 +204,11 @@ void Manager::init(const YAML::Node& config)
       DEBUG << "Pointcloud Topic: " << lidar_config[i]["ros"]["ros_send_points_topic"].as<std::string>() << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_points_ros"] = true;
-      lidar_points_ros_transmitters_.emplace_back(configTransmitter<LidarPointsInterface>(
-          lidar_config[i], "lidar_points_" + std::to_string(i), send_points_ros, false));
+      LidarPointsInterface* transmitter_ptr = createTransmitter<LidarPointsInterface>(
+          lidar_config[i], AdapterType::PointcloudRosAdpater);
+      lidar_points_transmitters_.emplace_back(transmitter_ptr);
       lidar_points_receivers_[i]->regRecvCallback(
-          std::bind(&LidarPointsInterface::send, lidar_points_ros_transmitters_[i], std::placeholders::_1));
+          std::bind(&LidarPointsInterface::send, transmitter_ptr, std::placeholders::_1));
     }
     if (send_points_proto)
     {
@@ -225,10 +218,11 @@ void Manager::init(const YAML::Node& config)
       DEBUG << "Target IP: " << lidar_config[i]["proto"]["points_send_ip"].as<std::string>() << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_points_proto"] = true;
-      lidar_points_proto_transmitters_.emplace_back(configTransmitter<LidarPointsInterface>(
-          lidar_config[i], "lidar_points_" + std::to_string(i), false, send_points_proto));
+      LidarPointsInterface* transmitter_ptr = createTransmitter<LidarPointsInterface>(
+          lidar_config[i],AdapterType::PointcloudProtoAdapter);
+      lidar_points_transmitters_.emplace_back(transmitter_ptr);
       lidar_points_receivers_[i]->regRecvCallback(
-          std::bind(&LidarPointsInterface::send, lidar_points_proto_transmitters_[i], std::placeholders::_1));
+          std::bind(&LidarPointsInterface::send, transmitter_ptr, std::placeholders::_1));
     }
   }
 }
@@ -278,138 +272,107 @@ void Manager::stop()
 }
 
 template <typename T>
-T* Manager::configReceiver(const YAML::Node& sensor_config, const std::string& type, const int& msg_source)
+T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
 {
-  std::string receiver_type = "";
-  std::string frame_id = "";
-  YAML::Node receiver_config;
-  if (msg_source == MessageSourceRsDriver)
+  T* receiver;
+  switch (adapter_type)
   {
-    receiver_config = yamlSubNodeAbort(sensor_config, "driver");
-    yamlReadAbort<std::string>(receiver_config, "device_type", receiver_type);
-    yamlReadAbort<std::string>(receiver_config, "frame_id", frame_id);
-  }
+    case AdapterType::DriverCoreAdpater:
+      receiver = dynamic_cast<T*>(new LidarDriverAdapter);
+      receiver->init(config);
+      break;
 
-  else if (msg_source == MessageSourceRos)
-  {
+    case AdapterType::PacketsRosAdapter:
 #ifdef ROS_FOUND
-    receiver_type = type + "_ros";
-    frame_id = "/" + type + "_ros";
+      receiver = dynamic_cast<T*>(new LidarPacketsRosAdapter);
+      receiver->init(config);
+      break;
 #else
-    ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
-    exit(-1);
+      ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
+      exit(-1);
+#endif
 
-#endif  // ROS_FOUND
-  }
-
-  else if (msg_source == MessageSourceProto)
-  {
+    case AdapterType::PacketsProtoAdapter:
 #ifdef PROTO_FOUND
-    receiver_type = type + "_proto";
-    frame_id = "/" + type + "_proto";
+      receiver = dynamic_cast<T*>(new LidarPacketsProtoAdapter);
+      receiver->init(config);
+      break;
 #else
-    ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
-    exit(-1);
-    ;
-#endif  // PROTO_FOUND
+      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      exit(-1);
+#endif
+
+    case AdapterType::PointcloudProtoAdapter:
+#ifdef PROTO_FOUND
+      receiver = dynamic_cast<T*>(new LidarPointsProtoAdapter);
+      receiver->init(config);
+      break;
+#else
+      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      exit(-1);
+#endif
+
+    default:
+      ERROR << "Create receiver failed. Abort!" << REND;
+      exit(-1);
   }
 
-  T* receiver = construct<T>(receiver_type);
-
-  if (receiver)
-  {
-    receiver->init(sensor_config);  // TODO: Check if init success
-  }
-  else
-  {
-    ERROR << "Manager : Failed to creat a " << type << " message receiver" << REND;
-    exit(-1);
-  }
   return receiver;
 }
 
 template <typename T>
-T* Manager::configTransmitter(const YAML::Node& sensor_config, const std::string& type, bool send_msg_ros,
-                              bool send_msg_proto)
+T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapter_type)
 {
-  bool success = false;
-  std::string transmitter_type = "";
-  std::string frame_id = "";
-
-  if (send_msg_ros)  // 2: ROS
+   T* transmitter;
+  switch (adapter_type)
   {
+    case AdapterType::PacketsRosAdapter:
 #ifdef ROS_FOUND
-    transmitter_type = type + "_ros";
-    frame_id = "/" + type + "_ros";
+      transmitter = dynamic_cast<T*>(new LidarPacketsRosAdapter);
+      transmitter->init(config);
+      break;
 #else
-    ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
-    exit(-1);
+      ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
+      exit(-1);
+#endif
 
-#endif  // ROS_FOUND
-  }
-
-  if (send_msg_proto)
-  {
+    case AdapterType::PacketsProtoAdapter:
 #ifdef PROTO_FOUND
-    transmitter_type = type + "_proto";
-    frame_id = "/" + type + "_proto";
+      transmitter = dynamic_cast<T*>(new LidarPacketsProtoAdapter);
+      transmitter->init(config);
+      break;
 #else
-    ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
-    exit(-1);
-#endif  // PROTO_FOUND
-  }
-  T* transmitter = construct<T>(transmitter_type);
-  if (transmitter)
-  {
-    if (!transmitter->isInitialized())
-    {
-      transmitter->init(sensor_config);  // TODO: Check if init success
-    }
-    success = true;
+      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      exit(-1);
+#endif
+
+    case AdapterType::PointcloudRosAdpater:
+#ifdef ROS_FOUND
+      transmitter = dynamic_cast<T*>(new LidarPointsRosAdapter);
+      transmitter->init(config);
+      break;
+#else
+      ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
+      exit(-1);
+#endif
+
+    case AdapterType::PointcloudProtoAdapter:
+#ifdef PROTO_FOUND
+      transmitter = dynamic_cast<T*>(new LidarPointsProtoAdapter);
+      transmitter->init(config);
+      break;
+#else
+      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      exit(-1);
+#endif
+
+    default:
+      ERROR << "Create receiver failed. Abort!" << REND;
+      exit(-1);
   }
 
-  if (success == false)
-  {
-    ERROR << "Manager : Failder to creat a  " << type << " message transmitter!" << REND;
-    exit(-1);
-  }
   return transmitter;
 }
 
-template <class R>
-R* Manager::construct(const std::string& device_type)
-{
-  R* ret;
-  if (device_type == "RS16" || device_type == "RS32" || device_type == "RSBP" || device_type == "RS128"|| device_type == "RSAUTO")
-  {
-    ret = dynamic_cast<R*>(new LidarDriverAdapter);
-  }
-#ifdef ROS_FOUND
-  else if ((int)device_type.find("lidar_points") != -1 && (int)device_type.find("ros") != -1)
-  {
-    ret = dynamic_cast<R*>(new LidarPointsRosAdapter);
-  }
-  else if ((int)device_type.find("lidar_pkts") != -1 && (int)device_type.find("ros") != -1)
-  {
-    ret = dynamic_cast<R*>(new LidarPacketsRosAdapter);
-  }
-#endif
-#ifdef PROTO_FOUND
-  else if ((int)device_type.find("lidar_points") != -1 && (int)device_type.find("proto") != -1)
-  {
-    ret = dynamic_cast<R*>(new LidarPointsProtoAdapter);
-  }
-  else if ((int)device_type.find("lidar_pkts") != -1 && (int)device_type.find("proto") != -1)
-  {
-    ret = dynamic_cast<R*>(new LidarPacketsProtoAdapter);
-  }
-#endif
-  else
-  {
-    ERROR << "Device type: " << device_type << " not found! Please check the device type !" << REND;
-    exit(-1);
-  }
-  return ret;
-}
 }  // namespace lidar
 }  // namespace robosense
