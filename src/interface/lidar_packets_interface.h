@@ -58,13 +58,13 @@ namespace robosense
             /**
   * @brief send function
   * @detail send lidar msop packets message through ROS
-  * @param msg--the Robosense LidarScanMsg message
+  * @param msg--the RoboSense LidarScanMsg message
   */
             virtual void sendMsopPkts(const LidarScanMsg &msg) {}
             /**
   * @brief send function
   * @detail send lidar difop packet message through ROS
-  * @param msg--the Robosense LidarPacketMsg message
+  * @param msg--the RoboSense LidarPacketMsg message
   */
             virtual void sendDifopPkts(const LidarPacketMsg &msg) {}
             /**

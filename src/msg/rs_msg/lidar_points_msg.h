@@ -32,10 +32,10 @@ namespace robosense
 namespace lidar
 {
 /**
- * @brief Lidar points Message for Robosense SDK.
- * @detail Robosense LidarPointsMsg is defined for passing lidar pointcloud accross different modules
- *         If ROS is turned on , we provide translation functions between ROS message and Robosense message
- *         If Proto is turned on , we provide translation functions between Protobuf message and Robosense message
+ * @brief Lidar points Message for RoboSense SDK.
+ * @detail RoboSense LidarPointsMsg is defined for passing lidar pointcloud accross different modules
+ *         If ROS is turned on , we provide translation functions between ROS message and RoboSense message
+ *         If Proto is turned on , we provide translation functions between Protobuf message and RoboSense message
  */
 
 struct alignas(16) LidarPointsMsg

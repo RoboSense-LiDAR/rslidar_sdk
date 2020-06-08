@@ -58,7 +58,7 @@ public:
   /**
    * @brief send function
    * @detail send lidar points message through ROS or Proto
-   * @param msg--the Robosense lidar points message
+   * @param msg--the RoboSense lidar points message
    */
   virtual void send(const LidarPointsMsg& msg)
   {
@@ -72,7 +72,7 @@ public:
   /**
    * @brief the function to depack the msop packets to get pointcloud
    * @detail will be registered to lidar packet receiver to process msop packets and get pointcloud
-   * @param pkt_msg--Robosense LidarScanMsg message
+   * @param pkt_msg--RoboSense LidarScanMsg message
    */
   virtual void processMsopScan(const LidarScanMsg& pkt_msg)
   {
@@ -80,7 +80,7 @@ public:
   /**
    * @brief the function to depack the difop packets to get parameters for pointcloud
    * @detail will be registered to lidar packet receiver to process difop packets
-   * @param pkt_msg--Robosense LidarPacketMsg message
+   * @param pkt_msg--RoboSense LidarPacketMsg message
    */
   virtual void processDifopPackets(const LidarPacketMsg& pkt_msg)
   {

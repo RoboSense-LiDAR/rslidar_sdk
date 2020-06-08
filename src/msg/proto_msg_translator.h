@@ -35,7 +35,7 @@ namespace robosense
 namespace lidar
 {
 /************************************************************************/
-/**Translation functions between Robosense message and protobuf message**/
+/**Translation functions between RoboSense message and protobuf message**/
 /************************************************************************/
 inline Proto_msg::LidarPoints toProtoMsg(const LidarPointsMsg& rs_msg)
 {

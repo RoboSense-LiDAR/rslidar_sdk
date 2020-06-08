@@ -28,14 +28,14 @@ common:
                                                           #4--packets from Protobuf-UDP
                                                           #5--pointcloud from Protobuf-UDP
     send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
-    send_points_ros: false                                #True--Send pointcloud through ROS
+    send_points_ros: true                                #True--Send pointcloud through ROS
     send_packets_proto: false                             #True--Send packets through Protobuf-UDP
-    send_points_proto: true                               #True--Send pointcloud through Protobuf-UDP
+    send_points_proto: false                               #True--Send pointcloud through Protobuf-UDP
     pcap_directory: /home/xzd/项目/驱动/测试数据/128.pcap           #The path of pcap file
     pcap_rate: 1
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      device_type: RS128          #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699

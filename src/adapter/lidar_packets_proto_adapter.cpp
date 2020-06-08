@@ -111,7 +111,7 @@ void LidarPacketsProtoAdapter::sendDifop()
 {
   while (difop_send_queue_.size() > 0)
   {
-    Proto_msg::LidarPacket proto_msg = toProtoMsg(difop_send_queue_.m_quque_.front());
+    Proto_msg::LidarPacket proto_msg = toProtoMsg(difop_send_queue_.front());
     if (!difop_proto_ptr_->sendSingleMsg<Proto_msg::LidarPacket>(proto_msg))
     {
       WARNING << "Difop packets Protobuf sending error" << REND;
@@ -135,7 +135,7 @@ void LidarPacketsProtoAdapter::sendMsop()
 {
   while (msop_send_queue_.size() > 0)
   {
-    Proto_msg::LidarScan proto_msg = toProtoMsg(msop_send_queue_.m_quque_.front());
+    Proto_msg::LidarScan proto_msg = toProtoMsg(msop_send_queue_.front());
     if (!msop_proto_ptr_->sendSplitMsg<Proto_msg::LidarScan>(proto_msg))
     {
       WARNING << "Msop packets Protobuf sending error" << REND;
@@ -184,7 +184,7 @@ void LidarPacketsProtoAdapter::spliceMsopPkts()
   {
     if (msop_recv_thread_.start.load())
     {
-      auto pair = msop_recv_queue_.m_quque_.front();
+      auto pair = msop_recv_queue_.front();
       old_frmNum_ = new_frmNum_;
       new_frmNum_ = pair.second.frmNumber;
       memcpy((uint8_t*)msop_buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
@@ -195,7 +195,7 @@ void LidarPacketsProtoAdapter::spliceMsopPkts()
         localMsopCallback(toRsMsg(proto_msg));
       }
     }
-    free(msop_recv_queue_.m_quque_.front().first);
+    free(msop_recv_queue_.front().first);
     msop_recv_queue_.pop();
   }
   msop_recv_queue_.is_task_finished_.store(true);
@@ -228,12 +228,12 @@ void LidarPacketsProtoAdapter::spliceDifopPkts()
   {
     if (difop_recv_thread_.start.load())
     {
-      auto pair = difop_recv_queue_.m_quque_.front();
+      auto pair = difop_recv_queue_.front();
       Proto_msg::LidarPacket protomsg;
       protomsg.ParseFromArray(pair.first, pair.second.msgLen);
       localDifopCallback(toRsMsg(protomsg));
     }
-    free(difop_recv_queue_.m_quque_.front().first);
+    free(difop_recv_queue_.front().first);
     difop_recv_queue_.pop();
   }
   difop_recv_queue_.is_task_finished_.store(true);

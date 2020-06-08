@@ -43,7 +43,7 @@ namespace robosense
 namespace lidar
 {
 /************************************************************************/
-/**Translation functions between Robosense message and ROS message**/
+/**Translation functions between RoboSense message and ROS message**/
 /************************************************************************/
 inline LidarPointsMsg toRsMsg(const sensor_msgs::PointCloud2& ros_msg, std::string frame_id = "/rslidar_points")
 {

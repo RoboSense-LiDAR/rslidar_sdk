@@ -102,7 +102,7 @@ void LidarPointsProtoAdapter::sendPoints()
 {
   while (points_send_queue_.size() > 0)
   {
-    Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.m_quque_.front());
+    Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.front());
     if (!points_proto_ptr_->sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
     {
       WARNING << "Pointcloud Protobuf sending error" << REND;
@@ -153,7 +153,7 @@ void LidarPointsProtoAdapter::splicePoints()
   {
     if (recv_thread_.start.load())
     {
-      auto pair = points_recv_queue_.m_quque_.front();
+      auto pair = points_recv_queue_.front();
       old_frmNum_ = new_frmNum_;
       new_frmNum_ = pair.second.frmNumber;
       memcpy((uint8_t*)buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
@@ -164,7 +164,7 @@ void LidarPointsProtoAdapter::splicePoints()
         localCallback(toRsMsg(proto_msg));
       }
     }
-    free(points_recv_queue_.m_quque_.front().first);
+    free(points_recv_queue_.front().first);
     points_recv_queue_.pop();
   }
   points_recv_queue_.is_task_finished_.store(true);

@@ -29,9 +29,9 @@ namespace robosense
 namespace lidar
 {
 /**
- * @brief Lidar packet Message for Robosense SDK.
- * @detail Robosense LidarPacketMsg is defined for passing lidar single packet such like difop packet accross different
- * modules If ROS is turned on , we provide translation functions between ROS message and Robosense message
+ * @brief Lidar packet Message for RoboSense SDK.
+ * @detail RoboSense LidarPacketMsg is defined for passing lidar single packet such like difop packet accross different
+ * modules If ROS is turned on , we provide translation functions between ROS message and RoboSense message
  */
 
 struct alignas(16) LidarPacketMsg

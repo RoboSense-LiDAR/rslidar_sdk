@@ -37,8 +37,8 @@ int main(int argc, char** argv)
 {
   TITLE << "********************************************************" << REND;
   TITLE << "**********                                    **********" << REND;
-  TITLE << "**********    RSLidar_SDK Version: V" << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH
-        << "     **********" << REND;
+  TITLE << "**********    RSLidar_SDK Version: V" << RSLIDAR_VERSION_MAJOR << "." << RSLIDAR_VERSION_MINOR << "."
+        << RSLIDAR_VERSION_PATCH << "     **********" << REND;
   TITLE << "**********                                    **********" << REND;
   TITLE << "********************************************************" << REND;
 
