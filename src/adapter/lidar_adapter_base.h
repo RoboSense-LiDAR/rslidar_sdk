@@ -48,14 +48,17 @@ public:
    * @param config--yaml node
    */
   virtual void init(const YAML::Node& config) = 0;
+
   /**
    * @brief start function
    */
   virtual void start() = 0;
+
   /**
    * @brief stop function
    */
   virtual void stop() = 0;
+
   /**
    * @brief send function
    * @detail send lidar msop packets message through ROS
@@ -64,6 +67,7 @@ public:
   virtual void sendMsopPkts(const LidarScanMsg& msg)
   {
   }
+
   /**
    * @brief send function
    * @detail send lidar difop packet message through ROS
@@ -72,6 +76,7 @@ public:
   virtual void sendDifopPkts(const LidarPacketMsg& msg)
   {
   }
+
   /**
    * @brief send function
    * @detail send lidar points message through ROS or Proto
@@ -80,6 +85,7 @@ public:
   virtual void send(const LidarPointsMsg& msg)
   {
   }
+
   /**
    * @brief register receive call back function
    * @detail after registration, the Lidar module can pass lidar msop packet message to other module
@@ -88,6 +94,7 @@ public:
   virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
   {
   }
+
   /**
    * @brief register receive call back function
    * @detail after registration, the Lidar module can pass lidar difop packet message to other module
@@ -96,6 +103,7 @@ public:
   virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
   {
   }
+
   /**
    * @brief register receive call back function
    * @detail after registration, the lidar points module can pass lidar points message to other module
@@ -104,6 +112,7 @@ public:
   virtual void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
   {
   }
+
   /**
    * @brief the function to depack the msop packets to get pointcloud
    * @detail will be registered to lidar packet receiver to process msop packets and get pointcloud
@@ -112,6 +121,7 @@ public:
   virtual void processMsopScan(const LidarScanMsg& pkt_msg)
   {
   }
+  
   /**
    * @brief the function to depack the difop packets to get parameters for pointcloud
    * @detail will be registered to lidar packet receiver to process difop packets
