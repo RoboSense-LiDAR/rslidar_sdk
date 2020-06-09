@@ -24,7 +24,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: Point Cloud
   - Class: rviz/Displays
     Help Height: 75
     Name: Displays
@@ -55,7 +55,7 @@ Visualization Manager:
       Max Intensity: 70
       Min Color: 0; 0; 0
       Min Intensity: -25
-      Name: PointCloud2
+      Name: Point Cloud
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
@@ -66,6 +66,31 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Alpha: 0.5
+      Cell Size: 10
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.0299999993
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 50
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz/Axes
+      Enabled: true
+      Length: 3
+      Name: Axes
+      Radius: 0.300000012
+      Reference Frame: <Fixed Frame>
       Value: true
   Enabled: true
   Global Options:
@@ -92,25 +117,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 81.4844208
+      Distance: 67.4813385
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.0892203152
-        Y: -0.629391849
-        Z: 0.0266718641
+        X: 1.70042944
+        Y: 1.41575134
+        Z: 1.71227217
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.444797069
+      Pitch: 0.464797169
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.03999901
+      Yaw: 3.10499907
     Saved: ~
 Window Geometry:
   Displays:
