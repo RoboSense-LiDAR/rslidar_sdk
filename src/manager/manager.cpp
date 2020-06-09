@@ -53,6 +53,7 @@ void Manager::init(const YAML::Node& config)
   YAML::Node lidar_config = yamlSubNodeAbort(config, "lidar");
   for (uint8_t i = 0; i < lidar_config.size(); ++i)
   {
+    LidarAdapterBase::Ptr recv_ptr;
     /*Receiver*/
     switch (msg_source)
     {
@@ -67,12 +68,11 @@ void Manager::init(const YAML::Node& config)
         INFO << "------------------------------------------------------" << REND;
         lidarpoints_run_flag_ = true;
         lidar_config[i]["msg_source"] = 1;
-        lidar_points_receivers_.emplace_back(
-            createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter));
+        recv_ptr = createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter);
+        lidar_points_receivers_.push_back(recv_ptr);
         if (send_packets_ros || send_packets_proto)
         {
-          lidar_packets_receivers_.emplace_back(
-              createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter));
+          lidar_packets_receivers_.push_back(recv_ptr);
           lidarpkts_run_flag_ = true;
         }
         break;
