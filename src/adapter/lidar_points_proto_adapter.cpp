@@ -102,12 +102,11 @@ void LidarPointsProtoAdapter::sendPoints()
 {
   while (points_send_queue_.size() > 0)
   {
-    Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.front());
+    Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.popFront());
     if (!points_proto_ptr_->sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
     {
       WARNING << "Pointcloud Protobuf sending error" << REND;
     }
-    points_send_queue_.pop();
   }
   points_send_queue_.is_task_finished_.store(true);
 }

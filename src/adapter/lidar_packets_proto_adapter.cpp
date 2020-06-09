@@ -111,12 +111,11 @@ void LidarPacketsProtoAdapter::sendDifop()
 {
   while (difop_send_queue_.size() > 0)
   {
-    Proto_msg::LidarPacket proto_msg = toProtoMsg(difop_send_queue_.front());
+    Proto_msg::LidarPacket proto_msg = toProtoMsg(difop_send_queue_.popFront());
     if (!difop_proto_ptr_->sendSingleMsg<Proto_msg::LidarPacket>(proto_msg))
     {
       WARNING << "Difop packets Protobuf sending error" << REND;
     }
-    difop_send_queue_.pop();
   }
   difop_send_queue_.is_task_finished_.store(true);
 }
@@ -135,12 +134,11 @@ void LidarPacketsProtoAdapter::sendMsop()
 {
   while (msop_send_queue_.size() > 0)
   {
-    Proto_msg::LidarScan proto_msg = toProtoMsg(msop_send_queue_.front());
+    Proto_msg::LidarScan proto_msg = toProtoMsg(msop_send_queue_.popFront());
     if (!msop_proto_ptr_->sendSplitMsg<Proto_msg::LidarScan>(proto_msg))
     {
       WARNING << "Msop packets Protobuf sending error" << REND;
     }
-    msop_send_queue_.pop();
   }
   msop_send_queue_.is_task_finished_.store(true);
 }
