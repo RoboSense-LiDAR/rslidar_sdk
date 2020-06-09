@@ -111,12 +111,11 @@ void Manager::init(const YAML::Node& config)
         lidar_config[i]["driver"]["pcap_directroy"] = pcap_dir;
         lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
         lidar_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
-        lidar_points_receivers_.emplace_back(
-            createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter));
+        recv_ptr = createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter);
+        lidar_points_receivers_.push_back(recv_ptr);
         if (send_packets_ros || send_packets_proto)
         {
-          lidar_packets_receivers_.emplace_back(
-              createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter));
+          lidar_packets_receivers_.push_back(recv_ptr);
           lidarpkts_run_flag_ = true;
         }
         break;
