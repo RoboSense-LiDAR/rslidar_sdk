@@ -114,11 +114,6 @@ endif(${ROS_COMPILE_SUPPORT})
 #========================
 add_executable(rslidar_sdk_node
             node/rslidar_sdk_node.cpp
-            src/manager/manager.cpp
-            src/adapter/lidar_points_ros_adapter.cpp
-            src/adapter/lidar_packtes_ros_adapter.cpp      
-            src/adapter/lidar_points_proto_adapter.cpp
-            src/adapter/lidar_packets_proto_adapter.cpp
             )
 
 target_link_libraries(rslidar_sdk_node                   

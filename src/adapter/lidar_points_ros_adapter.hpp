@@ -22,9 +22,9 @@
 #pragma once
 
 #ifdef ROS_FOUND
-#include <interface/lidar_packets_interface.h>
-#include <msg/ros_msg_translator.h>
-#include <msg/ros_msg/lidar_scan_ros.h>
+
+#include "adapter/lidar_adapter_base.h"
+#include "msg/ros_msg_translator.h"
 #include <ros/ros.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
@@ -33,41 +33,61 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public LidarPacketsInterface
+class LidarPointsRosAdapter : virtual public LidarAdapterBase
 {
 public:
-  LidarPacketsRosAdapter() = default;
-  ~LidarPacketsRosAdapter()
+  LidarPointsRosAdapter() = default;
+
+  ~LidarPointsRosAdapter()
   {
     stop();
   }
 
-  void init(const YAML::Node& config);
+  void init(const YAML::Node& config)
+  {
+    int msg_source;
+    bool send_points_ros;
+    YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
+    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
+    yamlRead<std::string>(config["driver"], "frame_id", frame_id_, "rslidar");
+    std::string ros_recv_topic;
+    yamlRead<std::string>(ros_config, "ros_recv_points_topic", ros_recv_topic, "rslidar_points");
+    std::string ros_send_topic;
+    yamlRead<std::string>(ros_config, "ros_send_points_topic", ros_send_topic, "rslidar_points");
+    yamlRead<int>(config, "msg_source", msg_source);
+    yamlRead<bool>(config, "send_points_ros", send_points_ros, false);
+    if (send_points_ros)
+    {
+      lidar_points_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
+    }
+  }
+
   inline void start()
   {
     return;
   }
+
   inline void stop()
   {
     return;
   }
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack);
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack);
-  void sendMsopPkts(const LidarScanMsg& msg);
-  void sendDifopPkts(const LidarPacketMsg& msg);
+
+  void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  {
+    lidarPointscbs_.emplace_back(callBack);
+  }
+
+  void send(const LidarPointsMsg& msg)
+  {
+    lidar_points_pub_.publish(toRosMsg(msg));
+  }
 
 private:
-  void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan& msg);
-  void localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket& msg);
-
-private:
-  std::unique_ptr<ros::NodeHandle> nh_;
-  std::vector<std::function<void(const LidarScanMsg&)>> lidar_packets_msop_cbs_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> lidar_packets_difop_cbs_;
-  ros::Publisher lidar_packets_msop_pub_;
-  ros::Publisher lidar_packets_difop_pub_;
-  ros::Subscriber lidar_packets_msop_sub_;
-  ros::Subscriber lidar_packets_difop_sub_;
+  std::shared_ptr<ros::NodeHandle> nh_;
+  std::vector<std::function<void(const LidarPointsMsg&)>> lidarPointscbs_;
+  ros::Publisher lidar_points_pub_;
+  ros::Subscriber lidar_points_sub_;
+  std::string frame_id_;
 };
 }  // namespace lidar
 }  // namespace robosense

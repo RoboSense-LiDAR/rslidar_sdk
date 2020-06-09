@@ -21,14 +21,13 @@
  *****************************************************************************/
 #pragma once
 
-#include "interface/lidar_packets_interface.h"
-#include "interface/lidar_points_interface.h"
+#include "adapter/lidar_adapter_base.h"
 #include "rs_driver/api/lidar_driver.h"
 namespace robosense
 {
 namespace lidar
 {
-class LidarDriverAdapter : virtual public LidarPointsInterface, virtual public LidarPacketsInterface
+class LidarDriverAdapter : virtual public LidarAdapterBase
 {
 public:
   LidarDriverAdapter()
@@ -173,6 +172,9 @@ private:
   {
     switch (_msg.error_code_type)
     {
+      case lidar::ErrCodeType::INFO_CODE:
+        INFO << _msg.toString() << REND;
+        break;
       case lidar::ErrCodeType::WARNING_CODE:
         WARNING << _msg.toString() << REND;
         break;

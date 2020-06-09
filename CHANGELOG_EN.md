@@ -6,7 +6,7 @@
 
 ### Updates
 
-The new LiDAR Driver Software Development Kit for Robosense mechanical LiDARs. Including RS16, RS32, RSBP, RS128(RS-Ruby). 
+The new LiDAR Driver Software Development Kit for RoboSense mechanical LiDARs. Including RS16, RS32, RSBP, RS128(RS-Ruby). 
 
 - New program structure
 
