@@ -89,6 +89,12 @@ public:
     {
       driver_param.lidar_type = lidar::LidarType::RSAUTO;
     }
+    else
+    {
+      ERROR<<"Wrong lidar type : "<<device_type<<REND;
+      ERROR<<"Please setup the correct type: RS16, RS32, RSBP, RS128, RSAUTO"<<REND;
+      exit(-1);
+    }
     if (msg_source == 1)
     {
       if (!driver_ptr_->init(driver_param))
