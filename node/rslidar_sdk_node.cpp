@@ -20,7 +20,7 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-#include <manager/manager.h>
+#include "manager/manager.hpp"
 #include <signal.h>
 using namespace robosense::lidar;
 bool start_ = true;

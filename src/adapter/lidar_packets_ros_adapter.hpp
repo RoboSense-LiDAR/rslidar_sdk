@@ -41,23 +41,79 @@ public:
     stop();
   }
 
-  void init(const YAML::Node& config);
+  void init(const YAML::Node& config)
+  {
+    int msg_source;
+    bool send_packets_ros;
+    YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
+    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
+    std::string ros_recv_topic;
+    yamlReadAbort<std::string>(ros_config, "ros_recv_packets_topic", ros_recv_topic);
+    std::string ros_send_topic;
+    yamlReadAbort<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic);
+    yamlRead<int>(config, "msg_source", msg_source);
+    yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
+    if (msg_source == 2)
+    {
+      lidar_packets_difop_sub_ =
+          nh_->subscribe(ros_recv_topic + "_difop", 1, &LidarPacketsRosAdapter::localLidarPacketsdifopCallback, this);
+      lidar_packets_msop_sub_ =
+          nh_->subscribe(ros_recv_topic, 1, &LidarPacketsRosAdapter::localLidarPacketsmsopCallback, this);
+      send_packets_ros = false;
+    }
+    if (send_packets_ros)
+    {
+      lidar_packets_difop_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
+      lidar_packets_msop_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
+    }
+  }
+
   inline void start()
   {
     return;
   }
+
   inline void stop()
   {
     return;
   }
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack);
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack);
-  void sendMsopPkts(const LidarScanMsg& msg);
-  void sendDifopPkts(const LidarPacketMsg& msg);
+
+  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  {
+    lidar_packets_msop_cbs_.emplace_back(callBack);
+  }
+
+  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  {
+    lidar_packets_difop_cbs_.emplace_back(callBack);
+  }
+
+  void sendMsopPkts(const LidarScanMsg& msg)
+  {
+    lidar_packets_msop_pub_.publish(toRosMsg(msg));
+  }
+
+  void sendDifopPkts(const LidarPacketMsg& msg)
+  {
+    lidar_packets_difop_pub_.publish(toRosMsg(msg));
+  }
 
 private:
-  void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan& msg);
-  void localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket& msg);
+  void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan& msg)
+  {
+    for (auto& cb : lidar_packets_msop_cbs_)
+    {
+      cb(toRsMsg(msg));
+    }
+  }
+
+  void localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket& msg)
+  {
+    for (auto& cb : lidar_packets_difop_cbs_)
+    {
+      cb(toRsMsg(msg));
+    }
+  }
 
 private:
   std::unique_ptr<ros::NodeHandle> nh_;

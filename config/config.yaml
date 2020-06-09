@@ -32,7 +32,7 @@ common:
     send_packets_proto: true                             #True--Send packets through Protobuf-UDP
     send_points_proto: true                              #True--Send pointcloud through Protobuf-UDP
     pcap_directory: /home/xzd/项目/驱动/测试数据/128.pcap           #The path of pcap file
-    pcap_rate: 1
+
 lidar:
   - driver:
       device_type: RSAUTO           #The lidar type, must be set correctly. If set to RSAUTO, the driver will check the lidar type automatically.This function only support the latest version LiDARs.
