@@ -20,7 +20,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 /***************************************************************************************************************************
-/* Basic struct:                                                                                              
+/* Basic struct:
  *
  *
  *                         LidarPacketsInterface          LidarPointsInterface
@@ -48,8 +48,8 @@
  *                      -send_points_proto=true -> LidarPointsProtoAdapter
  *
  * 3,
- * Register the transmitter's sending functions to the receiver.
- * 
+ * Register the transmitter's sending functions into the receiver.
+ *
  * 4,
  * Start all the receivers.
  *
@@ -69,11 +69,11 @@ namespace lidar
 {
 enum class AdapterType
 {
-  DriverCoreAdpater,
-  PointcloudRosAdpater,
-  PointcloudProtoAdapter,
-  PacketsRosAdapter,
-  PacketsProtoAdapter
+  LidarDriverAdapter,
+  LidarPointsRosAdapter,
+  LidarPointsProtoAdapter,
+  LidarPacketsRosAdapter,
+  LidarPacketsProtoAdapter
 };
 
 class Manager
@@ -88,18 +88,18 @@ public:
 
 private:
   template <typename T>
-  T* createReceiver(const YAML::Node& config, const AdapterType& adapter_type);
+  std::shared_ptr<T> createReceiver(const YAML::Node& config, const AdapterType& adapter_type);
 
   template <typename T>
-  T* createTransmitter(const YAML::Node& config, const AdapterType& adapter_type);
+  std::shared_ptr<T> createTransmitter(const YAML::Node& config, const AdapterType& adapter_type);
 
 private:
   bool lidarpkts_run_flag_;
   bool lidarpoints_run_flag_;
-  std::vector<LidarPacketsInterface*> lidar_packets_receivers_;
-  std::vector<LidarPointsInterface*> lidar_points_receivers_;
-  std::vector<LidarPacketsInterface*> lidar_packets_transmitters_;
-  std::vector<LidarPointsInterface*> lidar_points_transmitters_;
+  std::vector<LidarPacketsInterface::Ptr> lidar_packets_receivers_;
+  std::vector<LidarPointsInterface::Ptr> lidar_points_receivers_;
+  std::vector<LidarPacketsInterface::Ptr> lidar_packets_transmitters_;
+  std::vector<LidarPointsInterface::Ptr> lidar_points_transmitters_;
 };
 }  // namespace lidar
 }  // namespace robosense

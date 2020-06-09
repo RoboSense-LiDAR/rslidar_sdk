@@ -38,6 +38,7 @@ namespace lidar
 class LidarPointsInterface
 {
 public:
+  typedef std::shared_ptr<LidarPointsInterface> Ptr;
   LidarPointsInterface() = default;
   virtual ~LidarPointsInterface() = default;
 

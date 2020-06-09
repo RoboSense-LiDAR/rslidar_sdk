@@ -38,6 +38,7 @@ namespace lidar
 class LidarPacketsInterface
 {
 public:
+  typedef std::shared_ptr<LidarPacketsInterface> Ptr;
   LidarPacketsInterface() = default;
   virtual ~LidarPacketsInterface() = default;
 

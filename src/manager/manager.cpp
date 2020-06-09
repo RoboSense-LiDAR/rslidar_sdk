@@ -68,11 +68,11 @@ void Manager::init(const YAML::Node& config)
         lidarpoints_run_flag_ = true;
         lidar_config[i]["msg_source"] = 1;
         lidar_points_receivers_.emplace_back(
-            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::LidarDriverAdapter));
         if (send_packets_ros || send_packets_proto)
         {
           lidar_packets_receivers_.emplace_back(
-              createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
+              createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::LidarDriverAdapter));
           lidarpkts_run_flag_ = true;
         }
         break;
@@ -89,9 +89,9 @@ void Manager::init(const YAML::Node& config)
         lidar_config[i]["msg_source"] = 2;
         send_packets_ros = false;
         lidar_points_receivers_.emplace_back(
-            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::LidarDriverAdapter));
         lidar_packets_receivers_.emplace_back(
-            createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::PacketsRosAdapter));
+            createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::LidarPacketsRosAdapter));
         lidar_packets_receivers_[i]->regRecvCallback(
             std::bind(&LidarPointsInterface::processMsopScan, lidar_points_receivers_[i], std::placeholders::_1));
         lidar_packets_receivers_[i]->regRecvCallback(
@@ -112,11 +112,11 @@ void Manager::init(const YAML::Node& config)
         lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
         lidar_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
         lidar_points_receivers_.emplace_back(
-            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::LidarDriverAdapter));
         if (send_packets_ros || send_packets_proto)
         {
           lidar_packets_receivers_.emplace_back(
-              createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
+              createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::LidarDriverAdapter));
           lidarpkts_run_flag_ = true;
         }
         break;
@@ -132,9 +132,9 @@ void Manager::init(const YAML::Node& config)
         lidar_config[i]["msg_source"] = 4;
         send_packets_proto = false;
         lidar_points_receivers_.emplace_back(
-            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::DriverCoreAdpater));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::LidarDriverAdapter));
         lidar_packets_receivers_.emplace_back(
-            createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::PacketsProtoAdapter));
+            createReceiver<LidarPacketsInterface>(lidar_config[i], AdapterType::LidarPacketsProtoAdapter));
         lidar_packets_receivers_[i]->regRecvCallback(
             std::bind(&LidarPointsInterface::processMsopScan, lidar_points_receivers_[i], std::placeholders::_1));
         lidar_packets_receivers_[i]->regRecvCallback(
@@ -153,7 +153,7 @@ void Manager::init(const YAML::Node& config)
         send_packets_ros = false;
         send_packets_proto = false;
         lidar_points_receivers_.emplace_back(
-            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::PointcloudProtoAdapter));
+            createReceiver<LidarPointsInterface>(lidar_config[i], AdapterType::LidarPointsProtoAdapter));
         lidar_packets_receivers_.emplace_back(nullptr);
         break;
 
@@ -172,8 +172,8 @@ void Manager::init(const YAML::Node& config)
             << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_packets_ros"] = true;
-      LidarPacketsInterface* transmitter_ptr = createTransmitter<LidarPacketsInterface>(
-          lidar_config[i], AdapterType::PacketsRosAdapter);
+      LidarPacketsInterface::Ptr transmitter_ptr =
+          createTransmitter<LidarPacketsInterface>(lidar_config[i], AdapterType::LidarPacketsRosAdapter);
       lidar_packets_transmitters_.emplace_back(transmitter_ptr);
       lidar_packets_receivers_[i]->regRecvCallback(
           std::bind(&LidarPacketsInterface::sendMsopPkts, transmitter_ptr, std::placeholders::_1));
@@ -189,8 +189,8 @@ void Manager::init(const YAML::Node& config)
       DEBUG << "Target IP: " << lidar_config[i]["proto"]["packets_send_ip"].as<std::string>() << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_packets_proto"] = true;
-      LidarPacketsInterface* transmitter_ptr = createTransmitter<LidarPacketsInterface>(
-          lidar_config[i], AdapterType::PacketsProtoAdapter);
+      LidarPacketsInterface::Ptr transmitter_ptr =
+          createTransmitter<LidarPacketsInterface>(lidar_config[i], AdapterType::LidarPacketsProtoAdapter);
       lidar_packets_transmitters_.emplace_back(transmitter_ptr);
       lidar_packets_receivers_[i]->regRecvCallback(
           std::bind(&LidarPacketsInterface::sendMsopPkts, transmitter_ptr, std::placeholders::_1));
@@ -204,8 +204,8 @@ void Manager::init(const YAML::Node& config)
       DEBUG << "Pointcloud Topic: " << lidar_config[i]["ros"]["ros_send_points_topic"].as<std::string>() << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_points_ros"] = true;
-      LidarPointsInterface* transmitter_ptr = createTransmitter<LidarPointsInterface>(
-          lidar_config[i], AdapterType::PointcloudRosAdpater);
+      LidarPointsInterface::Ptr transmitter_ptr =
+          createTransmitter<LidarPointsInterface>(lidar_config[i], AdapterType::LidarPointsRosAdapter);
       lidar_points_transmitters_.emplace_back(transmitter_ptr);
       lidar_points_receivers_[i]->regRecvCallback(
           std::bind(&LidarPointsInterface::send, transmitter_ptr, std::placeholders::_1));
@@ -218,8 +218,8 @@ void Manager::init(const YAML::Node& config)
       DEBUG << "Target IP: " << lidar_config[i]["proto"]["points_send_ip"].as<std::string>() << REND;
       DEBUG << "------------------------------------------------------" << REND;
       lidar_config[i]["send_points_proto"] = true;
-      LidarPointsInterface* transmitter_ptr = createTransmitter<LidarPointsInterface>(
-          lidar_config[i],AdapterType::PointcloudProtoAdapter);
+      LidarPointsInterface::Ptr transmitter_ptr =
+          createTransmitter<LidarPointsInterface>(lidar_config[i], AdapterType::LidarPointsProtoAdapter);
       lidar_points_transmitters_.emplace_back(transmitter_ptr);
       lidar_points_receivers_[i]->regRecvCallback(
           std::bind(&LidarPointsInterface::send, transmitter_ptr, std::placeholders::_1));
@@ -272,19 +272,19 @@ void Manager::stop()
 }
 
 template <typename T>
-T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
+std::shared_ptr<T> Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
 {
-  T* receiver;
+  std::shared_ptr<T> receiver;
   switch (adapter_type)
   {
-    case AdapterType::DriverCoreAdpater:
-      receiver = dynamic_cast<T*>(new LidarDriverAdapter);
+    case AdapterType::LidarDriverAdapter:
+      receiver = std::dynamic_pointer_cast<T>(std::make_shared<LidarDriverAdapter>());
       receiver->init(config);
       break;
 
-    case AdapterType::PacketsRosAdapter:
+    case AdapterType::LidarPacketsRosAdapter:
 #ifdef ROS_FOUND
-      receiver = dynamic_cast<T*>(new LidarPacketsRosAdapter);
+      receiver = std::dynamic_pointer_cast<T>(std::make_shared<LidarPacketsRosAdapter>());
       receiver->init(config);
       break;
 #else
@@ -292,9 +292,9 @@ T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_
       exit(-1);
 #endif
 
-    case AdapterType::PacketsProtoAdapter:
+    case AdapterType::LidarPacketsProtoAdapter:
 #ifdef PROTO_FOUND
-      receiver = dynamic_cast<T*>(new LidarPacketsProtoAdapter);
+      receiver = std::dynamic_pointer_cast<T>(std::make_shared<LidarPacketsProtoAdapter>());
       receiver->init(config);
       break;
 #else
@@ -302,9 +302,9 @@ T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_
       exit(-1);
 #endif
 
-    case AdapterType::PointcloudProtoAdapter:
+    case AdapterType::LidarPointsProtoAdapter:
 #ifdef PROTO_FOUND
-      receiver = dynamic_cast<T*>(new LidarPointsProtoAdapter);
+      receiver = std::dynamic_pointer_cast<T>(std::make_shared<LidarPointsProtoAdapter>());
       receiver->init(config);
       break;
 #else
@@ -321,14 +321,14 @@ T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_
 }
 
 template <typename T>
-T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapter_type)
+std::shared_ptr<T> Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapter_type)
 {
-   T* transmitter;
+  std::shared_ptr<T> transmitter;
   switch (adapter_type)
   {
-    case AdapterType::PacketsRosAdapter:
+    case AdapterType::LidarPacketsRosAdapter:
 #ifdef ROS_FOUND
-      transmitter = dynamic_cast<T*>(new LidarPacketsRosAdapter);
+      transmitter = std::dynamic_pointer_cast<T>(std::make_shared<LidarPacketsRosAdapter>());
       transmitter->init(config);
       break;
 #else
@@ -336,9 +336,9 @@ T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapt
       exit(-1);
 #endif
 
-    case AdapterType::PacketsProtoAdapter:
+    case AdapterType::LidarPacketsProtoAdapter:
 #ifdef PROTO_FOUND
-      transmitter = dynamic_cast<T*>(new LidarPacketsProtoAdapter);
+      transmitter = std::dynamic_pointer_cast<T>(std::make_shared<LidarPacketsProtoAdapter>());
       transmitter->init(config);
       break;
 #else
@@ -346,9 +346,9 @@ T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapt
       exit(-1);
 #endif
 
-    case AdapterType::PointcloudRosAdpater:
+    case AdapterType::LidarPointsRosAdapter:
 #ifdef ROS_FOUND
-      transmitter = dynamic_cast<T*>(new LidarPointsRosAdapter);
+      transmitter = std::dynamic_pointer_cast<T>(std::make_shared<LidarPointsRosAdapter>());
       transmitter->init(config);
       break;
 #else
@@ -356,9 +356,9 @@ T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapt
       exit(-1);
 #endif
 
-    case AdapterType::PointcloudProtoAdapter:
+    case AdapterType::LidarPointsProtoAdapter:
 #ifdef PROTO_FOUND
-      transmitter = dynamic_cast<T*>(new LidarPointsProtoAdapter);
+      transmitter = std::dynamic_pointer_cast<T>(std::make_shared<LidarPointsProtoAdapter>());
       transmitter->init(config);
       break;
 #else
