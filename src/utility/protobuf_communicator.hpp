@@ -22,7 +22,6 @@
 
 #pragma once
 #ifdef PROTO_FOUND
-#include "interface/lidar_base.h"
 #include <string>
 #include <iostream>
 #include <memory.h>

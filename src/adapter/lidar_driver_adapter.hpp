@@ -46,7 +46,6 @@ public:
 
   void init(const YAML::Node& config)
   {
-    setName("LidarDriverAdapter");
     lidar::RSDriverParam driver_param;
     int msg_source;
     std::string device_type;
@@ -106,8 +105,6 @@ public:
     driver_ptr_->regPointRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
-
-    setinitFlag(true);
   }
 
   void start()

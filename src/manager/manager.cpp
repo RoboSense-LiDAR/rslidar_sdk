@@ -288,7 +288,7 @@ T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_
       receiver->init(config);
       break;
 #else
-      ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
+      ERROR << "ROS not found! Could not use ROS functions!" << REND;
       exit(-1);
 #endif
 
@@ -298,7 +298,7 @@ T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_
       receiver->init(config);
       break;
 #else
-      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
       exit(-1);
 #endif
 
@@ -308,7 +308,7 @@ T* Manager::createReceiver(const YAML::Node& config, const AdapterType& adapter_
       receiver->init(config);
       break;
 #else
-      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
       exit(-1);
 #endif
 
@@ -332,7 +332,7 @@ T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapt
       transmitter->init(config);
       break;
 #else
-      ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
+      ERROR << "ROS not found! Could not use ROS functions!" << REND;
       exit(-1);
 #endif
 
@@ -342,7 +342,7 @@ T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapt
       transmitter->init(config);
       break;
 #else
-      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
       exit(-1);
 #endif
 
@@ -352,7 +352,7 @@ T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapt
       transmitter->init(config);
       break;
 #else
-      ERROR << "ROS not found! Could not use ros-relate runctions! Abort!" << REND;
+      ERROR << "ROS not found! Could not use ROS functions!" << REND;
       exit(-1);
 #endif
 
@@ -362,12 +362,12 @@ T* Manager::createTransmitter(const YAML::Node& config, const AdapterType& adapt
       transmitter->init(config);
       break;
 #else
-      ERROR << "Proto not found! Could not use proto-relate runctions! Abort!" << REND;
+      ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
       exit(-1);
 #endif
 
     default:
-      ERROR << "Create receiver failed. Abort!" << REND;
+      ERROR << "Create transmitter failed. Abort!" << REND;
       exit(-1);
   }
 

@@ -29,13 +29,11 @@ namespace lidar
 {
 LidarPacketsProtoAdapter::LidarPacketsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
 {
-  setName("LidarPacketsProtoAdapter");
   thread_pool_ptr_.reset(new ThreadPool());
 }
 
 void LidarPacketsProtoAdapter::init(const YAML::Node& config)
 {
-  setinitFlag(true);
   bool send_packets_proto;
   int msg_source = 0;
   std::string packets_send_ip;

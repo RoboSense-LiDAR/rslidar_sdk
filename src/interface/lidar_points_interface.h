@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 #pragma once
-
-#include "interface/lidar_base.h"
+#include "utility/common.h"
 #include "utility/yaml_reader.hpp"
 #include "msg/rs_msg/lidar_points_msg.h"
 #include "msg/rs_msg/lidar_packet_msg.h"
@@ -36,7 +35,7 @@ namespace lidar
  * @detail 1, Will be inheritted by lidar points ROS message adapter and lidar points Proto message adapter
  *         2, Will be inheritted by driver base which relate to lidar points messages(eg: LidarBase)
  */
-class LidarPointsInterface : virtual public LidarBase
+class LidarPointsInterface
 {
 public:
   LidarPointsInterface() = default;

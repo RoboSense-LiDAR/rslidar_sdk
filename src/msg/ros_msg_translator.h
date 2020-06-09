@@ -22,7 +22,6 @@
 
 #pragma once
 #ifdef ROS_FOUND
-#include "interface/lidar_base.h"
 #include "msg/rs_msg/lidar_points_msg.h"
 #include "msg/rs_msg/lidar_packet_msg.h"
 #include "msg/rs_msg/lidar_scan_msg.h"

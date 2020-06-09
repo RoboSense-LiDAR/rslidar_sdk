@@ -29,13 +29,11 @@ namespace lidar
 {
 LidarPointsProtoAdapter::LidarPointsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
 {
-  setName("LidarPointsProtoAdapter");
   thread_pool_ptr_.reset(new lidar::ThreadPool());
 }
 
 void LidarPointsProtoAdapter::init(const YAML::Node& config)
 {
-  setinitFlag(true);
   int msg_source = 0;
   bool send_points_proto;
   std::string points_send_port;

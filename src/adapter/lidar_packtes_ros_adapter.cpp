@@ -28,8 +28,6 @@ namespace lidar
 {
 void LidarPacketsRosAdapter::init(const YAML::Node& config)
 {
-  setName("LidarPacketsRosAdapter");
-  setinitFlag(true);
   int msg_source;
   bool send_packets_ros;
   YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
