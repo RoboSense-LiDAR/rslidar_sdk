@@ -19,6 +19,41 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
+/***************************************************************************************************************************
+/* Basic struct:                                                                                              
+ *
+ *
+ *                         LidarPacketsInterface          LidarPointsInterface
+ *                            /      |      \                /      |     \
+ *                           /       |       \              /       |      \
+ *        LidarPacketsRosAdapter     |      LidarDriverAdapter      |     LidarPointsRosAdapter
+ *                        LidarPacketsProtoAdapter        LidarPointsProtoAdapter
+ *
+ *
+ *
+ * Manager:
+ *
+ * 1,
+ *                  -msg_source=1 -> packet receiver: LidarDriverAdapter; pointcloud receiver: LidarDriverAdapter
+ *                  -msg_source=2 -> packet receiver: LidarPacketsRosAdapter; pointcloud receiver: LidarDriverAdapter
+ * createReceiver ->-msg_source=3 -> packet receiver: LidarDriverAdapter; pointcloud receiver: LidarDriverAdapter
+ *                  -msg_source=4 -> packet receiver: LidarPacketsProtoAdapter; pointcloud receiver: LidarDriverAdapter
+ *                  -msg_source=5 -> packet receiver: None; pointcloud receiver: LidarPointsProtoAdapter
+ *
+ * 2,
+ *
+ *                      -send_packets_ros=true -> LidarPacketsRosAdapter
+ * createTransmitter -> -send_points_ros=true -> LidarPointsRosAdapter
+ *                      -send_packets_proto=true -> LidarPacketsProtoAdapter
+ *                      -send_points_proto=true -> LidarPointsProtoAdapter
+ *
+ * 3,
+ * Register the transmitter's sending functions to the receiver.
+ * 
+ * 4,
+ * Start all the receivers.
+ *
+ * *************************************************************************************************************************/
 
 #pragma once
 #include "utility/yaml_reader.hpp"
@@ -32,14 +67,6 @@ namespace robosense
 {
 namespace lidar
 {
-enum MessageSource
-{
-  MessageSourceNotUsed = 0,
-  MessageSourceRsDriver = 1,
-  MessageSourceRos = 2,
-  MessageSourceProto = 3
-};
-
 enum class AdapterType
 {
   DriverCoreAdpater,
