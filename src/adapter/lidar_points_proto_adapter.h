@@ -24,10 +24,10 @@
 
 #ifdef PROTO_FOUND
 
-#include <interface/lidar_points_interface.h>
-#include <utility/protobuf_communicator.hpp>
-#include <msg/proto_msg/Proto_msg.LidarPoints.pb.h>
-#include <msg/proto_msg_translator.h>
+#include "adapter/lidar_adapter_base.h"
+#include "utility/protobuf_communicator.hpp"
+#include "msg/proto_msg/Proto_msg.LidarPoints.pb.h"
+#include "msg/proto_msg_translator.h"
 #include <condition_variable>
 #include <mutex>
 
@@ -35,7 +35,7 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPointsProtoAdapter : virtual public LidarPointsInterface
+class LidarPointsProtoAdapter : virtual public LidarAdapterBase
 {
 public:
   LidarPointsProtoAdapter();

@@ -25,6 +25,7 @@
 #include "utility/yaml_reader.hpp"
 #include "msg/rs_msg/lidar_packet_msg.h"
 #include "msg/rs_msg/lidar_scan_msg.h"
+#include "msg/rs_msg/lidar_points_msg.h"
 
 namespace robosense
 {
@@ -35,12 +36,12 @@ namespace lidar
  * @detail 1, Will be inheritted by Lidar packets ROS message adapter
  *         2, Will be inheritted by driver base which relate to Lidar packets messages(eg: LidarBase)
  */
-class LidarPacketsInterface
+class LidarAdapterBase
 {
 public:
-  typedef std::shared_ptr<LidarPacketsInterface> Ptr;
-  LidarPacketsInterface() = default;
-  virtual ~LidarPacketsInterface() = default;
+  typedef std::shared_ptr<LidarAdapterBase> Ptr;
+  LidarAdapterBase() = default;
+  virtual ~LidarAdapterBase() = default;
 
   /**
    * @brief initialize function
@@ -72,17 +73,53 @@ public:
   {
   }
   /**
+   * @brief send function
+   * @detail send lidar points message through ROS or Proto
+   * @param msg--the RoboSense lidar points message
+   */
+  virtual void send(const LidarPointsMsg& msg)
+  {
+  }
+  /**
    * @brief register receive call back function
    * @detail after registration, the Lidar module can pass lidar msop packet message to other module
    * @param callBack--the function pointer of the call back function
    */
-  virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack) = 0;
+  virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  {
+  }
   /**
    * @brief register receive call back function
    * @detail after registration, the Lidar module can pass lidar difop packet message to other module
    * @param callBack--the function pointer of the call back function
    */
-  virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack) = 0;
+  virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  {
+  }
+  /**
+   * @brief register receive call back function
+   * @detail after registration, the lidar points module can pass lidar points message to other module
+   * @param callBack--the function pointer of the call back function
+   */
+  virtual void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  {
+  }
+  /**
+   * @brief the function to depack the msop packets to get pointcloud
+   * @detail will be registered to lidar packet receiver to process msop packets and get pointcloud
+   * @param pkt_msg--RoboSense LidarScanMsg message
+   */
+  virtual void processMsopScan(const LidarScanMsg& pkt_msg)
+  {
+  }
+  /**
+   * @brief the function to depack the difop packets to get parameters for pointcloud
+   * @detail will be registered to lidar packet receiver to process difop packets
+   * @param pkt_msg--RoboSense LidarPacketMsg message
+   */
+  virtual void processDifopPackets(const LidarPacketMsg& pkt_msg)
+  {
+  }
 };
 }  // namespace lidar
 }  // namespace robosense

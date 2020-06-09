@@ -24,9 +24,9 @@
 
 #ifdef PROTO_FOUND
 
-#include <interface/lidar_packets_interface.h>
-#include <utility/protobuf_communicator.hpp>
-#include <msg/proto_msg_translator.h>
+#include "adapter/lidar_adapter_base.h"
+#include "utility/protobuf_communicator.hpp"
+#include "msg/proto_msg_translator.h"
 #include <condition_variable>
 #include <mutex>
 
@@ -34,7 +34,7 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsProtoAdapter : virtual public LidarPacketsInterface
+class LidarPacketsProtoAdapter : virtual public LidarAdapterBase
 {
 public:
   LidarPacketsProtoAdapter();

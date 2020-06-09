@@ -22,9 +22,8 @@
 #pragma once
 
 #ifdef ROS_FOUND
-#include <interface/lidar_packets_interface.h>
-#include <msg/ros_msg_translator.h>
-#include <msg/ros_msg/lidar_scan_ros.h>
+#include "adapter/lidar_adapter_base.h"
+#include "msg/ros_msg_translator.h"
 #include <ros/ros.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
@@ -33,7 +32,7 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public LidarPacketsInterface
+class LidarPacketsRosAdapter : virtual public LidarAdapterBase
 {
 public:
   LidarPacketsRosAdapter() = default;

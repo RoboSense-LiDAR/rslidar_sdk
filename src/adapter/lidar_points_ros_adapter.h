@@ -23,18 +23,17 @@
 
 #ifdef ROS_FOUND
 
-#include "interface/lidar_points_interface.h"
-#include <msg/ros_msg_translator.h>
+#include "adapter/lidar_adapter_base.h"
+#include "msg/ros_msg_translator.h"
 #include <ros/ros.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
-#include <sensor_msgs/PointCloud2.h>
 
 namespace robosense
 {
 namespace lidar
 {
-class LidarPointsRosAdapter : virtual public LidarPointsInterface
+class LidarPointsRosAdapter : virtual public LidarAdapterBase
 {
 public:
   LidarPointsRosAdapter() = default;

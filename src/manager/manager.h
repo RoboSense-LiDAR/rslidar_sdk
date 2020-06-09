@@ -96,10 +96,10 @@ private:
 private:
   bool lidarpkts_run_flag_;
   bool lidarpoints_run_flag_;
-  std::vector<LidarPacketsInterface::Ptr> lidar_packets_receivers_;
-  std::vector<LidarPointsInterface::Ptr> lidar_points_receivers_;
-  std::vector<LidarPacketsInterface::Ptr> lidar_packets_transmitters_;
-  std::vector<LidarPointsInterface::Ptr> lidar_points_transmitters_;
+  std::vector<LidarAdapterBase::Ptr> lidar_packets_receivers_;
+  std::vector<LidarAdapterBase::Ptr> lidar_points_receivers_;
+  std::vector<LidarAdapterBase::Ptr> lidar_packets_transmitters_;
+  std::vector<LidarAdapterBase::Ptr> lidar_points_transmitters_;
 };
 }  // namespace lidar
 }  // namespace robosense
