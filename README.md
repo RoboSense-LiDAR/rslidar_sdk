@@ -15,13 +15,19 @@
 
 ### 2. 依赖介绍
 
-- ROS 
+- ROS (若需在ROS环境下使用雷达驱动，则需安装ROS相关依赖库)
 
   安装方式： 参考 http://wiki.ros.org/kinetic/Installation/Ubuntu 
 
   **如果您安装了ROS kinetic desktop-full版，那么兼容版本的PCL，Boost，Eigen和OpenCV也应该同时被安装了，所以您不需要重新安装它们以避免多个版本冲突引起的问题,因此，强烈建议安装ROS kinetic desktop-full版，这将为您节省大量的时间来逐个安装和配置库**
 
-- Protobuf 
+- Eigen(必需, 若已安装ROS kinetic desktop-full, 可跳过)
+
+- Boost(必需, 若已安装ROS kinetic desktop-full, 可跳过)
+
+- PCL(必需, 若已安装ROS kinetic desktop-full, 可跳过)
+
+- Protobuf (若需要使用Protobuf相关功能，则需安装Protobuf相关依赖库)
 
   安装方式:
 
@@ -29,13 +35,15 @@
   sudo apt-get install -y libprotobuf-dev protobuf-compiler
   ```
 
-- pcap 
+- pcap  (必需）
 
   安装方式：
 
   ```sh
   sudo apt-get install -y  libpcap-dev
   ```
+
+
 
 
 
@@ -142,13 +150,19 @@
 
 ### 2. Dependencies
 
-- ROS 
+- ROS (If use rslidar_sdk in ROS environment, ROS related libraries need to be installed)
 
   Installation： please refer to  http://wiki.ros.org/kinetic/Installation/Ubuntu 
 
   **If you install ROS kinetic desktop-full，then the correspond PCL, Boost, Eigen and OpenCV will be installed at the same time. If will bring you a lot of convenience since you dont need to handle the version confliction. Thus, its highly recommanded to install ROS kinetic desktop-full**
 
-- Protobuf 
+- Eigen(Essential, if installed ROS kinetic desktop-full, this part can be ignored)
+
+- Boost(Essential, if installed ROS kinetic desktop-full, this part can be ignored)
+
+- PCL(Essential, if installed ROS kinetic desktop-full, this part can be ignored)
+
+- Protobuf (If use Protobuf related functions, Protobuf need to be installed)
 
   Installation :
 
@@ -156,7 +170,7 @@
   sudo apt-get install -y libprotobuf-dev protobuf-compiler
   ```
 
-- pcap 
+- pcap (Essential)
 
   Installation：
 
