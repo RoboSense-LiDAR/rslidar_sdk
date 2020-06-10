@@ -58,16 +58,16 @@ lidar:
       cut_angle: 0                 #The cut angle(degree) used to split frame, only be used when mode_split_frame=1
 ```
 
-​	There are three hiding parameters in this part, *mode_split_frame, num_pkts_split, cut_angle*.
+​	There are four hiding parameters in this part, *mode_split_frame, num_pkts_split, cut_angle, wait_for_difop*.
 
 - mode_split_frame -- The mode to split the LiDAR frames. Default value is 1.
 
   - 1 -- Spliting frames depends on the cut_angle
-
-  - 2 -- Spliting frames depends on the packet rate
-
+- 2 -- Spliting frames depends on the packet rate
   - 3 -- Spliting frames depends on num_pkts_split
 
 - num_pkts_split: The number of packets in one frame. Only be used when mode_split_frame = 3
 
 - cut_angle: The angle(degree) to split frames. Only be used when mode_split_frame = 1. The default value is 0.
+
+- wait_for_difop: If set to false, the driver will not wait for difop packet and send out the pointcloud immediately. The default value is true.
