@@ -9,11 +9,32 @@
 
 
 ### 1. 工程简介
-  rslidar_sdk 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能， Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS进行二次开发的用户，可直接使用本软件包， 配合ROS自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核进行二次开发。
+  rslidar_sdk 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能， Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS进行二次开发的用户，可直接使用本软件包， 配合ROS自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核进行二次开发。 
 
 
 
-### 2. 依赖介绍
+### 2. 下载
+
+- 方法一 ------ 使用git clone
+
+ 由于rslidar_sdk项目中包含子模块驱动内核rs_driver, 因此在执行git clone 后还需要执行相关指令初始化并更新子模块。
+
+```sh
+git clone XXXX.git
+cd rslidar_sdk
+git submodule init
+git submodule update
+```
+
+- 方法二 ------ 直接下载
+
+由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核rs_driver(https://github.com/RoboSense-LiDAR/rs_driver), 然后将其解压在 rslidar_sdk/src/rs_driver路径下即可。
+
+
+
+
+
+### 3. 依赖介绍
 
 - ROS (若需在ROS环境下使用雷达驱动，则需安装ROS相关依赖库)
 
@@ -47,7 +68,7 @@
 
 
 
-### 3. 编译 & 运行
+### 4. 编译 & 运行
 
 我们提供两种编译&运行方式
 
@@ -84,7 +105,7 @@
 
 
 
-### 4. 文件结构
+### 5. 文件结构
 
 |- config												*存放所有的参数文件*
 
@@ -106,7 +127,7 @@
 
 
 
-### 5. 参数介绍
+### 6. 参数介绍
 
 **参数介绍非常重要，请仔细阅读。 本软件包的所有功能都将通过改变参数来实现。**
 
@@ -114,7 +135,7 @@
 
 
 
-### 6. 快速上手
+### 7. 快速上手
 
 **以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 用户可通过配置参数改变不同的工作模式。**
 
@@ -126,7 +147,7 @@
 
 
 
-### 7. 使用进阶
+### 8. 使用进阶
 
 [隐藏参数介绍](doc/intro/hiding_parameters_intro.md)
 
@@ -148,7 +169,26 @@
 
 
 
-### 2. Dependencies
+### 2. Download
+
+- Method1 ------ Use git clone
+
+Since rslidar_sdk project include the submodule --- rs_driver, user need to excute the following commands after git clone.
+
+```sh
+git clone XXXX.git
+cd rslidar_sdk
+git submodule init
+git submodule update
+```
+
+- Method2 ------ Download directly
+
+Since the zip file does not include submodule information, user need to download the driver core --- *rs_driver* manually (https://github.com/RoboSense-LiDAR/rs_driver). Then unzip the rs_driver under the path */rslidar_sdk/src/rs_driver*.
+
+
+
+### 3. Dependencies
 
 - ROS (If use rslidar_sdk in ROS environment, ROS related libraries need to be installed)
 
@@ -180,7 +220,7 @@
 
 
 
-### 3. Compile & Run
+### 4. Compile & Run
 
 We offer two ways to compile and run the driver
 
@@ -217,7 +257,7 @@ We offer two ways to compile and run the driver
 
 
 
-### 4. File Structure
+### 5. File Structure
 
 |- config												*Store all the configure files*
 
@@ -239,7 +279,7 @@ We offer two ways to compile and run the driver
 
 
 
-### 5. Introduction to parameters
+### 6. Introduction to parameters
 
 **This part is very important, please read carefully. All the functions of this software kit will be reach by modifying parameters.**
 
@@ -247,7 +287,7 @@ We offer two ways to compile and run the driver
 
 
 
-### 6. Quick start
+### 7. Quick start
 
 **The followings are some quick guides to using some of the most common features of the rslidar_sdk, but the software kit are not limited to the following modes of operation. Users can use rslidar_sdk in their own way by modifying parameters.**
 
@@ -259,7 +299,7 @@ We offer two ways to compile and run the driver
 
 
 
-### 7. Advanced
+### 8. Advanced
 
 [Intro to hiding parameters](doc/intro/hiding_parameters_intro.md)
 
