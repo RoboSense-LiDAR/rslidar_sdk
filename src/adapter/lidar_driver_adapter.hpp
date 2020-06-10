@@ -54,7 +54,7 @@ public:
     yamlRead<std::string>(driver_config, "angle_path", driver_param.angle_path, "");
     yamlReadAbort<std::string>(driver_config, "device_type", device_type);
     yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.use_lidar_clock, false);
-    yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, false);
+    yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
     yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
     yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
     yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
@@ -141,8 +141,10 @@ public:
   void processMsopScan(const LidarScanMsg& pkt_msg)
   {
     lidar::PointcloudMsg<pcl::PointXYZI> pointcloud;
-    driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud);
-    localPointsCallback(pointcloud);
+    if(driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
+    {
+      localPointsCallback(pointcloud);
+    }
   }
 
   void processDifopPackets(const LidarPacketMsg& pkt_msg)
