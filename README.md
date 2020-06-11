@@ -28,7 +28,7 @@ git submodule update
 
 - 方法二 ------ 直接下载
 
-由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核rs_driver(https://github.com/RoboSense-LiDAR/rs_driver), 然后将其解压在 rslidar_sdk/src/rs_driver路径下即可。
+由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核rs_driver(https://github.com/RoboSense-LiDAR/rs_driver), 然后将其解压在 rslidar_sdk/src路径下。 将src中原有的rs_driver文件夹删除，再将刚刚解压好的rs_driver-****文件夹改名为rs_driver即可。
 
 
 
@@ -184,7 +184,7 @@ git submodule update
 
 - Method2 ------ Download directly
 
-Since the zip file does not include submodule information, user need to download the driver core --- *rs_driver* manually (https://github.com/RoboSense-LiDAR/rs_driver). Then unzip the rs_driver under the path */rslidar_sdk/src/rs_driver*.
+Since the zip file does not include submodule information, user need to download the driver core --- *rs_driver* manually (https://github.com/RoboSense-LiDAR/rs_driver). Then unzip the rs_driver under the path */rslidar_sdk/src*. Delete the original *rs_driver* folder, and rename the folder you just unzip *rs_driver-XXXX* to *rs_driver*.  
 
 
 

@@ -52,6 +52,7 @@ lidar:
       min_distance: 0.2            #The minimum distance of pointcloud area
       max_distance: 200            #The maximum distance of pointcloud area
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      wait_for_difop: true         #True--start sending pointcloud until receive difop packet
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
       mode_split_frame: 1	       #1: Split frame depends on cut_angle; 2:Split frame depends on packet rate; 3:Split frame depends on num_pkts_split
 	  num_pkts_split: 1 	       #The number of packets in one frame, only be used when mode_split_frame=3
@@ -63,9 +64,11 @@ lidar:
 - mode_split_frame -- The mode to split the LiDAR frames. Default value is 1.
 
   - 1 -- Spliting frames depends on the cut_angle
-- 2 -- Spliting frames depends on the packet rate
+  
+       - 2 -- Spliting frames depends on the packet rate
+  
   - 3 -- Spliting frames depends on num_pkts_split
-
+  
 - num_pkts_split: The number of packets in one frame. Only be used when mode_split_frame = 3
 
 - cut_angle: The angle(degree) to split frames. Only be used when mode_split_frame = 1. The default value is 0.
