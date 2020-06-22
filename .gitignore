@@ -6,7 +6,6 @@
 build
 .vscode
 *.csv
-.clang-format
 build/*
 cmake-build-debug/
 .idea/
