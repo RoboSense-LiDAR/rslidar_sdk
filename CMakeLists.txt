@@ -22,7 +22,13 @@
 ###############################################################################
 cmake_minimum_required(VERSION 3.5)
 project(rslidar_sdk)
-set(ROS_COMPILE_SUPPORT false)
+#========================
+# Compile setup (ORIGINAL,CATKIN,COLCON)
+#========================
+set(COMPILE_METHOD ORIGINAL)
+#========================
+# Project Version
+#========================
 set (PROJECT_VERSION_MAJOR 1)
 set (PROJECT_VERSION_MINOR 0)
 set (PROJECT_VERSION_PATCH 0)
@@ -54,7 +60,6 @@ add_definitions(-DDEBUG_LEVEL=0)
 #========================
 # Dependencies Setup
 #========================
-set(EXTERNAL_LIBS "")
 find_package(roscpp 1.12 QUIET)
 if(roscpp_FOUND)
   message(=============================================================)
@@ -68,6 +73,26 @@ else(roscpp_FOUND)
   message(=============================================================)
 endif(roscpp_FOUND)
 
+if(${COMPILE_METHOD} MATCHES "COLCON")
+find_package(rclcpp QUIET)
+if(rclcpp_FOUND)
+  find_package(ament_cmake REQUIRED)
+  find_package(sensor_msgs REQUIRED)
+  find_package(rslidar_msg REQUIRED)
+  find_package(std_msgs REQUIRED)                      
+  set(CMAKE_CXX_STANDARD 14)
+  message(=============================================================)
+  message("-- ROS2 Found, Ros2 Support is turned On!")
+  message(=============================================================)
+  add_definitions(-DROS2_FOUND)
+  include_directories(${rclcpp_INCLUDE_DIRS})
+else(rclcpp_FOUND)
+  message(=============================================================)
+  message("-- ROS2 Not Found, Ros2 Support is turned Off!")
+  message(=============================================================)
+endif(rclcpp_FOUND)
+endif(${COMPILE_METHOD} MATCHES "COLCON")
+
 find_package(Protobuf QUIET)
 if(Protobuf_FOUND)
   message(=============================================================)
@@ -77,7 +102,6 @@ if(Protobuf_FOUND)
   include_directories(${PROTOBUF_INCLUDE_DIRS})
   SET(PROTO_FILE_PATH ${PROJECT_SOURCE_DIR}/src/msg/proto_msg)
   file(GLOB PROTOBUF_FILELIST ${PROTO_FILE_PATH}/*.proto)
-  message("-- Protobuf Found, Protobuf Support is turned On!")
   foreach(proto_file ${PROTOBUF_FILELIST})
     message(STATUS "COMPILING ${proto_file} USING ${PROTOBUF_PROTOC_EXECUTABLE}")
     execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
@@ -98,7 +122,7 @@ add_definitions(${PCL_DEFINITIONS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver)
 
-if(${ROS_COMPILE_SUPPORT})
+if(${COMPILE_METHOD} MATCHES "CATKIN")
 find_package(catkin REQUIRED COMPONENTS
         roscpp
         sensor_msgs
@@ -107,31 +131,53 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
         CATKIN_DEPENDS sensor_msgs
 )
-endif(${ROS_COMPILE_SUPPORT})
+endif(${COMPILE_METHOD} MATCHES "CATKIN")
 
 #========================
 # Build Setup
 #========================
+if(Protobuf_FOUND)
+add_executable(rslidar_sdk_node
+            node/rslidar_sdk_node.cpp
+            ${PROTO_FILE_PATH}/Proto_msg.LidarPoints.pb.cc
+            ${PROTO_FILE_PATH}/Proto_msg.LidarScan.pb.cc
+            ${PROTO_FILE_PATH}/Proto_msg.LidarPacket.pb.cc
+            )
+target_link_libraries(rslidar_sdk_node                   
+                    ${PCL_LIBRARIES}
+                    ${YAML_CPP_LIBRARIES}
+                    ${PROTOBUF_LIBRARY}
+                    pthread             
+                    pcap  
+                    )
+else(Protobuf_FOUND)
 add_executable(rslidar_sdk_node
             node/rslidar_sdk_node.cpp
             )
-
 target_link_libraries(rslidar_sdk_node                   
                     ${PCL_LIBRARIES}
                     ${YAML_CPP_LIBRARIES}
                     pthread
                     pcap  
-                       )
+                    )
+endif(Protobuf_FOUND)
 
+#Ros
 if(roscpp_FOUND)
 target_link_libraries(rslidar_sdk_node ${roscpp_LIBRARIES})
 endif(roscpp_FOUND)
-if(Protobuf_FOUND)
-add_library(proto_msg SHARED
-            ${PROTO_FILE_PATH}/Proto_msg.LidarPoints.pb.cc
-            ${PROTO_FILE_PATH}/Proto_msg.LidarScan.pb.cc
-            ${PROTO_FILE_PATH}/Proto_msg.LidarPacket.pb.cc
-            )
-target_link_libraries(rslidar_sdk_node proto_msg ${PROTOBUF_LIBRARY})
-endif(Protobuf_FOUND)
 
+#Ros2
+if(rclcpp_FOUND)
+ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)
+install(TARGETS
+  rslidar_sdk_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+install(DIRECTORY
+  launch
+  rviz
+  DESTINATION share/${PROJECT_NAME}
+)
+ament_package()
+endif(rclcpp_FOUND)

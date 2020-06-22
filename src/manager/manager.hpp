@@ -339,7 +339,7 @@ private:
         break;
 
       case AdapterType::LidarPacketsRosAdapter:
-#ifdef ROS_FOUND
+#if (ROS_FOUND || ROS2_FOUND)
         receiver = std::dynamic_pointer_cast<T>(std::make_shared<LidarPacketsRosAdapter>());
         receiver->init(config);
         break;
@@ -383,7 +383,7 @@ private:
     switch (adapter_type)
     {
       case AdapterType::LidarPacketsRosAdapter:
-#ifdef ROS_FOUND
+#if (ROS_FOUND || ROS2_FOUND)
         transmitter = std::dynamic_pointer_cast<T>(std::make_shared<LidarPacketsRosAdapter>());
         transmitter->init(config);
         break;
@@ -403,7 +403,7 @@ private:
 #endif
 
       case AdapterType::LidarPointsRosAdapter:
-#ifdef ROS_FOUND
+#if (ROS_FOUND || ROS2_FOUND)
         transmitter = std::dynamic_pointer_cast<T>(std::make_shared<LidarPointsRosAdapter>());
         transmitter->init(config);
         break;

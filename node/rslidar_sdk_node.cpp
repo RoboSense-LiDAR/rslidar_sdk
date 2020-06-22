@@ -27,6 +27,7 @@ bool start_ = true;
 
 static void sigHandler(int sig)
 {
+  MSG << "Robosense-LiDAR-Driver is stopping....." << REND;
 #ifdef ROS_FOUND
   ros::shutdown();
 #endif
@@ -57,6 +58,9 @@ int main(int argc, char** argv)
 #ifdef ROS_FOUND
   ros::init(argc, argv, "rslidar_sdk_node",
             ros::init_options::NoSigintHandler);  ///< if use_ros is true, ros::init() will be called
+#endif
+#ifdef ROS2_FOUND
+  rclcpp::init(argc, argv);
 #endif
   demo_ptr->init(config);
   demo_ptr->start();
