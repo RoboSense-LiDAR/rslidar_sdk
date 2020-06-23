@@ -1,3 +1,15 @@
+# 2020-07-01
+
+### Version 
+
+1.1.0
+
+### Updates
+
+- Add ROS2 support
+
+  
+
 # 2020-06-01
 
 ### Version 

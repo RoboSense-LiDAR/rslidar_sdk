@@ -28,7 +28,6 @@
 #include "msg/ros_msg/lidar_scan_ros.h"
 #include <ros/duration.h>
 #include <ros/rate.h>
-#include <Eigen/Dense>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
@@ -107,7 +106,6 @@ inline rslidar_msgs::rslidarScan toRosMsg(const LidarScanMsg& rs_msg)
 #include "rslidar_msg/msg/rslidar_packet.hpp"
 #include "rslidar_msg/msg/rslidar_scan.hpp"
 
-#include <Eigen/Dense>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <pcl_conversions/pcl_conversions.h>
 namespace robosense
