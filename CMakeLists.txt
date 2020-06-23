@@ -47,8 +47,8 @@ add_compile_options(-W)
 # Version
 #========================
 configure_file (
-  "${PROJECT_SOURCE_DIR}/src/rs_driver/rs_driver/macro/version.h.in"
-  "${PROJECT_SOURCE_DIR}/src/rs_driver/rs_driver/macro/version.h"
+  "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h.in"
+  "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h"
 )
 
 #========================
@@ -119,7 +119,7 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver)
+include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver/src)
 
 if(${COMPILE_METHOD} MATCHES "CATKIN")
 find_package(catkin REQUIRED COMPONENTS
