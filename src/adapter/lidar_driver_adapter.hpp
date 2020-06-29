@@ -92,8 +92,8 @@ public:
     }
     else
     {
-      ERROR<<"Wrong lidar type : "<<device_type<<REND;
-      ERROR<<"Please setup the correct type: RS16, RS32, RSBP, RS128, RSAUTO"<<REND;
+      ERROR << "Wrong lidar type : " << device_type << REND;
+      ERROR << "Please setup the correct type: RS16, RS32, RSBP, RS128, RSAUTO" << REND;
       exit(-1);
     }
     if (msg_source == 1)
@@ -141,7 +141,7 @@ public:
   void processMsopScan(const LidarScanMsg& pkt_msg)
   {
     lidar::PointcloudMsg<pcl::PointXYZI> pointcloud;
-    if(driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
+    if (driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
     {
       localPointsCallback(pointcloud);
     }
@@ -224,11 +224,7 @@ private:
   LidarPointsMsg lPoints2CPoints(const lidar::PointcloudMsg<pcl::PointXYZI>& _msg)
   {
     PointCloudPtr cloud(new pcl::PointCloud<pcl::PointXYZI>);
-    cloud->points.reserve(_msg.pointcloud_ptr->size());
-    for (auto iter : *_msg.pointcloud_ptr)
-    {
-      cloud->push_back(std::move(iter));
-    }
+    cloud->points.assign(_msg.pointcloud_ptr->begin(), _msg.pointcloud_ptr->end());
     cloud->height = _msg.height;
     cloud->width = _msg.width;
     LidarPointsMsg msg(cloud);
