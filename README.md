@@ -1,6 +1,6 @@
 # **rslidar_sdk** 
 
-# **v1.1.0**
+# **V1.1.0**
 
 
 
@@ -184,6 +184,10 @@ git submodule update
 
 [离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap.md)
 
+[如何使用ROS2功能](doc/howto/how_to_use_ros2.md)
+
+
+
 
 
 ### 8. 使用进阶
@@ -287,12 +291,15 @@ We offer three ways to compile and run the driver
     # Compile setup (ORIGINAL,CATKIN,COLCON)
     #=======================================
     set(COMPILE_METHOD CATKIN)
+    ```
   ```
   
-- Rename the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
+  ```
   
-- Create a new folder as the workspace, and create a *src* folder in the workspace. Then put the rslidar_sdk project in the *src* folder. 
-  
+  - Rename the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
+    
+  - Create a new folder as the workspace, and create a *src* folder in the workspace. Then put the rslidar_sdk project in the *src* folder. 
+    
   - Return back to the workspace, excute the following command to compile and run. (if use .zsh, replace the 2nd command with *source devel/setup.zsh*)
   
     ```sh
@@ -377,6 +384,8 @@ We offer three ways to compile and run the driver
 [Record rosbag & Offline decode rosbag](doc/howto/how_to_record_and_offline_decode_rosbag.md)
 
 [Decode pcap bag and send pointcloud through ROS](doc/howto/how_to_offline_decode_pcap.md)
+
+[How to use ROS2](doc/howto/how_to_use_ros2.md)
 
 
 
