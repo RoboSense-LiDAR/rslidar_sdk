@@ -22,16 +22,18 @@
  *****************************************************************************/
 #include "manager/manager.hpp"
 #include <signal.h>
+#include <mutex>
+#include <condition_variable>
 using namespace robosense::lidar;
-bool start_ = true;
-
+std::mutex mtx_;
+std::condition_variable cv_;
 static void sigHandler(int sig)
 {
   MSG << "Robosense-LiDAR-Driver is stopping....." << REND;
 #ifdef ROS_FOUND
   ros::shutdown();
 #endif
-  start_ = false;
+  cv_.notify_all();
 }
 
 int main(int argc, char** argv)
@@ -55,11 +57,10 @@ int main(int argc, char** argv)
     return 0;
   }
   signal(SIGINT, sigHandler);  ///< bind the ctrl+c signal with the the handler function
-#ifdef ROS_FOUND
-  ros::init(argc, argv, "rslidar_sdk_node",
-            ros::init_options::NoSigintHandler);  ///< if use_ros is true, ros::init() will be called
+#ifdef ROS_FOUND               ///< if ROS is found, call the ros::init function
+  ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
 #endif
-#ifdef ROS2_FOUND
+#ifdef ROS2_FOUND  ///< if ROS2 is found, call the rclcpp::init function
   rclcpp::init(argc, argv);
 #endif
   demo_ptr->init(config);
@@ -68,10 +69,8 @@ int main(int argc, char** argv)
 #ifdef ROS_FOUND
   ros::spin();
 #else
-  while (start_)
-  {
-    sleep(1);
-  }
+  std::unique_lock<std::mutex> lck(mtx_);
+  cv_.wait(lck);
 #endif
   demo_ptr.reset();
   return 0;
