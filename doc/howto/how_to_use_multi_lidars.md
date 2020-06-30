@@ -2,7 +2,7 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	This document will show you how to send out multi-LiDARs pointcloud with only one driver running.  Theoretically, one driver can decoder unlimited number of LiDARs at the same time. For convenient, in this document we will use three LiDARs as an example.
 
@@ -10,11 +10,11 @@
 
 
 
-### Online connect with multi-LiDARs
+## 2 Online connect with multi-LiDARs
 
 
 
-### Steps
+### 2.1 Steps
 
 1,  Get the LiDAR msop port number and difop port number 
 
@@ -160,11 +160,11 @@ lidar:
 
 ---
 
-### Offline use rosbag with multi-LiDARs
+## 3 Offline use rosbag with multi-LiDARs
 
 
 
-### Steps
+### 3.1 Steps
 
 1,  Set the *common* part of the config file
 

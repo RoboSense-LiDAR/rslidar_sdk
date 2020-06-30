@@ -2,13 +2,13 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	This document will show you how to online connect a LiDAR or offline decode pcap to  send pointcloud through ROS2. Please make sure you have read the LiDAR user-guide before reading this document. **Also please make sure you have read the README.md file and follow the ROS2 compile instructions **
 
 
 
-### Steps
+## 2 Steps
 
 1,  Get the LiDAR msop port number and difop port number 
 

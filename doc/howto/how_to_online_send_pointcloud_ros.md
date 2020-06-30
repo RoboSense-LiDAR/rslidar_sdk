@@ -2,13 +2,13 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	This document will show you how to online connect a LiDAR and send pointcloud to ROS. Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
 
 
 
-### Steps
+## 2 Steps
 
 1,  Get the LiDAR msop port number and difop port number 
 

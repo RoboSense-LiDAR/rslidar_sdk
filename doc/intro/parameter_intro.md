@@ -8,7 +8,7 @@ There is only one parameter file called config.yaml, which is locate in *rslidar
 
 
 
-### Common Part
+## 1 Common Part
 
 This part is used to decide the source of LiDAR data, and whether to send out the result or not.
 
@@ -81,7 +81,7 @@ common:
 
 
 
-### lidar
+## 2 lidar
 
 This part need to be adjust according to different LiDAR (in multi-LiDARs case). Here is an example for one LiDAR and three LiDARs. 
 

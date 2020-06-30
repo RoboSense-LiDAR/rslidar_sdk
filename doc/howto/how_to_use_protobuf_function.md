@@ -2,7 +2,7 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	Suppose you have two computers, PC-A and PC-B and they are far away from each other.  You connect LiDAR with PC-A and for some reasons, you want to use pointcloud message in PC-B. At this time, you may need to use the protobuf functions. Typically, there are two ways to achieve this goal.
 
@@ -22,7 +22,7 @@ We offer both of these two ways but we recommend method 1 rather than method 2 b
 
 
 
-### Send & receive packets
+## 2 Send & receive packets
 
 Here is the instruction for how to send & receive the packet message. We suppose you have already read [Intro to parameters](doc/intro/parameter_intro.md) and you already have a basic idea about the config file. Lets look at the sender part first.
 
@@ -140,7 +140,7 @@ We want to receive packets so we only need to focus on two things, *msop_recv_po
 
 ---
 
-### Send & receive pointcloud
+## 3 Send & receive pointcloud
 
 Here is the instruction for how to send & receive the pointcloud message. We suppose you have already read [Intro to parameters](doc/intro/parameter_intro.md) and you already have a basic idea about the config file. Lets look at the sender part first.
 

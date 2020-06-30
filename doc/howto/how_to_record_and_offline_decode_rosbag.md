@@ -2,13 +2,13 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	This document will show you how to record and decode rosbag file. Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
 
 
 
-### Record
+## 2 Record
 
 We suppose you are connecting a LiDAR and you have already sent out the pointcloud to ROS.  If you have no idea about this, please read [Online connect lidar and send pointcloud through ROS](doc/howto/how_to_online_send_pointcloud_ros.md) first.
 

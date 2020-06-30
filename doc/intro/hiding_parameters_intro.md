@@ -2,13 +2,13 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	In order to make the config file as simple as possible, we hide some of the parameters and give them a default value in the program. This document show you the use of those hiding parameters and you can decide whether to add them back or not. 
 
 
 
-#### common
+### 1.1 common
 
 ```yaml
 
@@ -37,7 +37,7 @@ common:
 
 
 
-#### lidar-driver
+### 1.2 lidar-driver
 
 ```yaml
 lidar:
@@ -64,11 +64,9 @@ lidar:
 - mode_split_frame -- The mode to split the LiDAR frames. Default value is 1.
 
   - 1 -- Spliting frames depends on the cut_angle
-  
-       - 2 -- Spliting frames depends on the packet rate
-  
+  - 2 -- Spliting frames depends on the packet rate
   - 3 -- Spliting frames depends on num_pkts_split
-  
+
 - num_pkts_split: The number of packets in one frame. Only be used when mode_split_frame = 3
 
 - cut_angle: The angle(degree) to split frames. Only be used when mode_split_frame = 1. The default value is 0.
