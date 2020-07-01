@@ -43,14 +43,10 @@ struct alignas(16) LidarPointsMsg
   double timestamp = 0.0;
   uint32_t seq = 0;
   std::string frame_id = "";
-  std::string lidar_model = "";
-  std::string points_type = "";
   uint32_t height = 0;
   uint32_t width = 0;
   bool is_dense = false;
-  bool is_transform = false;
 
-  bool is_motion_correct = false;  ///< using motion_correct or not
   PointCloudConstPtr cloudPtr;     ///< the pointcloud pointer
 
   LidarPointsMsg() = default;

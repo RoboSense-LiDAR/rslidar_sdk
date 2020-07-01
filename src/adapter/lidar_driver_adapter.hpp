@@ -209,8 +209,6 @@ private:
     msg.height = _msg.height;
     msg.width = _msg.width;
     msg.is_dense = _msg.is_dense;
-    msg.is_motion_correct = _msg.is_motion_correct;
-    msg.is_transform = _msg.is_transform;
     return std::move(msg);
   }
 

@@ -43,13 +43,9 @@ inline Proto_msg::LidarPoints toProtoMsg(const LidarPointsMsg& rs_msg)
   proto_msg.set_timestamp(rs_msg.timestamp);
   proto_msg.set_seq(rs_msg.seq);
   proto_msg.set_frame_id(rs_msg.frame_id);
-  proto_msg.set_is_motion_correct(rs_msg.is_motion_correct);
   proto_msg.set_height(rs_msg.height);
   proto_msg.set_width(rs_msg.width);
   proto_msg.set_is_dense(rs_msg.is_dense);
-  proto_msg.set_is_transform(rs_msg.is_transform);
-  proto_msg.set_lidar_model(rs_msg.lidar_model);
-  proto_msg.set_points_type(rs_msg.points_type);
 
   for (size_t i = 0; i < rs_msg.cloudPtr->size(); i++)
   {
@@ -68,13 +64,9 @@ inline LidarPointsMsg toRsMsg(const Proto_msg::LidarPoints& proto_msg)
   rs_msg.timestamp = proto_msg.timestamp();
   rs_msg.seq = proto_msg.seq();
   rs_msg.frame_id = proto_msg.frame_id();
-  rs_msg.is_motion_correct = proto_msg.is_motion_correct();
   rs_msg.height = proto_msg.height();
   rs_msg.width = proto_msg.width();
   rs_msg.is_dense = proto_msg.is_dense();
-  rs_msg.is_transform = proto_msg.is_transform();
-  rs_msg.lidar_model = proto_msg.lidar_model();
-  rs_msg.points_type = proto_msg.points_type();
   PointCloud* ptr_tmp = new PointCloud();
   for (int i = 0; i < proto_msg.data_size(); i += 4)
   {

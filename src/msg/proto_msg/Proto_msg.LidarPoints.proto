@@ -6,14 +6,10 @@ message LidarPoints
  optional double timestamp = 1; 
  optional uint32 seq = 2;
  optional string frame_id = 3;
- optional bool is_motion_correct = 4;
- optional uint32 height=5;
- optional uint32 width=6;
- optional bool is_dense=7;
- optional bool is_transform=8;
- optional string lidar_model=9;
- optional string points_type=10;
- repeated float data = 11;
+ optional uint32 height=4;
+ optional uint32 width=5;
+ optional bool is_dense=6;
+ repeated float data = 7;
 
 }
 
