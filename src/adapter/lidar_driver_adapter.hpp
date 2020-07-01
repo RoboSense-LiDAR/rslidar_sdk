@@ -47,12 +47,12 @@ public:
   {
     lidar::RSDriverParam driver_param;
     int msg_source;
-    std::string device_type;
+    std::string lidar_type;
     YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
     yamlRead<std::string>(driver_config, "angle_path", driver_param.angle_path, "");
-    yamlReadAbort<std::string>(driver_config, "device_type", device_type);
+    yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
     yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.use_lidar_clock, false);
     yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
     yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
@@ -69,34 +69,9 @@ public:
     yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
     yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_directory, "");
+    driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
 
-    if (device_type == "RS16")
-    {
-      driver_param.lidar_type = lidar::LidarType::RS16;
-    }
-    else if (device_type == "RS32")
-    {
-      driver_param.lidar_type = lidar::LidarType::RS32;
-    }
-    else if (device_type == "RSBP")
-    {
-      driver_param.lidar_type = lidar::LidarType::RSBP;
-    }
-    else if (device_type == "RS128")
-    {
-      driver_param.lidar_type = lidar::LidarType::RS128;
-    }
-    else if (device_type == "RSAUTO")
-    {
-      driver_param.lidar_type = lidar::LidarType::RSAUTO;
-    }
-    else
-    {
-      ERROR << "Wrong lidar type : " << device_type << REND;
-      ERROR << "Please setup the correct type: RS16, RS32, RSBP, RS128, RSAUTO" << REND;
-      exit(-1);
-    }
-    if (msg_source == 1)
+    if (msg_source == MsgSource::MSG_FROM_LIDAR || msg_source == MsgSource::MSG_FROM_PCAP)
     {
       if (!driver_ptr_->init(driver_param))
       {
@@ -138,7 +113,7 @@ public:
     pkt_cbs_.emplace_back(callBack);
   }
 
-  void processMsopScan(const LidarScanMsg& pkt_msg)
+  void decodeScan(const LidarScanMsg& pkt_msg)
   {
     lidar::PointcloudMsg<pcl::PointXYZI> pointcloud;
     if (driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
@@ -147,7 +122,7 @@ public:
     }
   }
 
-  void processDifopPackets(const LidarPacketMsg& pkt_msg)
+  void decodePacket(const LidarPacketMsg& pkt_msg)
   {
     driver_ptr_->decodeDifopPkt(cPkt2LPkt(pkt_msg));
   }

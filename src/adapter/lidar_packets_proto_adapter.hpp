@@ -65,7 +65,7 @@ public:
     yamlReadAbort<uint16_t>(proto_config, "difop_recv_port", difop_recv_port);
     msop_proto_ptr_.reset(new ProtoCommunicator);
     difop_proto_ptr_.reset(new ProtoCommunicator);
-    if (msg_source == 4)
+    if (msg_source == MsgSource::MSG_FROM_PROTO_PACKET)
     {
       if ((msop_proto_ptr_->initReceiver(msop_recv_port) == -1) ||
           (difop_proto_ptr_->initReceiver(difop_recv_port) == -1))
@@ -120,7 +120,7 @@ public:
     difop_cb_.emplace_back(callBack);
   }
 
-  void sendMsopPkts(const LidarScanMsg& msg)
+  void sendScan(const LidarScanMsg& msg)
   {
     msop_send_queue_.push(msg);
     if (msop_send_queue_.is_task_finished_.load())
@@ -130,7 +130,7 @@ public:
     }
   }
 
-  void sendDifopPkts(const LidarPacketMsg& msg)
+  void sendPacket(const LidarPacketMsg& msg)
   {
     difop_send_queue_.push(msg);
     if (difop_send_queue_.is_task_finished_.load())

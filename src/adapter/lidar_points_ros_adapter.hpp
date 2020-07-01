@@ -75,7 +75,7 @@ public:
     lidarPointscbs_.emplace_back(callBack);
   }
 
-  void send(const LidarPointsMsg& msg)
+  void sendPointcloud(const LidarPointsMsg& msg)
   {
     lidar_points_pub_.publish(toRosMsg(msg));
   }
@@ -136,7 +136,7 @@ public:
     return;
   }
 
-  void send(const LidarPointsMsg& msg)
+  void sendPointcloud(const LidarPointsMsg& msg)
   {
     lidar_points_pub_->publish(toRosMsg(msg));
   }

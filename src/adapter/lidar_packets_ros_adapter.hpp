@@ -22,9 +22,9 @@
 #pragma once
 
 /*****************************************************
- * 
+ *
  *            ROS LiDAR packets adapter
- * 
+ *
  ****************************************************/
 #ifdef ROS_FOUND
 #include "adapter/lidar_adapter_base.h"
@@ -58,7 +58,7 @@ public:
     yamlReadAbort<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic);
     yamlRead<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
-    if (msg_source == 2)
+    if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       lidar_packets_difop_sub_ =
           nh_->subscribe(ros_recv_topic + "_difop", 1, &LidarPacketsRosAdapter::localLidarPacketsdifopCallback, this);
@@ -93,12 +93,12 @@ public:
     lidar_packets_difop_cbs_.emplace_back(callBack);
   }
 
-  void sendMsopPkts(const LidarScanMsg& msg)
+  void sendScan(const LidarScanMsg& msg)
   {
     lidar_packets_msop_pub_.publish(toRosMsg(msg));
   }
 
-  void sendDifopPkts(const LidarPacketMsg& msg)
+  void sendPacket(const LidarPacketMsg& msg)
   {
     lidar_packets_difop_pub_.publish(toRosMsg(msg));
   }
@@ -134,9 +134,9 @@ private:
 #endif  // ROS_FOUND
 
 /*****************************************************
- * 
+ *
  *            ROS 2 LiDAR packets adapter
- * 
+ *
  ****************************************************/
 #ifdef ROS2_FOUND
 #include "adapter/lidar_adapter_base.h"
@@ -167,7 +167,7 @@ public:
     yamlReadAbort<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic);
     yamlRead<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
-    if (msg_source == 2)
+    if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       lidar_packets_difop_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(
           ros_recv_topic + "_difop", 10,
@@ -205,12 +205,12 @@ public:
     lidar_packets_difop_cbs_.emplace_back(callBack);
   }
 
-  void sendMsopPkts(const LidarScanMsg& msg)
+  void sendScan(const LidarScanMsg& msg)
   {
     lidar_packets_msop_pub_->publish(toRosMsg(msg));
   }
 
-  void sendDifopPkts(const LidarPacketMsg& msg)
+  void sendPacket(const LidarPacketMsg& msg)
   {
     lidar_packets_difop_pub_->publish(toRosMsg(msg));
   }

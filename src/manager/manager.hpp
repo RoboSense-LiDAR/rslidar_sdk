@@ -113,17 +113,14 @@ public:
       /*Receiver*/
       switch (msg_source)
       {
-        case 0:
-          INFO << "Message Source is 0. Program Ending..." << REND;
-          exit(-1);
-        case 1:  // use driver
+        case MsgSource::MSG_FROM_LIDAR:  // use driver
           INFO << "------------------------------------------------------" << REND;
           INFO << "Receive Packets From : Online LiDAR" << REND;
           INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << REND;
           INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << REND;
           INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = true;
-          lidar_config[i]["msg_source"] = 1;
+          lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_LIDAR;
           recv_ptr = createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter);
           lidar_points_receivers_.push_back(recv_ptr);
           if (send_packets_ros || send_packets_proto)
@@ -133,7 +130,7 @@ public:
           }
           break;
 
-        case 2:  // pkt from ros
+        case MsgSource::MSG_FROM_ROS_PACKET:  // pkt from ros
           INFO << "------------------------------------------------------" << REND;
           INFO << "Receive Packets From : ROS" << REND;
           INFO << "Msop Topic: " << lidar_config[i]["ros"]["ros_recv_packets_topic"].as<std::string>() << REND;
@@ -142,19 +139,19 @@ public:
           INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = false;
           lidarpkts_run_flag_ = true;
-          lidar_config[i]["msg_source"] = 2;
+          lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_ROS_PACKET;
           send_packets_ros = false;
           lidar_points_receivers_.emplace_back(
               createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter));
           lidar_packets_receivers_.emplace_back(
               createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarPacketsRosAdapter));
           lidar_packets_receivers_[i]->regRecvCallback(
-              std::bind(&LidarAdapterBase::processMsopScan, lidar_points_receivers_[i], std::placeholders::_1));
+              std::bind(&LidarAdapterBase::decodeScan, lidar_points_receivers_[i], std::placeholders::_1));
           lidar_packets_receivers_[i]->regRecvCallback(
-              std::bind(&LidarAdapterBase::processDifopPackets, lidar_points_receivers_[i], std::placeholders::_1));
+              std::bind(&LidarAdapterBase::decodePacket, lidar_points_receivers_[i], std::placeholders::_1));
           break;
 
-        case 3:  // pcap
+        case MsgSource::MSG_FROM_PCAP:  // pcap
           INFO << "------------------------------------------------------" << REND;
           INFO << "Receive Packets From : Pcap" << REND;
           INFO << "Device Ip: " << lidar_config[i]["driver"]["device_ip"].as<std::string>() << REND;
@@ -162,7 +159,7 @@ public:
           INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << REND;
           INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = true;
-          lidar_config[i]["msg_source"] = 1;
+          lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PCAP;
           lidar_config[i]["driver"]["read_pcap"] = true;
           lidar_config[i]["driver"]["pcap_directroy"] = pcap_dir;
           lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
@@ -176,7 +173,7 @@ public:
           }
           break;
 
-        case 4:  // packets from proto
+        case MsgSource::MSG_FROM_PROTO_PACKET:  // packets from proto
           INFO << "------------------------------------------------------" << REND;
           INFO << "Receive Packets From : Protobuf-UDP" << REND;
           INFO << "Msop Port: " << lidar_config[i]["proto"]["msop_recv_port"].as<uint16_t>() << REND;
@@ -184,26 +181,26 @@ public:
           INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = false;
           lidarpkts_run_flag_ = true;
-          lidar_config[i]["msg_source"] = 4;
+          lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PROTO_PACKET;
           send_packets_proto = false;
           lidar_points_receivers_.emplace_back(
               createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarDriverAdapter));
           lidar_packets_receivers_.emplace_back(
               createReceiver<LidarAdapterBase>(lidar_config[i], AdapterType::LidarPacketsProtoAdapter));
           lidar_packets_receivers_[i]->regRecvCallback(
-              std::bind(&LidarAdapterBase::processMsopScan, lidar_points_receivers_[i], std::placeholders::_1));
+              std::bind(&LidarAdapterBase::decodeScan, lidar_points_receivers_[i], std::placeholders::_1));
           lidar_packets_receivers_[i]->regRecvCallback(
-              std::bind(&LidarAdapterBase::processDifopPackets, lidar_points_receivers_[i], std::placeholders::_1));
+              std::bind(&LidarAdapterBase::decodePacket, lidar_points_receivers_[i], std::placeholders::_1));
           break;
 
-        case 5:  // points from proto
+        case MsgSource::MSG_FROM_PROTO_POINTCLOUD:  // points from proto
           INFO << "------------------------------------------------------" << REND;
           INFO << "Receive Pointcloud From : Protobuf-UDP" << REND;
           INFO << "Pointcloud Port: " << lidar_config[i]["proto"]["points_recv_port"].as<uint16_t>() << REND;
           INFO << "------------------------------------------------------" << REND;
           lidarpoints_run_flag_ = true;
           lidarpkts_run_flag_ = false;
-          lidar_config[i]["msg_source"] = 5;
+          lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PROTO_POINTCLOUD;
           send_points_proto = false;
           send_packets_ros = false;
           send_packets_proto = false;
@@ -231,9 +228,9 @@ public:
             createTransmitter<LidarAdapterBase>(lidar_config[i], AdapterType::LidarPacketsRosAdapter);
         lidar_packets_transmitters_.emplace_back(transmitter_ptr);
         lidar_packets_receivers_[i]->regRecvCallback(
-            std::bind(&LidarAdapterBase::sendMsopPkts, transmitter_ptr, std::placeholders::_1));
+            std::bind(&LidarAdapterBase::sendScan, transmitter_ptr, std::placeholders::_1));
         lidar_packets_receivers_[i]->regRecvCallback(
-            std::bind(&LidarAdapterBase::sendDifopPkts, transmitter_ptr, std::placeholders::_1));
+            std::bind(&LidarAdapterBase::sendPacket, transmitter_ptr, std::placeholders::_1));
       }
       if (send_packets_proto)
       {
@@ -248,9 +245,9 @@ public:
             createTransmitter<LidarAdapterBase>(lidar_config[i], AdapterType::LidarPacketsProtoAdapter);
         lidar_packets_transmitters_.emplace_back(transmitter_ptr);
         lidar_packets_receivers_[i]->regRecvCallback(
-            std::bind(&LidarAdapterBase::sendMsopPkts, transmitter_ptr, std::placeholders::_1));
+            std::bind(&LidarAdapterBase::sendScan, transmitter_ptr, std::placeholders::_1));
         lidar_packets_receivers_[i]->regRecvCallback(
-            std::bind(&LidarAdapterBase::sendDifopPkts, transmitter_ptr, std::placeholders::_1));
+            std::bind(&LidarAdapterBase::sendPacket, transmitter_ptr, std::placeholders::_1));
       }
       if (send_points_ros)
       {
@@ -263,7 +260,7 @@ public:
             createTransmitter<LidarAdapterBase>(lidar_config[i], AdapterType::LidarPointsRosAdapter);
         lidar_points_transmitters_.emplace_back(transmitter_ptr);
         lidar_points_receivers_[i]->regRecvCallback(
-            std::bind(&LidarAdapterBase::send, transmitter_ptr, std::placeholders::_1));
+            std::bind(&LidarAdapterBase::sendPointcloud, transmitter_ptr, std::placeholders::_1));
       }
       if (send_points_proto)
       {
@@ -277,7 +274,7 @@ public:
             createTransmitter<LidarAdapterBase>(lidar_config[i], AdapterType::LidarPointsProtoAdapter);
         lidar_points_transmitters_.emplace_back(transmitter_ptr);
         lidar_points_receivers_[i]->regRecvCallback(
-            std::bind(&LidarAdapterBase::send, transmitter_ptr, std::placeholders::_1));
+            std::bind(&LidarAdapterBase::sendPointcloud, transmitter_ptr, std::placeholders::_1));
       }
     }
   }

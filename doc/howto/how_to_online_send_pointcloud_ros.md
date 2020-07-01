@@ -64,7 +64,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -77,7 +77,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-​	Set the *device_type*  to your LiDAR type. (RS16,RS32,RSBP,RS128)
+​	Set the *lidar_type*  to your LiDAR type. (RS16,RS32,RSBP,RS128)
 
 ​	Set the *msop_port* and *difop_port*  to your LiDAR's port number. The default is *msop = 6699* and *difop = 7788*.
 
@@ -126,7 +126,7 @@ common:
 
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699

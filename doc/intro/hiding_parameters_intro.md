@@ -42,7 +42,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699

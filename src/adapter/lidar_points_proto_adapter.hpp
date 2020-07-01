@@ -61,7 +61,7 @@ public:
     yamlReadAbort<std::string>(proto_config, "points_send_port", points_send_port);
     yamlReadAbort<std::string>(proto_config, "points_send_ip", points_send_ip);
     yamlReadAbort<uint16_t>(proto_config, "points_recv_port", points_recv_port);
-    if (msg_source == 5)
+    if (msg_source ==  MsgSource::MSG_FROM_PROTO_POINTCLOUD)
     {
       if (points_proto_ptr_->initReceiver(points_recv_port) == -1)
       {
@@ -102,7 +102,7 @@ public:
     points_cb_.emplace_back(callBack);
   }
 
-  void send(const LidarPointsMsg& msg)
+  void sendPointcloud(const LidarPointsMsg& msg)
   {
     if (points_send_queue_.size() > 10)
     {

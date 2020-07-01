@@ -52,7 +52,7 @@ We want to send packets through protobuf-UDP, so set *send_packets_proto = true*
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -107,7 +107,7 @@ We want to watch the pointcloud on ROS-Rviz, so set *send_points_ros = true*.
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -120,7 +120,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-Check the *device_type*  to be correct.
+Check the *lidar_type*  to be correct.
 
 ```yaml
     proto:
@@ -170,7 +170,7 @@ We want to send packets through protobuf-UDP, so set *send_points_proto = true*.
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -183,7 +183,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-Check the *device_type,msop_port,difop_port*  to be correct.
+Check the *lidar_type,msop_port,difop_port*  to be correct.
 
 ```yaml
     proto:
