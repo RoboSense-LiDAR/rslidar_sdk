@@ -42,7 +42,6 @@ inline Proto_msg::LidarPoints toProtoMsg(const LidarPointsMsg& rs_msg)
   Proto_msg::LidarPoints proto_msg;
   proto_msg.set_timestamp(rs_msg.timestamp);
   proto_msg.set_seq(rs_msg.seq);
-  proto_msg.set_parent_frame_id(rs_msg.parent_frame_id);
   proto_msg.set_frame_id(rs_msg.frame_id);
   proto_msg.set_is_motion_correct(rs_msg.is_motion_correct);
   proto_msg.set_height(rs_msg.height);
@@ -68,7 +67,6 @@ inline LidarPointsMsg toRsMsg(const Proto_msg::LidarPoints& proto_msg)
   LidarPointsMsg rs_msg;
   rs_msg.timestamp = proto_msg.timestamp();
   rs_msg.seq = proto_msg.seq();
-  rs_msg.parent_frame_id = proto_msg.parent_frame_id();
   rs_msg.frame_id = proto_msg.frame_id();
   rs_msg.is_motion_correct = proto_msg.is_motion_correct();
   rs_msg.height = proto_msg.height();

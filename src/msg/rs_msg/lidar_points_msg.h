@@ -42,7 +42,6 @@ struct alignas(16) LidarPointsMsg
 {
   double timestamp = 0.0;
   uint32_t seq = 0;
-  std::string parent_frame_id = "";
   std::string frame_id = "";
   std::string lidar_model = "";
   std::string points_type = "";

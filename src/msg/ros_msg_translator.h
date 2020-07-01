@@ -48,7 +48,7 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointsMsg& rs_msg)
   sensor_msgs::PointCloud2 ros_msg;
   pcl::toROSMsg(*rs_msg.cloudPtr, ros_msg);
   ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
-  ros_msg.header.frame_id = rs_msg.parent_frame_id;
+  ros_msg.header.frame_id = rs_msg.frame_id;
   ros_msg.header.seq = rs_msg.seq;
   return std::move(ros_msg);
 }
@@ -75,8 +75,7 @@ inline LidarScanMsg toRsMsg(const rslidar_msgs::rslidarScan& ros_msg)
   LidarScanMsg rs_msg;
   rs_msg.seq = ros_msg.header.seq;
   rs_msg.timestamp = ros_msg.header.stamp.toSec();
-  rs_msg.parent_frame_id = ros_msg.header.frame_id;
-  rs_msg.frame_id = "/lidar_scan";
+  rs_msg.frame_id = ros_msg.header.frame_id;
 
   for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
   {
@@ -89,7 +88,7 @@ inline rslidar_msgs::rslidarScan toRosMsg(const LidarScanMsg& rs_msg)
 {
   rslidar_msgs::rslidarScan ros_msg;
   ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
-  ros_msg.header.frame_id = rs_msg.parent_frame_id;
+  ros_msg.header.frame_id = rs_msg.frame_id;
   ros_msg.header.seq = rs_msg.seq;
   for (uint32_t i = 0; i < rs_msg.packets.size(); i++)
   {
@@ -121,7 +120,7 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointsMsg& rs_msg)
   pcl::toROSMsg(*rs_msg.cloudPtr, ros_msg);
   ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
   ros_msg.header.stamp.nanosec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
-  ros_msg.header.frame_id = rs_msg.parent_frame_id;
+  ros_msg.header.frame_id = rs_msg.frame_id;
   return std::move(ros_msg);
 }
 inline LidarPacketMsg toRsMsg(const rslidar_msg::msg::RslidarPacket& ros_msg)
@@ -147,8 +146,7 @@ inline LidarScanMsg toRsMsg(const rslidar_msg::msg::RslidarScan& ros_msg)
 {
   LidarScanMsg rs_msg;
   rs_msg.timestamp = ros_msg.header.stamp.sec+double(ros_msg.header.stamp.nanosec)/1e9;
-  rs_msg.parent_frame_id = ros_msg.header.frame_id;
-  rs_msg.frame_id = "/lidar_scan";
+  rs_msg.frame_id = ros_msg.header.frame_id;
 
   for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
   {
@@ -162,7 +160,7 @@ inline rslidar_msg::msg::RslidarScan toRosMsg(const LidarScanMsg& rs_msg)
   rslidar_msg::msg::RslidarScan ros_msg;
   ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
   ros_msg.header.stamp.nanosec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
-  ros_msg.header.frame_id = rs_msg.parent_frame_id;
+  ros_msg.header.frame_id = rs_msg.frame_id;
   for (uint32_t i = 0; i < rs_msg.packets.size(); i++)
   {
     rslidar_msg::msg::RslidarPacket tmp = toRosMsg(rs_msg.packets[i]);

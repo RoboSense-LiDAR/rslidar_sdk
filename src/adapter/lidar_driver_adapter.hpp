@@ -204,7 +204,6 @@ private:
     cloud->width = _msg.width;
     LidarPointsMsg msg(cloud);
     msg.frame_id = _msg.frame_id;
-    msg.parent_frame_id = _msg.parent_frame_id;
     msg.timestamp = _msg.timestamp;
     msg.seq = _msg.seq;
     msg.height = _msg.height;
