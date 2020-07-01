@@ -56,7 +56,7 @@ public:
     uint16_t msop_recv_port;
     uint16_t difop_recv_port;
     YAML::Node proto_config = yamlSubNodeAbort(config, "proto");
-    yamlRead<int>(config, "msg_source", msg_source);
+    yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_proto", send_packets_proto, false);
     yamlReadAbort<std::string>(proto_config, "packets_send_ip", packets_send_ip);
     yamlReadAbort<std::string>(proto_config, "msop_send_port", msop_send_port);

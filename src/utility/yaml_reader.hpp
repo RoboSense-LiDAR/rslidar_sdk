@@ -25,119 +25,48 @@
 #include <yaml-cpp/yaml.h>
 namespace robosense
 {
-  namespace lidar
+namespace lidar
+{
+template <typename T>
+inline void yamlReadAbort(const YAML::Node& yaml, const std::string& key, T& out_val)
+{
+  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
   {
-    template <typename T>
-    inline bool yamlRead(const YAML::Node &yaml, const std::string &key, T &out_val)
-    {
-      if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
-      {
-        WARNING << " : Not set " << RESET << key;
-        WARNING << " value !!!" << RESET << REND;
-        return false;
-      }
-      else
-      {
-        out_val = yaml[key].as<T>();
-        return true;
-      }
-    }
+    ERROR << " : Not set " << RESET << key;
+    ERROR << " value, Aborting!!!" << RESET << REND;
+    exit(-1);
+  }
+  else
+  {
+    out_val = yaml[key].as<T>();
+  }
+}
 
-    template <typename T>
-    inline void yamlReadAbort(const YAML::Node &yaml, const std::string &key, T &out_val)
-    {
+template <typename T>
+inline bool yamlRead(const YAML::Node& yaml, const std::string& key, T& out_val, const T& default_val)
+{
+  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
+  {
+    out_val = default_val;
+    return false;
+  }
+  else
+  {
+    out_val = yaml[key].as<T>();
+    return true;
+  }
+}
 
-      if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
-      {
-        ERROR << " : Not set " << RESET << key;
-        ERROR << " value, Aborting!!!" << RESET << REND;
-        exit(-1);
-      }
-      else
-      {
-        out_val = yaml[key].as<T>();
-      }
-    }
+inline YAML::Node yamlSubNodeAbort(const YAML::Node& yaml, const std::string& node)
+{
+  YAML::Node ret = yaml[node.c_str()];
+  if (!ret)
+  {
+    ERROR << " : Cannot find subnode " << node << ". Aborting!!!" << REND;
+    exit(-1);
+  }
+  return std::move(ret);
+}
 
-    /**
-   * @brief  read target yaml node
-   * @note   read the yaml node with the specific key value, if failed, will set the default value as the output value
-   * @param  &yaml: the yaml node
-   * @param  &key: the key
-   * @param  &out_val: output value
-   * @retval true: success false: failed
-   */
-    template <typename T>
-    inline bool yamlRead(const YAML::Node &yaml, const std::string &key, T &out_val, const T &default_val)
-    {
-      if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
-      {
-        // WARNING <<  " : Not set " << RESET << key;
-        // WARNING << " value, Using default" << RESET << REND;
-        out_val = default_val;
-        return false;
-      }
-      else
-      {
-        out_val = yaml[key].as<T>();
-        return true;
-      }
-    }
-
-    /**
-   * @brief  get the subnode
-   * @note   get the subnode of the input yaml node with the subnode name , if failed, the progress will end
-   * @param  &yaml: the yaml node 
-   * @param  &node: the name of the subnode 
-   * @retval the subnode
-   */
-    inline YAML::Node yamlSubNodeAbort(const YAML::Node &yaml, const std::string &node)
-    {
-      YAML::Node ret = yaml[node.c_str()];
-      if (!ret)
-      {
-        ERROR << " : Cannot find subnode " << node << ". Aborting!!!" << REND;
-        exit(-1);
-      }
-      return std::move(ret);
-    }
-    /**
-   * @brief  get the subnode
-   * @note   get the subnode of the input yaml node with the subnode id (only use in subnode with list structure), if failed, the progress will end
-   * @param  &yaml: the yaml node
-   * @param  &id: the id of the subnode
-   * @retval the subnode
-   */
-    inline YAML::Node yamlSubNodeAbort(const YAML::Node &yaml, const unsigned int &id)
-    {
-      if (id >= yaml.size())
-      {
-        ERROR << " : Input id is overrange! Aborting!!!" << REND;
-        exit(-1);
-      }
-      YAML::Node ret = yaml[id];
-      return std::move(ret);
-    }
-    inline YAML::Node yamlSubNode(const YAML::Node &yaml, const std::string &node)
-    {
-      YAML::Node ret = yaml[node.c_str()];
-      if (!ret)
-      {
-        WARNING << " : Cannot find subnode " << node << ". Returning Null" << REND;
-        return YAML::Node();
-      }
-      return std::move(ret);
-    }
-    inline YAML::Node yamlSubNode(const YAML::Node &yaml, const unsigned int &id)
-    {
-      if (id >= yaml.size())
-      {
-        WARNING << " : Input id is overrange! Returning Null" << REND;
-        return YAML::Node();
-      }
-      YAML::Node ret = yaml[id];
-      return std::move(ret);
-    }
-
-  } // namespace lidar
-} // namespace robosense
+}  // namespace lidar
+}  // namespace robosense

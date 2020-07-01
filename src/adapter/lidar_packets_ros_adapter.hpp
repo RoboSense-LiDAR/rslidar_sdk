@@ -53,10 +53,10 @@ public:
     YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
     nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     std::string ros_recv_topic;
-    yamlReadAbort<std::string>(ros_config, "ros_recv_packets_topic", ros_recv_topic);
+    yamlRead<std::string>(ros_config, "ros_recv_packets_topic", ros_recv_topic,"rslidar_packets");
     std::string ros_send_topic;
-    yamlReadAbort<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic);
-    yamlRead<int>(config, "msg_source", msg_source);
+    yamlRead<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic,"rslidar_packets");
+    yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {

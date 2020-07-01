@@ -56,7 +56,7 @@ public:
     std::string points_send_ip;
     points_proto_ptr_.reset(new ProtoCommunicator);
     YAML::Node proto_config = yamlSubNodeAbort(config, "proto");
-    yamlRead<int>(config, "msg_source", msg_source);
+    yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_points_proto", send_points_proto, false);
     yamlReadAbort<std::string>(proto_config, "points_send_port", points_send_port);
     yamlReadAbort<std::string>(proto_config, "points_send_ip", points_send_ip);
