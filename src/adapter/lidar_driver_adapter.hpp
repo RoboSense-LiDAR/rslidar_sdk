@@ -68,7 +68,7 @@ public:
     yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
     yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
-    yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_file_dir, "");
+    yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_directory, "");
 
     if (device_type == "RS16")
     {
@@ -108,7 +108,7 @@ public:
     {
       driver_ptr_->initDecoderOnly(driver_param);
     }
-    driver_ptr_->regPointRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
   }

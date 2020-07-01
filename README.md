@@ -40,15 +40,13 @@ git submodule update
 
   安装方式： 参考 http://wiki.ros.org
 
-  **如果您安装了ROS kinetic desktop-full版或ROS melodic desktop-full版，那么兼容版本的PCL和Boost也应该同时被安装了，所以您不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将为您节省大量的时间来逐个安装和配置库**
+  **如果您安装了ROS kinetic desktop-full版或ROS melodic desktop-full版，那么兼容版本的PCL也应该同时被安装了，所以您不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将为您节省大量的时间来逐个安装和配置库**
 
 - ROS2 (若需在ROS2环境下使用雷达驱动，则需安装ROS2相关依赖库，Ubuntu1604 - 暂不支持, Ubuntu1804 - 安装ROS2 Eloquent desktop)
 
   安装方式：参考 https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
-  **注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时您还需要手动安装PCL和Boost库**
-
-- Boost--Version >= 1.58 (必需, 若已安装ROS desktop-full, 可跳过)
+  **注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时您还需要手动安装PCL库**
 
 - PCL--Version >= 1.7 (必需, 若已安装ROS desktop-full, 可跳过)
 
@@ -243,9 +241,7 @@ Since the zip file does not include submodule information, user need to download
 
   Installation: please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
-  **Note! Please avoid to install ROS and ROS2 in one computer at the same time! This may cause confliction! Also you may need to install PCL and Boost manually.**
-
-- Boost -- Version>=1.58 (Essential, if installed ROS desktop-full, this part can be ignored)
+  **Note! Please avoid to install ROS and ROS2 in one computer at the same time! This may cause confliction! Also you may need to install PCL  manually.**
 
 - PCL -- Version>=1.7(Essential, if installed ROS desktop-full, this part can be ignored)
 

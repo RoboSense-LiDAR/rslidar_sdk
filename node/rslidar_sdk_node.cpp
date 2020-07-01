@@ -29,7 +29,7 @@ std::mutex mtx_;
 std::condition_variable cv_;
 static void sigHandler(int sig)
 {
-  MSG << "Robosense-LiDAR-Driver is stopping....." << REND;
+  MSG << "RoboSense-LiDAR-Driver is stopping....." << REND;
 #ifdef ROS_FOUND
   ros::shutdown();
 #endif
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 #endif
   demo_ptr->init(config);
   demo_ptr->start();
-  MSG << "Robosense-LiDAR-Driver is running....." << REND;
+  MSG << "RoboSense-LiDAR-Driver is running....." << REND;
 #ifdef ROS_FOUND
   ros::spin();
 #else
