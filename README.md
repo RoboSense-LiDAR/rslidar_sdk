@@ -288,10 +288,6 @@ We offer three ways to compile and run the driver
     #=======================================
     set(COMPILE_METHOD CATKIN)
     ```
-  ```
-  
-  ```
-  
   - Rename the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
     
   - Create a new folder as the workspace, and create a *src* folder in the workspace. Then put the rslidar_sdk project in the *src* folder. 
@@ -303,8 +299,6 @@ We offer three ways to compile and run the driver
     source devel/setup.bash
     roslaunch rslidar_sdk start.launch 
     ```
-
-
 
   - Compile with ROS2-colcon
 
