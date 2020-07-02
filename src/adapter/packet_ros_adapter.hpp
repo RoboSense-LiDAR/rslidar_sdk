@@ -129,7 +129,7 @@ private:
  *
  ****************************************************/
 #ifdef ROS2_FOUND
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "msg/ros_msg_translator.h"
 #include "rclcpp/rclcpp.hpp"
 namespace robosense
