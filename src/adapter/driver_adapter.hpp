@@ -21,7 +21,7 @@
  *****************************************************************************/
 #pragma once
 
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "rs_driver/api/lidar_driver.h"
 namespace robosense
 {

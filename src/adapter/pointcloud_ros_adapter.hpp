@@ -20,14 +20,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 #pragma once
-
-/*****************************************************
- *
- *            ROS LiDAR packets adapter
- *
- ****************************************************/
 #ifdef ROS_FOUND
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "msg/ros_msg_translator.h"
 #include <ros/ros.h>
 #include <ros/publisher.h>
@@ -60,16 +54,6 @@ public:
     }
   }
 
-  inline void start()
-  {
-    return;
-  }
-
-  inline void stop()
-  {
-    return;
-  }
-
   void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
   {
     lidarPointscbs_.emplace_back(callBack);
@@ -89,11 +73,7 @@ private:
 }  // namespace robosense
 #endif  // ROS_FOUND
 
-/*****************************************************
- *
- *            ROS2 LiDAR packets adapter
- *
- ****************************************************/
+
 #ifdef ROS2_FOUND
 #include "adapter/lidar_adapter_base.h"
 #include "msg/ros_msg_translator.h"
@@ -124,16 +104,6 @@ public:
     {
       lidar_points_pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
     }
-  }
-
-  inline void start()
-  {
-    return;
-  }
-
-  inline void stop()
-  {
-    return;
   }
 
   void sendPointcloud(const LidarPointsMsg& msg)

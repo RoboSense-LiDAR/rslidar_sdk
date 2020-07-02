@@ -23,7 +23,7 @@
 #pragma once
 #ifdef PROTO_FOUND
 #define PKT_RECEIVE_BUF_SIZE 2000000
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "utility/protobuf_communicator.hpp"
 #include "msg/proto_msg_translator.h"
 #include <condition_variable>

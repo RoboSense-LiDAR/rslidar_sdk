@@ -57,11 +57,11 @@
 
 #pragma once
 #include "utility/yaml_reader.hpp"
-#include "adapter/lidar_driver_adapter.hpp"
-#include "adapter/lidar_points_ros_adapter.hpp"
-#include "adapter/lidar_packets_ros_adapter.hpp"
-#include "adapter/lidar_points_proto_adapter.hpp"
-#include "adapter/lidar_packets_proto_adapter.hpp"
+#include "adapter/driver_adapter.hpp"
+#include "adapter/packet_ros_adapter.hpp"
+#include "adapter/pointcloud_ros_adapter.hpp"
+#include "adapter/packet_protobuf_adapter.hpp"
+#include "adapter/pointcloud_protobuf_adapter.hpp"
 
 namespace robosense
 {

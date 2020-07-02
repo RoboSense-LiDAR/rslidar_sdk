@@ -27,7 +27,7 @@
  *
  ****************************************************/
 #ifdef ROS_FOUND
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "msg/ros_msg_translator.h"
 #include <ros/ros.h>
 #include <ros/publisher.h>
@@ -71,16 +71,6 @@ public:
       lidar_packets_difop_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
       lidar_packets_msop_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
     }
-  }
-
-  inline void start()
-  {
-    return;
-  }
-
-  inline void stop()
-  {
-    return;
   }
 
   void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
@@ -162,10 +152,10 @@ public:
     node_ptr_.reset(new rclcpp::Node("rslidar_packets_adapter"));
     YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
     std::string ros_recv_topic;
-    yamlReadAbort<std::string>(ros_config, "ros_recv_packets_topic", ros_recv_topic);
+    yamlRead<std::string>(ros_config, "ros_recv_packets_topic", ros_recv_topic,"rslidar_packets");
     std::string ros_send_topic;
-    yamlReadAbort<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic);
-    yamlRead<int>(config, "msg_source", msg_source);
+    yamlRead<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic,"rslidar_packets");
+    yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
@@ -188,11 +178,6 @@ public:
   {
     std::thread t([this]() { rclcpp::spin(node_ptr_); });
     t.detach();
-  }
-
-  inline void stop()
-  {
-    return;
   }
 
   void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
@@ -244,4 +229,4 @@ private:
 };
 }  // namespace lidar
 }  // namespace robosense
-#endif  // ROS_FOUND
+#endif  // ROS2_FOUND

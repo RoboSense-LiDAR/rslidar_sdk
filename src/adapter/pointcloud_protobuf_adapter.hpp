@@ -19,11 +19,10 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-
 #pragma once
 #ifdef PROTO_FOUND
 #define RECEIVE_BUF_SIZE 10000000
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "utility/protobuf_communicator.hpp"
 #include "msg/proto_msg/Proto_msg.LidarPoints.pb.h"
 #include "msg/proto_msg_translator.h"
