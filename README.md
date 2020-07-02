@@ -40,15 +40,22 @@ git submodule update
 
   安装方式： 参考 http://wiki.ros.org
 
-  **如果您安装了ROS kinetic desktop-full版或ROS melodic desktop-full版，那么兼容版本的PCL也应该同时被安装了，所以您不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将为您节省大量的时间来逐个安装和配置库**
+  **如果您安装了ROS kinetic desktop-full版或ROS melodic desktop-full版，那么兼容版本其他依赖库也应该同时被安装了，所以您不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将为您节省大量的时间来逐个安装和配置库**
 
 - ROS2 (若需在ROS2环境下使用雷达驱动，则需安装ROS2相关依赖库，Ubuntu1604 - 暂不支持, Ubuntu1804 - 安装ROS2 Eloquent desktop)
 
   安装方式：参考 https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
-  **注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时您还需要手动安装PCL库**
+  **注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时您还需要手动安装Yaml库**
 
-- PCL--Version >= 1.7 (必需, 若已安装ROS desktop-full, 可跳过)
+- Yaml >= v0.5.2 (必需, 若已安装ROS desktop-full, 可跳过)
+
+  安装方式:
+
+  ```sh
+  sudo apt-get update
+  sudo apt-get install -y libyaml-cpp-dev
+  ```
 
 - Protobuf (若需要使用Protobuf相关功能，则需安装Protobuf相关依赖库)
 
@@ -122,7 +129,7 @@ git submodule update
 
   - 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内
 
-  - 通过链接https://github.com/RoboSense-LiDAR/rslidar_msg下载ROS2环境下的雷达Packet消息定义， 将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列
+  - 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)下载ROS2环境下的雷达Packet消息定义， 将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列
 
   - 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)
 
@@ -315,7 +322,7 @@ We offer three ways to compile and run the driver
 
     - Create a new folder as the workspace, and create a *src* folder in the workspace. Then put the rslidar_sdk project in the *src* folder. 
 
-    - Download the packet definition project in ROS2 through link https://github.com/RoboSense-LiDAR/rslidar_msg, then put the project rslidar_msg in the *src* folder you just created.
+    - Download the packet definition project in ROS2 through [link](https://github.com/RoboSense-LiDAR/rslidar_msg), then put the project rslidar_msg in the *src* folder you just created.
 
     - Return back to the workspace, excute the following command to compile and run. (if use .zsh, replace the 2nd command with *source install/setup.zsh*)
 
