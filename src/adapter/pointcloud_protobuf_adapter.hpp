@@ -142,7 +142,7 @@ private:
     while (recv_thread_.start.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
-      proto_MsgHeader tmp_header;
+      ProtoMsgHeader tmp_header;
       int ret = points_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
@@ -197,7 +197,7 @@ private:
 private:
   std::vector<std::function<void(const LidarPointsMsg&)>> points_cb_;
   lidar::Queue<LidarPointsMsg> points_send_queue_;
-  lidar::Queue<std::pair<void*, proto_MsgHeader>> points_recv_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> points_recv_queue_;
   std::unique_ptr<ProtoCommunicator> points_proto_ptr_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   lidar::Thread recv_thread_;

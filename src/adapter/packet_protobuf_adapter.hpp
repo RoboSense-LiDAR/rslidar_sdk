@@ -162,7 +162,7 @@ private:
     while (difop_recv_thread_.start.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
-      proto_MsgHeader tmp_header;
+      ProtoMsgHeader tmp_header;
       int ret = difop_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
 
       if (ret == -1)
@@ -201,7 +201,7 @@ private:
     while (msop_recv_thread_.start.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
-      proto_MsgHeader tmp_header;
+      ProtoMsgHeader tmp_header;
       int ret = msop_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
@@ -285,8 +285,8 @@ private:
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   lidar::Queue<LidarScanMsg> msop_send_queue_;
   lidar::Queue<LidarPacketMsg> difop_send_queue_;
-  lidar::Queue<std::pair<void*, proto_MsgHeader>> msop_recv_queue_;
-  lidar::Queue<std::pair<void*, proto_MsgHeader>> difop_recv_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> msop_recv_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> difop_recv_queue_;
   lidar::Thread msop_recv_thread_;
   lidar::Thread difop_recv_thread_;
   int old_frmnum_;
