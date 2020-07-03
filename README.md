@@ -250,7 +250,14 @@ Since the zip file does not include submodule information, user need to download
 
   **Note! Please avoid to install ROS and ROS2 in one computer at the same time! This may cause confliction! Also you may need to install PCL  manually.**
 
-- PCL -- Version>=1.7(Essential, if installed ROS desktop-full, this part can be ignored)
+- Yaml >= v0.5.2 (Essential, if installed ROS desktop-full, this part can be ignored)
+
+  Installation:
+
+  ```sh
+  sudo apt-get update
+  sudo apt-get install -y libyaml-cpp-dev
+  ```
 
 - Protobuf (If use Protobuf related functions, Protobuf need to be installed)
 
