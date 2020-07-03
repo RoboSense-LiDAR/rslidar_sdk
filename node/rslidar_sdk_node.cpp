@@ -38,6 +38,7 @@ static void sigHandler(int sig)
 
 int main(int argc, char** argv)
 {
+  signal(SIGINT, sigHandler);  ///< bind ctrl+c signal with the sigHandler function
   TITLE << "********************************************************" << REND;
   TITLE << "**********                                    **********" << REND;
   TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR << "." << RSLIDAR_VERSION_MINOR << "."
@@ -56,16 +57,19 @@ int main(int argc, char** argv)
     ERROR << "Config file format wrong! Please check the format or intendation! " << REND;
     return 0;
   }
-  signal(SIGINT, sigHandler);  ///< bind the ctrl+c signal with the the handler function
-#ifdef ROS_FOUND               ///< if ROS is found, call the ros::init function
+
+#ifdef ROS_FOUND  ///< if ROS is found, call the ros::init function
   ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
 #endif
+
 #ifdef ROS2_FOUND  ///< if ROS2 is found, call the rclcpp::init function
   rclcpp::init(argc, argv);
 #endif
+
   demo_ptr->init(config);
   demo_ptr->start();
   MSG << "RoboSense-LiDAR-Driver is running....." << REND;
+
 #ifdef ROS_FOUND
   ros::spin();
 #else

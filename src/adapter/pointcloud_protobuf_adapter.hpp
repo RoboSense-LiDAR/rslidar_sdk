@@ -36,7 +36,7 @@ namespace lidar
 class LidarPointsProtoAdapter : virtual public LidarAdapterBase
 {
 public:
-  LidarPointsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
+  LidarPointsProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
   {
     thread_pool_ptr_.reset(new lidar::ThreadPool());
   }
@@ -51,16 +51,15 @@ public:
     int msg_source = 0;
     bool send_points_proto;
     std::string points_send_port;
-    uint16_t points_recv_port;
     std::string points_send_ip;
+    uint16_t points_recv_port;
     points_proto_ptr_.reset(new ProtoCommunicator);
-    YAML::Node proto_config = yamlSubNodeAbort(config, "proto");
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_points_proto", send_points_proto, false);
-    yamlReadAbort<std::string>(proto_config, "points_send_port", points_send_port);
-    yamlReadAbort<std::string>(proto_config, "points_send_ip", points_send_ip);
-    yamlReadAbort<uint16_t>(proto_config, "points_recv_port", points_recv_port);
-    if (msg_source ==  MsgSource::MSG_FROM_PROTO_POINTCLOUD)
+    yamlReadAbort<std::string>(config["proto"], "points_send_port", points_send_port);
+    yamlReadAbort<std::string>(config["proto"], "points_send_ip", points_send_ip);
+    yamlReadAbort<uint16_t>(config["proto"], "points_recv_port", points_recv_port);
+    if (msg_source == MsgSource::MSG_FROM_PROTO_POINTCLOUD)
     {
       if (points_proto_ptr_->initReceiver(points_recv_port) == -1)
       {
@@ -179,10 +178,10 @@ private:
       if (recv_thread_.start.load())
       {
         auto pair = points_recv_queue_.front();
-        old_frmNum_ = new_frmNum_;
-        new_frmNum_ = pair.second.frmNumber;
+        old_frmnum_ = new_frmnum_;
+        new_frmnum_ = pair.second.frmNumber;
         memcpy((uint8_t*)buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
-        if ((old_frmNum_ == new_frmNum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
+        if ((old_frmnum_ == new_frmnum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
         {
           Proto_msg::LidarPoints proto_msg;
           proto_msg.ParseFromArray(buff_, pair.second.totalMsgLen);
@@ -202,8 +201,8 @@ private:
   std::unique_ptr<ProtoCommunicator> points_proto_ptr_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   lidar::Thread recv_thread_;
-  int old_frmNum_;
-  int new_frmNum_;
+  int old_frmnum_;
+  int new_frmnum_;
   void* buff_;
 };
 }  // namespace lidar

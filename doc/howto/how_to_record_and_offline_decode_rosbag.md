@@ -70,13 +70,13 @@ We suppose you have recorded a rosbag which contains msop packets with the topic
 
 ### Steps
 
-1,  Set the *common* part of the config file
+1. Set the *common* part of the config file
 
-2,  Set the *lidar-driver* part of the config file
+2. Set the *lidar-driver* part of the config file
 
-3,  Set the *lidar-ros* part of the config file
+3. Set the *lidar-ros* part of the config file
 
-4,  Run the demo & play the rosbag
+4. Run the demo & play the rosbag
 
 
 

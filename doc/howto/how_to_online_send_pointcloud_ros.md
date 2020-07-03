@@ -10,15 +10,15 @@
 
 ## 2 Steps
 
-1,  Get the LiDAR msop port number and difop port number 
+1. Get the LiDAR msop port number and difop port number 
 
-2,  Set the *common* part of the config file
+2. Set the *common* part of the config file
 
-3,  Set the *lidar-driver* part of the config file
+3. Set the *lidar-driver* part of the config file
 
-4,  Set the *lidar-ros* part of the config file
+4. Set the *lidar-ros* part of the config file
 
-5,  Run the demo
+5. Run the demo
 
 
 

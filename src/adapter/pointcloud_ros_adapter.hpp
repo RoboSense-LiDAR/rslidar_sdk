@@ -43,11 +43,10 @@ public:
   void init(const YAML::Node& config)
   {
     bool send_points_ros;
-    YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
-    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     std::string ros_send_topic;
-    yamlRead<std::string>(ros_config, "ros_send_points_topic", ros_send_topic, "rslidar_points");
+    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     yamlRead<bool>(config, "send_points_ros", send_points_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_send_points_topic", ros_send_topic, "rslidar_points");
     if (send_points_ros)
     {
       lidar_points_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
@@ -95,11 +94,10 @@ public:
   void init(const YAML::Node& config)
   {
     bool send_points_ros;
-    node_ptr_.reset(new rclcpp::Node("rslidar_points_adapter"));
-    YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
     std::string ros_send_topic;
-    yamlRead<std::string>(ros_config, "ros_send_points_topic", ros_send_topic, "rslidar_points");
+    node_ptr_.reset(new rclcpp::Node("rslidar_points_adapter"));
     yamlRead<bool>(config, "send_points_ros", send_points_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_send_points_topic", ros_send_topic, "rslidar_points");
     if (send_points_ros)
     {
       lidar_points_pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);

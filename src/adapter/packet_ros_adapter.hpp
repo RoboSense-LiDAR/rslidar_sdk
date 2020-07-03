@@ -50,14 +50,13 @@ public:
   {
     int msg_source;
     bool send_packets_ros;
-    YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
-    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     std::string ros_recv_topic;
-    yamlRead<std::string>(ros_config, "ros_recv_packets_topic", ros_recv_topic,"rslidar_packets");
     std::string ros_send_topic;
-    yamlRead<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic,"rslidar_packets");
+    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_recv_packets_topic", ros_recv_topic, "rslidar_packets");
+    yamlRead<std::string>(config["ros"], "ros_send_packets_topic", ros_send_topic, "rslidar_packets");
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       lidar_packets_difop_sub_ =
@@ -149,14 +148,13 @@ public:
   {
     int msg_source;
     bool send_packets_ros;
-    node_ptr_.reset(new rclcpp::Node("rslidar_packets_adapter"));
-    YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
     std::string ros_recv_topic;
-    yamlRead<std::string>(ros_config, "ros_recv_packets_topic", ros_recv_topic,"rslidar_packets");
     std::string ros_send_topic;
-    yamlRead<std::string>(ros_config, "ros_send_packets_topic", ros_send_topic,"rslidar_packets");
+    node_ptr_.reset(new rclcpp::Node("rslidar_packets_adapter"));
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_recv_packets_topic", ros_recv_topic, "rslidar_packets");
+    yamlRead<std::string>(config["ros"], "ros_send_packets_topic", ros_send_topic, "rslidar_packets");
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       lidar_packets_difop_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(

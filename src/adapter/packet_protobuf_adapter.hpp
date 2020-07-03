@@ -36,7 +36,7 @@ namespace lidar
 class LidarPacketsProtoAdapter : virtual public LidarAdapterBase
 {
 public:
-  LidarPacketsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
+  LidarPacketsProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
   {
     thread_pool_ptr_.reset(new ThreadPool());
   }
@@ -55,14 +55,13 @@ public:
     std::string difop_send_port;
     uint16_t msop_recv_port;
     uint16_t difop_recv_port;
-    YAML::Node proto_config = yamlSubNodeAbort(config, "proto");
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_proto", send_packets_proto, false);
-    yamlReadAbort<std::string>(proto_config, "packets_send_ip", packets_send_ip);
-    yamlReadAbort<std::string>(proto_config, "msop_send_port", msop_send_port);
-    yamlReadAbort<std::string>(proto_config, "difop_send_port", difop_send_port);
-    yamlReadAbort<uint16_t>(proto_config, "msop_recv_port", msop_recv_port);
-    yamlReadAbort<uint16_t>(proto_config, "difop_recv_port", difop_recv_port);
+    yamlReadAbort<std::string>(config["proto"], "packets_send_ip", packets_send_ip);
+    yamlReadAbort<std::string>(config["proto"], "msop_send_port", msop_send_port);
+    yamlReadAbort<std::string>(config["proto"], "difop_send_port", difop_send_port);
+    yamlReadAbort<uint16_t>(config["proto"], "msop_recv_port", msop_recv_port);
+    yamlReadAbort<uint16_t>(config["proto"], "difop_recv_port", difop_recv_port);
     msop_proto_ptr_.reset(new ProtoCommunicator);
     difop_proto_ptr_.reset(new ProtoCommunicator);
     if (msg_source == MsgSource::MSG_FROM_PROTO_PACKET)
@@ -236,10 +235,10 @@ private:
       if (msop_recv_thread_.start.load())
       {
         auto pair = msop_recv_queue_.front();
-        old_frmNum_ = new_frmNum_;
-        new_frmNum_ = pair.second.frmNumber;
+        old_frmnum_ = new_frmnum_;
+        new_frmnum_ = pair.second.frmNumber;
         memcpy((uint8_t*)msop_buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
-        if ((old_frmNum_ == new_frmNum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
+        if ((old_frmnum_ == new_frmnum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
         {
           Proto_msg::LidarScan proto_msg;
           proto_msg.ParseFromArray(msop_buff_, pair.second.totalMsgLen);
@@ -290,8 +289,8 @@ private:
   lidar::Queue<std::pair<void*, proto_MsgHeader>> difop_recv_queue_;
   lidar::Thread msop_recv_thread_;
   lidar::Thread difop_recv_thread_;
-  int old_frmNum_;
-  int new_frmNum_;
+  int old_frmnum_;
+  int new_frmnum_;
   void* msop_buff_;
 };
 }  // namespace lidar
