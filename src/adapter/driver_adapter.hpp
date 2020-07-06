@@ -21,7 +21,7 @@
  *****************************************************************************/
 #pragma once
 
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "rs_driver/api/lidar_driver.h"
 namespace robosense
 {
@@ -47,12 +47,12 @@ public:
   {
     lidar::RSDriverParam driver_param;
     int msg_source;
-    std::string device_type;
+    std::string lidar_type;
     YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
     yamlReadAbort<int>(config, "msg_source", msg_source);
-    yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar_points");
+    yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
     yamlRead<std::string>(driver_config, "angle_path", driver_param.angle_path, "");
-    yamlReadAbort<std::string>(driver_config, "device_type", device_type);
+    yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
     yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.use_lidar_clock, false);
     yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
     yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
@@ -68,35 +68,10 @@ public:
     yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
     yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
-    yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_file_dir, "");
+    yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_directory, "");
+    driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
 
-    if (device_type == "RS16")
-    {
-      driver_param.lidar_type = lidar::LidarType::RS16;
-    }
-    else if (device_type == "RS32")
-    {
-      driver_param.lidar_type = lidar::LidarType::RS32;
-    }
-    else if (device_type == "RSBP")
-    {
-      driver_param.lidar_type = lidar::LidarType::RSBP;
-    }
-    else if (device_type == "RS128")
-    {
-      driver_param.lidar_type = lidar::LidarType::RS128;
-    }
-    else if (device_type == "RSAUTO")
-    {
-      driver_param.lidar_type = lidar::LidarType::RSAUTO;
-    }
-    else
-    {
-      ERROR<<"Wrong lidar type : "<<device_type<<REND;
-      ERROR<<"Please setup the correct type: RS16, RS32, RSBP, RS128, RSAUTO"<<REND;
-      exit(-1);
-    }
-    if (msg_source == 1)
+    if (msg_source == MsgSource::MSG_FROM_LIDAR || msg_source == MsgSource::MSG_FROM_PCAP)
     {
       if (!driver_ptr_->init(driver_param))
       {
@@ -108,7 +83,7 @@ public:
     {
       driver_ptr_->initDecoderOnly(driver_param);
     }
-    driver_ptr_->regPointRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
   }
@@ -138,16 +113,16 @@ public:
     pkt_cbs_.emplace_back(callBack);
   }
 
-  void processMsopScan(const LidarScanMsg& pkt_msg)
+  void decodeScan(const LidarScanMsg& pkt_msg)
   {
     lidar::PointcloudMsg<pcl::PointXYZI> pointcloud;
-    if(driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
+    if (driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
     {
       localPointsCallback(pointcloud);
     }
   }
 
-  void processDifopPackets(const LidarPacketMsg& pkt_msg)
+  void decodePacket(const LidarPacketMsg& pkt_msg)
   {
     driver_ptr_->decodeDifopPkt(cPkt2LPkt(pkt_msg));
   }
@@ -224,23 +199,16 @@ private:
   LidarPointsMsg lPoints2CPoints(const lidar::PointcloudMsg<pcl::PointXYZI>& _msg)
   {
     PointCloudPtr cloud(new pcl::PointCloud<pcl::PointXYZI>);
-    cloud->points.reserve(_msg.pointcloud_ptr->size());
-    for (auto iter : *_msg.pointcloud_ptr)
-    {
-      cloud->push_back(std::move(iter));
-    }
+    cloud->points.assign(_msg.pointcloud_ptr->begin(), _msg.pointcloud_ptr->end());
     cloud->height = _msg.height;
     cloud->width = _msg.width;
     LidarPointsMsg msg(cloud);
     msg.frame_id = _msg.frame_id;
-    msg.parent_frame_id = _msg.parent_frame_id;
     msg.timestamp = _msg.timestamp;
     msg.seq = _msg.seq;
     msg.height = _msg.height;
     msg.width = _msg.width;
     msg.is_dense = _msg.is_dense;
-    msg.is_motion_correct = _msg.is_motion_correct;
-    msg.is_transform = _msg.is_transform;
     return std::move(msg);
   }
 

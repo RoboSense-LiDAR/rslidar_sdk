@@ -22,51 +22,83 @@
 
 #pragma once
 #include "utility/common.h"
-#include <yaml-cpp/yaml.h>
+#include "utility/yaml_reader.hpp"
+#include "msg/rs_msg/lidar_packet_msg.h"
+#include "msg/rs_msg/lidar_scan_msg.h"
+#include "msg/rs_msg/lidar_points_msg.h"
+
 namespace robosense
 {
 namespace lidar
 {
-template <typename T>
-inline void yamlReadAbort(const YAML::Node& yaml, const std::string& key, T& out_val)
-{
-  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
-  {
-    ERROR << " : Not set " << RESET << key;
-    ERROR << " value, Aborting!!!" << RESET << REND;
-    exit(-1);
-  }
-  else
-  {
-    out_val = yaml[key].as<T>();
-  }
-}
 
-template <typename T>
-inline bool yamlRead(const YAML::Node& yaml, const std::string& key, T& out_val, const T& default_val)
+enum MsgSource
 {
-  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
-  {
-    out_val = default_val;
-    return false;
-  }
-  else
-  {
-    out_val = yaml[key].as<T>();
-    return true;
-  }
-}
+  MSG_FROM_LIDAR=1,          
+  MSG_FROM_ROS_PACKET=2, 
+  MSG_FROM_PCAP=3, 
+  MSG_FROM_PROTO_PACKET=4, 
+  MSG_FROM_PROTO_POINTCLOUD=5
+};
 
-inline YAML::Node yamlSubNodeAbort(const YAML::Node& yaml, const std::string& node)
+class LidarAdapterBase
 {
-  YAML::Node ret = yaml[node.c_str()];
-  if (!ret)
-  {
-    ERROR << " : Cannot find subnode " << node << ". Aborting!!!" << REND;
-    exit(-1);
-  }
-  return std::move(ret);
-}
+public:
+  typedef std::shared_ptr<LidarAdapterBase> Ptr;
+  LidarAdapterBase() = default;
+  virtual ~LidarAdapterBase() = default;
 
+  virtual void init(const YAML::Node& config) = 0;
+
+  virtual void start()
+  {
+    return;
+  }
+
+  virtual void stop()
+  {
+    return;
+  }
+
+  virtual void sendScan(const LidarScanMsg& msg)
+  {
+    return;
+  }
+
+  virtual void sendPacket(const LidarPacketMsg& msg)
+  {
+    return;
+  }
+
+  virtual void sendPointcloud(const LidarPointsMsg& msg)
+  {
+    return;
+  }
+
+  virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  {
+    return;
+  }
+
+  virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  {
+    return;
+  }
+
+  virtual void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  {
+    return;
+  }
+
+  virtual void decodeScan(const LidarScanMsg& msg)
+  {
+    return;
+  }
+
+  virtual void decodePacket(const LidarPacketMsg& msg)
+  {
+    return;
+  }
+};
 }  // namespace lidar
 }  // namespace robosense

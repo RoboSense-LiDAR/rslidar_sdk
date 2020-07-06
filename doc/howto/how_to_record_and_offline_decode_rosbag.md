@@ -2,13 +2,13 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	This document will show you how to record and decode rosbag file. Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
 
 
 
-### Record
+## 2 Record
 
 We suppose you are connecting a LiDAR and you have already sent out the pointcloud to ROS.  If you have no idea about this, please read [Online connect lidar and send pointcloud through ROS](doc/howto/how_to_online_send_pointcloud_ros.md) first.
 
@@ -70,13 +70,13 @@ We suppose you have recorded a rosbag which contains msop packets with the topic
 
 ### Steps
 
-1,  Set the *common* part of the config file
+1. Set the *common* part of the config file
 
-2,  Set the *lidar-driver* part of the config file
+2. Set the *lidar-driver* part of the config file
 
-3,  Set the *lidar-ros* part of the config file
+3. Set the *lidar-ros* part of the config file
 
-4,  Run the demo & play the rosbag
+4. Run the demo & play the rosbag
 
 
 
@@ -116,7 +116,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -129,7 +129,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-​	Set the *device_type*  to your LiDAR type. (RS16,RS32,RSBP,RS128)
+​	Set the *lidar_type*  to your LiDAR type. (RS16,RS32,RSBP,RS128)
 
 
 

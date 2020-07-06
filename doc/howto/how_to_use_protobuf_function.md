@@ -2,7 +2,7 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	Suppose you have two computers, PC-A and PC-B and they are far away from each other.  You connect LiDAR with PC-A and for some reasons, you want to use pointcloud message in PC-B. At this time, you may need to use the protobuf functions. Typically, there are two ways to achieve this goal.
 
@@ -22,7 +22,7 @@ We offer both of these two ways but we recommend method 1 rather than method 2 b
 
 
 
-### Send & receive packets
+## 2 Send & receive packets
 
 Here is the instruction for how to send & receive the packet message. We suppose you have already read [Intro to parameters](doc/intro/parameter_intro.md) and you already have a basic idea about the config file. Lets look at the sender part first.
 
@@ -52,7 +52,7 @@ We want to send packets through protobuf-UDP, so set *send_packets_proto = true*
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -107,7 +107,7 @@ We want to watch the pointcloud on ROS-Rviz, so set *send_points_ros = true*.
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -120,7 +120,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-Check the *device_type*  to be correct.
+Check the *lidar_type*  to be correct.
 
 ```yaml
     proto:
@@ -140,7 +140,7 @@ We want to receive packets so we only need to focus on two things, *msop_recv_po
 
 ---
 
-### Send & receive pointcloud
+## 3 Send & receive pointcloud
 
 Here is the instruction for how to send & receive the pointcloud message. We suppose you have already read [Intro to parameters](doc/intro/parameter_intro.md) and you already have a basic idea about the config file. Lets look at the sender part first.
 
@@ -170,7 +170,7 @@ We want to send packets through protobuf-UDP, so set *send_points_proto = true*.
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -183,7 +183,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-Check the *device_type,msop_port,difop_port*  to be correct.
+Check the *lidar_type,msop_port,difop_port*  to be correct.
 
 ```yaml
     proto:

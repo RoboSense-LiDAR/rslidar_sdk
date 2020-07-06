@@ -2,23 +2,23 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	This document will show you how to decode pcap bag  and send pointcloud to ROS. Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
 
 
 
-### Steps
+## 2 Steps
 
-1,  Get the LiDAR msop port number , difop port number and the device ip address. 
+1. Get the LiDAR msop port number , difop port number and the device ip address. 
 
-2,  Set the *common* part of the config file
+2. Set the *common* part of the config file
 
-3,  Set the *lidar-driver* part of the config file
+3. Set the *lidar-driver* part of the config file
 
-4,  Set the *lidar-ros* part of the config file
+4. Set the *lidar-ros* part of the config file
 
-5,  Run the demo
+5. Run the demo
 
 
 
@@ -66,7 +66,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -79,7 +79,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-​	Set the *device_type*  to your LiDAR type. (RS16,RS32,RSBP,RS128)
+​	Set the *lidar_type*  to your LiDAR type. (RS16,RS32,RSBP,RS128)
 
 ​    Set the *device_ip* to your LiDAR's ip address. the default is *device_ip = 192.168.1.200*.
 
@@ -130,7 +130,7 @@ common:
 
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699

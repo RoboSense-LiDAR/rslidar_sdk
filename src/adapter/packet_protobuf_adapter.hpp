@@ -23,7 +23,7 @@
 #pragma once
 #ifdef PROTO_FOUND
 #define PKT_RECEIVE_BUF_SIZE 2000000
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "utility/protobuf_communicator.hpp"
 #include "msg/proto_msg_translator.h"
 #include <condition_variable>
@@ -36,7 +36,7 @@ namespace lidar
 class LidarPacketsProtoAdapter : virtual public LidarAdapterBase
 {
 public:
-  LidarPacketsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
+  LidarPacketsProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
   {
     thread_pool_ptr_.reset(new ThreadPool());
   }
@@ -55,17 +55,16 @@ public:
     std::string difop_send_port;
     uint16_t msop_recv_port;
     uint16_t difop_recv_port;
-    YAML::Node proto_config = yamlSubNodeAbort(config, "proto");
-    yamlRead<int>(config, "msg_source", msg_source);
+    yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packets_proto", send_packets_proto, false);
-    yamlReadAbort<std::string>(proto_config, "packets_send_ip", packets_send_ip);
-    yamlReadAbort<std::string>(proto_config, "msop_send_port", msop_send_port);
-    yamlReadAbort<std::string>(proto_config, "difop_send_port", difop_send_port);
-    yamlReadAbort<uint16_t>(proto_config, "msop_recv_port", msop_recv_port);
-    yamlReadAbort<uint16_t>(proto_config, "difop_recv_port", difop_recv_port);
+    yamlReadAbort<std::string>(config["proto"], "packets_send_ip", packets_send_ip);
+    yamlReadAbort<std::string>(config["proto"], "msop_send_port", msop_send_port);
+    yamlReadAbort<std::string>(config["proto"], "difop_send_port", difop_send_port);
+    yamlReadAbort<uint16_t>(config["proto"], "msop_recv_port", msop_recv_port);
+    yamlReadAbort<uint16_t>(config["proto"], "difop_recv_port", difop_recv_port);
     msop_proto_ptr_.reset(new ProtoCommunicator);
     difop_proto_ptr_.reset(new ProtoCommunicator);
-    if (msg_source == 4)
+    if (msg_source == MsgSource::MSG_FROM_PROTO_PACKET)
     {
       if ((msop_proto_ptr_->initReceiver(msop_recv_port) == -1) ||
           (difop_proto_ptr_->initReceiver(difop_recv_port) == -1))
@@ -120,7 +119,7 @@ public:
     difop_cb_.emplace_back(callBack);
   }
 
-  void sendMsopPkts(const LidarScanMsg& msg)
+  void sendScan(const LidarScanMsg& msg)
   {
     msop_send_queue_.push(msg);
     if (msop_send_queue_.is_task_finished_.load())
@@ -130,7 +129,7 @@ public:
     }
   }
 
-  void sendDifopPkts(const LidarPacketMsg& msg)
+  void sendPacket(const LidarPacketMsg& msg)
   {
     difop_send_queue_.push(msg);
     if (difop_send_queue_.is_task_finished_.load())
@@ -163,7 +162,7 @@ private:
     while (difop_recv_thread_.start.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
-      proto_MsgHeader tmp_header;
+      ProtoMsgHeader tmp_header;
       int ret = difop_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
 
       if (ret == -1)
@@ -202,7 +201,7 @@ private:
     while (msop_recv_thread_.start.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
-      proto_MsgHeader tmp_header;
+      ProtoMsgHeader tmp_header;
       int ret = msop_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
@@ -236,10 +235,10 @@ private:
       if (msop_recv_thread_.start.load())
       {
         auto pair = msop_recv_queue_.front();
-        old_frmNum_ = new_frmNum_;
-        new_frmNum_ = pair.second.frmNumber;
+        old_frmnum_ = new_frmnum_;
+        new_frmnum_ = pair.second.frmNumber;
         memcpy((uint8_t*)msop_buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
-        if ((old_frmNum_ == new_frmNum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
+        if ((old_frmnum_ == new_frmnum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
         {
           Proto_msg::LidarScan proto_msg;
           proto_msg.ParseFromArray(msop_buff_, pair.second.totalMsgLen);
@@ -286,12 +285,12 @@ private:
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   lidar::Queue<LidarScanMsg> msop_send_queue_;
   lidar::Queue<LidarPacketMsg> difop_send_queue_;
-  lidar::Queue<std::pair<void*, proto_MsgHeader>> msop_recv_queue_;
-  lidar::Queue<std::pair<void*, proto_MsgHeader>> difop_recv_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> msop_recv_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> difop_recv_queue_;
   lidar::Thread msop_recv_thread_;
   lidar::Thread difop_recv_thread_;
-  int old_frmNum_;
-  int new_frmNum_;
+  int old_frmnum_;
+  int new_frmnum_;
   void* msop_buff_;
 };
 }  // namespace lidar

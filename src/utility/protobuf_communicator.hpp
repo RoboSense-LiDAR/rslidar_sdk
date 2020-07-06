@@ -130,7 +130,7 @@ private:
                                             (unsigned char)0xD4 };
 };
 
-struct alignas(16) proto_MsgHeader
+struct alignas(16) ProtoMsgHeader
 {
   unsigned int msgType;           // 消息类型: 0: obstacle, 1: freespace, 99: keepalive
   unsigned int frmNumber;         // 消息帧编号
@@ -144,7 +144,7 @@ struct alignas(16) proto_MsgHeader
   unsigned int totalMsgLen;  // 消息帧中的总消息长度(针对一帧数据量较大)
   unsigned int res[2];       // 填充
 
-  proto_MsgHeader()
+  ProtoMsgHeader()
   {
     msgType = 99;
     frmNumber = 0;
@@ -160,7 +160,7 @@ struct alignas(16) proto_MsgHeader
   bool toTargetEndianArray(char* pArray, const unsigned int maxArraySize,
                            const RS_DATA_ENDIAN_TYPE dstEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN) const
   {
-    if (pArray == nullptr || maxArraySize < sizeof(proto_MsgHeader))
+    if (pArray == nullptr || maxArraySize < sizeof(ProtoMsgHeader))
     {
       return false;
     }
@@ -203,7 +203,7 @@ struct alignas(16) proto_MsgHeader
   bool toHostEndianValue(const char* pArray, const unsigned int arraySize,
                          const RS_DATA_ENDIAN_TYPE srcEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN)
   {
-    if (pArray == nullptr || arraySize < sizeof(proto_MsgHeader))
+    if (pArray == nullptr || arraySize < sizeof(ProtoMsgHeader))
     {
       return false;
     }
@@ -307,15 +307,15 @@ public:
    * @param  &header: header
    * @retval >=0 : success -1: failed
    */
-  inline int sendProtoMsg(const void* pMsgData, const proto_MsgHeader& header)
+  inline int sendProtoMsg(const void* pMsgData, const ProtoMsgHeader& header)
   {
-    int sendLen = header.msgLen + sizeof(proto_MsgHeader);
+    int sendLen = header.msgLen + sizeof(ProtoMsgHeader);
     char* sendBuffer = (char*)malloc(sendLen);
     memset(sendBuffer, 0, sendLen);
-    header.toTargetEndianArray(sendBuffer, sizeof(proto_MsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
+    header.toTargetEndianArray(sendBuffer, sizeof(ProtoMsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
     if (header.msgLen > 0)
     {
-      memcpy(sendBuffer + sizeof(proto_MsgHeader), pMsgData, header.msgLen);
+      memcpy(sendBuffer + sizeof(ProtoMsgHeader), pMsgData, header.msgLen);
     }
     int ret = send_sock_ptr_->send_to(boost::asio::buffer(sendBuffer, sendLen), *iterator_);
     free(sendBuffer);
@@ -329,13 +329,13 @@ public:
    * @param  &header: output header
    * @retval >=0: success -1: failed
    */
-  inline int receiveProtoMsg(void* pMsgData, const int msgMaxLen, proto_MsgHeader& header)
+  inline int receiveProtoMsg(void* pMsgData, const int msgMaxLen, ProtoMsgHeader& header)
   {
     deadline_->expires_from_now(boost::posix_time::seconds(1));
     boost::system::error_code ec = boost::asio::error::would_block;
     std::size_t ret = 0;
-    char* pRecvBuffer = (char*)malloc(msgMaxLen + sizeof(proto_MsgHeader));
-    recv_sock_ptr_->async_receive(boost::asio::buffer(pRecvBuffer, msgMaxLen + sizeof(proto_MsgHeader)),
+    char* pRecvBuffer = (char*)malloc(msgMaxLen + sizeof(ProtoMsgHeader));
+    recv_sock_ptr_->async_receive(boost::asio::buffer(pRecvBuffer, msgMaxLen + sizeof(ProtoMsgHeader)),
                                   boost::bind(&ProtoCommunicator::handle_receive, _1, _2, &ec, &ret));
     do
     {
@@ -346,15 +346,15 @@ public:
       free(pRecvBuffer);
       return -1;
     }
-    header.toHostEndianValue(pRecvBuffer, sizeof(proto_MsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
-    if (ret < (std::size_t)(header.msgLen + sizeof(proto_MsgHeader)))
+    header.toHostEndianValue(pRecvBuffer, sizeof(ProtoMsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
+    if (ret < (std::size_t)(header.msgLen + sizeof(ProtoMsgHeader)))
     {
       free(pRecvBuffer);
       return -1;
     }
     if (header.msgLen > 0)
     {
-      memcpy(pMsgData, pRecvBuffer + sizeof(proto_MsgHeader), header.msgLen);
+      memcpy(pMsgData, pRecvBuffer + sizeof(ProtoMsgHeader), header.msgLen);
     }
     free(pRecvBuffer);
     return ret;
@@ -366,7 +366,7 @@ public:
     void* buf = malloc(msg.ByteSize() + SPLIT_SIZE);
     msg.SerializeToArray(buf, msg.ByteSize());
     int pkt_num = ceil(1.0 * msg.ByteSize() / SPLIT_SIZE);
-    proto_MsgHeader tmp_header;
+    ProtoMsgHeader tmp_header;
     tmp_header.frmNumber = msg.seq();
     tmp_header.msgLen = SPLIT_SIZE;
     tmp_header.totalMsgCnt = pkt_num;
@@ -394,7 +394,7 @@ public:
   template <typename T>
   bool sendSingleMsg(const T& msg)
   {
-    proto_MsgHeader tmp_header;
+    ProtoMsgHeader tmp_header;
     tmp_header.msgLen = msg.ByteSize();
     void* buf = malloc(tmp_header.msgLen);
     msg.SerializeToArray(buf, tmp_header.msgLen);

@@ -8,7 +8,7 @@ There is only one parameter file called config.yaml, which is locate in *rslidar
 
 
 
-### Common Part
+## 1 Common Part
 
 This part is used to decide the source of LiDAR data, and whether to send out the result or not.
 
@@ -81,11 +81,11 @@ common:
 
 
 
-### lidar
+## 2 lidar
 
 This part need to be adjust according to different LiDAR (in multi-LiDARs case). Here is an example for one LiDAR and three LiDARs. 
 
-**NOTE: About the device_type. If set to RSAUTO, the driver can check the lidar type automatically, but this function only support the latest version LiDARs. If you found the pointcloud is not correct, please set the device type manually**
+**NOTE: About the lidar_type. If set to RSAUTO, the driver can check the lidar type automatically, but this function only support the latest version LiDARs. If you found the pointcloud is not correct, please set the device type manually**
 
 
 
@@ -94,7 +94,7 @@ This part need to be adjust according to different LiDAR (in multi-LiDARs case).
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -128,7 +128,7 @@ lidar:
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -153,7 +153,7 @@ lidar:
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
       packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
   - driver:
-      device_type: RSBP           #The lidar type, must be set correctly
+      lidar_type: RSBP           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 1990              #The mosp port of lidar,default is 6699
@@ -178,7 +178,7 @@ lidar:
       difop_send_port: 60026                      #The port number which the difop packets will be send to 
       packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
   - driver:
-      device_type: RSBP           #The lidar type, must be set correctly
+      lidar_type: RSBP           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 2000              #The mosp port of lidar,default is 6699

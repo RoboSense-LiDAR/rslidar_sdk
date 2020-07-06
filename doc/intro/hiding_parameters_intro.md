@@ -2,13 +2,13 @@
 
 
 
-### Introduction
+## 1 Introduction
 
 ​	In order to make the config file as simple as possible, we hide some of the parameters and give them a default value in the program. This document show you the use of those hiding parameters and you can decide whether to add them back or not. 
 
 
 
-#### common
+### 1.1 common
 
 ```yaml
 
@@ -37,12 +37,12 @@ common:
 
 
 
-#### lidar-driver
+### 1.2 lidar-driver
 
 ```yaml
 lidar:
   - driver:
-      device_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128           #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -52,6 +52,7 @@ lidar:
       min_distance: 0.2            #The minimum distance of pointcloud area
       max_distance: 200            #The maximum distance of pointcloud area
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      wait_for_difop: true         #True--start sending pointcloud until receive difop packet
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
       mode_split_frame: 1	       #1: Split frame depends on cut_angle; 2:Split frame depends on packet rate; 3:Split frame depends on num_pkts_split
 	  num_pkts_split: 1 	       #The number of packets in one frame, only be used when mode_split_frame=3
@@ -63,7 +64,7 @@ lidar:
 - mode_split_frame -- The mode to split the LiDAR frames. Default value is 1.
 
   - 1 -- Spliting frames depends on the cut_angle
-- 2 -- Spliting frames depends on the packet rate
+  - 2 -- Spliting frames depends on the packet rate
   - 3 -- Spliting frames depends on num_pkts_split
 
 - num_pkts_split: The number of packets in one frame. Only be used when mode_split_frame = 3

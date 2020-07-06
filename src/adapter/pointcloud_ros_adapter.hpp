@@ -20,14 +20,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 #pragma once
-
 #ifdef ROS_FOUND
-
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "msg/ros_msg_translator.h"
 #include <ros/ros.h>
 #include <ros/publisher.h>
-#include <ros/subscriber.h>
 
 namespace robosense
 {
@@ -45,31 +42,15 @@ public:
 
   void init(const YAML::Node& config)
   {
-    int msg_source;
     bool send_points_ros;
-    YAML::Node ros_config = yamlSubNodeAbort(config, "ros");
-    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-    yamlRead<std::string>(config["driver"], "frame_id", frame_id_, "rslidar");
-    std::string ros_recv_topic;
-    yamlRead<std::string>(ros_config, "ros_recv_points_topic", ros_recv_topic, "rslidar_points");
     std::string ros_send_topic;
-    yamlRead<std::string>(ros_config, "ros_send_points_topic", ros_send_topic, "rslidar_points");
-    yamlRead<int>(config, "msg_source", msg_source);
+    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     yamlRead<bool>(config, "send_points_ros", send_points_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_send_points_topic", ros_send_topic, "rslidar_points");
     if (send_points_ros)
     {
       lidar_points_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
     }
-  }
-
-  inline void start()
-  {
-    return;
-  }
-
-  inline void stop()
-  {
-    return;
   }
 
   void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
@@ -77,7 +58,7 @@ public:
     lidarPointscbs_.emplace_back(callBack);
   }
 
-  void send(const LidarPointsMsg& msg)
+  void sendPointcloud(const LidarPointsMsg& msg)
   {
     lidar_points_pub_.publish(toRosMsg(msg));
   }
@@ -86,9 +67,52 @@ private:
   std::shared_ptr<ros::NodeHandle> nh_;
   std::vector<std::function<void(const LidarPointsMsg&)>> lidarPointscbs_;
   ros::Publisher lidar_points_pub_;
-  ros::Subscriber lidar_points_sub_;
-  std::string frame_id_;
 };
 }  // namespace lidar
 }  // namespace robosense
 #endif  // ROS_FOUND
+
+
+#ifdef ROS2_FOUND
+#include "adapter/adapter_base.h"
+#include "msg/ros_msg_translator.h"
+#include "rclcpp/rclcpp.hpp"
+namespace robosense
+{
+namespace lidar
+{
+class LidarPointsRosAdapter : virtual public LidarAdapterBase
+{
+public:
+  LidarPointsRosAdapter() = default;
+
+  ~LidarPointsRosAdapter()
+  {
+    stop();
+  }
+
+  void init(const YAML::Node& config)
+  {
+    bool send_points_ros;
+    std::string ros_send_topic;
+    node_ptr_.reset(new rclcpp::Node("rslidar_points_adapter"));
+    yamlRead<bool>(config, "send_points_ros", send_points_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_send_points_topic", ros_send_topic, "rslidar_points");
+    if (send_points_ros)
+    {
+      lidar_points_pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
+    }
+  }
+
+  void sendPointcloud(const LidarPointsMsg& msg)
+  {
+    lidar_points_pub_->publish(toRosMsg(msg));
+  }
+
+private:
+  std::shared_ptr<rclcpp::Node> node_ptr_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_points_pub_;
+};
+}  // namespace lidar
+}  // namespace robosense
+#endif  // ROS2_FOUND

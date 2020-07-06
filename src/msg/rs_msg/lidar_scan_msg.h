@@ -40,7 +40,6 @@ struct alignas(16) LidarScanMsg
 {
   double timestamp = 0.0;
   uint32_t seq = 0;
-  std::string parent_frame_id = "";
   std::string frame_id = "";
 
   std::vector<LidarPacketMsg> packets;  ///< a vector which store a scan of packets (the size of the vector is not fix)

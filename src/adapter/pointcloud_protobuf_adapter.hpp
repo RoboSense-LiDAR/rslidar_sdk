@@ -19,11 +19,10 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-
 #pragma once
 #ifdef PROTO_FOUND
 #define RECEIVE_BUF_SIZE 10000000
-#include "adapter/lidar_adapter_base.h"
+#include "adapter/adapter_base.h"
 #include "utility/protobuf_communicator.hpp"
 #include "msg/proto_msg/Proto_msg.LidarPoints.pb.h"
 #include "msg/proto_msg_translator.h"
@@ -37,7 +36,7 @@ namespace lidar
 class LidarPointsProtoAdapter : virtual public LidarAdapterBase
 {
 public:
-  LidarPointsProtoAdapter() : old_frmNum_(0), new_frmNum_(0)
+  LidarPointsProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
   {
     thread_pool_ptr_.reset(new lidar::ThreadPool());
   }
@@ -52,16 +51,15 @@ public:
     int msg_source = 0;
     bool send_points_proto;
     std::string points_send_port;
-    uint16_t points_recv_port;
     std::string points_send_ip;
+    uint16_t points_recv_port;
     points_proto_ptr_.reset(new ProtoCommunicator);
-    YAML::Node proto_config = yamlSubNodeAbort(config, "proto");
-    yamlRead<int>(config, "msg_source", msg_source);
+    yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_points_proto", send_points_proto, false);
-    yamlReadAbort<std::string>(proto_config, "points_send_port", points_send_port);
-    yamlReadAbort<std::string>(proto_config, "points_send_ip", points_send_ip);
-    yamlReadAbort<uint16_t>(proto_config, "points_recv_port", points_recv_port);
-    if (msg_source == 5)
+    yamlReadAbort<std::string>(config["proto"], "points_send_port", points_send_port);
+    yamlReadAbort<std::string>(config["proto"], "points_send_ip", points_send_ip);
+    yamlReadAbort<uint16_t>(config["proto"], "points_recv_port", points_recv_port);
+    if (msg_source == MsgSource::MSG_FROM_PROTO_POINTCLOUD)
     {
       if (points_proto_ptr_->initReceiver(points_recv_port) == -1)
       {
@@ -102,7 +100,7 @@ public:
     points_cb_.emplace_back(callBack);
   }
 
-  void send(const LidarPointsMsg& msg)
+  void sendPointcloud(const LidarPointsMsg& msg)
   {
     if (points_send_queue_.size() > 10)
     {
@@ -144,7 +142,7 @@ private:
     while (recv_thread_.start.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
-      proto_MsgHeader tmp_header;
+      ProtoMsgHeader tmp_header;
       int ret = points_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
@@ -180,10 +178,10 @@ private:
       if (recv_thread_.start.load())
       {
         auto pair = points_recv_queue_.front();
-        old_frmNum_ = new_frmNum_;
-        new_frmNum_ = pair.second.frmNumber;
+        old_frmnum_ = new_frmnum_;
+        new_frmnum_ = pair.second.frmNumber;
         memcpy((uint8_t*)buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
-        if ((old_frmNum_ == new_frmNum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
+        if ((old_frmnum_ == new_frmnum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
         {
           Proto_msg::LidarPoints proto_msg;
           proto_msg.ParseFromArray(buff_, pair.second.totalMsgLen);
@@ -199,12 +197,12 @@ private:
 private:
   std::vector<std::function<void(const LidarPointsMsg&)>> points_cb_;
   lidar::Queue<LidarPointsMsg> points_send_queue_;
-  lidar::Queue<std::pair<void*, proto_MsgHeader>> points_recv_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> points_recv_queue_;
   std::unique_ptr<ProtoCommunicator> points_proto_ptr_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   lidar::Thread recv_thread_;
-  int old_frmNum_;
-  int new_frmNum_;
+  int old_frmnum_;
+  int new_frmnum_;
   void* buff_;
 };
 }  // namespace lidar
