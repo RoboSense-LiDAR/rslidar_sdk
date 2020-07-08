@@ -45,7 +45,7 @@ common:
 
 - send_packets_ros
 
-  Ture -- The lidar packets will be sent to ROS. e.g., When you connect a lidar and want to record rosbag, you can set the *msg_source=1* and set *send_packets_ros = true*.
+  Ture -- The lidar packets will be sent to ROS. e.g. When you connect a lidar and want to record rosbag, you can set the *msg_source=1* and set *send_packets_ros = true*.
 
   False -- Do nothing.
 
@@ -55,7 +55,7 @@ common:
 
 - send_points_ros
 
-  True -- The lidar pointcloud will be sent to ROS. e.g., When you connect a lidar and want to see pointcloud on ROS-Rviz, you can the *msg_source =1* and set *send_points_ros = true*.
+  True -- The lidar pointcloud will be sent to ROS. e.g. When you connect a lidar and want to see pointcloud on ROS-Rviz, you can the *msg_source =1* and set *send_points_ros = true*.
 
   False -- Do nothing.
 
@@ -63,13 +63,13 @@ common:
 
 - send_packets_proto
 
-  True -- The lidar packets will be sent out as protobuf message through ethernet in UDP protocal. e.g., When you connect the lidar with computerA and want to see the pointcloud on computerB, you can run a rslidar_sdk on computerA and set the *msg_source = 1*, set *send_packets_proto = true*. Then, on computerB, set the *msg_source = 4* and set *send_points_ros = true*, then you can see the pointcloud on computerB through ROS-Rviz.
+  True -- The lidar packets will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the pointcloud on computerB, you can run a rslidar_sdk on computerA and set the *msg_source = 1*, set *send_packets_proto = true*. Then, on computerB, set the *msg_source = 4* and set *send_points_ros = true*, then you can see the pointcloud on computerB through ROS-Rviz.
 
   False -- Do nothing
 
 - send_points_proto
 
-  True -- The lidar pointcloud will be sent out as protobuf message through ethernet in UDP protocal. e.g., When you connect the lidar with computerA and want to see the pointcloud on computerB, you can run a rslidar_sdk on computerA and *set the msg_source = 1*, set *send_points_proto = true*. Then, on computerB, set the *msg_source = 5* and *set send_points_ros = true*, then you can see the pointcloud on computerB through ROS-Rviz.
+  True -- The lidar pointcloud will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the pointcloud on computerB, you can run a rslidar_sdk on computerA and *set the msg_source = 1*, set *send_points_proto = true*. Then, on computerB, set the *msg_source = 5* and *set send_points_ros = true*, then you can see the pointcloud on computerB through ROS-Rviz.
 
   **Node: We suggest send packets through ethernet rather than pointcloud because pointcloud size is too larger and it may take up a lot of bandwidth.**
 

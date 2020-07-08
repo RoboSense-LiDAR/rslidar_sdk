@@ -4,7 +4,7 @@
 
 ## 1 Introduction
 
-​	This document will show you how to online connect a LiDAR or offline decode pcap to  send pointcloud through ROS2. Please make sure you have read the LiDAR user-guide before reading this document. **Also please make sure you have read the README.md file and follow the ROS2 compile instructions **
+​	This document will show you how to online connect a LiDAR or offline decode pcap to  send pointcloud through ROS2. Please make sure you have read the LiDAR user-guide before reading this document. **Also please make sure you have read the README.md file and follow the ROS2 compile instructions**
 
 
 
@@ -69,7 +69,7 @@ lidar:
       difop_port: 7788             #The difop port of lidar, default is 7788
       min_distance: 0.2            #The minimum distance of pointcloud area
       max_distance: 200            #The maximum distance of pointcloud area
-	  angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
+      angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
 ​	Set the *msop_port* and *difop_port*  to your LiDAR's port number. The default is *msop = 6699* and *difop = 7788*. 
