@@ -100,17 +100,17 @@ public:
 
   inline void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
   {
-    point_cbs_.emplace_back(callBack);
+    pointcloud_cb_vec_.emplace_back(callBack);
   }
 
   inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
   {
-    scan_cbs_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callBack);
   }
 
   inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
   {
-    pkt_cbs_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callBack);
   }
 
   void decodeScan(const LidarScanMsg& pkt_msg)
@@ -130,7 +130,7 @@ public:
 private:
   void localPointsCallback(const lidar::PointcloudMsg<pcl::PointXYZI>& _msg)
   {
-    for (auto iter : point_cbs_)
+    for (auto iter : pointcloud_cb_vec_)
     {
       thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPoints2CPoints(_msg)); });
     }
@@ -138,7 +138,7 @@ private:
 
   void localScanCallback(const lidar::ScanMsg& _msg)
   {
-    for (auto iter : scan_cbs_)
+    for (auto iter : scan_cb_vec_)
     {
       thread_pool_ptr_->commit([this, _msg, iter]() { iter(lScan2CScan(_msg)); });
     }
@@ -146,7 +146,7 @@ private:
 
   void localPacketCallback(const lidar::PacketMsg& _msg)
   {
-    for (auto iter : pkt_cbs_)
+    for (auto iter : packet_cb_vec_)
     {
       thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPkt2CPkt(_msg)); });
     }
@@ -214,9 +214,9 @@ private:
 
 private:
   std::shared_ptr<lidar::LidarDriver<pcl::PointXYZI>> driver_ptr_;
-  std::vector<std::function<void(const LidarPointsMsg&)>> point_cbs_;
-  std::vector<std::function<void(const LidarScanMsg&)>> scan_cbs_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> pkt_cbs_;
+  std::vector<std::function<void(const LidarPointsMsg&)>> pointcloud_cb_vec_;
+  std::vector<std::function<void(const LidarScanMsg&)>> scan_cb_vec_;
+  std::vector<std::function<void(const LidarPacketMsg&)>> packet_cb_vec_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
 };
 }  // namespace lidar

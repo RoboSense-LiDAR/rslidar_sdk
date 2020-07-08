@@ -49,24 +49,18 @@ public:
     yamlRead<std::string>(config["ros"], "ros_send_points_topic", ros_send_topic, "rslidar_points");
     if (send_points_ros)
     {
-      lidar_points_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
+      pointcloud_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
     }
-  }
-
-  void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
-  {
-    lidarPointscbs_.emplace_back(callBack);
   }
 
   void sendPointcloud(const LidarPointsMsg& msg)
   {
-    lidar_points_pub_.publish(toRosMsg(msg));
+    pointcloud_pub_.publish(toRosMsg(msg));
   }
 
 private:
   std::shared_ptr<ros::NodeHandle> nh_;
-  std::vector<std::function<void(const LidarPointsMsg&)>> lidarPointscbs_;
-  ros::Publisher lidar_points_pub_;
+  ros::Publisher pointcloud_pub_;
 };
 }  // namespace lidar
 }  // namespace robosense
@@ -100,18 +94,18 @@ public:
     yamlRead<std::string>(config["ros"], "ros_send_points_topic", ros_send_topic, "rslidar_points");
     if (send_points_ros)
     {
-      lidar_points_pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
+      pointcloud_pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
     }
   }
 
   void sendPointcloud(const LidarPointsMsg& msg)
   {
-    lidar_points_pub_->publish(toRosMsg(msg));
+    pointcloud_pub_->publish(toRosMsg(msg));
   }
 
 private:
   std::shared_ptr<rclcpp::Node> node_ptr_;
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_points_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
 };
 }  // namespace lidar
 }  // namespace robosense

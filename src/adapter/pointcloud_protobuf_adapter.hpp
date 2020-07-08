@@ -53,7 +53,7 @@ public:
     std::string points_send_port;
     std::string points_send_ip;
     uint16_t points_recv_port;
-    points_proto_ptr_.reset(new ProtoCommunicator);
+    proto_com_ptr_.reset(new ProtoCommunicator);
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_points_proto", send_points_proto, false);
     yamlReadAbort<std::string>(config["proto"], "points_send_port", points_send_port);
@@ -61,7 +61,7 @@ public:
     yamlReadAbort<uint16_t>(config["proto"], "points_recv_port", points_recv_port);
     if (msg_source == MsgSource::MSG_FROM_PROTO_POINTCLOUD)
     {
-      if (points_proto_ptr_->initReceiver(points_recv_port) == -1)
+      if (proto_com_ptr_->initReceiver(points_recv_port) == -1)
       {
         ERROR << "LidarPointsProtoAdapter: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
         exit(-1);
@@ -70,7 +70,7 @@ public:
     }
     if (send_points_proto)
     {
-      if (points_proto_ptr_->initSender(points_send_port, points_send_ip) == -1)
+      if (proto_com_ptr_->initSender(points_send_port, points_send_ip) == -1)
       {
         ERROR << "LidarPointsProtoAdapter: Create UDP Sender Socket Failed ! " << REND;
         exit(-1);
@@ -97,19 +97,19 @@ public:
 
   inline void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
   {
-    points_cb_.emplace_back(callBack);
+    pointcloud_cb_vec_.emplace_back(callBack);
   }
 
   void sendPointcloud(const LidarPointsMsg& msg)
   {
-    if (points_send_queue_.size() > 10)
+    if (pointcloud_send_queue_.size() > 10)
     {
-      points_send_queue_.clear();
+      pointcloud_send_queue_.clear();
     }
-    points_send_queue_.push(msg);
-    if (points_send_queue_.is_task_finished_.load())
+    pointcloud_send_queue_.push(msg);
+    if (pointcloud_send_queue_.is_task_finished_.load())
     {
-      points_send_queue_.is_task_finished_.store(false);
+      pointcloud_send_queue_.is_task_finished_.store(false);
       thread_pool_ptr_->commit([this]() { sendPoints(); });
     }
   }
@@ -117,7 +117,7 @@ public:
 private:
   inline void localCallback(const LidarPointsMsg& rs_msg)
   {
-    for (auto& cb : points_cb_)
+    for (auto& cb : pointcloud_cb_vec_)
     {
       cb(rs_msg);
     }
@@ -125,15 +125,15 @@ private:
 
   void sendPoints()
   {
-    while (points_send_queue_.size() > 0)
+    while (pointcloud_send_queue_.size() > 0)
     {
-      Proto_msg::LidarPoints proto_msg = toProtoMsg(points_send_queue_.popFront());
-      if (!points_proto_ptr_->sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
+      Proto_msg::LidarPoints proto_msg = toProtoMsg(pointcloud_send_queue_.popFront());
+      if (!proto_com_ptr_->sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
       {
         WARNING << "Pointcloud Protobuf sending error" << REND;
       }
     }
-    points_send_queue_.is_task_finished_.store(true);
+    pointcloud_send_queue_.is_task_finished_.store(true);
   }
 
   void recvPoints()
@@ -143,7 +143,7 @@ private:
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
       ProtoMsgHeader tmp_header;
-      int ret = points_proto_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
+      int ret = proto_com_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
         if (tmp_header.msgID == 0)
@@ -161,11 +161,11 @@ private:
         continue;
       }
 
-      points_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
+      pointcloud_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
 
-      if (points_recv_queue_.is_task_finished_.load())
+      if (pointcloud_recv_queue_.is_task_finished_.load())
       {
-        points_recv_queue_.is_task_finished_.store(false);
+        pointcloud_recv_queue_.is_task_finished_.store(false);
         thread_pool_ptr_->commit([&]() { splicePoints(); });
       }
     }
@@ -173,11 +173,11 @@ private:
 
   void splicePoints()
   {
-    while (points_recv_queue_.size() > 0)
+    while (pointcloud_recv_queue_.size() > 0)
     {
       if (recv_thread_.start.load())
       {
-        auto pair = points_recv_queue_.front();
+        auto pair = pointcloud_recv_queue_.front();
         old_frmnum_ = new_frmnum_;
         new_frmnum_ = pair.second.frmNumber;
         memcpy((uint8_t*)buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
@@ -188,17 +188,17 @@ private:
           localCallback(toRsMsg(proto_msg));
         }
       }
-      free(points_recv_queue_.front().first);
-      points_recv_queue_.pop();
+      free(pointcloud_recv_queue_.front().first);
+      pointcloud_recv_queue_.pop();
     }
-    points_recv_queue_.is_task_finished_.store(true);
+    pointcloud_recv_queue_.is_task_finished_.store(true);
   }
 
 private:
-  std::vector<std::function<void(const LidarPointsMsg&)>> points_cb_;
-  lidar::Queue<LidarPointsMsg> points_send_queue_;
-  lidar::Queue<std::pair<void*, ProtoMsgHeader>> points_recv_queue_;
-  std::unique_ptr<ProtoCommunicator> points_proto_ptr_;
+  std::vector<std::function<void(const LidarPointsMsg&)>> pointcloud_cb_vec_;
+  lidar::Queue<LidarPointsMsg> pointcloud_send_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> pointcloud_recv_queue_;
+  std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   lidar::Thread recv_thread_;
   int old_frmnum_;
