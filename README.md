@@ -183,11 +183,11 @@ git submodule update
 
 **以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 用户可通过配置参数改变不同的工作模式。**
 
-[在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_pointcloud_ros.md)
+[在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_pointcloud_ros_cn.md)
 
-[录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag.md)
+[录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)
 
-[离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap.md)
+[离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)
 
 [如何使用ROS2功能](doc/howto/how_to_use_ros2.md)
 
@@ -199,9 +199,9 @@ git submodule update
 
 [隐藏参数介绍](doc/intro/hiding_parameters_intro.md)
 
-[使用Protobuf发送&接收](doc/howto/how_to_use_protobuf_function.md)
+[使用Protobuf发送&接收](doc/howto/how_to_use_protobuf_function_cn.md)
 
-[多雷达](doc/howto/how_to_use_multi_lidars.md)
+[多雷达](doc/howto/how_to_use_multi_lidars_cn.md)
 
 
 
