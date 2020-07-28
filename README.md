@@ -1,7 +1,7 @@
 # **rslidar_sdk** 
 
 ### 1 工程简介
-  **rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核rs_driver(https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
+  **rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
 
 
 
@@ -20,7 +20,7 @@ git submodule update
 
 - 方法二 ------ 直接下载
 
-由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核rs_driver(https://github.com/RoboSense-LiDAR/rs_driver), 然后将其解压在 rslidar_sdk/src路径下。 将src中原有的rs_driver文件夹删除，再将刚刚解压好的rs_driver-xxxx文件夹改名为rs_driver即可。
+由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver),  然后将其解压在 rslidar_sdk/src路径下。 将src中原有的rs_driver文件夹删除，再将刚刚解压好的rs_driver-xxxx文件夹改名为rs_driver即可。
 
 
 
