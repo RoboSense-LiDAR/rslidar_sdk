@@ -30,12 +30,12 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPointsRosAdapter : virtual public AdapterBase
+class PointCloudRosAdapter : virtual public AdapterBase
 {
 public:
-  LidarPointsRosAdapter() = default;
+  PointCloudRosAdapter() = default;
 
-  ~LidarPointsRosAdapter()
+  ~PointCloudRosAdapter()
   {
     stop();
   }
@@ -75,12 +75,12 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPointsRosAdapter : virtual public AdapterBase
+class PointCloudRosAdapter : virtual public AdapterBase
 {
 public:
-  LidarPointsRosAdapter() = default;
+  PointCloudRosAdapter() = default;
 
-  ~LidarPointsRosAdapter()
+  ~PointCloudRosAdapter()
   {
     stop();
   }

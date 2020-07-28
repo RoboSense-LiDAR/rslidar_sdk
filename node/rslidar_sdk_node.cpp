@@ -20,7 +20,7 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-#include "manager/lidar_manager.hpp"
+#include "manager/adapter_manager.hpp"
 #include <signal.h>
 #include <mutex>
 #include <condition_variable>
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
   TITLE << "**********                                    **********" << REND;
   TITLE << "********************************************************" << REND;
 
-  std::shared_ptr<LidarManager> demo_ptr = std::make_shared<LidarManager>();
+  std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
   YAML::Node config;
   try
   {

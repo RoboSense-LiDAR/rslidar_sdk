@@ -33,15 +33,15 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsProtoAdapter : virtual public AdapterBase
+class PacketProtoAdapter : virtual public AdapterBase
 {
 public:
-  LidarPacketsProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
+  PacketProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
   {
     thread_pool_ptr_.reset(new ThreadPool());
   }
 
-  ~LidarPacketsProtoAdapter()
+  ~PacketProtoAdapter()
   {
     stop();
   }

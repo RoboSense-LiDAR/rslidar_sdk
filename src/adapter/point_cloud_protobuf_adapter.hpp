@@ -33,15 +33,15 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPointsProtoAdapter : virtual public AdapterBase
+class PointCloudProtoAdapter : virtual public AdapterBase
 {
 public:
-  LidarPointsProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
+  PointCloudProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
   {
     thread_pool_ptr_.reset(new lidar::ThreadPool());
   }
 
-  ~LidarPointsProtoAdapter()
+  ~PointCloudProtoAdapter()
   {
     stop();
   }
@@ -63,7 +63,7 @@ public:
     {
       if (proto_com_ptr_->initReceiver(point_cloud_recv_port) == -1)
       {
-        ERROR << "LidarPointsProtoAdapter: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
+        ERROR << "PointCloudProtoAdapter: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
         exit(-1);
       }
       send_point_cloud_proto = false;
@@ -72,7 +72,7 @@ public:
     {
       if (proto_com_ptr_->initSender(point_cloud_send_port, point_cloud_send_ip) == -1)
       {
-        ERROR << "LidarPointsProtoAdapter: Create UDP Sender Socket Failed ! " << REND;
+        ERROR << "PointCloudProtoAdapter: Create UDP Sender Socket Failed ! " << REND;
         exit(-1);
       }
     }

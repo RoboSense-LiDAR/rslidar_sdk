@@ -27,18 +27,18 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarDriverAdapter : virtual public AdapterBase
+class DriverAdapter : virtual public AdapterBase
 {
 public:
-  LidarDriverAdapter()
+  DriverAdapter()
   {
     driver_ptr_.reset(new lidar::LidarDriver<pcl::PointXYZI>());
     thread_pool_ptr_.reset(new lidar::ThreadPool());
     driver_ptr_->regExceptionCallback(
-        std::bind(&LidarDriverAdapter::localExceptionCallback, this, std::placeholders::_1));
+        std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
   }
 
-  ~LidarDriverAdapter()
+  ~DriverAdapter()
   {
     driver_ptr_->stop();
   }
@@ -83,9 +83,9 @@ public:
     {
       driver_ptr_->initDecoderOnly(driver_param);
     }
-    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
-    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
-    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
   }
 
   void start()

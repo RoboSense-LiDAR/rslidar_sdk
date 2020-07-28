@@ -31,11 +31,11 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public AdapterBase
+class PacketRosAdapter : virtual public AdapterBase
 {
 public:
-  LidarPacketsRosAdapter() = default;
-  ~LidarPacketsRosAdapter()
+  PacketRosAdapter() = default;
+  ~PacketRosAdapter()
   {
     stop();
   }
@@ -54,9 +54,9 @@ public:
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       packet_sub_ =
-          nh_->subscribe(ros_recv_topic + "_difop", 1, &LidarPacketsRosAdapter::localDifopCallback, this);
+          nh_->subscribe(ros_recv_topic + "_difop", 1, &PacketRosAdapter::localDifopCallback, this);
       scan_sub_ =
-          nh_->subscribe(ros_recv_topic, 1, &LidarPacketsRosAdapter::localMsopCallback, this);
+          nh_->subscribe(ros_recv_topic, 1, &PacketRosAdapter::localMsopCallback, this);
       send_packets_ros = false;
     }
     if (send_packets_ros)
@@ -124,11 +124,11 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public AdapterBase
+class PacketRosAdapter : virtual public AdapterBase
 {
 public:
-  LidarPacketsRosAdapter() = default;
-  ~LidarPacketsRosAdapter()
+  PacketRosAdapter() = default;
+  ~PacketRosAdapter()
   {
     stop();
   }
