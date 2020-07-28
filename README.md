@@ -44,26 +44,26 @@
 
     安装方式:
 
-  ```sh
-  sudo apt-get update
-  sudo apt-get install -y libyaml-cpp-dev
-  ```
+      ```sh
+      sudo apt-get update
+      sudo apt-get install -y libyaml-cpp-dev
+      ```
 
 - Protobuf (若需要使用Protobuf相关功能，则需安装Protobuf相关依赖库,若不需要使用，可跳过)
 
-  安装方式:
+    安装方式:
 
-  ```sh
-  sudo apt-get install -y libprotobuf-dev protobuf-compiler
-  ```
+      ```sh
+      sudo apt-get install -y libprotobuf-dev protobuf-compiler
+      ```
 
 - pcap  (必需）
 
-  安装方式：
+    安装方式：
 
-  ```sh
-  sudo apt-get install -y  libpcap-dev
-  ```
+      ```sh
+      sudo apt-get install -y  libpcap-dev
+      ```
 
 
 
@@ -75,14 +75,14 @@
 
 - 直接编译
 
-  按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能，但需要用户在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
+    按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能，但需要用户在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
 
-  ```sh
-  cd rslidar_sdk
-  mkdir build && cd build
-  cmake .. && make -j4
-  ./rslidar_sdk_node
-  ```
+      ```sh
+      cd rslidar_sdk
+      mkdir build && cd build
+      cmake .. && make -j4
+      ./rslidar_sdk_node
+      ```
 
 - 依赖于ROS-catkin编译
 
@@ -231,28 +231,28 @@
 
 - Yaml >= v0.5.2 (Essential, if installed ROS desktop-full, this part can be ignored)
 
-  Installation:
-
-  ```sh
-  sudo apt-get update
-  sudo apt-get install -y libyaml-cpp-dev
-  ```
+    Installation:
+    
+      ```sh
+      sudo apt-get update
+      sudo apt-get install -y libyaml-cpp-dev
+      ```
 
 - Protobuf (If use Protobuf related functions, Protobuf need to be installed)
 
-  Installation :
-
-  ```sh
-  sudo apt-get install -y libprotobuf-dev protobuf-compiler
-  ```
+      Installation :
+    
+      ```sh
+      sudo apt-get install -y libprotobuf-dev protobuf-compiler
+      ```
 
 - pcap (Essential)
 
-  Installation：
-
-  ```sh
-  sudo apt-get install -y  libpcap-dev
-  ```
+      Installation：
+    
+      ```sh
+      sudo apt-get install -y  libpcap-dev
+      ```
 
 
 
@@ -262,14 +262,14 @@ We offer three ways to compile and run the driver
 
  - Compile directly
 
-   Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
+     Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
 
-  ```sh
-  cd rslidar_sdk
-  mkdir build && cd build
-  cmake .. && make -j4
-  ./rslidar_sdk_node
-  ```
+      ```sh
+      cd rslidar_sdk
+      mkdir build && cd build
+      cmake .. && make -j4
+      ./rslidar_sdk_node
+      ```
 
 - Compile with ROS-catkin
 
