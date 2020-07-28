@@ -50,14 +50,14 @@ public:
   {
     bool send_packet_proto;
     int msg_source = 0;
-    std::string packets_send_ip;
+    std::string packet_send_ip;
     std::string msop_send_port;
     std::string difop_send_port;
     uint16_t msop_recv_port;
     uint16_t difop_recv_port;
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<bool>(config, "send_packet_proto", send_packet_proto, false);
-    yamlReadAbort<std::string>(config["proto"], "packets_send_ip", packets_send_ip);
+    yamlReadAbort<std::string>(config["proto"], "packet_send_ip", packet_send_ip);
     yamlReadAbort<std::string>(config["proto"], "msop_send_port", msop_send_port);
     yamlReadAbort<std::string>(config["proto"], "difop_send_port", difop_send_port);
     yamlReadAbort<uint16_t>(config["proto"], "msop_recv_port", msop_recv_port);
@@ -76,8 +76,8 @@ public:
     }
     if (send_packet_proto)
     {
-      if ((scan_proto_com_ptr_->initSender(msop_send_port, packets_send_ip) == -1) ||
-          (packet_proto_com_ptr_->initSender(difop_send_port, packets_send_ip) == -1))
+      if ((scan_proto_com_ptr_->initSender(msop_send_port, packet_send_ip) == -1) ||
+          (packet_proto_com_ptr_->initSender(difop_send_port, packet_send_ip) == -1))
       {
         ERROR << "LidarPacketsReceiver: Create UDP Sender Socket Failed ! " << REND;
         exit(-1);

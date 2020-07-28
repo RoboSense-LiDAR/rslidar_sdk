@@ -137,7 +137,7 @@ lidar:
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
 

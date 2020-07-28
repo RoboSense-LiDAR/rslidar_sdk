@@ -1,15 +1,11 @@
 # **rslidar_sdk** 
 
-# **v1.1.0**
-
-
-
----
+**v1.1.0**
 
 
 
 ### 1 工程简介
-  **rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核进行二次开发。 
+  **rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核进行二次开发(https://github.com/RoboSense-LiDAR/rs_driver)。 
 
 
 
@@ -28,7 +24,7 @@ git submodule update
 
 - 方法二 ------ 直接下载
 
-由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核rs_driver(https://github.com/RoboSense-LiDAR/rs_driver), 然后将其解压在 rslidar_sdk/src路径下。 将src中原有的rs_driver文件夹删除，再将刚刚解压好的rs_driver-****文件夹改名为rs_driver即可。
+由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核rs_driver(https://github.com/RoboSense-LiDAR/rs_driver), 然后将其解压在 rslidar_sdk/src路径下。 将src中原有的rs_driver文件夹删除，再将刚刚解压好的rs_driver-xxxx文件夹改名为rs_driver即可。
 
 
 
@@ -57,7 +53,7 @@ git submodule update
   sudo apt-get install -y libyaml-cpp-dev
   ```
 
-- Protobuf (若需要使用Protobuf相关功能，则需安装Protobuf相关依赖库)
+- Protobuf (若需要使用Protobuf相关功能，则需安装Protobuf相关依赖库,若不需要使用，可跳过)
 
   安装方式:
 
@@ -86,10 +82,10 @@ git submodule update
   按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能，但需要用户在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
 
 ```sh
-    cd rslidar_sdk
-    mkdir build && cd build
-    cmake .. && make -j4
-    ./rslidar_sdk_node
+cd rslidar_sdk
+mkdir build && cd build
+cmake .. && make -j4
+./rslidar_sdk_node
 ```
 
 - 依赖于ROS-catkin编译
@@ -143,37 +139,28 @@ git submodule update
 
 ### 5 文件结构
 
-|- config												*存放所有的参数文件*
-
-|- doc													*存放相关文档*
-
-|- launch											  *存放ROS与ROS2的launch脚本*
-
-|- node												 *存放node代码*
-
-|- rviz													*存放rviz配置文件*
-
-|- src													 *存放内核代码，以及外围功能性代码*
-
-|- CHANGELOG_CN.md					 
-
-|- CHANGELOG_EN.md
-
-|- CMakeLists.txt
-
-|- license
-
-|- package_ros1.xml
-
-|- package_ros2.xml
-
-|- README.md
+```sh
+.						
+├── config				#存放所有的参数文件
+├── doc					#存放所有的文档
+│   ├── howto				#存放使用文档
+│   └── intro				#存放介绍文档
+├── launch				#存放ROS与ROS2的启动脚本
+├── node				#存放节点代码（main函数)
+├── rviz				#存放ROS与ROS2的rviz配置文件
+└── src					#存放所有源代码
+    ├── adapter				#存放外围适配器的代码
+    ├── manager				#存放适配器管理器的代码
+    ├── msg					#存放消息定义
+    ├── rs_driver			#驱动内核
+    └── utility				#存放工具类代码
+```
 
 
 
 ### 6 参数介绍
 
-**参数介绍非常重要，请仔细阅读。 本软件包的所有功能都将通过改变参数来实现。**
+**参数介绍非常重要，请仔细阅读。 本软件包的所有功能都将通过配置参数文件来实现。**
 
 [参数介绍](doc/intro/parameter_intro.md)
 
@@ -213,7 +200,7 @@ git submodule update
 
 ### 1 Introduction
 
-​	**rslidar_sdk** is the lidar driver software kit in Linux environment, which includes the driver core, ROS support, ROS2 support and Protobuf-UDP communication code. For users who want to use lidar driver through ROS, this software kit can be used directly. For users who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core. 
+​	**rslidar_sdk** is the lidar driver softwar e development kit under Linux operating system, which contains the lidar driver core, ROS support, ROS2 support and Protobuf-UDP communication functions. For users who want to get point cloud through ROS or ROS2,  this software development kit can be used directly. For users who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core(https://github.com/RoboSense-LiDAR/rs_driver). 
 
 
 
@@ -221,7 +208,7 @@ git submodule update
 
 - Method1 ------ Use git clone
 
-Since rslidar_sdk project include the submodule --- rs_driver, user need to excute the following commands after git clone.
+Since rslidar_sdk project include the submodule --- rs_driver, users need to excute the following commands after git clone.
 
 ```sh
 git clone XXXX.git
@@ -232,7 +219,7 @@ git submodule update
 
 - Method2 ------ Download directly
 
-Since the zip file does not include submodule information, user need to download the driver core --- *rs_driver* manually (https://github.com/RoboSense-LiDAR/rs_driver). Then unzip the rs_driver under the path */rslidar_sdk/src*. Delete the original *rs_driver* folder, and rename the folder you just unzip *rs_driver-XXXX* to *rs_driver*.  
+Since the zip file does not include submodule information, user need to download the driver core --- *rs_driver* manually (https://github.com/RoboSense-LiDAR/rs_driver). Then unzip the rs_driver under the path */rslidar_sdk/src*. Delete the original empty *rs_driver* folder, and rename the folder you just unzip *rs_driver-XXXX* to *rs_driver*.  
 
 
 
@@ -286,10 +273,10 @@ We offer three ways to compile and run the driver
    Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
 
 ```sh
-    cd rslidar_sdk
-    mkdir build && cd build
-    cmake .. && make -j4
-    ./rslidar_sdk_node
+cd rslidar_sdk
+mkdir build && cd build
+cmake .. && make -j4
+./rslidar_sdk_node
 ```
 
 - Compile with ROS-catkin
@@ -343,37 +330,28 @@ We offer three ways to compile and run the driver
 
 ### 5 File Structure
 
-|- config												*Store all the configure files*
-
-|- doc													*Store all the documents*
-
-|- launch											  *Store the launch script for ROS and ROS2*
-
-|- node												*Store the code of running node* 
-
-|- rviz							    				   *Store the rviz configure file*
-
-|- src							    					*Store the lidar driver core and functional codes*
-
-|- CHANGELOG_CN.md           
-
-|- CHANGELOG_EN.md
-
-|- CMakeLists.txt
-
-|- license
-
-|- package_ros1.xml
-
-|- package_ros2.xml
-
-|- README.md
+```sh
+.						
+├── config				#Store all the config files
+├── doc					#Store all the documents
+│   ├── howto				#Store the guide documents
+│   └── intro				#Store the introduction documents
+├── launch				#Store the launch files for ROS & ROS2
+├── node				#Store the node code(main function)
+├── rviz				#Store the rviz config file for ROS & ROS2
+└── src					#Store all the source codes
+    ├── adapter				#Store the code of adapters
+    ├── manager				#Store the code of adapter manager
+    ├── msg					#Store the message definition
+    ├── rs_driver			#The lidar driver core
+    └── utility				#Store the tool codes
+```
 
 
 
 ### 6 Introduction to parameters
 
-**This part is very important, please read carefully. All the functions of this software kit will be reach by modifying parameters.**
+**This part is very important so please read carefully. All the functions of this software development kit will be reach by modifying parameters.**
 
 [Intro to parameters](doc/intro/parameter_intro.md)
 
@@ -381,7 +359,7 @@ We offer three ways to compile and run the driver
 
 ### 7 Quick start
 
-**The followings are some quick guides to using some of the most common features of the rslidar_sdk, but the software kit are not limited to the following modes of operation. Users can use rslidar_sdk in their own way by modifying parameters.**
+**The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and users can use rslidar_sdk in their own way by modifying parameters.**
 
 [Online connect lidar and send point cloud through ROS](doc/howto/how_to_online_send_point_cloud_ros.md)
 

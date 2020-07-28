@@ -76,10 +76,10 @@ Check the *msop_port,difop_port*  to be correct.
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
-We want to send packets so we only need to focus on three things, *msop_send_port, difop_send_port, packets_send_ip*. You can adjust them as you want.
+We want to send packets so we only need to focus on three things, *msop_send_port, difop_send_port, packet_send_ip*. You can adjust them as you want.
 
 
 
@@ -131,7 +131,7 @@ Check the *lidar_type*  to be correct.
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
 We want to receive packets so we only need to focus on two things, *msop_recv_port, difop_recv_port*. You must make sure they are same as the *msop_send_port, difop_send_port*set in the sender.
@@ -194,7 +194,7 @@ Check the *lidar_type,msop_port,difop_port*  to be correct.
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
 We want to send point cloud so we only need to focus on two things, *point_cloud_send_port, point_cloud_send_ip*. You can adjust them as you want.
@@ -231,7 +231,7 @@ We want to watch the point cloud on ROS-Rviz, so set *send_point_cloud_ros = tru
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
 We want to receive packets so we only need to focus on one things, *point_cloud_recv_port*. You must make sure they are same as the *point_cloud_send_port*  set in the sender.

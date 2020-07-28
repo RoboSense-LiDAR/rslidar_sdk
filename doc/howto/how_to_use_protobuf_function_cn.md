@@ -76,10 +76,10 @@ lidar:
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
-我们要发送数据包，所以我们只需要关注三件事，即 *msop_send_port，difop_send_port，packets_send_ip* 。 您可以根据需要调整它们。
+我们要发送数据包，所以我们只需要关注三件事，即 *msop_send_port，difop_send_port，packet_send_ip* 。 您可以根据需要调整它们。
 
 
 
@@ -131,7 +131,7 @@ lidar:
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
 我们希望接收数据包，因此我们只需要关注两件事，即 *msop_recv_port，difop_recv_port* 。 您必须确保它们与发送端中的 *msop_send_port，difop_send_port* 设置相同。
@@ -194,7 +194,7 @@ lidar:
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
 我们要发送数据包，所以我们只需要关注两件事，即  *point_cloud_send_port, point_cloud_send_ip*。您可以根据需要调整它们。
@@ -231,7 +231,7 @@ common:
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
 ```
 
 我们希望接收数据包，因此我们只需要关注 *point_cloud_recv_port* 。 您必须确保它们与发送端中设置的 *point_cloud_send_port* 相同。

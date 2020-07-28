@@ -4,55 +4,37 @@
 
 ## 1 Introduction
 
-​	This document will show you how to send out multi-LiDARs point cloud with only one driver running.  Theoretically, one driver can decoder unlimited number of LiDARs at the same time. For convenient, in this document we will use three LiDARs as an example.
-
-
+This document will show you how to send out multi-LiDARs point cloud with only one driver running.  Theoretically, one driver can decoder unlimited number of LiDARs at the same time. For convenient, we will use three LiDARs as an example.
 
 
 
 ## 2 Online connect with multi-LiDARs
 
-
-
-### 2.1 Steps
-
-1. Get the LiDAR msop port number and difop port number 
-
-2. Set the *common* part of the config file
-
-3. Set the *lidar* part of the config file
-
-4. Run the demo
+Please follow the steps below. 
 
 
 
-Please follow the above steps to do advanced development, details are as follow:
-
-
-
-#### step1
+### 2.1 Get the data port number
 
 ​	Suppose you have well connect three LiDARs with your computer and you can see the point cloud of each LiDAR on RSView. At this time, you should have known the *msop port and difop port*  for each LiDAR. If you have no idea about this, please check the LiDAR user-guide first.  
 
 
 
-#### step2
-
-​	Set up the *common* part of the config file.
+### 2.2 Set up the common part of the config file
 
 ```yaml
 common:
-    msg_source: 1                                         #0--not use Lidar
-                                                          #1--lidar packet message come from online lidar
-                                                          #2--lidar packet message come from ROS
-                                                          #3--lidar packet message come from Pcap bag
-                                                          #4--packets from Protobuf-UDP
-                                                          #5--point cloud from Protobuf-UDP
-    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
-    send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
-    send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
-    pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 1                                         #0--not use Lidar
+                                                        #1--packet message come from online lidar
+                                                        #2--packet message come from ROS or ROS2
+                                                        #3--packet message come from Pcap bag
+                                                        #4--packet message come from Protobuf-UDP
+                                                        #5--point cloud from Protobuf-UDP
+  send_packet_ros: false                                #True--Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #True--Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #True--Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #True--Send point cloud through Protobuf-UDP
+  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	Since the message come from the LiDAR, set *msg_source = 1*. 
@@ -61,14 +43,12 @@ common:
 
 
 
-#### step3
-
-​	Set up the *lidar* part of the config file
+### 2.3 Set up the lidar part of the config file
 
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128            #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -91,9 +71,9 @@ lidar:
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP           #The lidar type, must be set correctly
+      lidar_type: RSBP             #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 1990              #The mosp port of lidar,default is 6699
@@ -116,9 +96,9 @@ lidar:
       difop_recv_port: 60026                      #The port number used for receiving lidar difop packets
       msop_send_port: 60025                       #The port number which the msop packets will be send to 
       difop_send_port: 60026                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP           #The lidar type, must be set correctly
+      lidar_type: RSBP             #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 2000              #The mosp port of lidar,default is 6699
@@ -141,10 +121,10 @@ lidar:
       difop_recv_port: 60029                      #The port number used for receiving lidar difop packets
       msop_send_port: 60028                       #The port number which the msop packets will be send to 
       difop_send_port: 60029                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1 
+      packet_send_ip: 127.0.0.1 				  #The ip address which the lidar packets will be send to
 ```
 
-​	Set the *lidar_type*  for each LiDAR type. (RS16,RS32,RSBP,RS128)
+​	Set the *lidar_type*  for each LiDAR --- RS16,RS32,RSBP,RS128.
 
 ​	Set the *msop_port* and *difop_port*  for each LiDAR.
 
@@ -152,49 +132,33 @@ lidar:
 
 
 
-#### step4
+### 2.4 Run
 
-​	Run the demo 
+​	Run the demo.
 
 
-
----
 
 ## 3 Offline use rosbag with multi-LiDARs
 
-
-
-### 3.1 Steps
-
-1. Set the *common* part of the config file
-
-2. Set the *lidar* part of the config file
-
-3. Run the demo & play rosbag
+Please follow the steps below. 
 
 
 
-Please follow the above steps to do advanced development, details are as follow:
-
-
-
-#### step1
-
-​	Set up the *common* part of the config file.
+### 3.1 Set up the common part of the config file
 
 ```yaml
 common:
-    msg_source: 2                                         #0--not use Lidar
-                                                          #1--lidar packet message come from online lidar
-                                                          #2--lidar packet message come from ROS
-                                                          #3--lidar packet message come from Pcap bag
-                                                          #4--packets from Protobuf-UDP
-                                                          #5--point cloud from Protobuf-UDP
-    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
-    send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
-    send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
-    pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 2                                         #0--not use Lidar
+                                                        #1--packet message come from online lidar
+                                                        #2--packet message come from ROS or ROS2
+                                                        #3--packet message come from Pcap bag
+                                                        #4--packet message come from Protobuf-UDP
+                                                        #5--point cloud from Protobuf-UDP
+  send_packet_ros: false                                #True--Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #True--Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #True--Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #True--Send point cloud through Protobuf-UDP
+  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	Since the packet message come from the ROS, set *msg_source = 2*. 
@@ -203,14 +167,12 @@ common:
 
 
 
-#### step2
-
-​	Set up the *lidar* part of the config file
+### 3.2 Set up the lidar part of the config file
 
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128            #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -233,9 +195,9 @@ lidar:
       difop_recv_port: 60023                      #The port number used for receiving lidar difop packets
       msop_send_port: 60022                       #The port number which the msop packets will be send to 
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP           #The lidar type, must be set correctly
+      lidar_type: RSBP             #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 1990              #The mosp port of lidar,default is 6699
@@ -258,9 +220,9 @@ lidar:
       difop_recv_port: 60026                      #The port number used for receiving lidar difop packets
       msop_send_port: 60025                       #The port number which the msop packets will be send to 
       difop_send_port: 60026                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1                  #The ip address which the lidar packets will be send to
+      packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP           #The lidar type, must be set correctly
+      lidar_type: RSBP             #The lidar type, must be set correctly
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 2000              #The mosp port of lidar,default is 6699
@@ -283,10 +245,10 @@ lidar:
       difop_recv_port: 60029                      #The port number used for receiving lidar difop packets
       msop_send_port: 60028                       #The port number which the msop packets will be send to 
       difop_send_port: 60029                      #The port number which the difop packets will be send to 
-      packets_send_ip: 127.0.0.1 
+      packet_send_ip: 127.0.0.1  				  #The ip address which the lidar packets will be send to
 ```
 
-​	Set the *lidar_type*  for each LiDAR type. (RS16,RS32,RSBP,RS128)
+​	Set the *lidar_type*  to your LiDAR type --- RS16,RS32,RSBP,RS128.
 
 ​	Set the *ros_recv_packet_topic* for each LiDAR, need to corresbond to the topic names in rosbag.
 
@@ -294,6 +256,6 @@ lidar:
 
 
 
-#### step3
+### 3.3 Run
 
-​	Run the demo & play rosbag
+​	Run the demo & play rosbag.
