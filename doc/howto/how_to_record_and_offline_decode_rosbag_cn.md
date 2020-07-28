@@ -22,16 +22,16 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--point cloud from Protobuf-UDP
-    send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
+    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
     send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packets_proto: false                             #True--Send packets through Protobuf-UDP
+    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 实际上，您现在可以记录点云消息，并且在离线播放包时不需要运行驱动程序。 但是缺点也很明显，即录制的包会非常大。 因此，通常我们建议记录雷达packet，而不是记录点云消息。
 
-为了记录雷达packet 您需要设置 *send_packets_ros = true*。然后 *common* 部分应当如下所示： 
+为了记录雷达packet 您需要设置 *send_packet_ros = true*。然后 *common* 部分应当如下所示： 
 
 ```yaml
 common:
@@ -41,16 +41,16 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--point cloud from Protobuf-UDP
-    send_packets_ros: true                                #True--Send packet through ROS(Used to record packet)
+    send_packet_ros: true                                #True--Send packet through ROS(Used to record packet)
     send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packets_proto: false                             #True--Send packets through Protobuf-UDP
+    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
-您还可以通过调整配置文件的 *lidar-ros* 部分中的 *ros_send_packets_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的主题为“ msoptopic_difop”。 例如，默认话题设置为 *rslidar_packets*，因此msop主题为 *rslidar_packets*，而difop主题为 *rslidar_packets_difop*。
+您还可以通过调整配置文件的 *lidar-ros* 部分中的 *ros_send_packet_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的主题为“ msoptopic_difop”。 例如，默认话题设置为 *rslidar_packets*，因此msop主题为 *rslidar_packets*，而difop主题为 *rslidar_packets_difop*。
 
-**注意：如果将send_packets_ros设置为true，则两种数据包都将发送到ROS。 重要的是，您必须同时记录这两个数据包。**
+**注意：如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 重要的是，您必须同时记录这两个数据包。**
 
 ```sh
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
@@ -96,9 +96,9 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--point cloud from Protobuf-UDP
-    send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
+    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
     send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packets_proto: false                             #True--Send packets through Protobuf-UDP
+    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
@@ -135,12 +135,12 @@ lidar:
 
 ```yaml
     ros:
-      ros_recv_packets_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
-      ros_send_packets_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_recv_packet_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packet_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
       ros_send_point_cloud_topic: /rslidar_points      #The topic which used to send point cloud through ROS
 ```
 
-​	将 *ros_recv_packets_topic* 设置为rosbag中的msop话题。
+​	将 *ros_recv_packet_topic* 设置为rosbag中的msop话题。
 
 #### 步骤4
 

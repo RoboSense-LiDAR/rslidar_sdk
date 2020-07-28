@@ -19,9 +19,9 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--point cloud from Protobuf-UDP
-    send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
+    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
     send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packets_proto: false                             #True--Send packets through Protobuf-UDP
+    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
     pcap_repeat: true									  #If true, the pcap file will repeatedly read.

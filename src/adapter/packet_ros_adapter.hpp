@@ -43,23 +43,23 @@ public:
   void init(const YAML::Node& config)
   {
     int msg_source;
-    bool send_packets_ros;
+    bool send_packet_ros;
     std::string ros_recv_topic;
     std::string ros_send_topic;
     nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     yamlReadAbort<int>(config, "msg_source", msg_source);
-    yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
-    yamlRead<std::string>(config["ros"], "ros_recv_packets_topic", ros_recv_topic, "rslidar_packets");
-    yamlRead<std::string>(config["ros"], "ros_send_packets_topic", ros_send_topic, "rslidar_packets");
+    yamlRead<bool>(config, "send_packet_ros", send_packet_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", ros_recv_topic, "rslidar_packets");
+    yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       packet_sub_ =
           nh_->subscribe(ros_recv_topic + "_difop", 1, &PacketRosAdapter::localDifopCallback, this);
       scan_sub_ =
           nh_->subscribe(ros_recv_topic, 1, &PacketRosAdapter::localMsopCallback, this);
-      send_packets_ros = false;
+      send_packet_ros = false;
     }
-    if (send_packets_ros)
+    if (send_packet_ros)
     {
       packet_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
       scan_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
@@ -136,14 +136,14 @@ public:
   void init(const YAML::Node& config)
   {
     int msg_source;
-    bool send_packets_ros;
+    bool send_packet_ros;
     std::string ros_recv_topic;
     std::string ros_send_topic;
     node_ptr_.reset(new rclcpp::Node("rslidar_packets_adapter"));
     yamlReadAbort<int>(config, "msg_source", msg_source);
-    yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
-    yamlRead<std::string>(config["ros"], "ros_recv_packets_topic", ros_recv_topic, "rslidar_packets");
-    yamlRead<std::string>(config["ros"], "ros_send_packets_topic", ros_send_topic, "rslidar_packets");
+    yamlRead<bool>(config, "send_packet_ros", send_packet_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", ros_recv_topic, "rslidar_packets");
+    yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       packet_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(
@@ -153,7 +153,7 @@ public:
           ros_recv_topic, 10,
           [this](const rslidar_msg::msg::RslidarScan::SharedPtr msg) { localMsopCallback(msg); });
     }
-    if (send_packets_ros)
+    if (send_packet_ros)
     {
       packet_pub_ =
           node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic + "_difop", 10);

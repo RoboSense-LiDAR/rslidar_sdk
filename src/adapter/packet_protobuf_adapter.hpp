@@ -48,7 +48,7 @@ public:
 
   void init(const YAML::Node& config)
   {
-    bool send_packets_proto;
+    bool send_packet_proto;
     int msg_source = 0;
     std::string packets_send_ip;
     std::string msop_send_port;
@@ -56,7 +56,7 @@ public:
     uint16_t msop_recv_port;
     uint16_t difop_recv_port;
     yamlReadAbort<int>(config, "msg_source", msg_source);
-    yamlRead<bool>(config, "send_packets_proto", send_packets_proto, false);
+    yamlRead<bool>(config, "send_packet_proto", send_packet_proto, false);
     yamlReadAbort<std::string>(config["proto"], "packets_send_ip", packets_send_ip);
     yamlReadAbort<std::string>(config["proto"], "msop_send_port", msop_send_port);
     yamlReadAbort<std::string>(config["proto"], "difop_send_port", difop_send_port);
@@ -72,9 +72,9 @@ public:
         ERROR << "LidarPacketsReceiver: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
         exit(-1);
       }
-      send_packets_proto = false;
+      send_packet_proto = false;
     }
-    if (send_packets_proto)
+    if (send_packet_proto)
     {
       if ((scan_proto_com_ptr_->initSender(msop_send_port, packets_send_ip) == -1) ||
           (packet_proto_com_ptr_->initSender(difop_send_port, packets_send_ip) == -1))

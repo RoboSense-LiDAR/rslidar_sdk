@@ -48,9 +48,9 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--point cloud from Protobuf-UDP
-    send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
+    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
     send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packets_proto: false                             #True--Send packets through Protobuf-UDP
+    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
@@ -80,8 +80,8 @@ lidar:
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
-      ros_recv_packets_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
-      ros_send_packets_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_recv_packet_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packet_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
       ros_send_point_cloud_topic: /rslidar_points      #The topic which used to send point cloud through ROS
     proto:
       point_cloud_recv_port: 60021                     #The port number used for receiving point cloud 
@@ -105,8 +105,8 @@ lidar:
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
-      ros_recv_packets_topic: /left/rslidar_packets    #The topic which used to reveice lidar packets from ROS
-      ros_send_packets_topic: /left/rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_recv_packet_topic: /left/rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packet_topic: /left/rslidar_packets    #The topic which used to send lidar packets through ROS
       ros_send_point_cloud_topic: /left/rslidar_points      #The topic which used to send point cloud through ROS
     proto:
       point_cloud_recv_port: 60024                     #The port number used for receiving point cloud 
@@ -130,8 +130,8 @@ lidar:
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
-      ros_recv_packets_topic: /right/rslidar_packets    #The topic which used to reveice lidar packets from ROS
-      ros_send_packets_topic: /right/rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_recv_packet_topic: /right/rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packet_topic: /right/rslidar_packets    #The topic which used to send lidar packets through ROS
       ros_send_point_cloud_topic: /right/rslidar_points      #The topic which used to send point cloud through ROS
     proto:
       point_cloud_recv_port: 60027                     #The port number used for receiving point cloud 
@@ -190,9 +190,9 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--point cloud from Protobuf-UDP
-    send_packets_ros: false                               #True--Send packet through ROS(Used to record packet)
+    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
     send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packets_proto: false                             #True--Send packets through Protobuf-UDP
+    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
@@ -222,8 +222,8 @@ lidar:
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
-      ros_recv_packets_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
-      ros_send_packets_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_recv_packet_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packet_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
       ros_send_point_cloud_topic: /rslidar_points      #The topic which used to send point cloud through ROS
     proto:
       point_cloud_recv_port: 60021                     #The port number used for receiving point cloud 
@@ -247,8 +247,8 @@ lidar:
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
-      ros_recv_packets_topic: /left/rslidar_packets    #The topic which used to reveice lidar packets from ROS
-      ros_send_packets_topic: /left/rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_recv_packet_topic: /left/rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packet_topic: /left/rslidar_packets    #The topic which used to send lidar packets through ROS
       ros_send_point_cloud_topic: /left/rslidar_points      #The topic which used to send point cloud through ROS
     proto:
       point_cloud_recv_port: 60024                     #The port number used for receiving point cloud 
@@ -272,8 +272,8 @@ lidar:
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
-      ros_recv_packets_topic: /right/rslidar_packets    #The topic which used to reveice lidar packets from ROS
-      ros_send_packets_topic: /right/rslidar_packets    #The topic which used to send lidar packets through ROS
+      ros_recv_packet_topic: /right/rslidar_packets    #The topic which used to reveice lidar packets from ROS
+      ros_send_packet_topic: /right/rslidar_packets    #The topic which used to send lidar packets through ROS
       ros_send_point_cloud_topic: /right/rslidar_points      #The topic which used to send point cloud through ROS
     proto:
       point_cloud_recv_port: 60027                     #The port number used for receiving point cloud 
