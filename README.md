@@ -1,7 +1,7 @@
 # **rslidar_sdk**
 
 ## 1 工程简介
-  **rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
+ 	**rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
 
 
 
@@ -83,11 +83,11 @@ sudo apt-get install -y libprotobuf-dev protobuf-compiler
 
 ## 4 编译 & 运行
 
-我们提供三种编译&运行方式
+我们提供三种编译&运行方式。
 
 ### 4.1 直接编译
 
-按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能，但需要用户在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
+(1) 按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能，但需要用户在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
 
 ```sh
 cd rslidar_sdk
@@ -98,7 +98,7 @@ cmake .. && make -j4
 
 ### 4.2 依赖于ROS-catkin编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD CATKIN)**
+(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD CATKIN)**。
 
 ```cmake
 #=======================================
@@ -107,11 +107,11 @@ cmake .. && make -j4
 set(COMPILE_METHOD CATKIN)
 ```
 
-(2) 将rslidar_sdk工程目录下的*package_ros1.xml*文件重命名为*package.xml*
+(2) 将rslidar_sdk工程目录下的*package_ros1.xml*文件重命名为*package.xml*。
 
-(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内
+(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
-(4) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)
+(4) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
 
 ```sh
 catkin_make
@@ -121,7 +121,7 @@ roslaunch rslidar_sdk start.launch
 
 ### 4.3 依赖于ROS2-colcon编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD COLCON)**
+(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD COLCON)**。
 
 ```cmake
 #=======================================
@@ -130,13 +130,13 @@ roslaunch rslidar_sdk start.launch
 set(COMPILE_METHOD COLCON)
 ```
 
-(2) 将rslidar_sdk工程目录下的*package_ros2.xml*文件重命名为*package.xml*
+(2) 将rslidar_sdk工程目录下的*package_ros2.xml*文件重命名为*package.xml*。
 
-(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内
+(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
-(4) 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)下载ROS2环境下的雷达Packet消息定义， 将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列
+(4) 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)下载ROS2环境下的雷达Packet消息定义， 将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列。
 
-(5) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)
+(5) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)。
 
 ```sh
 colcon build
@@ -282,17 +282,17 @@ sudo apt-get install -y libprotobuf-dev protobuf-compiler
 
 ## 4 Compile & Run
 
-We offer three ways to compile and run the driver
+We offer three ways to compile and run the driver.
 
 ### 4.1 Compile directly
 
-Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
+(1) Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
 
 ```sh
- cd rslidar_sdk
- mkdir build && cd build
- cmake .. && make -j4
- ./rslidar_sdk_node
+cd rslidar_sdk
+mkdir build && cd build
+cmake .. && make -j4
+./rslidar_sdk_node
 ```
 
 ### 4.2 Compile with ROS-catkin
