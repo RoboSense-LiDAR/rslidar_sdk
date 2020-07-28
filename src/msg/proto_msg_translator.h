@@ -23,9 +23,9 @@
 #pragma once
 #ifdef PROTO_FOUND
 
-#include <msg/rs_msg/lidar_points_msg.h>
 #include <msg/rs_msg/lidar_packet_msg.h>
 #include <msg/rs_msg/lidar_scan_msg.h>
+#include <msg/rs_msg/lidar_point_cloud_msg.h>
 #include <msg/proto_msg/Proto_msg.LidarPoints.pb.h>
 #include <msg/proto_msg/Proto_msg.LidarPacket.pb.h>
 #include <msg/proto_msg/Proto_msg.LidarScan.pb.h>
@@ -37,7 +37,7 @@ namespace lidar
 /************************************************************************/
 /**Translation functions between RoboSense message and protobuf message**/
 /************************************************************************/
-inline Proto_msg::LidarPoints toProtoMsg(const LidarPointsMsg& rs_msg)
+inline Proto_msg::LidarPoints toProtoMsg(const LidarPointCloudMsg& rs_msg)
 {
   Proto_msg::LidarPoints proto_msg;
   proto_msg.set_timestamp(rs_msg.timestamp);
@@ -47,20 +47,20 @@ inline Proto_msg::LidarPoints toProtoMsg(const LidarPointsMsg& rs_msg)
   proto_msg.set_width(rs_msg.width);
   proto_msg.set_is_dense(rs_msg.is_dense);
 
-  for (size_t i = 0; i < rs_msg.cloudPtr->size(); i++)
+  for (size_t i = 0; i < rs_msg.point_cloud_ptr->size(); i++)
   {
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].x);
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].y);
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].z);
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].intensity);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].x);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].y);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].z);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].intensity);
   }
 
   return std::move(proto_msg);
 }
 
-inline LidarPointsMsg toRsMsg(const Proto_msg::LidarPoints& proto_msg)
+inline LidarPointCloudMsg toRsMsg(const Proto_msg::LidarPoints& proto_msg)
 {
-  LidarPointsMsg rs_msg;
+  LidarPointCloudMsg rs_msg;
   rs_msg.timestamp = proto_msg.timestamp();
   rs_msg.seq = proto_msg.seq();
   rs_msg.frame_id = proto_msg.frame_id();
@@ -80,7 +80,7 @@ inline LidarPointsMsg toRsMsg(const Proto_msg::LidarPoints& proto_msg)
   ptr_tmp->height = rs_msg.height;
   ptr_tmp->width = rs_msg.width;
   ptr_tmp->is_dense = rs_msg.is_dense;
-  rs_msg.cloudPtr.reset(ptr_tmp);
+  rs_msg.point_cloud_ptr.reset(ptr_tmp);
   return rs_msg;
 }
 

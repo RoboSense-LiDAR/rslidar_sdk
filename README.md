@@ -183,7 +183,7 @@ git submodule update
 
 **以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 用户可通过配置参数改变不同的工作模式。**
 
-[在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_pointcloud_ros_cn.md)
+[在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_point_cloud_ros_cn.md)
 
 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)
 
@@ -283,7 +283,7 @@ We offer three ways to compile and run the driver
 
  - Compile directly
 
-   Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the pointcloud.
+   Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
 
 ```sh
     cd rslidar_sdk
@@ -383,11 +383,11 @@ We offer three ways to compile and run the driver
 
 **The followings are some quick guides to using some of the most common features of the rslidar_sdk, but the software kit are not limited to the following modes of operation. Users can use rslidar_sdk in their own way by modifying parameters.**
 
-[Online connect lidar and send pointcloud through ROS](doc/howto/how_to_online_send_pointcloud_ros.md)
+[Online connect lidar and send point cloud through ROS](doc/howto/how_to_online_send_point_cloud_ros.md)
 
 [Record rosbag & Offline decode rosbag](doc/howto/how_to_record_and_offline_decode_rosbag.md)
 
-[Decode pcap bag and send pointcloud through ROS](doc/howto/how_to_offline_decode_pcap.md)
+[Decode pcap bag and send point cloud through ROS](doc/howto/how_to_offline_decode_pcap.md)
 
 [How to use ROS2](doc/howto/how_to_use_ros2.md)
 

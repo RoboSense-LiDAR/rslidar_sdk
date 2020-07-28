@@ -54,9 +54,9 @@ public:
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
       packet_sub_ =
-          nh_->subscribe(ros_recv_topic + "_difop", 1, &LidarPacketsRosAdapter::localLidarPacketsdifopCallback, this);
+          nh_->subscribe(ros_recv_topic + "_difop", 1, &LidarPacketsRosAdapter::localDifopCallback, this);
       scan_sub_ =
-          nh_->subscribe(ros_recv_topic, 1, &LidarPacketsRosAdapter::localLidarPacketsmsopCallback, this);
+          nh_->subscribe(ros_recv_topic, 1, &LidarPacketsRosAdapter::localMsopCallback, this);
       send_packets_ros = false;
     }
     if (send_packets_ros)
@@ -66,14 +66,14 @@ public:
     }
   }
 
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
   {
-    scan_cb_vec_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
   {
-    packet_cb_vec_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callback);
   }
 
   void sendScan(const LidarScanMsg& msg)
@@ -87,7 +87,7 @@ public:
   }
 
 private:
-  void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan& msg)
+  void localMsopCallback(const rslidar_msgs::rslidarScan& msg)
   {
     for (auto& cb : scan_cb_vec_)
     {
@@ -95,7 +95,7 @@ private:
     }
   }
 
-  void localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket& msg)
+  void localDifopCallback(const rslidar_msgs::rslidarPacket& msg)
   {
     for (auto& cb : packet_cb_vec_)
     {
@@ -148,10 +148,10 @@ public:
     {
       packet_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(
           ros_recv_topic + "_difop", 10,
-          [this](const rslidar_msg::msg::RslidarPacket::SharedPtr msg) { localLidarPacketsdifopCallback(msg); });
+          [this](const rslidar_msg::msg::RslidarPacket::SharedPtr msg) { localDifopCallback(msg); });
       scan_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarScan>(
           ros_recv_topic, 10,
-          [this](const rslidar_msg::msg::RslidarScan::SharedPtr msg) { localLidarPacketsmsopCallback(msg); });
+          [this](const rslidar_msg::msg::RslidarScan::SharedPtr msg) { localMsopCallback(msg); });
     }
     if (send_packets_ros)
     {
@@ -167,14 +167,14 @@ public:
     t.detach();
   }
 
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
   {
-    scan_cb_vec_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
   {
-    packet_cb_vec_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callback);
   }
 
   void sendScan(const LidarScanMsg& msg)
@@ -188,7 +188,7 @@ public:
   }
 
 private:
-  void localLidarPacketsmsopCallback(const rslidar_msg::msg::RslidarScan::SharedPtr msg)
+  void localMsopCallback(const rslidar_msg::msg::RslidarScan::SharedPtr msg)
   {
     for (auto& cb : scan_cb_vec_)
     {
@@ -196,7 +196,7 @@ private:
     }
   }
 
-  void localLidarPacketsdifopCallback(const rslidar_msg::msg::RslidarPacket::SharedPtr msg)
+  void localDifopCallback(const rslidar_msg::msg::RslidarPacket::SharedPtr msg)
   {
     for (auto& cb : packet_cb_vec_)
     {

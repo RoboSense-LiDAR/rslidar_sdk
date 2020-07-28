@@ -49,28 +49,28 @@ public:
   void init(const YAML::Node& config)
   {
     int msg_source = 0;
-    bool send_points_proto;
-    std::string points_send_port;
-    std::string points_send_ip;
-    uint16_t points_recv_port;
+    bool send_point_cloud_proto;
+    std::string point_cloud_send_port;
+    std::string point_cloud_send_ip;
+    uint16_t point_cloud_recv_port;
     proto_com_ptr_.reset(new ProtoCommunicator);
     yamlReadAbort<int>(config, "msg_source", msg_source);
-    yamlRead<bool>(config, "send_points_proto", send_points_proto, false);
-    yamlReadAbort<std::string>(config["proto"], "points_send_port", points_send_port);
-    yamlReadAbort<std::string>(config["proto"], "points_send_ip", points_send_ip);
-    yamlReadAbort<uint16_t>(config["proto"], "points_recv_port", points_recv_port);
+    yamlRead<bool>(config, "send_point_cloud_proto", send_point_cloud_proto, false);
+    yamlReadAbort<std::string>(config["proto"], "point_cloud_send_port", point_cloud_send_port);
+    yamlReadAbort<std::string>(config["proto"], "point_cloud_send_ip", point_cloud_send_ip);
+    yamlReadAbort<uint16_t>(config["proto"], "point_cloud_recv_port", point_cloud_recv_port);
     if (msg_source == MsgSource::MSG_FROM_PROTO_POINTCLOUD)
     {
-      if (proto_com_ptr_->initReceiver(points_recv_port) == -1)
+      if (proto_com_ptr_->initReceiver(point_cloud_recv_port) == -1)
       {
         ERROR << "LidarPointsProtoAdapter: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
         exit(-1);
       }
-      send_points_proto = false;
+      send_point_cloud_proto = false;
     }
-    if (send_points_proto)
+    if (send_point_cloud_proto)
     {
-      if (proto_com_ptr_->initSender(points_send_port, points_send_ip) == -1)
+      if (proto_com_ptr_->initSender(point_cloud_send_port, point_cloud_send_ip) == -1)
       {
         ERROR << "LidarPointsProtoAdapter: Create UDP Sender Socket Failed ! " << REND;
         exit(-1);
@@ -95,29 +95,29 @@ public:
     }
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
   {
-    pointcloud_cb_vec_.emplace_back(callBack);
+    point_cloud_cb_vec_.emplace_back(callback);
   }
 
-  void sendPointcloud(const LidarPointsMsg& msg)
+  void sendPointCloud(const LidarPointCloudMsg& msg)
   {
-    if (pointcloud_send_queue_.size() > 10)
+    if (point_cloud_send_queue_.size() > 10)
     {
-      pointcloud_send_queue_.clear();
+      point_cloud_send_queue_.clear();
     }
-    pointcloud_send_queue_.push(msg);
-    if (pointcloud_send_queue_.is_task_finished_.load())
+    point_cloud_send_queue_.push(msg);
+    if (point_cloud_send_queue_.is_task_finished_.load())
     {
-      pointcloud_send_queue_.is_task_finished_.store(false);
+      point_cloud_send_queue_.is_task_finished_.store(false);
       thread_pool_ptr_->commit([this]() { sendPoints(); });
     }
   }
 
 private:
-  inline void localCallback(const LidarPointsMsg& rs_msg)
+  inline void localCallback(const LidarPointCloudMsg& rs_msg)
   {
-    for (auto& cb : pointcloud_cb_vec_)
+    for (auto& cb : point_cloud_cb_vec_)
     {
       cb(rs_msg);
     }
@@ -125,15 +125,15 @@ private:
 
   void sendPoints()
   {
-    while (pointcloud_send_queue_.size() > 0)
+    while (point_cloud_send_queue_.size() > 0)
     {
-      Proto_msg::LidarPoints proto_msg = toProtoMsg(pointcloud_send_queue_.popFront());
+      Proto_msg::LidarPoints proto_msg = toProtoMsg(point_cloud_send_queue_.popFront());
       if (!proto_com_ptr_->sendSplitMsg<Proto_msg::LidarPoints>(proto_msg))
       {
-        WARNING << "Pointcloud Protobuf sending error" << REND;
+        WARNING << "PointCloud Protobuf sending error" << REND;
       }
     }
-    pointcloud_send_queue_.is_task_finished_.store(true);
+    point_cloud_send_queue_.is_task_finished_.store(true);
   }
 
   void recvPoints()
@@ -157,15 +157,15 @@ private:
       }
       if (ret == -1)
       {
-        WARNING << "Pointcloud Protobuf receiving error" << REND;
+        WARNING << "PointCloud Protobuf receiving error" << REND;
         continue;
       }
 
-      pointcloud_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
+      point_cloud_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
 
-      if (pointcloud_recv_queue_.is_task_finished_.load())
+      if (point_cloud_recv_queue_.is_task_finished_.load())
       {
-        pointcloud_recv_queue_.is_task_finished_.store(false);
+        point_cloud_recv_queue_.is_task_finished_.store(false);
         thread_pool_ptr_->commit([&]() { splicePoints(); });
       }
     }
@@ -173,11 +173,11 @@ private:
 
   void splicePoints()
   {
-    while (pointcloud_recv_queue_.size() > 0)
+    while (point_cloud_recv_queue_.size() > 0)
     {
       if (recv_thread_.start.load())
       {
-        auto pair = pointcloud_recv_queue_.front();
+        auto pair = point_cloud_recv_queue_.front();
         old_frmnum_ = new_frmnum_;
         new_frmnum_ = pair.second.frmNumber;
         memcpy((uint8_t*)buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
@@ -188,16 +188,16 @@ private:
           localCallback(toRsMsg(proto_msg));
         }
       }
-      free(pointcloud_recv_queue_.front().first);
-      pointcloud_recv_queue_.pop();
+      free(point_cloud_recv_queue_.front().first);
+      point_cloud_recv_queue_.pop();
     }
-    pointcloud_recv_queue_.is_task_finished_.store(true);
+    point_cloud_recv_queue_.is_task_finished_.store(true);
   }
 
 private:
-  std::vector<std::function<void(const LidarPointsMsg&)>> pointcloud_cb_vec_;
-  lidar::Queue<LidarPointsMsg> pointcloud_send_queue_;
-  lidar::Queue<std::pair<void*, ProtoMsgHeader>> pointcloud_recv_queue_;
+  std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
+  lidar::Queue<LidarPointCloudMsg> point_cloud_send_queue_;
+  lidar::Queue<std::pair<void*, ProtoMsgHeader>> point_cloud_recv_queue_;
   std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   lidar::Thread recv_thread_;

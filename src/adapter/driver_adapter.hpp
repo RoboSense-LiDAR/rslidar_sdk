@@ -98,123 +98,123 @@ public:
     driver_ptr_->stop();
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
   {
-    pointcloud_cb_vec_.emplace_back(callBack);
+    point_cloud_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
   {
-    scan_cb_vec_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
   {
-    packet_cb_vec_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callback);
   }
 
-  void decodeScan(const LidarScanMsg& pkt_msg)
+  void decodeScan(const LidarScanMsg& msg)
   {
-    lidar::PointcloudMsg<pcl::PointXYZI> pointcloud;
-    if (driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
+    lidar::PointCloudMsg<pcl::PointXYZI> point_cloud_msg;
+    if (driver_ptr_->decodeMsopScan(cScan2LScan(msg), point_cloud_msg))
     {
-      localPointsCallback(pointcloud);
+      localPointsCallback(point_cloud_msg);
     }
   }
 
-  void decodePacket(const LidarPacketMsg& pkt_msg)
+  void decodePacket(const LidarPacketMsg& msg)
   {
-    driver_ptr_->decodeDifopPkt(cPkt2LPkt(pkt_msg));
+    driver_ptr_->decodeDifopPkt(cPkt2LPkt(msg));
   }
 
 private:
-  void localPointsCallback(const lidar::PointcloudMsg<pcl::PointXYZI>& _msg)
+  void localPointsCallback(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
   {
-    for (auto iter : pointcloud_cb_vec_)
+    for (auto iter : point_cloud_cb_vec_)
     {
-      thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPoints2CPoints(_msg)); });
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(lPoints2CPoints(msg)); });
     }
   }
 
-  void localScanCallback(const lidar::ScanMsg& _msg)
+  void localScanCallback(const lidar::ScanMsg& msg)
   {
     for (auto iter : scan_cb_vec_)
     {
-      thread_pool_ptr_->commit([this, _msg, iter]() { iter(lScan2CScan(_msg)); });
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(lScan2CScan(msg)); });
     }
   }
 
-  void localPacketCallback(const lidar::PacketMsg& _msg)
+  void localPacketCallback(const lidar::PacketMsg& msg)
   {
     for (auto iter : packet_cb_vec_)
     {
-      thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPkt2CPkt(_msg)); });
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(lPkt2CPkt(msg)); });
     }
   }
 
-  void localExceptionCallback(const lidar::Error& _msg)
+  void localExceptionCallback(const lidar::Error& msg)
   {
-    switch (_msg.error_code_type)
+    switch (msg.error_code_type)
     {
       case lidar::ErrCodeType::INFO_CODE:
-        INFO << _msg.toString() << REND;
+        INFO << msg.toString() << REND;
         break;
       case lidar::ErrCodeType::WARNING_CODE:
-        WARNING << _msg.toString() << REND;
+        WARNING << msg.toString() << REND;
         break;
       case lidar::ErrCodeType::ERROR_CODE:
-        ERROR << _msg.toString() << REND;
+        ERROR << msg.toString() << REND;
         break;
     }
   }
 
-  LidarScanMsg lScan2CScan(const lidar::ScanMsg& _msg)
+  LidarScanMsg lScan2CScan(const lidar::ScanMsg& msg)
   {
-    lidar::ScanMsg tmp_msg = _msg;
-    LidarScanMsg* msg = (struct LidarScanMsg*)(&tmp_msg);
-    return std::move(*msg);
+    lidar::ScanMsg tmp_msg = msg;
+    LidarScanMsg* scan_msg = (struct LidarScanMsg*)(&tmp_msg);
+    return std::move(*scan_msg);
   }
 
-  lidar::ScanMsg cScan2LScan(const LidarScanMsg& _msg)
+  lidar::ScanMsg cScan2LScan(const LidarScanMsg& msg)
   {
-    LidarScanMsg tmp_msg = _msg;
-    lidar::ScanMsg* msg = (struct lidar::ScanMsg*)(&tmp_msg);
-    return std::move(*msg);
+    LidarScanMsg tmp_msg = msg;
+    lidar::ScanMsg* scan_msg = (struct lidar::ScanMsg*)(&tmp_msg);
+    return std::move(*scan_msg);
   }
 
-  LidarPacketMsg lPkt2CPkt(const lidar::PacketMsg& _msg)
+  LidarPacketMsg lPkt2CPkt(const lidar::PacketMsg& msg)
   {
-    lidar::PacketMsg tmp_msg = _msg;
-    LidarPacketMsg* msg = (struct LidarPacketMsg*)(&tmp_msg);
-    return std::move(*msg);
+    lidar::PacketMsg tmp_msg = msg;
+    LidarPacketMsg* pkt_msg = (struct LidarPacketMsg*)(&tmp_msg);
+    return std::move(*pkt_msg);
   }
 
-  lidar::PacketMsg cPkt2LPkt(const LidarPacketMsg& _msg)
+  lidar::PacketMsg cPkt2LPkt(const LidarPacketMsg& msg)
   {
-    LidarPacketMsg tmp_msg = _msg;
-    lidar::PacketMsg* msg = (struct lidar::PacketMsg*)(&tmp_msg);
-    return std::move(*msg);
+    LidarPacketMsg tmp_msg = msg;
+    lidar::PacketMsg* pkt_msg = (struct lidar::PacketMsg*)(&tmp_msg);
+    return std::move(*pkt_msg);
   }
 
-  LidarPointsMsg lPoints2CPoints(const lidar::PointcloudMsg<pcl::PointXYZI>& _msg)
+  LidarPointCloudMsg lPoints2CPoints(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
   {
-    PointCloudPtr cloud(new pcl::PointCloud<pcl::PointXYZI>);
-    cloud->points.assign(_msg.pointcloud_ptr->begin(), _msg.pointcloud_ptr->end());
-    cloud->height = _msg.height;
-    cloud->width = _msg.width;
-    LidarPointsMsg msg(cloud);
-    msg.frame_id = _msg.frame_id;
-    msg.timestamp = _msg.timestamp;
-    msg.seq = _msg.seq;
-    msg.height = _msg.height;
-    msg.width = _msg.width;
-    msg.is_dense = _msg.is_dense;
-    return std::move(msg);
+    PointCloudPtr point_cloud(new pcl::PointCloud<pcl::PointXYZI>);
+    point_cloud->points.assign(msg.point_cloud_ptr->begin(), msg.point_cloud_ptr->end());
+    point_cloud->height = msg.height;
+    point_cloud->width = msg.width;
+    LidarPointCloudMsg point_cloud_msg(point_cloud);
+    point_cloud_msg.frame_id = msg.frame_id;
+    point_cloud_msg.timestamp = msg.timestamp;
+    point_cloud_msg.seq = msg.seq;
+    point_cloud_msg.height = msg.height;
+    point_cloud_msg.width = msg.width;
+    point_cloud_msg.is_dense = msg.is_dense;
+    return std::move(point_cloud_msg);
   }
 
 private:
   std::shared_ptr<lidar::LidarDriver<pcl::PointXYZI>> driver_ptr_;
-  std::vector<std::function<void(const LidarPointsMsg&)>> pointcloud_cb_vec_;
+  std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
   std::vector<std::function<void(const LidarScanMsg&)>> scan_cb_vec_;
   std::vector<std::function<void(const LidarPacketMsg&)>> packet_cb_vec_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;

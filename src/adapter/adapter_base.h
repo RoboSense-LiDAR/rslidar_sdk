@@ -25,20 +25,19 @@
 #include "utility/yaml_reader.hpp"
 #include "msg/rs_msg/lidar_packet_msg.h"
 #include "msg/rs_msg/lidar_scan_msg.h"
-#include "msg/rs_msg/lidar_points_msg.h"
+#include "msg/rs_msg/lidar_point_cloud_msg.h"
 
 namespace robosense
 {
 namespace lidar
 {
-
 enum MsgSource
 {
-  MSG_FROM_LIDAR=1,          
-  MSG_FROM_ROS_PACKET=2, 
-  MSG_FROM_PCAP=3, 
-  MSG_FROM_PROTO_PACKET=4, 
-  MSG_FROM_PROTO_POINTCLOUD=5
+  MSG_FROM_LIDAR = 1,
+  MSG_FROM_ROS_PACKET = 2,
+  MSG_FROM_PCAP = 3,
+  MSG_FROM_PROTO_PACKET = 4,
+  MSG_FROM_PROTO_POINTCLOUD = 5
 };
 
 class LidarAdapterBase
@@ -70,22 +69,22 @@ public:
     return;
   }
 
-  virtual void sendPointcloud(const LidarPointsMsg& msg)
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
   {
     return;
   }

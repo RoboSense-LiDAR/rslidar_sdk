@@ -109,14 +109,14 @@ public:
     }
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
   {
-    scan_cb_vec_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
   {
-    packet_cb_vec_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callback);
   }
 
   void sendScan(const LidarScanMsg& msg)
