@@ -33,7 +33,7 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsProtoAdapter : virtual public LidarAdapterBase
+class LidarPacketsProtoAdapter : virtual public AdapterBase
 {
 public:
   LidarPacketsProtoAdapter() : old_frmnum_(0), new_frmnum_(0)
@@ -109,17 +109,17 @@ public:
     }
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
   {
     scan_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
   {
     packet_cb_vec_.emplace_back(callback);
   }
 
-  void sendScan(const LidarScanMsg& msg)
+  void sendScan(const ScanMsg& msg)
   {
     scan_send_queue_.push(msg);
     if (scan_send_queue_.is_task_finished_.load())
@@ -129,7 +129,7 @@ public:
     }
   }
 
-  void sendPacket(const LidarPacketMsg& msg)
+  void sendPacket(const PacketMsg& msg)
   {
     packet_send_queue_.push(msg);
     if (packet_send_queue_.is_task_finished_.load())
@@ -140,7 +140,7 @@ public:
   }
 
 private:
-  inline void localMsopCallback(const LidarScanMsg& rs_msg)
+  inline void localMsopCallback(const ScanMsg& rs_msg)
   {
     for (auto& cb : scan_cb_vec_)
     {
@@ -148,7 +148,7 @@ private:
     }
   }
 
-  inline void localDifopCallback(const LidarPacketMsg& rs_msg)
+  inline void localDifopCallback(const PacketMsg& rs_msg)
   {
     for (auto& cb : packet_cb_vec_)
     {
@@ -278,13 +278,13 @@ private:
   }
 
 private:
-  std::vector<std::function<void(const LidarScanMsg&)>> scan_cb_vec_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> packet_cb_vec_;
+  std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
+  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
   std::unique_ptr<ProtoCommunicator> scan_proto_com_ptr_;
   std::unique_ptr<ProtoCommunicator> packet_proto_com_ptr_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
-  lidar::Queue<LidarScanMsg> scan_send_queue_;
-  lidar::Queue<LidarPacketMsg> packet_send_queue_;
+  lidar::Queue<ScanMsg> scan_send_queue_;
+  lidar::Queue<PacketMsg> packet_send_queue_;
   lidar::Queue<std::pair<void*, ProtoMsgHeader>> scan_recv_queue_;
   lidar::Queue<std::pair<void*, ProtoMsgHeader>> packet_recv_queue_;
   lidar::Thread scan_recv_thread_;

@@ -115,7 +115,7 @@ endif(${COMPILE_METHOD} MATCHES "CATKIN")
 if(Protobuf_FOUND)
 add_executable(rslidar_sdk_node
             node/rslidar_sdk_node.cpp
-            ${PROTO_FILE_PATH}/Proto_msg.LidarPoints.pb.cc
+            ${PROTO_FILE_PATH}/Proto_msg.LidarPointCloud.pb.cc
             ${PROTO_FILE_PATH}/Proto_msg.LidarScan.pb.cc
             ${PROTO_FILE_PATH}/Proto_msg.LidarPacket.pb.cc
             )

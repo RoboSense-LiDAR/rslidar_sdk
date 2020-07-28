@@ -23,8 +23,8 @@
 #pragma once
 #include "utility/common.h"
 #include "utility/yaml_reader.hpp"
-#include "msg/rs_msg/lidar_packet_msg.h"
-#include "msg/rs_msg/lidar_scan_msg.h"
+#include "rs_driver/msg/packet_msg.h"
+#include "rs_driver/msg/scan_msg.h"
 #include "msg/rs_msg/lidar_point_cloud_msg.h"
 
 namespace robosense
@@ -40,12 +40,12 @@ enum MsgSource
   MSG_FROM_PROTO_POINTCLOUD = 5
 };
 
-class LidarAdapterBase
+class AdapterBase
 {
 public:
-  typedef std::shared_ptr<LidarAdapterBase> Ptr;
-  LidarAdapterBase() = default;
-  virtual ~LidarAdapterBase() = default;
+  typedef std::shared_ptr<AdapterBase> Ptr;
+  AdapterBase() = default;
+  virtual ~AdapterBase() = default;
 
   virtual void init(const YAML::Node& config) = 0;
 
@@ -59,12 +59,12 @@ public:
     return;
   }
 
-  virtual void sendScan(const LidarScanMsg& msg)
+  virtual void sendScan(const ScanMsg& msg)
   {
     return;
   }
 
-  virtual void sendPacket(const LidarPacketMsg& msg)
+  virtual void sendPacket(const PacketMsg& msg)
   {
     return;
   }
@@ -74,12 +74,12 @@ public:
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
+  virtual void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
+  virtual void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
   {
     return;
   }
@@ -89,12 +89,12 @@ public:
     return;
   }
 
-  virtual void decodeScan(const LidarScanMsg& msg)
+  virtual void decodeScan(const ScanMsg& msg)
   {
     return;
   }
 
-  virtual void decodePacket(const LidarPacketMsg& msg)
+  virtual void decodePacket(const PacketMsg& msg)
   {
     return;
   }

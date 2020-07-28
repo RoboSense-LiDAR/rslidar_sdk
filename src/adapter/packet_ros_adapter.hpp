@@ -31,7 +31,7 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public LidarAdapterBase
+class LidarPacketsRosAdapter : virtual public AdapterBase
 {
 public:
   LidarPacketsRosAdapter() = default;
@@ -66,22 +66,22 @@ public:
     }
   }
 
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
+  void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
   {
     scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
+  void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
   {
     packet_cb_vec_.emplace_back(callback);
   }
 
-  void sendScan(const LidarScanMsg& msg)
+  void sendScan(const ScanMsg& msg)
   {
     scan_pub_.publish(toRosMsg(msg));
   }
 
-  void sendPacket(const LidarPacketMsg& msg)
+  void sendPacket(const PacketMsg& msg)
   {
     packet_pub_.publish(toRosMsg(msg));
   }
@@ -105,8 +105,8 @@ private:
 
 private:
   std::unique_ptr<ros::NodeHandle> nh_;
-  std::vector<std::function<void(const LidarScanMsg&)>> scan_cb_vec_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> packet_cb_vec_;
+  std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
+  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
   ros::Publisher scan_pub_;
   ros::Publisher packet_pub_;
   ros::Subscriber scan_sub_;
@@ -124,7 +124,7 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public LidarAdapterBase
+class LidarPacketsRosAdapter : virtual public AdapterBase
 {
 public:
   LidarPacketsRosAdapter() = default;
@@ -167,22 +167,22 @@ public:
     t.detach();
   }
 
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callback)
+  void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
   {
     scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callback)
+  void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
   {
     packet_cb_vec_.emplace_back(callback);
   }
 
-  void sendScan(const LidarScanMsg& msg)
+  void sendScan(const ScanMsg& msg)
   {
     scan_pub_->publish(toRosMsg(msg));
   }
 
-  void sendPacket(const LidarPacketMsg& msg)
+  void sendPacket(const PacketMsg& msg)
   {
     packet_pub_->publish(toRosMsg(msg));
   }
@@ -210,8 +210,8 @@ private:
   rclcpp::Publisher<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_pub_
   rclcpp::Subscription<rslidar_msg::msg::RslidarScan>::SharedPtr scan_sub_;
   rclcpp::Subscription<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_sub_;
-  std::vector<std::function<void(const LidarScanMsg&)>> scan_cb_vec_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> packet_cb_vec_;
+  std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
+  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
   rclcpp::executors::MultiThreadedExecutor executor;
 };
 }  // namespace lidar
