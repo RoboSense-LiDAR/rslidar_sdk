@@ -133,6 +133,5 @@ inline PacketMsg toRsMsg(const Proto_msg::LidarPacket& proto_msg)
 }
 
 }  // namespace lidar
-
 }  // namespace robosense
 #endif  // PROTO_FOUND

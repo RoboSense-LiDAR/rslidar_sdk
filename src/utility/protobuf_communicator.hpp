@@ -43,10 +43,10 @@ namespace robosense
 {
 namespace lidar
 {
-enum class RS_DATA_ENDIAN_TYPE
+enum class DataEndianType
 {
-  RS_DATA_BIG_ENDIAN = 0,
-  RS_DATA_LITTLE_ENDIAN = 1,
+  RS_BIG_ENDIAN = 0,
+  RS_SMALL_ENDIAN = 1
 };
 template <typename T>
 class CRSEndian
@@ -58,61 +58,61 @@ public:
 public:
   CRSEndian()
   {
-    unsigned char* pChar = (unsigned char*)(&magicData);
-    if (*pChar == magicBigEndian[0] && (*(pChar + 1)) == magicBigEndian[1] &&
-        (*(pChar + 2)) == magicBigEndian[2] & (*(pChar + 3)) == magicBigEndian[3])
+    unsigned char* p_char = (unsigned char*)(&magic_data_);
+    if (*p_char == magic_big_endian_[0] && (*(p_char + 1)) == magic_big_endian_[1] &&
+        (*(p_char + 2)) == magic_big_endian_[2] & (*(p_char + 3)) == magic_big_endian_[3])
     {
-      m_hostEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN;
+      host_endian_type_ = DataEndianType::RS_BIG_ENDIAN;
     }
-    else if (*pChar == magicLittleEndian[0] && (*(pChar + 1)) == magicLittleEndian[1] &&
-             (*(pChar + 2)) == magicLittleEndian[2] && (*(pChar + 3)) == magicLittleEndian[3])
+    else if (*p_char == magic_small_endian_[0] && (*(p_char + 1)) == magic_small_endian_[1] &&
+             (*(p_char + 2)) == magic_small_endian_[2] && (*(p_char + 3)) == magic_small_endian_[3])
     {
-      m_hostEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_LITTLE_ENDIAN;
+      host_endian_type_ = DataEndianType::RS_SMALL_ENDIAN;
     }
   }
 
 public:
-  RS_DATA_ENDIAN_TYPE getHostEndian()
+  DataEndianType getHostEndian()
   {
-    return m_hostEndianType;
+    return host_endian_type_;
   }
 
-  int toTargetEndianArray(T t, void* pArray, unsigned int maxSize, RS_DATA_ENDIAN_TYPE dstEndianType)
+  int toTargetEndianArray(T t, void* pArray, unsigned int maxSize, DataEndianType dstEndianType)
   {
     unsigned int tSize = sizeof(T);
     assert(tSize <= maxSize);
     assert(pArray != nullptr);
-    if (m_hostEndianType != dstEndianType)
+    if (host_endian_type_ != dstEndianType)
     {
-      char* pData = (char*)(&t);
+      char* p_data_ = (char*)(&t);
       unsigned int tSize_h = tSize / 2;
       for (unsigned int idx = 0; idx < tSize_h; ++idx)
       {
-        char tmp = pData[idx];
+        char tmp = p_data_[idx];
         unsigned int swapIdx = tSize - idx - 1;
-        pData[idx] = pData[swapIdx];
-        pData[swapIdx] = tmp;
+        p_data_[idx] = p_data_[swapIdx];
+        p_data_[swapIdx] = tmp;
       }
     }
     memcpy(pArray, &t, tSize);
     return 0;
   }
 
-  int toHostEndianValue(T& t, const void* pArray, unsigned int maxSize, RS_DATA_ENDIAN_TYPE srcEndianType)
+  int toHostEndianValue(T& t, const void* pArray, unsigned int maxSize, DataEndianType srcEndianType)
   {
     unsigned int tSize = sizeof(T);
     assert(pArray != nullptr);
     assert(tSize <= maxSize);
-    if (srcEndianType != m_hostEndianType)
+    if (srcEndianType != host_endian_type_)
     {
-      char* pData = (char*)(pArray);
+      char* p_data_ = (char*)(pArray);
       unsigned int tSize_h = tSize / 2;
       for (unsigned idx = 0; idx < tSize_h; ++idx)
       {
-        char tmp = pData[idx];
+        char tmp = p_data_[idx];
         unsigned int swapIdx = tSize - idx - 1;
-        pData[idx] = pData[swapIdx];
-        pData[swapIdx] = tmp;
+        p_data_[idx] = p_data_[swapIdx];
+        p_data_[swapIdx] = tmp;
       }
     }
     memcpy(&t, pArray, tSize);
@@ -120,13 +120,13 @@ public:
   }
 
 private:
-  RS_DATA_ENDIAN_TYPE m_hostEndianType;
+  DataEndianType host_endian_type_;
 
 private:
-  const unsigned int magicData = 0xA1B2C3D4;
-  const unsigned char magicLittleEndian[4] = { (unsigned char)0xD4, (unsigned char)0xC3, (unsigned char)0xB2,
+  const unsigned int magic_data_ = 0xA1B2C3D4;
+  const unsigned char magic_small_endian_[4] = { (unsigned char)0xD4, (unsigned char)0xC3, (unsigned char)0xB2,
                                                (unsigned char)0xA1 };
-  const unsigned char magicBigEndian[4] = { (unsigned char)0xA1, (unsigned char)0xB2, (unsigned char)0xC3,
+  const unsigned char magic_big_endian_[4] = { (unsigned char)0xA1, (unsigned char)0xB2, (unsigned char)0xC3,
                                             (unsigned char)0xD4 };
 };
 
@@ -158,7 +158,7 @@ struct alignas(16) ProtoMsgHeader
     memset(res, 0, sizeof(unsigned int) * 2);
   }
   bool toTargetEndianArray(char* pArray, const unsigned int maxArraySize,
-                           const RS_DATA_ENDIAN_TYPE dstEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN) const
+                           const DataEndianType dstEndianType = DataEndianType::RS_BIG_ENDIAN) const
   {
     if (pArray == nullptr || maxArraySize < sizeof(ProtoMsgHeader))
     {
@@ -201,7 +201,7 @@ struct alignas(16) ProtoMsgHeader
     return true;
   }
   bool toHostEndianValue(const char* pArray, const unsigned int arraySize,
-                         const RS_DATA_ENDIAN_TYPE srcEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN)
+                         const DataEndianType srcEndianType = DataEndianType::RS_BIG_ENDIAN)
   {
     if (pArray == nullptr || arraySize < sizeof(ProtoMsgHeader))
     {
@@ -312,7 +312,7 @@ public:
     int sendLen = header.msgLen + sizeof(ProtoMsgHeader);
     char* sendBuffer = (char*)malloc(sendLen);
     memset(sendBuffer, 0, sendLen);
-    header.toTargetEndianArray(sendBuffer, sizeof(ProtoMsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
+    header.toTargetEndianArray(sendBuffer, sizeof(ProtoMsgHeader), DataEndianType::RS_BIG_ENDIAN);
     if (header.msgLen > 0)
     {
       memcpy(sendBuffer + sizeof(ProtoMsgHeader), pMsgData, header.msgLen);
@@ -346,7 +346,7 @@ public:
       free(pRecvBuffer);
       return -1;
     }
-    header.toHostEndianValue(pRecvBuffer, sizeof(ProtoMsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
+    header.toHostEndianValue(pRecvBuffer, sizeof(ProtoMsgHeader), DataEndianType::RS_BIG_ENDIAN);
     if (ret < (std::size_t)(header.msgLen + sizeof(ProtoMsgHeader)))
     {
       free(pRecvBuffer);
