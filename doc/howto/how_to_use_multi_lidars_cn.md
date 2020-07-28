@@ -24,17 +24,17 @@
 
 ```yaml
 common:
-    msg_source: 1                                         #0--not use Lidar
-                                                          #1--lidar packet message come from online lidar
-                                                          #2--lidar packet message come from ROS
-                                                          #3--lidar packet message come from Pcap bag
-                                                          #4--packets from Protobuf-UDP
-                                                          #5--point cloud from Protobuf-UDP
-    send_packet_ros: false                               #True--Send packet through ROS(Used to record packet)
-    send_point_cloud_ros: true                                 #True--Send point cloud through ROS
-    send_packet_proto: false                             #True--Send packets through Protobuf-UDP
-    send_point_cloud_proto: false                              #True--Send point cloud through Protobuf-UDP
-    pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 1                                         #0--not use Lidar
+                                                        #1--packet message come from online lidar
+                                                        #2--packet message come from ROS or ROS2
+                                                        #3--packet message come from Pcap bag
+                                                        #4--packet message come from Protobuf-UDP
+                                                        #5--point cloud from Protobuf-UDP
+  send_packet_ros: false                                #True--Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #True--Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #True--Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #True--Send point cloud through Protobuf-UDP
+  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	由于消息来自雷达，因此请设置 *msg_source = 1*。 

@@ -176,10 +176,6 @@ cmake .. && make -j4
 
 [离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)
 
-[如何使用ROS2功能](doc/howto/how_to_use_ros2.md)
-
-
-
 
 
 ### 8 使用进阶
@@ -366,8 +362,6 @@ cmake .. && make -j4
 [Record rosbag & Offline decode rosbag](doc/howto/how_to_record_and_offline_decode_rosbag.md)
 
 [Decode pcap bag and send point cloud through ROS](doc/howto/how_to_offline_decode_pcap.md)
-
-[How to use ROS2](doc/howto/how_to_use_ros2.md)
 
 
 
