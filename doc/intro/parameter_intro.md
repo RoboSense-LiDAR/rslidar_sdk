@@ -43,37 +43,37 @@ common:
 
 - send_packet_ros
 
-  ​	Ture -- The lidar packets will be sent to ROS or ROS2. e.g. When you connect a lidar and want to record rosbag, you can set the *msg_source=1* and set *send_packet_ros = true*.
+      ​	Ture -- The lidar packets will be sent to ROS or ROS2. e.g. When you connect a lidar and want to record rosbag, you can set the *msg_source=1* and set *send_packet_ros = true*.
 
-  ​	False -- Do nothing.
+      ​	False -- Do nothing.
 
-  ​	**Note1:  If the msg_source =2, there is no use to set send_packet_ros to true because the packet come from ROS and there is no reason to send them back to ROS.**
+      ​ **Note1:  If the msg_source =2, there is no use to set send_packet_ros to true because the packet come from ROS and there is no reason to send them back to ROS.**
 
-  ​	**Note2: Since the ROS packet message type is robosense self-defined type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.**
+      ​	**Note2: Since the ROS packet message type is robosense self-defined type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.**
 
 - send_point_cloud_ros
 
-  ​	True -- The lidar point cloud will be sent to ROS or ROS2. e.g. When you connect a lidar and want to see point cloud on ROS-Rviz, you can the *msg_source =1* and set *send_point_cloud_ros = true*.
+      ​	True -- The lidar point cloud will be sent to ROS or ROS2. e.g. When you connect a lidar and want to see point cloud on ROS-Rviz, you can the *msg_source =1* and set *send_point_cloud_ros = true*.
 
-  ​	False -- Do nothing.
-
-  ​	**Note: The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, thats 		why we suggest to  record packets.**
+      ​	False -- Do nothing.
+    
+      ​	**Note: The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, thats 		why we suggest to  record packets.**
 
 - send_packet_proto
 
-  ​	True -- The lidar packets will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and set the *msg_source = 1*, set *send_packet_proto = true*. Then, on computerB, set the *msg_source = 4* and set *send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
+      ​	True -- The lidar packets will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and set the *msg_source = 1*, set *send_packet_proto = true*. Then, on computerB, set the *msg_source = 4* and set *send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
 
-  ​	False -- Do nothing
+      ​	False -- Do nothing
 
 - send_point_cloud_proto
 
-  ​	True -- The lidar point cloud will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and *set the msg_source = 1*, set *send_point_cloud_proto = true*. Then, on computerB, set the *msg_source = 5* and *set send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
+      ​	True -- The lidar point cloud will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and *set the msg_source = 1*, set *send_point_cloud_proto = true*. Then, on computerB, set the *msg_source = 5* and *set send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
 
-  **Node: We suggest send packets through ethernet rather than point cloud because point cloud size is too larger and it may take up a lot of bandwidth.**
+       **Node: We suggest send packets through ethernet rather than point cloud because point cloud size is too larger and it may take up a lot of bandwidth.**
 
 - pcap_directory
 
-  ​	If the *msg_source = 3*, please make sure the pcap_directory is correct. 
+      ​	If the *msg_source = 3*, please make sure the pcap_directory is correct. 
 
 ---
 
