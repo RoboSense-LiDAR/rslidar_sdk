@@ -1,7 +1,7 @@
 # **rslidar_sdk**
 
 ## 1 工程简介
- 	**rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
+ **rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
 
 
 
