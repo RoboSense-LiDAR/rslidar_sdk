@@ -55,7 +55,7 @@ int main(int argc, char** argv)
   catch (...)
   {
     ERROR << "Config file format wrong! Please check the format or intendation! " << REND;
-    return 0;
+    return -1;
   }
 
 #ifdef ROS_FOUND  ///< if ROS is found, call the ros::init function

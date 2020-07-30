@@ -244,7 +244,7 @@ using boost::asio::deadline_timer;
 using boost::asio::ip::udp;
 /**
  * @brief  Protobuf UDP transmission basic class
- * @note   used to initialize socket sender and receiver, and define send function and receive function
+ * @note   Initialize socket sender and receiver, and define send function and receive function
  */
 class ProtoCommunicator
 {
@@ -252,7 +252,7 @@ public:
   ProtoCommunicator() = default;
   ~ProtoCommunicator() = default;
 
-  /* Sender & Receiver initialize function */
+  /* Sender & Receiver initialization function */
   /**
    * @brief  intilize the socket sender
    * @param  proto_send_port: destination port
@@ -278,7 +278,7 @@ public:
     return 0;
   }
   /**
-   * @brief  initialize the socket receiver
+   * @brief  Initialize the socket receiver
    * @param  proto_recv_port: the receiver port number
    * @retval 0:success -1:failed
    */

@@ -236,7 +236,7 @@ If use rslidar_sdk in ROS environment, ROS related libraries need to be installe
 
 Installation： please refer to  http://wiki.ros.org
 
-**If you install ROS kinetic desktop-full or ROS melodic desktop-full，then the correspond PCL and Boost  will be installed at the same time. If will bring you a lot of convenience since you dont need to handle the version confliction. Thus, its highly recommanded to install ROS  desktop-full**.
+**If you install ROS kinetic desktop-full or ROS melodic desktop-full，then the correspond PCL and Boost  will be installed at the same time. If will bring you a lot of convenience since you don't need to handle the version confliction. Thus, its highly recommanded to install ROS  desktop-full**.
 
 ### 3.2 ROS2
 
