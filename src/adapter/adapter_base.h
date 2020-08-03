@@ -74,6 +74,11 @@ public:
     return;
   }
 
+  virtual void sendCameraTrigger(const CameraTrigger& msg)
+  {
+    return;
+  }
+
   virtual void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
   {
     return;
@@ -85,6 +90,11 @@ public:
   }
 
   virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
+  {
+    return;
+  }
+
+  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)> callback)
   {
     return;
   }

@@ -30,6 +30,7 @@
 #include <ros/rate.h>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <std_msgs/Time.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/transforms.h>
 
@@ -94,6 +95,13 @@ inline rslidar_msgs::rslidarScan toRosMsg(const ScanMsg& rs_msg)
   }
   return std::move(ros_msg);
 }
+inline std_msgs::Time toRosMsg(const CameraTrigger& rs_msg)
+{
+  std_msgs::Time ros_msg;
+  ros_msg.data=ros_msg.data.fromSec(rs_msg.second);
+  return ros_msg;
+}
+
 }  // namespace lidar
 }  // namespace robosense
 #endif  // ROS_FOUND
