@@ -22,18 +22,18 @@
 /***************************************************************************************************************************
 /* Basic struct:
  *
- *                                
- *                                              AdapterBase          
- *                                            /      |      \                
- *                                           /       |       \         
- *     ROS:                        PacketRosAdapter  |   PointCloudRosAdapter 
+ *
+ *                                              AdapterBase
+ *                                            /      |      \
+ *                                           /       |       \
+ *     ROS:                        PacketRosAdapter  |   PointCloudRosAdapter
  *     Protobuf:          PacketProtoAdapter         |            PointCloudProtoAdapter
  *     Driver:                       \         DriverAdapter           /
  *                                    \        /           \          /
  *                                     \      /             \        /
  *                                      \    /               \      /
  *                                      Packet              PointCloud
- * 
+ *
  *
  * AdapterManager:
  *
@@ -66,6 +66,7 @@
 #include "adapter/point_cloud_ros_adapter.hpp"
 #include "adapter/packet_protobuf_adapter.hpp"
 #include "adapter/point_cloud_protobuf_adapter.hpp"
+#include "adapter/camera_trigger_adapter.hpp"
 
 namespace robosense
 {
@@ -77,7 +78,8 @@ enum class AdapterType
   PointCloudRosAdapter,
   PointCloudProtoAdapter,
   PacketRosAdapter,
-  PacketProtoAdapter
+  PacketProtoAdapter,
+  CameraTriggerRosAdapter
 };
 
 class AdapterManager
@@ -98,6 +100,7 @@ public:
     bool send_packet_ros;
     bool send_point_cloud_proto;
     bool send_packet_proto;
+    bool send_camera_trigger_ros;
     std::string pcap_dir;
     double pcap_rate;
     bool pcap_repeat;
@@ -107,6 +110,7 @@ public:
     yamlRead<bool>(common_config, "send_point_cloud_ros", send_point_cloud_ros, false);
     yamlRead<bool>(common_config, "send_point_cloud_proto", send_point_cloud_proto, false);
     yamlRead<bool>(common_config, "send_packet_proto", send_packet_proto, false);
+    yamlRead<bool>(common_config, "send_camera_trigger_ros", send_camera_trigger_ros, false);
     yamlRead<std::string>(common_config, "pcap_directory", pcap_dir, "");
     yamlRead<double>(common_config, "pcap_rate", pcap_rate, 1);
     yamlRead<bool>(common_config, "pcap_repeat", pcap_repeat, true);
@@ -208,6 +212,7 @@ public:
           send_point_cloud_proto = false;
           send_packet_ros = false;
           send_packet_proto = false;
+          send_camera_trigger_ros = false;
           point_cloud_receiver_vec_.emplace_back(
               createReceiver<AdapterBase>(lidar_config[i], AdapterType::PointCloudProtoAdapter));
           packet_receiver_vec_.emplace_back(nullptr);
@@ -282,6 +287,21 @@ public:
         point_cloud_receiver_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendPointCloud, transmitter_ptr, std::placeholders::_1));
       }
+      if (send_camera_trigger_ros)
+      {
+        DEBUG << "------------------------------------------------------" << REND;
+        DEBUG << "Send Camera Trigger To : ROS" << REND;
+        for (auto iter : lidar_config[i]["camera"])
+        {
+          DEBUG << "Camera : " << iter["frame_id"].as<std::string>()
+                << "  Trigger Angle : " << iter["trigger_angle"].as<double>() << REND;
+        }
+        DEBUG << "------------------------------------------------------" << REND;
+        AdapterBase::Ptr transmitter_ptr =
+            createTransmitter<AdapterBase>(lidar_config[i], AdapterType::CameraTriggerRosAdapter);
+        point_cloud_receiver_vec_[i]->regRecvCallback(
+            std::bind(&AdapterBase::sendCameraTrigger, transmitter_ptr, std::placeholders::_1));
+       }
     }
   }
 
@@ -427,6 +447,16 @@ private:
         break;
 #else
         ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
+        exit(-1);
+#endif
+
+      case AdapterType::CameraTriggerRosAdapter:
+#if (ROS_FOUND || ROS2_FOUND)
+        transmitter = std::dynamic_pointer_cast<T>(std::make_shared<CameraTriggerRosAdapter>());
+        transmitter->init(config);
+        break;
+#else
+        ERROR << "ROS not found! Could not use ROS functions!" << REND;
         exit(-1);
 #endif
 

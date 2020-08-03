@@ -34,8 +34,7 @@ public:
   {
     driver_ptr_.reset(new lidar::LidarDriver<pcl::PointXYZI>());
     thread_pool_ptr_.reset(new lidar::ThreadPool());
-    driver_ptr_->regExceptionCallback(
-        std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
+    driver_ptr_->regExceptionCallback(std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
   }
 
   ~DriverAdapter()
@@ -53,8 +52,8 @@ public:
     yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
     yamlRead<std::string>(driver_config, "angle_path", driver_param.angle_path, "");
     yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
-    yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.use_lidar_clock, false);
     yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
+    yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.decoder_param.use_lidar_clock, false);
     yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
     yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
     yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
@@ -70,7 +69,26 @@ public:
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
     yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_directory, "");
     driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
-
+    if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
+    {
+      for (size_t i = 0; i < config["camera"].size(); i++)
+      {
+        double trigger_angle;
+        std::string frame_id;
+        yamlRead<double>(config["camera"][i], "trigger_angle", trigger_angle, 0);
+        yamlRead<std::string>(config["camera"][i], "frame_id", frame_id, "rs_camera");
+        auto iter = driver_param.decoder_param.trigger_param.trigger_map.find(trigger_angle);
+        if (iter != driver_param.decoder_param.trigger_param.trigger_map.end())
+        {
+          trigger_angle += (double)i / 1000.0;
+          driver_param.decoder_param.trigger_param.trigger_map.emplace(trigger_angle, frame_id);
+        }
+        else
+        {
+          driver_param.decoder_param.trigger_param.trigger_map.emplace(trigger_angle, frame_id);
+        }
+      }
+    }
     if (msg_source == MsgSource::MSG_FROM_LIDAR || msg_source == MsgSource::MSG_FROM_PCAP)
     {
       if (!driver_ptr_->init(driver_param))
@@ -86,6 +104,7 @@ public:
     driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
     driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localCameraTriggerCallback, this, std::placeholders::_1));
   }
 
   void start()
@@ -113,6 +132,11 @@ public:
     packet_cb_vec_.emplace_back(callback);
   }
 
+  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)> callback)
+  {
+    camera_trigger_cb_vec_.emplace_back(callback);
+  }
+
   void decodeScan(const ScanMsg& msg)
   {
     lidar::PointCloudMsg<pcl::PointXYZI> point_cloud_msg;
@@ -128,7 +152,7 @@ public:
   }
 
 private:
-  void localPointsCallback(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
+  void localPointsCallback(const PointCloudMsg<pcl::PointXYZI>& msg)
   {
     for (auto iter : point_cloud_cb_vec_)
     {
@@ -136,7 +160,7 @@ private:
     }
   }
 
-  void localScanCallback(const lidar::ScanMsg& msg)
+  void localScanCallback(const ScanMsg& msg)
   {
     for (auto iter : scan_cb_vec_)
     {
@@ -144,9 +168,17 @@ private:
     }
   }
 
-  void localPacketCallback(const lidar::PacketMsg& msg)
+  void localPacketCallback(const PacketMsg& msg)
   {
     for (auto iter : packet_cb_vec_)
+    {
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
+    }
+  }
+
+  void localCameraTriggerCallback(const CameraTrigger& msg)
+  {
+    for (auto iter : camera_trigger_cb_vec_)
     {
       thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
     }
@@ -189,6 +221,7 @@ private:
   std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
   std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
   std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
+  std::vector<std::function<void(const CameraTrigger&)>> camera_trigger_cb_vec_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
 };
 }  // namespace lidar
