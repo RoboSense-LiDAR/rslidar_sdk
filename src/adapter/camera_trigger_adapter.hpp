@@ -80,6 +80,7 @@ namespace robosense
 {
 namespace lidar
 {
+  ///< Add in the future
 }  // namespace lidar
 }  // namespace robosense
 #endif  // ROS2_FOUND
