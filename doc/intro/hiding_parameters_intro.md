@@ -52,22 +52,22 @@ lidar:
       max_distance: 200            #The maximum distance of point cloud area
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
-      mode_split_frame: 1	       #1: Split frame depends on cut_angle; 2: Split frame depends on a fixed number of packets; 3: Split frame depends on num_pkts_split
-	  num_pkts_split: 1 	       #The number of packets in one frame, only be used when mode_split_frame=3
-      cut_angle: 0                 #The cut angle(degree) used to split frame, only be used when mode_split_frame=1
+      split_frame_mode: 1	       #1: Split frame depends on cut_angle; 2: Split frame depends on a fixed number of packets; 3: Split frame depends on num_pkts_split
+	  num_pkts_split: 1 	       #The number of packets in one frame, only be used when split_frame_mode=3
+      cut_angle: 0                 #The cut angle(degree) used to split frame, only be used when split_frame_mode=1
       wait_for_difop: true         #True--start sending point cloud until receive difop packet
 ```
 
-​	There are four hiding parameters in this part, *mode_split_frame, num_pkts_split, cut_angle, wait_for_difop*.
+​	There are four hiding parameters in this part, *split_frame_mode, num_pkts_split, cut_angle, wait_for_difop*.
 
-- mode_split_frame -- The mode to split the LiDAR frames. Default value is 1.
+- split_frame_mode -- The mode to split the LiDAR frames. Default value is 1.
 
   - 1 -- Spliting frames depends on the cut_angle
   - 2 -- Spliting frames depends on a fixed number of packets
   - 3 -- Spliting frames depends on num_pkts_split
 
-- num_pkts_split: The number of packets in one frame. Only be used when mode_split_frame = 3
+- num_pkts_split: The number of packets in one frame. Only be used when split_frame_mode = 3
 
-- cut_angle: The angle(degree) to split frames. Only be used when mode_split_frame = 1. The default value is 0.
+- cut_angle: The angle(degree) to split frames. Only be used when split_frame_mode = 1. The default value is 0.
 
 - wait_for_difop: If set to false, the driver will not wait for difop packet and send out the point cloud immediately. The default value is true.

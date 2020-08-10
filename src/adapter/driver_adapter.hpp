@@ -47,6 +47,7 @@ public:
     lidar::RSDriverParam driver_param;
     int msg_source;
     std::string lidar_type;
+    uint16_t split_frame_mode;
     YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
@@ -58,7 +59,7 @@ public:
     yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
     yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
     yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
-    yamlRead<uint16_t>(driver_config, "mode_split_frame", driver_param.decoder_param.mode_split_frame, 1);
+    yamlRead<uint16_t>(driver_config, "split_frame_mode", split_frame_mode, 1);
     yamlRead<uint32_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_pkts_split, 0);
     yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.cut_angle, 0);
     yamlRead<std::string>(driver_config, "device_ip", driver_param.input_param.device_ip, "192.168.1.200");
@@ -69,6 +70,7 @@ public:
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
     yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_directory, "");
     driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
+    driver_param.decoder_param.split_frame_mode=SplitFrameMode(split_frame_mode);
     if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
     {
       for (size_t i = 0; i < config["camera"].size(); i++)
