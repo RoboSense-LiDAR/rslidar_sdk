@@ -1,5 +1,13 @@
 # Changelog
 
+## unreleased v1.2.0 - beta
+
+### Added
+- Add camera software trigger (base on target angle)
+
+### Changed
+- Update driver core, please refer to changelog in rs_driver for details
+
 ## v1.1.0 - 2020-07-01
 
 ### Added
