@@ -60,7 +60,7 @@ public:
   {
     unsigned char* p_char = (unsigned char*)(&magic_data_);
     if (*p_char == magic_big_endian_[0] && (*(p_char + 1)) == magic_big_endian_[1] &&
-        (*(p_char + 2)) == magic_big_endian_[2] & (*(p_char + 3)) == magic_big_endian_[3])
+        (*(p_char + 2)) == magic_big_endian_[2] && (*(p_char + 3)) == magic_big_endian_[3])
     {
       host_endian_type_ = DataEndianType::RS_BIG_ENDIAN;
     }
@@ -371,8 +371,6 @@ public:
     tmp_header.msgLen = SPLIT_SIZE;
     tmp_header.totalMsgCnt = pkt_num;
     tmp_header.totalMsgLen = msg.ByteSize();
-    struct timeval time;
-    time.tv_usec = 10;
     for (int i = 0; i < pkt_num; i++)
     {
       tmp_header.msgID = i;

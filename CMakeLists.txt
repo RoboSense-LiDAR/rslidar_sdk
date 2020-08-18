@@ -20,7 +20,7 @@ include(CheckSymbolExists)
 set(CMAKE_BUILD_TYPE RELEASE)
 add_definitions(-O3)
 add_definitions(-std=c++11)
-add_compile_options(-W)
+add_compile_options(-Wall)
 
 #========================
 # Version
@@ -90,6 +90,17 @@ else(Protobuf_FOUND)
   message("-- Protobuf Not Found, Protobuf Support is turned Off!")
   message(=============================================================)
 endif(Protobuf_FOUND)
+
+find_package( OpenMP QUIET)
+if(OPENMP_FOUND)
+message(=============================================================)
+message("-- OpenMP Found, OpenMP support is turned On!")
+message(=============================================================)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS"${CMAKE_EXE_LINKER_FLAGS}${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+
 find_package(yaml-cpp REQUIRED)
 find_package(PCL QUIET)
 include_directories(${PCL_INCLUDE_DIRS})

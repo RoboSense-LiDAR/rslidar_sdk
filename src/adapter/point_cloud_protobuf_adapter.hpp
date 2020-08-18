@@ -81,16 +81,16 @@ public:
   void start()
   {
     buff_ = malloc(RECEIVE_BUF_SIZE);
-    recv_thread_.start = true;
-    recv_thread_.m_thread.reset(new std::thread([this]() { recvPoints(); }));
+    recv_thread_.start_ = true;
+    recv_thread_.thread_.reset(new std::thread([this]() { recvPoints(); }));
   }
 
   void stop()
   {
-    if (recv_thread_.start.load())
+    if (recv_thread_.start_.load())
     {
-      recv_thread_.start.store(false);
-      recv_thread_.m_thread->join();
+      recv_thread_.start_.store(false);
+      recv_thread_.thread_->join();
       free(buff_);
     }
   }
@@ -139,7 +139,7 @@ private:
   void recvPoints()
   {
     bool start_check = true;
-    while (recv_thread_.start.load())
+    while (recv_thread_.start_.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
       ProtoMsgHeader tmp_header;
@@ -175,7 +175,7 @@ private:
   {
     while (point_cloud_recv_queue_.size() > 0)
     {
-      if (recv_thread_.start.load())
+      if (recv_thread_.start_.load())
       {
         auto pair = point_cloud_recv_queue_.front();
         old_frmnum_ = new_frmnum_;

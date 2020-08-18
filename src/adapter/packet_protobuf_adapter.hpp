@@ -88,24 +88,24 @@ public:
   void start()
   {
     scan_buff_ = malloc(PKT_RECEIVE_BUF_SIZE);
-    scan_recv_thread_.start = true;
-    scan_recv_thread_.m_thread.reset(new std::thread([this]() { recvMsopPkts(); }));
-    packet_recv_thread_.start = true;
-    packet_recv_thread_.m_thread.reset(new std::thread([this]() { recvDifopPkts(); }));
+    scan_recv_thread_.start_ = true;
+    scan_recv_thread_.thread_.reset(new std::thread([this]() { recvMsopPkts(); }));
+    packet_recv_thread_.start_ = true;
+    packet_recv_thread_.thread_.reset(new std::thread([this]() { recvDifopPkts(); }));
   }
 
   void stop()
   {
-    if (scan_recv_thread_.start.load())
+    if (scan_recv_thread_.start_.load())
     {
-      scan_recv_thread_.start.store(false);
-      scan_recv_thread_.m_thread->join();
+      scan_recv_thread_.start_.store(false);
+      scan_recv_thread_.thread_->join();
       free(scan_buff_);
     }
-    if (packet_recv_thread_.start.load())
+    if (packet_recv_thread_.start_.load())
     {
-      packet_recv_thread_.start.store(false);
-      packet_recv_thread_.m_thread->join();
+      packet_recv_thread_.start_.store(false);
+      packet_recv_thread_.thread_->join();
     }
   }
 
@@ -159,7 +159,7 @@ private:
 private:
   void recvDifopPkts()
   {
-    while (packet_recv_thread_.start.load())
+    while (packet_recv_thread_.start_.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
       ProtoMsgHeader tmp_header;
@@ -182,7 +182,7 @@ private:
   {
     while (packet_recv_queue_.size() > 0)
     {
-      if (packet_recv_thread_.start.load())
+      if (packet_recv_thread_.start_.load())
       {
         auto pair = packet_recv_queue_.front();
         Proto_msg::LidarPacket protomsg;
@@ -198,7 +198,7 @@ private:
   void recvMsopPkts()
   {
     bool start_check = true;
-    while (scan_recv_thread_.start.load())
+    while (scan_recv_thread_.start_.load())
     {
       void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
       ProtoMsgHeader tmp_header;
@@ -232,7 +232,7 @@ private:
   {
     while (scan_recv_queue_.size() > 0)
     {
-      if (scan_recv_thread_.start.load())
+      if (scan_recv_thread_.start_.load())
       {
         auto pair = scan_recv_queue_.front();
         old_frmnum_ = new_frmnum_;
