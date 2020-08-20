@@ -40,6 +40,7 @@ add_definitions(-DDEBUG_LEVEL=0)
 #========================
 find_package(roscpp 1.12 QUIET)
 if(roscpp_FOUND)
+  set(CMAKE_CXX_STANDARD 14)
   message(=============================================================)
   message("-- ROS Found, Ros Support is turned On!")
   message(=============================================================)
