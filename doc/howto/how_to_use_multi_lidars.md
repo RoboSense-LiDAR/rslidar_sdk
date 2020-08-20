@@ -30,10 +30,10 @@ common:
                                                         #3--packet message come from Pcap bag
                                                         #4--packet message come from Protobuf-UDP
                                                         #5--point cloud from Protobuf-UDP
-  send_packet_ros: false                                #True--Send packet through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: true                            #True--Send point cloud through ROS or ROS2
-  send_packet_proto: false                              #True--Send packet through Protobuf-UDP
-  send_point_cloud_proto: false                         #True--Send point cloud through Protobuf-UDP
+  send_packet_ros: false                                #true--Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true--Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
   pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
@@ -57,7 +57,7 @@ lidar:
       end_angle: 360               #The end angle of point cloud area
       min_distance: 0.2            #The minimum distance of point cloud area
       max_distance: 200            #The maximum distance of point cloud area
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp;false-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
       ros_recv_packet_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
@@ -82,7 +82,7 @@ lidar:
       end_angle: 360               #The end angle of point cloud area
       min_distance: 0.2            #The minimum distance of point cloud area
       max_distance: 200            #The maximum distance of point cloud area
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp;false-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
       ros_recv_packet_topic: /left/rslidar_packets    #The topic which used to reveice lidar packets from ROS
@@ -107,7 +107,7 @@ lidar:
       end_angle: 360               #The end angle of point cloud area
       min_distance: 0.2            #The minimum distance of point cloud area
       max_distance: 200            #The maximum distance of point cloud area
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp;false-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
       ros_recv_packet_topic: /right/rslidar_packets    #The topic which used to reveice lidar packets from ROS
@@ -154,10 +154,10 @@ common:
                                                         #3--packet message come from Pcap bag
                                                         #4--packet message come from Protobuf-UDP
                                                         #5--point cloud from Protobuf-UDP
-  send_packet_ros: false                                #True--Send packet through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: true                            #True--Send point cloud through ROS or ROS2
-  send_packet_proto: false                              #True--Send packet through Protobuf-UDP
-  send_point_cloud_proto: false                         #True--Send point cloud through Protobuf-UDP
+  send_packet_ros: false                                #true--Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true--Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
   pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
@@ -181,7 +181,7 @@ lidar:
       end_angle: 360               #The end angle of point cloud area
       min_distance: 0.2            #The minimum distance of point cloud area
       max_distance: 200            #The maximum distance of point cloud area
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp;false-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
       ros_recv_packet_topic: /rslidar_packets    #The topic which used to reveice lidar packets from ROS
@@ -206,7 +206,7 @@ lidar:
       end_angle: 360               #The end angle of point cloud area
       min_distance: 0.2            #The minimum distance of point cloud area
       max_distance: 200            #The maximum distance of point cloud area
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp;false-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
       ros_recv_packet_topic: /left/rslidar_packets    #The topic which used to reveice lidar packets from ROS
@@ -231,7 +231,7 @@ lidar:
       end_angle: 360               #The end angle of point cloud area
       min_distance: 0.2            #The minimum distance of point cloud area
       max_distance: 200            #The maximum distance of point cloud area
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp;false-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv  #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
     ros:
       ros_recv_packet_topic: /right/rslidar_packets    #The topic which used to reveice lidar packets from ROS

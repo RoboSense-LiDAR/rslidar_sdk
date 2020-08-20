@@ -19,10 +19,10 @@ common:
                                                           #3--lidar packet message come from Pcap bag
                                                           #4--packets from Protobuf-UDP
                                                           #5--point cloud from Protobuf-UDP
-    send_packet_ros: false                                #True--Send packet through ROS(Used to record packet)
-    send_point_cloud_ros: true                            #True--Send point cloud through ROS
-    send_packet_proto: false                              #True--Send packets through Protobuf-UDP
-    send_point_cloud_proto: false                         #True--Send point cloud through Protobuf-UDP
+    send_packet_ros: false                                #true--Send packet through ROS(Used to record packet)
+    send_point_cloud_ros: true                            #true--Send point cloud through ROS
+    send_packet_proto: false                              #true--Send packets through Protobuf-UDP
+    send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
     pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
     pcap_repeat: true									  #If true, the pcap file will be played repeatedly.
     pcap_rate:	1										  #The rate of reading pcap	
@@ -50,12 +50,12 @@ lidar:
       end_angle: 360               #The end angle of point cloud area
       min_distance: 0.2            #The minimum distance of point cloud area
       max_distance: 200            #The maximum distance of point cloud area
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp;False-- Use the system clock as the time stamp  
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp;false-- Use the system clock as the time stamp  
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
       split_frame_mode: 1	       #1: Split frame depends on cut_angle; 2: Split frame depends on a fixed number of packets; 3: Split frame depends on num_pkts_split
 	  num_pkts_split: 1 	       #The number of packets in one frame, only be used when split_frame_mode=3
       cut_angle: 0                 #The cut angle(degree) used to split frame, only be used when split_frame_mode=1
-      wait_for_difop: true         #True--start sending point cloud until receive difop packet
+      wait_for_difop: true         #true--start sending point cloud until receive difop packet
 ```
 
 ​	There are four hiding parameters in this part, *split_frame_mode, num_pkts_split, cut_angle, wait_for_difop*.

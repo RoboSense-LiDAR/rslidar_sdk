@@ -64,7 +64,7 @@ namespace ros
 {
 namespace message_traits
 {
-// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': True}
+// BOOLTRAITS {'IsFixedSize': false, 'IsMessage': true, 'HasHeader': true}
 // {'std_msgs': ['/opt/ros/kinetic/share/std_msgs/cmake/../msg'], 'rslidar_msgs':
 // ['/home/xzd/catkin_ws/src/rs_driver/rslidar_msgs/msg']}
 
