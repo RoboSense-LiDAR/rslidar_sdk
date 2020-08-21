@@ -53,10 +53,8 @@ public:
     yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
-      packet_sub_ =
-          nh_->subscribe(ros_recv_topic + "_difop", 1, &PacketRosAdapter::localDifopCallback, this);
-      scan_sub_ =
-          nh_->subscribe(ros_recv_topic, 1, &PacketRosAdapter::localMsopCallback, this);
+      packet_sub_ = nh_->subscribe(ros_recv_topic + "_difop", 1, &PacketRosAdapter::localDifopCallback, this);
+      scan_sub_ = nh_->subscribe(ros_recv_topic, 1, &PacketRosAdapter::localMsopCallback, this);
       send_packet_ros = false;
     }
     if (send_packet_ros)
@@ -66,12 +64,12 @@ public:
     }
   }
 
-  void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
+  void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
     scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
+  void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
     packet_cb_vec_.emplace_back(callback);
   }
@@ -150,13 +148,11 @@ public:
           ros_recv_topic + "_difop", 10,
           [this](const rslidar_msg::msg::RslidarPacket::SharedPtr msg) { localDifopCallback(msg); });
       scan_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarScan>(
-          ros_recv_topic, 10,
-          [this](const rslidar_msg::msg::RslidarScan::SharedPtr msg) { localMsopCallback(msg); });
+          ros_recv_topic, 10, [this](const rslidar_msg::msg::RslidarScan::SharedPtr msg) { localMsopCallback(msg); });
     }
     if (send_packet_ros)
     {
-      packet_pub_ =
-          node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic + "_difop", 10);
+      packet_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic + "_difop", 10);
       scan_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarScan>(ros_send_topic, 10);
     }
   }
@@ -167,12 +163,12 @@ public:
     t.detach();
   }
 
-  void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
+  void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
     scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
+  void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
     packet_cb_vec_.emplace_back(callback);
   }
@@ -208,7 +204,7 @@ private:
   std::shared_ptr<rclcpp::Node> node_ptr_;
   rclcpp::Publisher<rslidar_msg::msg::RslidarScan>::SharedPtr scan_pub_;
   rclcpp::Publisher<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_pub_
-  rclcpp::Subscription<rslidar_msg::msg::RslidarScan>::SharedPtr scan_sub_;
+      rclcpp::Subscription<rslidar_msg::msg::RslidarScan>::SharedPtr scan_sub_;
   rclcpp::Subscription<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_sub_;
   std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
   std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;

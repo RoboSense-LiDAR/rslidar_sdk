@@ -76,6 +76,5 @@ int main(int argc, char** argv)
   std::unique_lock<std::mutex> lck(mtx_);
   cv_.wait(lck);
 #endif
-  demo_ptr.reset();
   return 0;
 }

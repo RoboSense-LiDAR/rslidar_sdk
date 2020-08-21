@@ -70,7 +70,7 @@ public:
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
     yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_directory, "");
     driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
-    driver_param.decoder_param.split_frame_mode=SplitFrameMode(split_frame_mode);
+    driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
     if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
     {
       for (size_t i = 0; i < config["camera"].size(); i++)
@@ -119,22 +119,22 @@ public:
     driver_ptr_->stop();
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
   {
     point_cloud_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
     scan_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
     packet_cb_vec_.emplace_back(callback);
   }
 
-  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)> callback)
+  inline void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
   {
     camera_trigger_cb_vec_.emplace_back(callback);
   }

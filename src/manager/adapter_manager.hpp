@@ -301,7 +301,7 @@ public:
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::CameraTriggerRosAdapter);
         point_cloud_receiver_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendCameraTrigger, transmitter_ptr, std::placeholders::_1));
-       }
+      }
     }
   }
 
@@ -349,7 +349,7 @@ public:
     }
   }
 
-  void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
+  void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
   {
     point_cloud_cb_vec_.emplace_back(callback);
   }

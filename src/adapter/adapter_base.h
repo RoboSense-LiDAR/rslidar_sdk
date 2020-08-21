@@ -79,22 +79,22 @@ public:
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
+  virtual void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
+  virtual void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
+  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)> callback)
+  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
   {
     return;
   }

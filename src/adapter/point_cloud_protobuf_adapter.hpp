@@ -95,7 +95,7 @@ public:
     }
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
   {
     point_cloud_cb_vec_.emplace_back(callback);
   }

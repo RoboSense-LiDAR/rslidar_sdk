@@ -109,12 +109,12 @@ public:
     }
   }
 
-  inline void regRecvCallback(const std::function<void(const ScanMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
     scan_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const PacketMsg&)> callback)
+  inline void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
     packet_cb_vec_.emplace_back(callback);
   }
