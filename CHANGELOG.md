@@ -7,6 +7,8 @@
 
 ### Changed
 - Update driver core, please refer to changelog in rs_driver for details
+- Update the compiler version from C++11 to C++14
+
 
 ## v1.1.0 - 2020-07-01
 

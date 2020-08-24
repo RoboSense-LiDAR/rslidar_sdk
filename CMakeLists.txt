@@ -19,7 +19,7 @@ cmake_policy(SET CMP0048 NEW)
 include(CheckSymbolExists)
 set(CMAKE_BUILD_TYPE RELEASE)
 add_definitions(-O3)
-add_definitions(-std=c++11)
+add_definitions(-std=c++14)
 add_compile_options(-Wall)
 
 #========================
@@ -29,11 +29,6 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h.in"
   "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h"
 )
-
-#========================
-# DEBUG
-#========================
-add_definitions(-DDEBUG_LEVEL=0)
 
 #========================
 # Dependencies Setup
