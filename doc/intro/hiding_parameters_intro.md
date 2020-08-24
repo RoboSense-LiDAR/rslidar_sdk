@@ -23,7 +23,7 @@ common:
     send_point_cloud_ros: true                            #true--Send point cloud through ROS
     send_packet_proto: false                              #true--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-    pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+    pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
     pcap_repeat: true									  #If true, the pcap file will be played repeatedly.
     pcap_rate:	1										  #The rate of reading pcap	
 ```

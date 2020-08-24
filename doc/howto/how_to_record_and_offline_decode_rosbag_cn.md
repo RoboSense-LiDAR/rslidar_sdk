@@ -26,7 +26,7 @@ common:
   send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	实际上，您现在可以直接录制点云消息，这样在离线播包时不需要再另外运行驱动程序解包。但这种方法缺点也很明显，即录制的包会非常大。 因此，通常我们建议记录雷达packet，而不是记录点云消息。
@@ -45,7 +45,7 @@ common:
   send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	您还可以通过调整参数文件的 *lidar-ros* 部分中的 *ros_send_packet_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的话题为“ msoptopic_difop”。 例如，默认话题设置为 *rslidar_packets*，因此msop话题为 *rslidar_packets*，而difop的话题为 *rslidar_packets_difop*。
@@ -76,7 +76,7 @@ common:
     send_point_cloud_ros: true                                 #true--Send point cloud through ROS
     send_packet_proto: false                             #true--Send packets through Protobuf-UDP
     send_point_cloud_proto: false                              #true--Send point cloud through Protobuf-UDP
-    pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+    pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	由于数据包消息来自ROS，因此请设置 *msg_source = 2* 。

@@ -111,7 +111,7 @@ public:
     yamlRead<bool>(common_config, "send_point_cloud_proto", send_point_cloud_proto, false);
     yamlRead<bool>(common_config, "send_packet_proto", send_packet_proto, false);
     yamlRead<bool>(common_config, "send_camera_trigger_ros", send_camera_trigger_ros, false);
-    yamlRead<std::string>(common_config, "pcap_directory", pcap_dir, "");
+    yamlRead<std::string>(common_config, "pcap_path", pcap_dir, "");
     yamlRead<double>(common_config, "pcap_rate", pcap_rate, 1);
     yamlRead<bool>(common_config, "pcap_repeat", pcap_repeat, true);
     YAML::Node lidar_config = yamlSubNodeAbort(config, "lidar");

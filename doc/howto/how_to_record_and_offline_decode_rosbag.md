@@ -26,7 +26,7 @@ common:
   send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 Actually, you can record the point cloud message now and you don't need to run the driver again when you offline play the bag. But the disadvantage is also obvious that the point cloud message is very large. So normally we recommend to record packets rather than point cloud message. 
@@ -45,7 +45,7 @@ common:
   send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 You can also adjust the packets topic by adjust the *ros_send_packet_topic* in *lidar-ros* part of the config file. This topic represent the topic of the msop, and the topic of the difop will be "msoptopic_difop". e.g., the default topic value is set as *rslidar_packets*, so the msop topic is *rslidar_packets* and the difop topic is *rslidar_packets_difop*. 
@@ -78,7 +78,7 @@ common:
   send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	Since the packets message come from the ROS, set *msg_source = 2*. 

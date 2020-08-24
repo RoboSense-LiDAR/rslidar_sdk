@@ -34,14 +34,14 @@ common:
   send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 ​	由于消息来自pcap包，因此请设置 *msg_source = 3* 。
 
 ​    我们想将点云发送到ROS，因此设置 *send_point_cloud_ros = true* 。 
 
-​    请确保 pcap包的路径*pcap_directory* 是正确的。
+​    请确保 pcap包的路径*pcap_path* 是正确的。
 
 
 
@@ -108,7 +108,7 @@ common:
   send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 
 lidar:
   - driver:

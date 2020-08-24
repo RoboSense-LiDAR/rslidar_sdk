@@ -22,7 +22,7 @@ common:
   send_point_cloud_ros: false                           #true--Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true--Send packet through Protobuf-UDP
   send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_directory: /home/robosense/lidar.pcap            #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
 - msg_source
@@ -71,9 +71,9 @@ common:
 
        **Node: We suggest send packets through ethernet rather than point cloud because point cloud size is too larger and it may take up a lot of bandwidth.**
 
-- pcap_directory
+- pcap_path
 
-      ​	If the *msg_source = 3*, please make sure the pcap_directory is correct. 
+      ​	If the *msg_source = 3*, please make sure the pcap_path is correct. 
 
 ---
 
