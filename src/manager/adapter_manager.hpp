@@ -169,7 +169,7 @@ public:
           point_cloud_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PCAP;
           lidar_config[i]["driver"]["read_pcap"] = true;
-          lidar_config[i]["driver"]["pcap_directroy"] = pcap_dir;
+          lidar_config[i]["driver"]["pcap_path"] = pcap_dir;
           lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
           lidar_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
           recv_ptr = createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter);

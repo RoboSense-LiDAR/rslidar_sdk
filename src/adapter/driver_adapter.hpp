@@ -68,7 +68,7 @@ public:
     yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
     yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
-    yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_path, "");
+    yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
     driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
     driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
     if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
