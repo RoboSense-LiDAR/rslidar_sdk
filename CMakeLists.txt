@@ -63,12 +63,9 @@ else(rclcpp_FOUND)
   message(=============================================================)
 endif(rclcpp_FOUND)
 #Protobuf#
+find_package(Protobuf QUIET)
 find_program(PROTOC protoc)
-if(PROTOC MATCHES "NOTFOUND")
-  message(=============================================================)
-  message("-- Protobuf Not Found, Protobuf Support is turned Off!")
-  message(=============================================================)
-else(PROTOC MATCHES "NOTFOUND")
+if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   message(=============================================================)
   message("-- Protobuf Found, Protobuf Support is turned On!")
   message(=============================================================)
@@ -83,16 +80,20 @@ else(PROTOC MATCHES "NOTFOUND")
                     --cpp_out=${PROTO_FILE_PATH}
                     ${proto_file})
   endforeach()
-endif(PROTOC MATCHES "NOTFOUND")
+else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+  message(=============================================================)
+  message("-- Protobuf Not Found, Protobuf Support is turned Off!")
+  message(=============================================================)
+endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 #OMP#
 find_package( OpenMP QUIET)
 if(OPENMP_FOUND)
-message(=============================================================)
-message("-- OpenMP Found, OpenMP support is turned On!")
-message(=============================================================)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS"${CMAKE_EXE_LINKER_FLAGS}${OpenMP_EXE_LINKER_FLAGS}")
+  message(=============================================================)
+  message("-- OpenMP Found, OpenMP support is turned On!")
+  message(=============================================================)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS"${CMAKE_EXE_LINKER_FLAGS}${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 #Others#
 find_package(yaml-cpp REQUIRED)
@@ -102,14 +103,14 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 #Catkin#
 if(${COMPILE_METHOD} MATCHES "CATKIN")
-find_package(catkin REQUIRED COMPONENTS
-        roscpp
-        sensor_msgs
-        )
+  find_package(catkin REQUIRED COMPONENTS
+          roscpp
+          sensor_msgs
+          )
 
-catkin_package(
-        CATKIN_DEPENDS sensor_msgs
-)
+  catkin_package(
+          CATKIN_DEPENDS sensor_msgs
+  )
 endif(${COMPILE_METHOD} MATCHES "CATKIN")
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
@@ -118,46 +119,46 @@ include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver/src)
 # Build Setup
 #========================
 #Protobuf#
-if(PROTOC MATCHES "NOTFOUND")
-add_executable(rslidar_sdk_node
-            node/rslidar_sdk_node.cpp
-            )
-target_link_libraries(rslidar_sdk_node                   
-                    ${PCL_LIBRARIES}
-                    ${YAML_CPP_LIBRARIES}
-                    pthread
-                    pcap  
-                    )
-else(PROTOC MATCHES "NOTFOUND")
-add_executable(rslidar_sdk_node
-            node/rslidar_sdk_node.cpp
-            ${PROTO_FILE_PATH}/Proto_msg.LidarPointCloud.pb.cc
-            ${PROTO_FILE_PATH}/Proto_msg.LidarScan.pb.cc
-            ${PROTO_FILE_PATH}/Proto_msg.LidarPacket.pb.cc
-            )
-target_link_libraries(rslidar_sdk_node                   
-                    ${PCL_LIBRARIES}
-                    ${YAML_CPP_LIBRARIES}
-                    ${PROTOBUF_LIBRARY}
-                    pthread             
-                    pcap  
-                    )
-endif(PROTOC MATCHES "NOTFOUND")
+if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+  add_executable(rslidar_sdk_node
+              node/rslidar_sdk_node.cpp
+              ${PROTO_FILE_PATH}/Proto_msg.LidarPointCloud.pb.cc
+              ${PROTO_FILE_PATH}/Proto_msg.LidarScan.pb.cc
+              ${PROTO_FILE_PATH}/Proto_msg.LidarPacket.pb.cc
+              )
+  target_link_libraries(rslidar_sdk_node                   
+                      ${PCL_LIBRARIES}
+                      ${YAML_CPP_LIBRARIES}
+                      ${PROTOBUF_LIBRARY}
+                      pthread             
+                      pcap  
+                      )
+else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+  add_executable(rslidar_sdk_node
+              node/rslidar_sdk_node.cpp
+              )
+  target_link_libraries(rslidar_sdk_node                   
+                      ${PCL_LIBRARIES}
+                      ${YAML_CPP_LIBRARIES}
+                      pthread
+                      pcap  
+                      )
+endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 #Ros#
 if(roscpp_FOUND)
-target_link_libraries(rslidar_sdk_node ${roscpp_LIBRARIES})
+  target_link_libraries(rslidar_sdk_node ${roscpp_LIBRARIES})
 endif(roscpp_FOUND)
 #Ros2#
 if(rclcpp_FOUND)
-ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)
-install(TARGETS
-  rslidar_sdk_node
-  DESTINATION lib/${PROJECT_NAME}
-)
-install(DIRECTORY
-  launch
-  rviz
-  DESTINATION share/${PROJECT_NAME}
-)
-ament_package()
+  ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)
+  install(TARGETS
+    rslidar_sdk_node
+    DESTINATION lib/${PROJECT_NAME}
+  )
+  install(DIRECTORY
+    launch
+    rviz
+    DESTINATION share/${PROJECT_NAME}
+  )
+  ament_package()
 endif(rclcpp_FOUND)
