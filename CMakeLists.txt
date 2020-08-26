@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.5)
 project(rslidar_sdk)
+
 #=======================================
 # Compile setup (ORIGINAL,CATKIN,COLCON)
 #=======================================
 set(COMPILE_METHOD ORIGINAL)
+
 #========================
 # Project Version
 #========================
 set (PROJECT_VERSION_MAJOR 1)
 set (PROJECT_VERSION_MINOR 2)
 set (PROJECT_VERSION_PATCH 0)
+
 #========================
 # Project details / setup
 #========================
@@ -21,6 +24,7 @@ set(CMAKE_BUILD_TYPE RELEASE)
 add_definitions(-O3)
 add_definitions(-std=c++14)
 add_compile_options(-Wall)
+
 #========================
 # Version
 #========================
@@ -28,6 +32,7 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h.in"
   "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h"
 )
+
 #========================
 # Dependencies Setup
 #========================
@@ -114,7 +119,11 @@ if(${COMPILE_METHOD} MATCHES "CATKIN")
 endif(${COMPILE_METHOD} MATCHES "CATKIN")
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver/src)
+#Driver core#
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/src/rs_driver/cmake)
+include(rs_driver)
+include_directories(${rs_driver_INCLUDE_DIRS})
+
 #========================
 # Build Setup
 #========================
@@ -130,8 +139,7 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
                       ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
                       ${PROTOBUF_LIBRARY}
-                      pthread             
-                      pcap  
+                      ${rs_driver_LIBRARIES}
                       )
 else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   add_executable(rslidar_sdk_node
@@ -140,8 +148,7 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   target_link_libraries(rslidar_sdk_node                   
                       ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
-                      pthread
-                      pcap  
+                      ${rs_driver_LIBRARIES}
                       )
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 #Ros#
