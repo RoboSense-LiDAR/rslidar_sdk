@@ -65,7 +65,7 @@ inline LidarPointCloudMsg toRsMsg(const Proto_msg::LidarPointCloud& proto_msg)
   rs_msg.height = proto_msg.height();
   rs_msg.width = proto_msg.width();
   rs_msg.is_dense = proto_msg.is_dense();
-  PointCloud* ptr_tmp = new PointCloud();
+  LidarPointCloudMsg::PointCloud* ptr_tmp = new LidarPointCloudMsg::PointCloud();
   for (int i = 0; i < proto_msg.data_size(); i += 4)
   {
     pcl::PointXYZI point;
@@ -89,9 +89,9 @@ inline Proto_msg::LidarScan toProtoMsg(const ScanMsg& rs_msg)
   proto_msg.set_seq(rs_msg.seq);
   for (auto iter : rs_msg.packets)
   {
-    void* data_ptr = malloc(1248);
-    memcpy(data_ptr, iter.packet.data(), 1248);
-    proto_msg.add_data(data_ptr, 1248);
+    void* data_ptr = malloc(RSLIDAR_PKT_LEN);
+    memcpy(data_ptr, iter.packet.data(), RSLIDAR_PKT_LEN);
+    proto_msg.add_data(data_ptr, RSLIDAR_PKT_LEN);
     free(data_ptr);
   }
   return proto_msg;
@@ -115,9 +115,9 @@ inline ScanMsg toRsMsg(const Proto_msg::LidarScan& proto_msg)
 inline Proto_msg::LidarPacket toProtoMsg(const PacketMsg& rs_msg)
 {
   Proto_msg::LidarPacket proto_msg;
-  void* data_ptr = malloc(1248);
-  memcpy(data_ptr, rs_msg.packet.data(), 1248);
-  proto_msg.set_data(data_ptr, 1248);
+  void* data_ptr = malloc(RSLIDAR_PKT_LEN);
+  memcpy(data_ptr, rs_msg.packet.data(), RSLIDAR_PKT_LEN);
+  proto_msg.set_data(data_ptr, RSLIDAR_PKT_LEN);
   free(data_ptr);
   return proto_msg;
 }

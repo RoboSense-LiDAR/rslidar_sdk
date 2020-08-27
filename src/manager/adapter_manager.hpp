@@ -130,10 +130,10 @@ public:
           point_cloud_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_LIDAR;
           recv_ptr = createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter);
-          point_cloud_receiver_vec_.push_back(recv_ptr);
+          point_cloud_receive_adapter_vec_.push_back(recv_ptr);
           if (send_packet_ros || send_packet_proto)
           {
-            packet_receiver_vec_.push_back(recv_ptr);
+            packet_receive_adapter_vec_.push_back(recv_ptr);
             packet_thread_flag_ = true;
           }
           break;
@@ -149,14 +149,14 @@ public:
           packet_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_ROS_PACKET;
           send_packet_ros = false;
-          point_cloud_receiver_vec_.emplace_back(
+          point_cloud_receive_adapter_vec_.emplace_back(
               createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter));
-          packet_receiver_vec_.emplace_back(
+          packet_receive_adapter_vec_.emplace_back(
               createReceiver<AdapterBase>(lidar_config[i], AdapterType::PacketRosAdapter));
-          packet_receiver_vec_[i]->regRecvCallback(
-              std::bind(&AdapterBase::decodeScan, point_cloud_receiver_vec_[i], std::placeholders::_1));
-          packet_receiver_vec_[i]->regRecvCallback(
-              std::bind(&AdapterBase::decodePacket, point_cloud_receiver_vec_[i], std::placeholders::_1));
+          packet_receive_adapter_vec_[i]->regRecvCallback(
+              std::bind(&AdapterBase::decodeScan, point_cloud_receive_adapter_vec_[i], std::placeholders::_1));
+          packet_receive_adapter_vec_[i]->regRecvCallback(
+              std::bind(&AdapterBase::decodePacket, point_cloud_receive_adapter_vec_[i], std::placeholders::_1));
           break;
 
         case MsgSource::MSG_FROM_PCAP:  // pcap
@@ -173,10 +173,10 @@ public:
           lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
           lidar_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
           recv_ptr = createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter);
-          point_cloud_receiver_vec_.push_back(recv_ptr);
+          point_cloud_receive_adapter_vec_.push_back(recv_ptr);
           if (send_packet_ros || send_packet_proto)
           {
-            packet_receiver_vec_.push_back(recv_ptr);
+            packet_receive_adapter_vec_.push_back(recv_ptr);
             packet_thread_flag_ = true;
           }
           break;
@@ -191,14 +191,14 @@ public:
           packet_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PROTO_PACKET;
           send_packet_proto = false;
-          point_cloud_receiver_vec_.emplace_back(
+          point_cloud_receive_adapter_vec_.emplace_back(
               createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter));
-          packet_receiver_vec_.emplace_back(
+          packet_receive_adapter_vec_.emplace_back(
               createReceiver<AdapterBase>(lidar_config[i], AdapterType::PacketProtoAdapter));
-          packet_receiver_vec_[i]->regRecvCallback(
-              std::bind(&AdapterBase::decodeScan, point_cloud_receiver_vec_[i], std::placeholders::_1));
-          packet_receiver_vec_[i]->regRecvCallback(
-              std::bind(&AdapterBase::decodePacket, point_cloud_receiver_vec_[i], std::placeholders::_1));
+          packet_receive_adapter_vec_[i]->regRecvCallback(
+              std::bind(&AdapterBase::decodeScan, point_cloud_receive_adapter_vec_[i], std::placeholders::_1));
+          packet_receive_adapter_vec_[i]->regRecvCallback(
+              std::bind(&AdapterBase::decodePacket, point_cloud_receive_adapter_vec_[i], std::placeholders::_1));
           break;
 
         case MsgSource::MSG_FROM_PROTO_POINTCLOUD:  // point cloud from proto
@@ -213,16 +213,16 @@ public:
           send_packet_ros = false;
           send_packet_proto = false;
           send_camera_trigger_ros = false;
-          point_cloud_receiver_vec_.emplace_back(
+          point_cloud_receive_adapter_vec_.emplace_back(
               createReceiver<AdapterBase>(lidar_config[i], AdapterType::PointCloudProtoAdapter));
-          packet_receiver_vec_.emplace_back(nullptr);
+          packet_receive_adapter_vec_.emplace_back(nullptr);
           break;
 
         default:
           ERROR << "Wrong LiDAR message source! Abort!" << REND;
           exit(-1);
       }
-      point_cloud_receiver_vec_[i]->regRecvCallback(
+      point_cloud_receive_adapter_vec_[i]->regRecvCallback(
           std::bind(&AdapterManager::localPointCloudCallback, this, std::placeholders::_1));
 
       /*Transmitter*/
@@ -237,10 +237,10 @@ public:
         lidar_config[i]["send_packet_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PacketRosAdapter);
-        packet_transmitter_vec_.emplace_back(transmitter_ptr);
-        packet_receiver_vec_[i]->regRecvCallback(
+        packet_transmit_adapter_vec_.emplace_back(transmitter_ptr);
+        packet_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendScan, transmitter_ptr, std::placeholders::_1));
-        packet_receiver_vec_[i]->regRecvCallback(
+        packet_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendPacket, transmitter_ptr, std::placeholders::_1));
       }
       if (send_packet_proto)
@@ -254,10 +254,10 @@ public:
         lidar_config[i]["send_packet_proto"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PacketProtoAdapter);
-        packet_transmitter_vec_.emplace_back(transmitter_ptr);
-        packet_receiver_vec_[i]->regRecvCallback(
+        packet_transmit_adapter_vec_.emplace_back(transmitter_ptr);
+        packet_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendScan, transmitter_ptr, std::placeholders::_1));
-        packet_receiver_vec_[i]->regRecvCallback(
+        packet_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendPacket, transmitter_ptr, std::placeholders::_1));
       }
       if (send_point_cloud_ros)
@@ -269,8 +269,8 @@ public:
         lidar_config[i]["send_point_cloud_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PointCloudRosAdapter);
-        point_cloud_transmitter_vec_.emplace_back(transmitter_ptr);
-        point_cloud_receiver_vec_[i]->regRecvCallback(
+        point_cloud_transmit_adapter_vec_.emplace_back(transmitter_ptr);
+        point_cloud_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendPointCloud, transmitter_ptr, std::placeholders::_1));
       }
       if (send_point_cloud_proto)
@@ -283,8 +283,8 @@ public:
         lidar_config[i]["send_point_cloud_proto"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PointCloudProtoAdapter);
-        point_cloud_transmitter_vec_.emplace_back(transmitter_ptr);
-        point_cloud_receiver_vec_[i]->regRecvCallback(
+        point_cloud_transmit_adapter_vec_.emplace_back(transmitter_ptr);
+        point_cloud_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendPointCloud, transmitter_ptr, std::placeholders::_1));
       }
       if (send_camera_trigger_ros)
@@ -299,7 +299,7 @@ public:
         DEBUG << "------------------------------------------------------" << REND;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::CameraTriggerRosAdapter);
-        point_cloud_receiver_vec_[i]->regRecvCallback(
+        point_cloud_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendCameraTrigger, transmitter_ptr, std::placeholders::_1));
       }
     }
@@ -309,7 +309,7 @@ public:
   {
     if (point_cloud_thread_flag_)
     {
-      for (auto& iter : point_cloud_receiver_vec_)
+      for (auto& iter : point_cloud_receive_adapter_vec_)
       {
         if (iter != nullptr)
           iter->start();
@@ -317,7 +317,7 @@ public:
     }
     if (packet_thread_flag_)
     {
-      for (auto& iter : packet_receiver_vec_)
+      for (auto& iter : packet_receive_adapter_vec_)
       {
         if (iter != nullptr)
         {
@@ -331,7 +331,7 @@ public:
   {
     if (point_cloud_thread_flag_)
     {
-      for (auto& iter : point_cloud_receiver_vec_)
+      for (auto& iter : point_cloud_receive_adapter_vec_)
       {
         if (iter != nullptr)
           iter->stop();
@@ -339,7 +339,7 @@ public:
     }
     if (packet_thread_flag_)
     {
-      for (auto& iter : packet_receiver_vec_)
+      for (auto& iter : packet_receive_adapter_vec_)
       {
         if (iter != nullptr)
         {
@@ -480,10 +480,10 @@ private:
   bool packet_thread_flag_;
   bool point_cloud_thread_flag_;
   std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
-  std::vector<AdapterBase::Ptr> packet_receiver_vec_;
-  std::vector<AdapterBase::Ptr> point_cloud_receiver_vec_;
-  std::vector<AdapterBase::Ptr> packet_transmitter_vec_;
-  std::vector<AdapterBase::Ptr> point_cloud_transmitter_vec_;
+  std::vector<AdapterBase::Ptr> packet_receive_adapter_vec_;
+  std::vector<AdapterBase::Ptr> point_cloud_receive_adapter_vec_;
+  std::vector<AdapterBase::Ptr> packet_transmit_adapter_vec_;
+  std::vector<AdapterBase::Ptr> point_cloud_transmit_adapter_vec_;
 };
 }  // namespace lidar
 }  // namespace robosense

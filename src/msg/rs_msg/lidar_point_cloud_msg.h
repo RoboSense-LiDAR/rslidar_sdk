@@ -24,9 +24,6 @@
 #include <string>
 #include <array>
 #include <pcl/io/io.h>
-typedef pcl::PointCloud<pcl::PointXYZI> PointCloud;
-typedef pcl::PointCloud<pcl::PointXYZI>::Ptr PointCloudPtr;
-typedef pcl::PointCloud<pcl::PointXYZI>::ConstPtr PointCloudConstPtr;
 namespace robosense
 {
 namespace lidar
@@ -40,6 +37,9 @@ namespace lidar
 
 struct alignas(16) LidarPointCloudMsg
 {
+  typedef pcl::PointCloud<pcl::PointXYZI> PointCloud;
+  typedef pcl::PointCloud<pcl::PointXYZI>::Ptr PointCloudPtr;
+  typedef pcl::PointCloud<pcl::PointXYZI>::ConstPtr PointCloudConstPtr;
   double timestamp = 0.0;
   uint32_t seq = 0;
   std::string frame_id = "";
@@ -47,10 +47,10 @@ struct alignas(16) LidarPointCloudMsg
   uint32_t width = 0;
   bool is_dense = false;
 
-  PointCloudConstPtr point_cloud_ptr;     ///< the point cloud pointer
+  PointCloudConstPtr point_cloud_ptr;  ///< the point cloud pointer
 
   LidarPointCloudMsg() = default;
-  LidarPointCloudMsg(const PointCloudPtr &ptr) : point_cloud_ptr(ptr)
+  LidarPointCloudMsg(const PointCloudPtr& ptr) : point_cloud_ptr(ptr)
   {
   }
   typedef std::shared_ptr<LidarPointCloudMsg> Ptr;

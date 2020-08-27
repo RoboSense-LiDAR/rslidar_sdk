@@ -69,7 +69,7 @@ public:
       if ((scan_proto_com_ptr_->initReceiver(msop_recv_port) == -1) ||
           (packet_proto_com_ptr_->initReceiver(difop_recv_port) == -1))
       {
-        ERROR << "LidarPacketsReceiver: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
+        ERROR << "LidarPacketsReceiver: Create UDP Receiver Socket failed or Bind Network failed!" << REND;
         exit(-1);
       }
       send_packet_proto = false;
@@ -79,7 +79,7 @@ public:
       if ((scan_proto_com_ptr_->initSender(msop_send_port, packet_send_ip) == -1) ||
           (packet_proto_com_ptr_->initSender(difop_send_port, packet_send_ip) == -1))
       {
-        ERROR << "LidarPacketsReceiver: Create UDP Sender Socket Failed ! " << REND;
+        ERROR << "LidarPacketsReceiver: Create UDP Sender Socket failed ! " << REND;
         exit(-1);
       }
     }
@@ -161,15 +161,15 @@ private:
   {
     while (packet_recv_thread_.start_.load())
     {
-      void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
+      void* p_data = malloc(MAX_RECEIVE_LENGTH);
       ProtoMsgHeader tmp_header;
-      int ret = packet_proto_com_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
+      int ret = packet_proto_com_ptr_->receiveProtoMsg(p_data, MAX_RECEIVE_LENGTH, tmp_header);
 
       if (ret == -1)
       {
         continue;
       }
-      packet_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
+      packet_recv_queue_.push(std::make_pair(p_data, tmp_header));
       if (packet_recv_queue_.is_task_finished_.load())
       {
         packet_recv_queue_.is_task_finished_.store(false);
@@ -200,9 +200,9 @@ private:
     bool start_check = true;
     while (scan_recv_thread_.start_.load())
     {
-      void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
+      void* p_data = malloc(MAX_RECEIVE_LENGTH);
       ProtoMsgHeader tmp_header;
-      int ret = scan_proto_com_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
+      int ret = scan_proto_com_ptr_->receiveProtoMsg(p_data, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
         if (tmp_header.msgID == 0)
@@ -219,7 +219,7 @@ private:
         WARNING << "Packets Protobuf receiving error" << REND;
         continue;
       }
-      scan_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
+      scan_recv_queue_.push(std::make_pair(p_data, tmp_header));
       if (scan_recv_queue_.is_task_finished_.load())
       {
         scan_recv_queue_.is_task_finished_.store(false);

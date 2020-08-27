@@ -63,7 +63,7 @@ public:
     {
       if (proto_com_ptr_->initReceiver(point_cloud_recv_port) == -1)
       {
-        ERROR << "PointCloudProtoAdapter: Create UDP Receiver Socket Failed OR Bind Network failed!" << REND;
+        ERROR << "PointCloudProtoAdapter: Create UDP Receiver Socket failed or Bind Network failed!" << REND;
         exit(-1);
       }
       send_point_cloud_proto = false;
@@ -72,7 +72,7 @@ public:
     {
       if (proto_com_ptr_->initSender(point_cloud_send_port, point_cloud_send_ip) == -1)
       {
-        ERROR << "PointCloudProtoAdapter: Create UDP Sender Socket Failed ! " << REND;
+        ERROR << "PointCloudProtoAdapter: Create UDP Sender Socket failed ! " << REND;
         exit(-1);
       }
     }
@@ -104,6 +104,7 @@ public:
   {
     if (point_cloud_send_queue_.size() > 10)
     {
+      WARNING<<"Point Cloud Protobuf Sender buffer over flow!"<<REND;
       point_cloud_send_queue_.clear();
     }
     point_cloud_send_queue_.push(msg);
@@ -141,9 +142,9 @@ private:
     bool start_check = true;
     while (recv_thread_.start_.load())
     {
-      void* pMsgData = malloc(MAX_RECEIVE_LENGTH);
+      void* p_data = malloc(MAX_RECEIVE_LENGTH);
       ProtoMsgHeader tmp_header;
-      int ret = proto_com_ptr_->receiveProtoMsg(pMsgData, MAX_RECEIVE_LENGTH, tmp_header);
+      int ret = proto_com_ptr_->receiveProtoMsg(p_data, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
         if (tmp_header.msgID == 0)
@@ -161,7 +162,7 @@ private:
         continue;
       }
 
-      point_cloud_recv_queue_.push(std::make_pair(pMsgData, tmp_header));
+      point_cloud_recv_queue_.push(std::make_pair(p_data, tmp_header));
 
       if (point_cloud_recv_queue_.is_task_finished_.load())
       {

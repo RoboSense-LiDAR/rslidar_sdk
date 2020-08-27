@@ -1,4 +1,3 @@
-
 /******************************************************************************
  * Copyright 2020 RoboSense All rights reserved.
  * Suteng Innovation Technology Co., Ltd. www.robosense.ai
@@ -20,20 +19,20 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-#include "manager/adapter_manager.hpp"
 #include <signal.h>
 #include <mutex>
 #include <condition_variable>
+#include "manager/adapter_manager.hpp"
 using namespace robosense::lidar;
-std::mutex mtx_;
-std::condition_variable cv_;
+std::mutex g_mtx;
+std::condition_variable g_cv;
 static void sigHandler(int sig)
 {
   MSG << "RoboSense-LiDAR-Driver is stopping....." << REND;
 #ifdef ROS_FOUND
   ros::shutdown();
 #endif
-  cv_.notify_all();
+  g_cv.notify_all();
 }
 
 int main(int argc, char** argv)
@@ -54,7 +53,7 @@ int main(int argc, char** argv)
   }
   catch (...)
   {
-    ERROR << "Config file format wrong! Please check the format or intendation! " << REND;
+    ERROR << "Config file format wrong! Please check the format(e.g. indentation) " << REND;
     return -1;
   }
 
@@ -73,8 +72,8 @@ int main(int argc, char** argv)
 #ifdef ROS_FOUND
   ros::spin();
 #else
-  std::unique_lock<std::mutex> lck(mtx_);
-  cv_.wait(lck);
+  std::unique_lock<std::mutex> lck(g_mtx);
+  g_cv.wait(lck);
 #endif
   return 0;
 }

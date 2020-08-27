@@ -204,7 +204,7 @@ private:
 
   LidarPointCloudMsg lPoints2CPoints(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
   {
-    PointCloudPtr point_cloud(new pcl::PointCloud<pcl::PointXYZI>);
+    LidarPointCloudMsg::PointCloudPtr point_cloud(new pcl::PointCloud<pcl::PointXYZI>);
     point_cloud->points.assign(msg.point_cloud_ptr->begin(), msg.point_cloud_ptr->end());
     point_cloud->height = msg.height;
     point_cloud->width = msg.width;

@@ -203,12 +203,11 @@ private:
 private:
   std::shared_ptr<rclcpp::Node> node_ptr_;
   rclcpp::Publisher<rslidar_msg::msg::RslidarScan>::SharedPtr scan_pub_;
-  rclcpp::Publisher<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_pub_
-      rclcpp::Subscription<rslidar_msg::msg::RslidarScan>::SharedPtr scan_sub_;
+  rclcpp::Publisher<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_pub_;
+  rclcpp::Subscription<rslidar_msg::msg::RslidarScan>::SharedPtr scan_sub_;
   rclcpp::Subscription<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_sub_;
   std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
   std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
-  rclcpp::executors::MultiThreadedExecutor executor;
 };
 }  // namespace lidar
 }  // namespace robosense

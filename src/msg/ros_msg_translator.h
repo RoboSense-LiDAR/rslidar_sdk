@@ -53,7 +53,7 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 inline PacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
 {
   PacketMsg rs_msg;
-  for (size_t i = 0; i < 1248; i++)
+  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
   {
     rs_msg.packet[i] = std::move(ros_msg.data[i]);
   }
@@ -62,7 +62,7 @@ inline PacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
 inline rslidar_msgs::rslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msgs::rslidarPacket ros_msg;
-  for (size_t i = 0; i < 1248; i++)
+  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
   {
     ros_msg.data[i] = std::move(rs_msg.packet[i]);
   }
@@ -98,7 +98,7 @@ inline rslidar_msgs::rslidarScan toRosMsg(const ScanMsg& rs_msg)
 inline std_msgs::Time toRosMsg(const CameraTrigger& rs_msg)
 {
   std_msgs::Time ros_msg;
-  ros_msg.data=ros_msg.data.fromSec(rs_msg.second);
+  ros_msg.data = ros_msg.data.fromSec(rs_msg.second);
   return ros_msg;
 }
 
@@ -131,7 +131,8 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 inline PacketMsg toRsMsg(const rslidar_msg::msg::RslidarPacket& ros_msg)
 {
   PacketMsg rs_msg;
-  for (size_t i = 0; i < 1248; i++)
+#pragma omp parallel for
+  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
   {
     rs_msg.packet[i] = std::move(ros_msg.data[i]);
   }
@@ -141,7 +142,7 @@ inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msg::msg::RslidarPacket ros_msg;
 #pragma omp parallel for
-  for (size_t i = 0; i < 1248; i++)
+  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
   {
     ros_msg.data[i] = std::move(rs_msg.packet[i]);
   }
@@ -150,9 +151,8 @@ inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
 inline ScanMsg toRsMsg(const rslidar_msg::msg::RslidarScan& ros_msg)
 {
   ScanMsg rs_msg;
-  rs_msg.timestamp = ros_msg.header.stamp.sec+double(ros_msg.header.stamp.nanosec)/1e9;
+  rs_msg.timestamp = ros_msg.header.stamp.sec + double(ros_msg.header.stamp.nanosec) / 1e9;
   rs_msg.frame_id = ros_msg.header.frame_id;
-
   for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
   {
     PacketMsg tmp = toRsMsg(ros_msg.packets[i]);
