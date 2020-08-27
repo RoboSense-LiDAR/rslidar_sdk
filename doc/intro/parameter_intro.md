@@ -1,28 +1,28 @@
 # Parameters Introduction
 
-There is only one parameter file called config.yaml, which is locate in *rslidar_sdk/config/config.yaml*.  The whole file can be divided into two parts, the *common* part and *lidar* part. In multi-LiDARs case, the parameters in *common* part will be shred by all LiDARs, while the parameters in *lidar* part need to be adjust according to specific LiDAR.  
+There is only one parameter file called config.yaml, which is locate in *rslidar_sdk/config/config.yaml*.  The whole file can be divided into two parts, the *common*  and *lidar* . In multi-LiDARs case, the parameters in *common* part will be shared by all LiDARs, while the parameters in *lidar* part need to be adjust according to specific LiDAR.  
 
 **Note: The config.yaml is very strict to indentation! Please make sure the indentation is not changed when adjusting the parameters!**
 
 
 
-## 1 Common Part
+## 1 Common
 
 This part is used to decide the source of LiDAR data, and whether to send out the result or not.
 
 ```yaml
 common:
-  msg_source: 1                                         #0--not use Lidar
-                                                        #1--packet message come from online lidar
-                                                        #2--packet message come from ROS or ROS2
-                                                        #3--packet message come from Pcap bag
-                                                        #4--packet message come from Protobuf-UDP
-                                                        #5--point cloud from Protobuf-UDP
-  send_packet_ros: false                                #true--Send packet through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: false                           #true--Send point cloud through ROS or ROS2
-  send_packet_proto: false                              #true--Send packet through Protobuf-UDP
-  send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 1                                         #0: not use Lidar
+                                                        #1: packet message comes from online Lidar
+                                                        #2: packet message comes from ROS or ROS2
+                                                        #3: packet message comes from Pcap bag
+                                                        #4: packet message comes from Protobuf-UDP
+                                                        #5: point cloud comes from Protobuf-UDP
+  send_packet_ros: false                                #true: Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: false                           #true: Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true: Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
 - msg_source
@@ -43,43 +43,41 @@ common:
 
 - send_packet_ros
 
-      ​	True -- The lidar packets will be sent to ROS or ROS2. e.g. When you connect a lidar and want to record rosbag, you can set the *msg_source=1* and set *send_packet_ros = true*.
-
+      	True -- The lidar packets will be sent to ROS or ROS2. e.g. When you connect a lidar and want to record rosbag, you can set the *msg_source=1* and set *send_packet_ros = true*.
+   
       ​	false -- Do nothing.
-
+   
       ​ **Note1:  If the msg_source =2, there is no use to set send_packet_ros to true because the packet come from ROS and there is no reason to send them back to ROS.**
-
+   
       ​	**Note2: Since the ROS packet message type is robosense self-defined type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.**
 
 - send_point_cloud_ros
 
-      ​	true -- The lidar point cloud will be sent to ROS or ROS2. e.g. When you connect a lidar and want to see point cloud on ROS-Rviz, you can the *msg_source =1* and set *send_point_cloud_ros = true*.
-
+      	true -- The lidar point cloud will be sent to ROS or ROS2. e.g. When you connect a lidar and want to see point cloud on ROS-Rviz, you can the *msg_source =1* and set *send_point_cloud_ros = true*.
+   
       ​	false -- Do nothing.
-    
-      ​	**Note: The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, thats 		why we suggest to  record packets.**
+        
+      ​	**Note: The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, that's why we suggest to  record packets.**
 
 - send_packet_proto
 
-      ​	true -- The lidar packets will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and set the *msg_source = 1*, set *send_packet_proto = true*. Then, on computerB, set the *msg_source = 4* and set *send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
-
+      	true -- The lidar packets will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and set the *msg_source = 1*, set *send_packet_proto = true*. Then, on computerB, set the *msg_source = 4* and set *send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
+   
       ​	false -- Do nothing
 
 - send_point_cloud_proto
 
-      ​	true -- The lidar point cloud will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and *set the msg_source = 1*, set *send_point_cloud_proto = true*. Then, on computerB, set the *msg_source = 5* and *set send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
-
+      	true -- The lidar point cloud will be sent out as protobuf message through ethernet in UDP protocal. e.g. When you connect the lidar with computerA and want to see the point cloud on computerB, you can run a rslidar_sdk on computerA and *set the msg_source = 1*, set *send_point_cloud_proto = true*. Then, on computerB, set the *msg_source = 5* and *set send_point_cloud_ros = true*, then you can see the point cloud on computerB through ROS-Rviz.
+   
        **Node: We suggest send packets through ethernet rather than point cloud because point cloud size is too larger and it may take up a lot of bandwidth.**
 
 - pcap_path
 
-      ​	If the *msg_source = 3*, please make sure the pcap_path is correct. 
-
----
+      	If the *msg_source = 3*, please make sure the pcap_path is correct. 
 
 
 
-## 2 lidar
+## 2 LiDAR
 
 This part need to be adjust according to different LiDAR (in multi-LiDARs case). Here is an example for one LiDAR and three LiDARs. 
 
@@ -90,7 +88,7 @@ This part need to be adjust according to different LiDAR (in multi-LiDARs case).
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16,RS32,RSBP,RS128
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699

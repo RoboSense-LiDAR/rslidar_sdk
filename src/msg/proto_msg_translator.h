@@ -115,7 +115,6 @@ inline ScanMsg toRsMsg(const Proto_msg::LidarScan& proto_msg)
 inline Proto_msg::LidarPacket toProtoMsg(const PacketMsg& rs_msg)
 {
   Proto_msg::LidarPacket proto_msg;
-  proto_msg.set_timestamp(rs_msg.timestamp);
   void* data_ptr = malloc(1248);
   memcpy(data_ptr, rs_msg.packet.data(), 1248);
   proto_msg.set_data(data_ptr, 1248);
@@ -126,7 +125,6 @@ inline Proto_msg::LidarPacket toProtoMsg(const PacketMsg& rs_msg)
 inline PacketMsg toRsMsg(const Proto_msg::LidarPacket& proto_msg)
 {
   PacketMsg rs_msg;
-  rs_msg.timestamp = proto_msg.timestamp();
   std::string data_str = proto_msg.data();
   memcpy(rs_msg.packet.data(), data_str.data(), data_str.size());
   return rs_msg;

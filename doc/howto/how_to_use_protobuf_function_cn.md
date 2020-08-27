@@ -4,7 +4,7 @@
 
 ## 1 介绍
 
-​	假设您有两台计算机，PC-A和PC-B，并且它们彼此相距很远。 您将LiDAR与PC-A连接，由于某些原因，您想在PC-B中使用点云消息。 此时，您可能需要使用protobuf功能。 通常，有两种方法可以实现此目标。
+​	假设有两台计算机，PC-A和PC-B，并且它们彼此相距很远。 将LiDAR与PC-A连接，由于某些原因，想在PC-B中使用点云消息。 此时，可能需要使用protobuf功能。 通常，有两种方法可以实现此目标。
 
 - PC-A将雷达packet消息发送到PC-B。 PC-B收到雷达packet消息并对其进行解码，然后PC-B获得点云消息并使用它。
 
@@ -12,13 +12,13 @@
 
 
 
-我们提供这两种方式，但是我们建议使用第一种方法，因为点云消息非常大，对带宽有较高要求。  
+rslidar_sdk提供这两种方式，但是通常建议使用第一种方法，因为点云消息非常大，对带宽有较高要求。  
 
 
 
 ## 2 通过Protobuf-UDP发送和接收 packets
 
-我们假设您已经阅读了[参数简介](.. / intro / parameter_intro.md)，并且已经对配置文件有了基本的了解。 让我们先看一下发送端部分。
+假设您已经阅读了[参数简介](.. / intro / parameter_intro.md)，并且已经对配置文件有了基本的了解。 
 
 
 
@@ -41,7 +41,7 @@ common:
 
 由于数据来自在线LiDAR，因此请设置 *msg_source = 1* 。
 
-我们想通过protobuf-UDP发送雷达packet，因此设置 *send_packet_proto = true* 。
+通过protobuf-UDP发送雷达packet，因此设置 *send_packet_proto = true* 。
 
 ```yaml
 lidar:
@@ -73,7 +73,7 @@ proto:
   packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
 ```
 
-我们要发送packet数据，因此只需要关注三个参数，即 *msop_send_port，difop_send_port，packet_send_ip* 。 您可以根据需要调整它们。
+发送packet数据，因此只需要关注三个参数，即 *msop_send_port，difop_send_port，packet_send_ip* 。 可以根据需要调整它们。
 
 
 
@@ -96,7 +96,7 @@ common:
 
 由于数据包消息来自protobuf-UDP，因此请设置 *msg_source = 4* 。
 
-我们想在ROS-Rviz上观看点云，因此设置 *send_point_cloud_ros = true* 。
+需要在ROS-Rviz上观看点云，因此设置 *send_point_cloud_ros = true* 。
 
 ```yaml
 lidar:
@@ -128,13 +128,13 @@ proto:
   packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
 ```
 
-我们希望接收packet数据，因此只需要关注两个参数，即 *msop_recv_port，difop_recv_port* 。 您必须确保它们与发送端中的 *msop_send_port，difop_send_port* 设置相同。
+接收packet数据，因此只需要关注两个参数，即 *msop_recv_port，difop_recv_port* 。 必须确保它们与发送端中的 *msop_send_port，difop_send_port* 设置相同。
 
 
 
 ## 3 通过Protobuf-UDP发送和接收点云
 
- 我们假设您已经阅读了[参数简介](... / intro / parameter_intro.md)，并且已经对配置文件有了基本的了解。 让我们先看一下发送端部分。
+ 假设已经阅读了[参数简介](... / intro / parameter_intro.md)，并且已经对配置文件有了基本的了解。 
 
 
 
@@ -157,7 +157,7 @@ common:
 
 由于数据来自在线LiDAR，因此请设置 *msg_source = 1* 。
 
-我们想通过protobuf-UDP发送数据包，因此设置 *send_packet_proto = true* 。
+通过protobuf-UDP发送数据包，因此设置 *send_packet_proto = true* 。
 
 ```yaml
 lidar:
@@ -189,7 +189,7 @@ proto:
   packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
 ```
 
-我们要发送点云，所以只需要关注两个参数，即  *point_cloud_send_port, point_cloud_send_ip*。您可以根据需要调整它们。
+发送点云，所以只需要关注两个参数，即  *point_cloud_send_port, point_cloud_send_ip*。可以根据需要调整它们。
 
 
 
@@ -212,7 +212,7 @@ common:
 
 由于点云消息来自protobuf-UDP，因此请设置  *msg_source = 5* 。
 
-我们想在ROS-Rviz上观看点云，因此设置 *send_point_cloud_ros = true* 。
+需要在ROS-Rviz上观看点云，因此设置 *send_point_cloud_ros = true* 。
 
 ```yaml
 proto:
@@ -226,7 +226,7 @@ proto:
   packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
 ```
 
-我们希望接收点云，因此我们只需要关注 *point_cloud_recv_port* 。 您必须确保它们与发送端中设置的 *point_cloud_send_port* 相同。
+接收点云，因此只需要关注 *point_cloud_recv_port* 。 必须确保它们与发送端中设置的 *point_cloud_send_port* 相同。
 
 
 

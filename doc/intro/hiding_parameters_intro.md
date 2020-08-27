@@ -1,14 +1,10 @@
 # Introduction to hiding parameters
 
-
-
-## 1 Introduction
-
-​	In order to make the config file as simple as possible, we hide some of the parameters and give them a default value in the program. This document show you the use of those hiding parameters and you can decide whether to add them back or not. 
+In order to make the config file as simple as possible, we hide some of the parameters and give them a default value in the program. This document show you the use of those hiding parameters and you can decide whether to add them back or not. 
 
 
 
-### 1.1 common
+## 1 common
 
 ```yaml
 
@@ -32,11 +28,11 @@ common:
 
 - pcap_repeat -- The default value is *true* , you can add it back and set to false to prevent pcap read repeatedly.
 
-- pcap_rate -- The default value is *1*, you can adjust this value to control the frequency of reading pcap.
+- pcap_rate -- The default value is *1*, you can adjust this value to control the frequency of reading pcap. The larger the value is set, the faster the pcap bag is played.
 
 
 
-### 1.2 lidar-driver
+## 2 LiDAR
 
 ```yaml
 lidar:

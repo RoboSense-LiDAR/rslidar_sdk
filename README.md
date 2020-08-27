@@ -1,7 +1,7 @@
 # **rslidar_sdk**
 
 ## 1 工程简介
- **rslidar_sdk** 为速腾聚创在Linux环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
+ **rslidar_sdk** 为速腾聚创在Ubuntu环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
 
 
 
@@ -12,7 +12,7 @@
  由于rslidar_sdk项目中包含子模块驱动内核rs_driver, 因此在执行git clone 后还需要执行相关指令初始化并更新子模块。
 
   ```sh
-git clone XXXX.git
+git clone https://github.com/RoboSense-LiDAR/rslidar_sdk.git
 cd rslidar_sdk
 git submodule init
 git submodule update
@@ -20,7 +20,7 @@ git submodule update
 
 ### 2.2 直接下载
 
-由于直接下载的压缩包内不包含git信息，因此您需要手动下载驱动内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver),  然后将其解压在 rslidar_sdk/src路径下。 将src中原有的rs_driver文件夹删除，再将刚刚解压好的rs_driver-xxxx文件夹改名为rs_driver即可。
+由于直接下载的压缩包内不包含git信息，因此需要手动下载驱动内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver),  然后将其解压在 rslidar_sdk/src路径下。 将src中原有的rs_driver文件夹删除，再将刚刚解压好的rs_driver-xxxx文件夹改名为rs_driver即可。
 
 
 
@@ -30,25 +30,33 @@ git submodule update
 
 ### 3.1 ROS 
 
-若需在ROS环境下使用雷达驱动，则需安装ROS相关依赖库。Ubuntu1604-安装ROS kinetic desktop-full   Ubuntu 1804 - 安装ROS melodic desktop-full。
+若需在ROS环境下使用雷达驱动，则需安装ROS相关依赖库。
+
+Ubuntu 16.04 - 安装ROS kinetic desktop-full  
+
+Ubuntu 18.04 - 安装ROS melodic desktop-full
 
 安装方式： 参考 http://wiki.ros.org
 
-**如果您安装了ROS kinetic desktop-full版或ROS melodic desktop-full版，那么兼容版本其他依赖库也应该同时被安装了，所以您不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将为您节省大量的时间来逐个安装和配置库**。
+**如果安装了ROS kinetic desktop-full版或ROS melodic desktop-full版，那么兼容版本其他依赖库也应该同时被安装了，所以不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将节省大量的时间来逐个安装和配置库**。
 
 ### 3.2 ROS2
 
-若需在ROS2环境下使用雷达驱动，则需安装ROS2相关依赖库。Ubuntu1604 - 暂不支持, Ubuntu1804 - 安装ROS2 Eloquent desktop。
+若需在ROS2环境下使用雷达驱动，则需安装ROS2相关依赖库。
+
+Ubuntu 16.04 - 不支持
+
+Ubuntu 18.04 - 安装ROS2 Eloquent desktop
 
 安装方式：参考 https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
-**注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时您还需要手动安装Yaml库**。
+**注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时还需要手动安装Yaml库**。
 
-### 3.5 Yaml
+### 3.5 Yaml (必需)
 
 版本号:  >= v0.5.2 
 
-**必需**, 若已安装ROS desktop-full, 可跳过。
+若已安装ROS desktop-full, 可跳过。
 
 安装方式:
 
@@ -57,9 +65,9 @@ sudo apt-get update
 sudo apt-get install -y libyaml-cpp-dev
 ```
 
-### 3.6 pcap
+### 3.6 Pcap (必需)
 
-**必需**
+版本号： >=v1.7.4
 
 安装方式：
 
@@ -67,9 +75,9 @@ sudo apt-get install -y libyaml-cpp-dev
 sudo apt-get install -y  libpcap-dev
 ```
 
-### 3.7 Protobuf 
+### 3.7 Protobuf (可选)
 
-**可选**
+版本号： >=v2.6.1
 
 安装方式:
 
@@ -79,15 +87,13 @@ sudo apt-get install -y libprotobuf-dev protobuf-compiler
 
 
 
-
-
 ## 4 编译 & 运行
 
 我们提供三种编译&运行方式。
 
 ### 4.1 直接编译
 
-(1) 按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能，但需要用户在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
+(1) 按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能(但ROS2不行)，但需要在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
 
 ```sh
 cd rslidar_sdk
@@ -177,7 +183,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 7 快速上手
 
-**以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 用户可通过配置参数改变不同的工作模式。**
+**以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 可通过配置参数改变不同的工作模式。**
 
 [在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_point_cloud_ros_cn.md)
 
@@ -205,7 +211,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 1 Introduction
 
-**rslidar_sdk** is the lidar driver softwar e development kit under Linux operating system, which contains the lidar driver core, ROS support, ROS2 support and Protobuf-UDP communication functions. For users who want to get point cloud through ROS or ROS2,  this software development kit can be used directly. For users who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core [rs_driver](https://github.com/RoboSense-LiDAR/rs_driver).
+**rslidar_sdk** is the lidar driver software development kit under Ubuntu operating system, which contains the lidar driver core, ROS support, ROS2 support and Protobuf-UDP communication functions. For user who want to get point cloud through ROS or ROS2,  this software development kit can be used directly. For user who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core [rs_driver](https://github.com/RoboSense-LiDAR/rs_driver).
 
 
 
@@ -213,10 +219,10 @@ ros2 launch rslidar_sdk start.py
 
 ### 2.1 Use git clone
 
-Since rslidar_sdk project include the submodule --- rs_driver, users need to excute the following commands after git clone.
+Since rslidar_sdk project include the submodule --- rs_driver, user need to excute the following commands after git clone.
 
 ```sh
-git clone XXXX.git
+git clone https://github.com/RoboSense-LiDAR/rslidar_sdk.git
 cd rslidar_sdk
 git submodule init
 git submodule update
@@ -232,25 +238,33 @@ Since the zip file does not include submodule information, user need to download
 
 ### 3.1 ROS
 
-If use rslidar_sdk in ROS environment, ROS related libraries need to be installed. Ubuntu1604 - Install ROS kinetic desktop-full, Ubuntu1804 - install ROS melodic desktop-full.
+If use rslidar_sdk in ROS environment, ROS related libraries need to be installed. 
+
+Ubuntu 16.04 - Install ROS kinetic desktop-full
+
+Ubuntu 18.04 - install ROS melodic desktop-full
 
 Installation： please refer to  http://wiki.ros.org
 
-**If you install ROS kinetic desktop-full or ROS melodic desktop-full，then the correspond PCL and Boost  will be installed at the same time. If will bring you a lot of convenience since you don't need to handle the version confliction. Thus, its highly recommanded to install ROS  desktop-full**.
+**If you install ROS kinetic desktop-full or ROS melodic desktop-full，then the correspond PCL and Boost  will be installed at the same time. It will bring you a lot of convenience since you don't need to handle the version confliction. Thus, its highly recommanded to install ROS  desktop-full**.
 
 ### 3.2 ROS2
 
-If use rslidar_sdk in ROS2 environment, ROS2 related libraries need to be installed. Ubuntu1604 - Not support yet, Ubuntu 1804 - Install ROS2 eloquent desktop.
+If use rslidar_sdk in ROS2 environment, ROS2 related libraries need to be installed. 
+
+Ubuntu 16.04 - Not support 
+
+Ubuntu 18.04 - Install ROS2 eloquent desktop
 
 Installation: please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
-**Note! Please avoid to install ROS and ROS2 in one computer at the same time! This may cause confliction! Also you may need to install PCL  manually.**
+**Note! Please avoid to install ROS and ROS2 in one computer at the same time! This may cause confliction! Also you may need to install Yaml  manually.**
 
-### 3.3 Yaml 
+### 3.3 Yaml(Essential) 
 
 version: >= v0.5.2
 
-**Essential**, if installed ROS desktop-full, this part can be ignored.
+If installed ROS desktop-full, this part can be ignored.
 
 Installation:
 
@@ -259,9 +273,9 @@ sudo apt-get update
 sudo apt-get install -y libyaml-cpp-dev
 ```
 
-### 3.4 Pcap
+### 3.4 Pcap(Essential) 
 
-**Essential**
+version: >=v1.7.4
 
 Installation：
 
@@ -269,9 +283,9 @@ Installation：
 sudo apt-get install -y  libpcap-dev
 ```
 
-### 3.5 Protobuf
+### 3.5 Protobuf(Optional)
 
-**Optional**
+version:>=v2.6.1
 
 Installation :
 
@@ -286,7 +300,7 @@ We offer three ways to compile and run the driver.
 
 ### 4.1 Compile directly
 
-(1) Excute the commands below. In this way, user can also use ROS functions but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
+(1) Excute the commands below. In this way, user can also use ROS functions(Not include ROS2), but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
 
 ```sh
 cd rslidar_sdk
@@ -376,7 +390,7 @@ ros2 launch rslidar_sdk start.py
 
 ### 7 Quick start
 
-**The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and users can use rslidar_sdk in their own way by modifying parameters.**
+**The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and user can use rslidar_sdk in their own way by modifying parameters.**
 
 [Online connect lidar and send point cloud through ROS](doc/howto/how_to_online_send_point_cloud_ros.md)
 

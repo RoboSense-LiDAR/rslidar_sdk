@@ -4,13 +4,13 @@
 
 ## 1 介绍
 
-​	本文档将向您展示如何记录与解码rosbag。 在阅读这个文档之前请先确认您已经阅读过雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
+​	本文档将展示如何记录与解码rosbag。 在阅读这个文档之前请先确认已经阅读过雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
 
 
 
 ## 2 录包
 
-​	假设您正在线连接雷达并已经将点云发送至ROS。如果您对此不太了解, 请先阅读 [如何在线连接雷达并发送点云数据到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
+​	假设正在线连接雷达并已经将点云发送至ROS。如果对此不太了解, 请先阅读 [如何在线连接雷达并发送点云数据到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
 
 ​    此时，配置文件的*common*部分应如下所示:
 
@@ -29,9 +29,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
-​	实际上，您现在可以直接录制点云消息，这样在离线播包时不需要再另外运行驱动程序解包。但这种方法缺点也很明显，即录制的包会非常大。 因此，通常我们建议记录雷达packet，而不是记录点云消息。
+​	现在可以直接录制点云消息，这样在离线播包时不需要再另外运行驱动程序解包。但这种方法缺点也很明显，即录制的包会非常大。 因此，通常建议记录雷达packet，而不是记录点云消息。
 
-​	为了记录雷达packet, 您需要设置 *send_packet_ros = true*。然后 *common* 部分应当如下所示： 
+​	为了记录雷达packet, 需要设置 *send_packet_ros = true*。然后 *common* 部分应当如下所示： 
 
 ```yaml
 common:
@@ -48,9 +48,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
 ```
 
-​	您还可以通过调整参数文件的 *lidar-ros* 部分中的 *ros_send_packet_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的话题为“ msoptopic_difop”。 例如，默认话题设置为 *rslidar_packets*，因此msop话题为 *rslidar_packets*，而difop的话题为 *rslidar_packets_difop*。
+​	可以通过调整参数文件的 *lidar-ros* 部分中的 *ros_send_packet_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的话题为“ msoptopic_difop”。 例如，默认话题设置为 *rslidar_packets*，因此msop话题为 *rslidar_packets*，而difop的话题为 *rslidar_packets_difop*。
 
-**注意：如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 重点是您必须同时记录这两个数据包。**
+**注意：如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 必须同时记录这两个数据。**
 
 ```sh
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
@@ -60,7 +60,7 @@ rosbag record /rslidar_packets /rslidar_packets_difop -O bag
 
 ## 3 离线解码
 
-​	假设您录制了一个rosbag，其中包含话题为 *rslidar_packets* 的msop数据包和话题为 *rslidar_packets_difop*的difop数据包。请按照以下步骤进行配置。	
+​	假设录制了一个rosbag，其中包含话题为 *rslidar_packets* 的msop数据包和话题为 *rslidar_packets_difop*的difop数据包。请按照以下步骤进行配置。	
 
 ### 3.1 设置文件的 common部分
 
@@ -81,7 +81,7 @@ common:
 
 ​	由于数据包消息来自ROS，因此请设置 *msg_source = 2* 。
 
-​	我们想将点云发送到ROS，因此设置 *send_point_cloud_ros = true*。
+​	将点云发送到ROS，因此设置 *send_point_cloud_ros = true*。
 
 
 
@@ -103,7 +103,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-​	将 *lidar_type* 设置为您的LiDAR类型 - -RS16，RS32，RSBP，RS128。
+​	将 *lidar_type* 设置为LiDAR类型 - -RS16，RS32，RSBP，RS128。
 
 
 
