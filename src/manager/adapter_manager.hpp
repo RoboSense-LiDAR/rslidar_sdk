@@ -451,7 +451,7 @@ private:
 #endif
 
       case AdapterType::CameraTriggerRosAdapter:
-#if (ROS_FOUND || ROS2_FOUND)
+#if (ROS_FOUND)  ///< Camera trigger not support ROS2 yet
         transmitter = std::dynamic_pointer_cast<T>(std::make_shared<CameraTriggerRosAdapter>());
         transmitter->init(config);
         break;
