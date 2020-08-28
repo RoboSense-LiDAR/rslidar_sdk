@@ -130,9 +130,9 @@ include_directories(${rs_driver_INCLUDE_DIRS})
 if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
-              ${PROTO_FILE_PATH}/Proto_msg.LidarPointCloud.pb.cc
-              ${PROTO_FILE_PATH}/Proto_msg.LidarScan.pb.cc
-              ${PROTO_FILE_PATH}/Proto_msg.LidarPacket.pb.cc
+              ${PROTO_FILE_PATH}/packet.pb.cc
+              ${PROTO_FILE_PATH}/scan.pb.cc
+              ${PROTO_FILE_PATH}/point_cloud.pb.cc
               )
   target_link_libraries(rslidar_sdk_node                   
                       ${PCL_LIBRARIES}

@@ -1,5 +1,5 @@
 syntax="proto2";
-package Proto_msg;
+package proto_msg;
 
 message LidarPacket
 { 

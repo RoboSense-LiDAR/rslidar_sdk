@@ -24,7 +24,6 @@
 #define RECEIVE_BUF_SIZE 10000000
 #include "adapter/adapter_base.h"
 #include "utility/protobuf_communicator.hpp"
-#include "msg/proto_msg/Proto_msg.LidarPointCloud.pb.h"
 #include "msg/proto_msg_translator.h"
 #include <condition_variable>
 #include <mutex>
@@ -128,8 +127,8 @@ private:
   {
     while (point_cloud_send_queue_.size() > 0)
     {
-      Proto_msg::LidarPointCloud proto_msg = toProtoMsg(point_cloud_send_queue_.popFront());
-      if (!proto_com_ptr_->sendSplitMsg<Proto_msg::LidarPointCloud>(proto_msg))
+      proto_msg::LidarPointCloud proto_msg = toProtoMsg(point_cloud_send_queue_.popFront());
+      if (!proto_com_ptr_->sendSplitMsg<proto_msg::LidarPointCloud>(proto_msg))
       {
         WARNING << "PointCloud Protobuf sending error" << REND;
       }
@@ -147,7 +146,7 @@ private:
       int ret = proto_com_ptr_->receiveProtoMsg(p_data, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
-        if (tmp_header.msgID == 0)
+        if (tmp_header.msg_id == 0)
         {
           start_check = false;
         }
@@ -180,12 +179,12 @@ private:
       {
         auto pair = point_cloud_recv_queue_.front();
         old_frmnum_ = new_frmnum_;
-        new_frmnum_ = pair.second.frmNumber;
-        memcpy((uint8_t*)buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
-        if ((old_frmnum_ == new_frmnum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
+        new_frmnum_ = pair.second.frame_num;
+        memcpy((uint8_t*)buff_ + pair.second.msg_id * SPLIT_SIZE, pair.first, SPLIT_SIZE);
+        if ((old_frmnum_ == new_frmnum_) && (pair.second.msg_id == pair.second.total_msg_cnt - 1))
         {
-          Proto_msg::LidarPointCloud proto_msg;
-          proto_msg.ParseFromArray(buff_, pair.second.totalMsgLen);
+          proto_msg::LidarPointCloud proto_msg;
+          proto_msg.ParseFromArray(buff_, pair.second.total_msg_length);
           localCallback(toRsMsg(proto_msg));
         }
       }

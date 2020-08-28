@@ -185,8 +185,8 @@ private:
       if (packet_recv_thread_.start_.load())
       {
         auto pair = packet_recv_queue_.front();
-        Proto_msg::LidarPacket protomsg;
-        protomsg.ParseFromArray(pair.first, pair.second.msgLen);
+        proto_msg::LidarPacket protomsg;
+        protomsg.ParseFromArray(pair.first, pair.second.msg_length);
         localDifopCallback(toRsMsg(protomsg));
       }
       free(packet_recv_queue_.front().first);
@@ -205,7 +205,7 @@ private:
       int ret = scan_proto_com_ptr_->receiveProtoMsg(p_data, MAX_RECEIVE_LENGTH, tmp_header);
       if (start_check)
       {
-        if (tmp_header.msgID == 0)
+        if (tmp_header.msg_id == 0)
         {
           start_check = false;
         }
@@ -236,12 +236,12 @@ private:
       {
         auto pair = scan_recv_queue_.front();
         old_frmnum_ = new_frmnum_;
-        new_frmnum_ = pair.second.frmNumber;
-        memcpy((uint8_t*)scan_buff_ + pair.second.msgID * SPLIT_SIZE, pair.first, SPLIT_SIZE);
-        if ((old_frmnum_ == new_frmnum_) && (pair.second.msgID == pair.second.totalMsgCnt - 1))
+        new_frmnum_ = pair.second.frame_num;
+        memcpy((uint8_t*)scan_buff_ + pair.second.msg_id * SPLIT_SIZE, pair.first, SPLIT_SIZE);
+        if ((old_frmnum_ == new_frmnum_) && (pair.second.msg_id == pair.second.total_msg_cnt - 1))
         {
-          Proto_msg::LidarScan proto_msg;
-          proto_msg.ParseFromArray(scan_buff_, pair.second.totalMsgLen);
+          proto_msg::LidarScan proto_msg;
+          proto_msg.ParseFromArray(scan_buff_, pair.second.total_msg_length);
           localMsopCallback(toRsMsg(proto_msg));
         }
       }
@@ -255,8 +255,8 @@ private:
   {
     while (packet_send_queue_.size() > 0)
     {
-      Proto_msg::LidarPacket proto_msg = toProtoMsg(packet_send_queue_.popFront());
-      if (!packet_proto_com_ptr_->sendSingleMsg<Proto_msg::LidarPacket>(proto_msg))
+      proto_msg::LidarPacket proto_msg = toProtoMsg(packet_send_queue_.popFront());
+      if (!packet_proto_com_ptr_->sendSingleMsg<proto_msg::LidarPacket>(proto_msg))
       {
         WARNING << "Difop packets Protobuf sending error" << REND;
       }
@@ -268,8 +268,8 @@ private:
   {
     while (scan_send_queue_.size() > 0)
     {
-      Proto_msg::LidarScan proto_msg = toProtoMsg(scan_send_queue_.popFront());
-      if (!scan_proto_com_ptr_->sendSplitMsg<Proto_msg::LidarScan>(proto_msg))
+      proto_msg::LidarScan proto_msg = toProtoMsg(scan_send_queue_.popFront());
+      if (!scan_proto_com_ptr_->sendSplitMsg<proto_msg::LidarScan>(proto_msg))
       {
         WARNING << "Msop packets Protobuf sending error" << REND;
       }
