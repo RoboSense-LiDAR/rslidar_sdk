@@ -16,7 +16,7 @@ Please follow the steps below.
 
 #### 2.1 Get the data port number & ip address
 
-We suppose you have followed the instructions in LiDAR user-guide to connect the LiDAR and set up your computer's ip address. And now you should be able to use RSView to see the point cloud. At this time, you should have already known your LiDAR's msop port number, difop port number, and device ip address. The default is *msop-6699, difop-7788, ip-192.168.1.200*. If you have no idea what it is, please check the LiDAR user-guide first.
+Please follow the instructions in LiDAR user-guide to connect the LiDAR and set up your computer's ip address. And now you should be able to use RSView to see the point cloud. At this time, you should have already known your LiDAR's msop port number, difop port number, and device ip address. The default is *msop-6699, difop-7788, ip-192.168.1.200*. If you have no idea what it is, please check the LiDAR user-guide first.
 
 
 
@@ -24,24 +24,24 @@ We suppose you have followed the instructions in LiDAR user-guide to connect the
 
 ```yaml
 common:
-  msg_source: 3                                         #0--not use Lidar
-                                                        #1--packet message come from online lidar
-                                                        #2--packet message come from ROS or ROS2
-                                                        #3--packet message come from Pcap bag
-                                                        #4--packet message come from Protobuf-UDP
-                                                        #5--point cloud from Protobuf-UDP
-  send_packet_ros: false                                #true--Send packet through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
-  send_packet_proto: false                              #true--Send packet through Protobuf-UDP
-  send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 3                                         #0: not use Lidar
+                                                        #1: packet message comes from online Lidar
+                                                        #2: packet message comes from ROS or ROS2
+                                                        #3: packet message comes from Pcap bag
+                                                        #4: packet message comes from Protobuf-UDP
+                                                        #5: point cloud comes from Protobuf-UDP
+  send_packet_ros: false                                #true: Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true: Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-​	Since the message come from the pcap bag, set *msg_source = 3*. 
+Since the message come from the pcap bag, set *msg_source = 3*. 
 
-​    We want to send point cloud to ROS so set *send_point_cloud_ros = true*. 
+Send point cloud to ROS so set *send_point_cloud_ros = true*. 
 
-​    Make sure the *pcap_path* is correct.
+Make sure the *pcap_path* is correct.
 
 
 
@@ -50,7 +50,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type, must be set correctly
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -63,11 +63,11 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-​	Set the *lidar_type*  to your LiDAR type --- RS16,RS32,RSBP,RS128.
+Set the *lidar_type*  to your LiDAR type --- RS16, RS32, RSBP, RS128, RS80.
 
-​    Set the *device_ip* to your LiDAR's ip address. the default is *device_ip = 192.168.1.200*.
+Set the *device_ip* to your LiDAR's ip address. the default is *device_ip = 192.168.1.200*.
 
-​	Set the *msop_port* and *difop_port*  to your LiDAR's port number. The default is *msop = 6699* and *difop = 7788*.
+Set the *msop_port* and *difop_port*  to your LiDAR's port number. The default is *msop = 6699* and *difop = 7788*.
 
 ​	
 
@@ -98,21 +98,21 @@ ros:
 
 ```yaml
 common:
-  msg_source: 3                                         #0--not use Lidar
-                                                        #1--packet message come from online lidar
-                                                        #2--packet message come from ROS or ROS2
-                                                        #3--packet message come from Pcap bag
-                                                        #4--packet message come from Protobuf-UDP
-                                                        #5--point cloud from Protobuf-UDP
-  send_packet_ros: false                                #true--Send packet through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
-  send_packet_proto: false                              #true--Send packet through Protobuf-UDP
-  send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 3                                         #0: not use Lidar
+                                                        #1: packet message comes from online Lidar
+                                                        #2: packet message comes from ROS or ROS2
+                                                        #3: packet message comes from Pcap bag
+                                                        #4: packet message comes from Protobuf-UDP
+                                                        #5: point cloud comes from Protobuf-UDP
+  send_packet_ros: false                                #true: Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true: Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type, must be set correctly
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699

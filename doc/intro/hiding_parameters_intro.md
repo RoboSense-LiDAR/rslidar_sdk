@@ -7,21 +7,20 @@ In order to make the config file as simple as possible, we hide some of the para
 ## 1 common
 
 ```yaml
-
 common:
-    msg_source: 2                                         #0--not use Lidar
-                                                          #1--lidar packet message come from online lidar
-                                                          #2--lidar packet message come from ROS
-                                                          #3--lidar packet message come from Pcap bag
-                                                          #4--packets from Protobuf-UDP
-                                                          #5--point cloud from Protobuf-UDP
-    send_packet_ros: false                                #true--Send packet through ROS(Used to record packet)
-    send_point_cloud_ros: true                            #true--Send point cloud through ROS
-    send_packet_proto: false                              #true--Send packets through Protobuf-UDP
-    send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-    pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
-    pcap_repeat: true									  #If true, the pcap file will be played repeatedly.
-    pcap_rate:	1										  #The rate of reading pcap	
+  msg_source: 1                                         #0: not use Lidar
+                                                        #1: packet message comes from online Lidar
+                                                        #2: packet message comes from ROS or ROS2
+                                                        #3: packet message comes from Pcap bag
+                                                        #4: packet message comes from Protobuf-UDP
+                                                        #5: point cloud comes from Protobuf-UDP
+  send_packet_ros: false                                #true: Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: false                           #true: Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true: Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
+  pcap_repeat: true									    #If true, the pcap file will be played repeatedly.
+  pcap_rate: 1  										#The rate of reading pcap	
 ```
 
 ​	There are two  hiding parameters in this part.
@@ -37,7 +36,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16,RS32,RSBP,RS128
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699

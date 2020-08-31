@@ -4,53 +4,53 @@
 
 ## 1 介绍
 
-​	本文档将展示如何记录与解码rosbag。 在阅读这个文档之前请先确认已经阅读过雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
+​	本文档将展示如何记录与解码rosbag。 在阅读这本文档之前请先阅读雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
 
 
 
 ## 2 录包
 
-​	假设正在线连接雷达并已经将点云发送至ROS。如果对此不太了解, 请先阅读 [如何在线连接雷达并发送点云数据到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
+​	首先在线连接雷达并将点云发送至ROS。如果对此不太了解, 请先阅读 [如何在线连接雷达并发送点云数据到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
 
 ​    此时，配置文件的*common*部分应如下所示:
 
 ```yaml
 common:
-  msg_source: 1                                         #0--not use Lidar
-                                                        #1--packet message come from online lidar
-                                                        #2--packet message come from ROS or ROS2
-                                                        #3--packet message come from Pcap bag
-                                                        #4--packet message come from Protobuf-UDP
-                                                        #5--point cloud from Protobuf-UDP
-  send_packet_ros: false                                #true--Send packet through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
-  send_packet_proto: false                              #true--Send packet through Protobuf-UDP
-  send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 1                                         #0: not use Lidar
+                                                        #1: packet message comes from online Lidar
+                                                        #2: packet message comes from ROS or ROS2
+                                                        #3: packet message comes from Pcap bag
+                                                        #4: packet message comes from Protobuf-UDP
+                                                        #5: point cloud comes from Protobuf-UDP
+  send_packet_ros: false                                #true: Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true: Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-​	现在可以直接录制点云消息，这样在离线播包时不需要再另外运行驱动程序解包。但这种方法缺点也很明显，即录制的包会非常大。 因此，通常建议记录雷达packet，而不是记录点云消息。
+​	现在可以直接录制点云消息，这样在离线播包时不需要再另外运行驱动程序解包。但这种方法会导致录制的包非常大。 因此，通常建议记录雷达packet数据，而不是记录点云数据。
 
 ​	为了记录雷达packet, 需要设置 *send_packet_ros = true*。然后 *common* 部分应当如下所示： 
 
 ```yaml
 common:
-  msg_source: 1                                         #0--not use Lidar
-                                                        #1--packet message come from online lidar
-                                                        #2--packet message come from ROS or ROS2
-                                                        #3--packet message come from Pcap bag
-                                                        #4--packet message come from Protobuf-UDP
-                                                        #5--point cloud from Protobuf-UDP
-  send_packet_ros: true                                 #true--Send packet through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: true                            #true--Send point cloud through ROS or ROS2
-  send_packet_proto: false                              #true--Send packet through Protobuf-UDP
-  send_point_cloud_proto: false                         #true--Send point cloud through Protobuf-UDP
-  pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 1                                         #0: not use Lidar
+                                                        #1: packet message comes from online Lidar
+                                                        #2: packet message comes from ROS or ROS2
+                                                        #3: packet message comes from Pcap bag
+                                                        #4: packet message comes from Protobuf-UDP
+                                                        #5: point cloud comes from Protobuf-UDP
+  send_packet_ros: true                                #true: Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true: Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-​	可以通过调整参数文件的 *lidar-ros* 部分中的 *ros_send_packet_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的话题为“ msoptopic_difop”。 例如，默认话题设置为 *rslidar_packets*，因此msop话题为 *rslidar_packets*，而difop的话题为 *rslidar_packets_difop*。
+​	可以通过调整参数文件的 *lidar-ros* 部分中的 *ros_send_packet_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的话题为“ msoptopic_difop”。 例： 默认话题设置为 *rslidar_packets*，因此msop话题为 *rslidar_packets*，而difop的话题为 *rslidar_packets_difop*。
 
-**注意：如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 必须同时记录这两个数据。**
+**注意：如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 录包时必须同时记录这两种数据。**
 
 ```sh
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
@@ -66,17 +66,17 @@ rosbag record /rslidar_packets /rslidar_packets_difop -O bag
 
 ```yaml
 common:
-    msg_source: 2                                         #0--not use Lidar
-                                                          #1--lidar packet message come from online lidar
-                                                          #2--lidar packet message come from ROS
-                                                          #3--lidar packet message come from Pcap bag
-                                                          #4--packets from Protobuf-UDP
-                                                          #5--point cloud from Protobuf-UDP
-    send_packet_ros: false                               #true--Send packet through ROS(Used to record packet)
-    send_point_cloud_ros: true                                 #true--Send point cloud through ROS
-    send_packet_proto: false                             #true--Send packets through Protobuf-UDP
-    send_point_cloud_proto: false                              #true--Send point cloud through Protobuf-UDP
-    pcap_path: /home/robosense/lidar.pcap            #The path of pcap file
+  msg_source: 2                                         #0: not use Lidar
+                                                        #1: packet message comes from online Lidar
+                                                        #2: packet message comes from ROS or ROS2
+                                                        #3: packet message comes from Pcap bag
+                                                        #4: packet message comes from Protobuf-UDP
+                                                        #5: point cloud comes from Protobuf-UDP
+  send_packet_ros: false                                #true: Send packet through ROS or ROS2(Used to record packet)
+  send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
+  send_packet_proto: false                              #true: Send packet through Protobuf-UDP
+  send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
 ​	由于数据包消息来自ROS，因此请设置 *msg_source = 2* 。
@@ -90,7 +90,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128           #The lidar type, must be set correctly
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -103,7 +103,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For latest version lidars, there is no need to use this file.
 ```
 
-​	将 *lidar_type* 设置为LiDAR类型 - -RS16，RS32，RSBP，RS128。
+​	将 *lidar_type* 设置为LiDAR类型 - -RS16，RS32，RSBP，RS128, RS80。
 
 
 

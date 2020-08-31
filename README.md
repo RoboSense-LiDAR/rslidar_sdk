@@ -93,7 +93,7 @@ sudo apt-get install -y libprotobuf-dev protobuf-compiler
 
 ### 4.1 直接编译
 
-(1) 按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能(但ROS2不行)，但需要在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
+(1) 按照如下指令即可编译运行程序。 直接编译也可以使用ROS相关功能(不包括ROS2)，但需要在程序启动前**手动启动roscore**，启动后**手动打开rviz**才能看到可视化点云结果。
 
 ```sh
 cd rslidar_sdk

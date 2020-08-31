@@ -121,7 +121,7 @@ lidar:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16,RS32,RSBP,RS128
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The mosp port of lidar,default is 6699
@@ -146,9 +146,9 @@ lidar:
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
       packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP             #The lidar type - RS16,RS32,RSBP,RS128
+      lidar_type: RSBP             #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
-      device_ip: 192.168.1.200     #The device ip address
+      device_ip: 192.168.1.199     #The device ip address
       msop_port: 1990              #The mosp port of lidar,default is 6699
       difop_port: 1991             #The difop port of lidar, default is 7788
       start_angle: 0               #The start angle of point cloud area
@@ -171,9 +171,9 @@ lidar:
       difop_send_port: 60026                      #The port number which the difop packets will be send to 
       packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP             #The lidar type - RS16,RS32,RSBP,RS128
+      lidar_type: RSBP            #The lidar type - RS16, RS32, RSBP, RS128, RS80
       frame_id: /rslidar           #The frame id of message
-      device_ip: 192.168.1.200     #The device ip address
+      device_ip: 192.168.1.201     #The device ip address
       msop_port: 2000              #The mosp port of lidar,default is 6699
       difop_port: 2001             #The difop port of lidar, default is 7788
       start_angle: 0               #The start angle of point cloud area
