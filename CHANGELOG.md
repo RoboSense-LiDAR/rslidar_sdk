@@ -1,6 +1,6 @@
 # Changelog
 
-## unreleased v1.2.0 - beta
+## v1.2.0 - 2020-09-01
 
 ### Added
 - Add camera software trigger (base on target angle)
