@@ -122,11 +122,11 @@ public:
       switch (msg_source)
       {
         case MsgSource::MSG_FROM_LIDAR:  // use driver
-          INFO << "------------------------------------------------------" << REND;
-          INFO << "Receive Packets From : Online LiDAR" << REND;
-          INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << REND;
-          INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << REND;
-          INFO << "------------------------------------------------------" << REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
+          RS_INFO << "Receive Packets From : Online LiDAR" << RS_REND;
+          RS_INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << RS_REND;
+          RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
           point_cloud_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_LIDAR;
           recv_ptr = createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter);
@@ -139,12 +139,12 @@ public:
           break;
 
         case MsgSource::MSG_FROM_ROS_PACKET:  // pkt from ros
-          INFO << "------------------------------------------------------" << REND;
-          INFO << "Receive Packets From : ROS" << REND;
-          INFO << "Msop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << REND;
-          INFO << "Difop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << "_difop"
-               << REND;
-          INFO << "------------------------------------------------------" << REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
+          RS_INFO << "Receive Packets From : ROS" << RS_REND;
+          RS_INFO << "Msop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << RS_REND;
+          RS_INFO << "Difop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << "_difop"
+               << RS_REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
           point_cloud_thread_flag_ = false;
           packet_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_ROS_PACKET;
@@ -160,12 +160,12 @@ public:
           break;
 
         case MsgSource::MSG_FROM_PCAP:  // pcap
-          INFO << "------------------------------------------------------" << REND;
-          INFO << "Receive Packets From : Pcap" << REND;
-          INFO << "Device Ip: " << lidar_config[i]["driver"]["device_ip"].as<std::string>() << REND;
-          INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << REND;
-          INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << REND;
-          INFO << "------------------------------------------------------" << REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
+          RS_INFO << "Receive Packets From : Pcap" << RS_REND;
+          RS_INFO << "Device Ip: " << lidar_config[i]["driver"]["device_ip"].as<std::string>() << RS_REND;
+          RS_INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << RS_REND;
+          RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
           point_cloud_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PCAP;
           lidar_config[i]["driver"]["read_pcap"] = true;
@@ -182,11 +182,11 @@ public:
           break;
 
         case MsgSource::MSG_FROM_PROTO_PACKET:  // packets from proto
-          INFO << "------------------------------------------------------" << REND;
-          INFO << "Receive Packets From : Protobuf-UDP" << REND;
-          INFO << "Msop Port: " << lidar_config[i]["proto"]["msop_recv_port"].as<uint16_t>() << REND;
-          INFO << "Difop Port: " << lidar_config[i]["proto"]["difop_recv_port"].as<uint16_t>() << REND;
-          INFO << "------------------------------------------------------" << REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
+          RS_INFO << "Receive Packets From : Protobuf-UDP" << RS_REND;
+          RS_INFO << "Msop Port: " << lidar_config[i]["proto"]["msop_recv_port"].as<uint16_t>() << RS_REND;
+          RS_INFO << "Difop Port: " << lidar_config[i]["proto"]["difop_recv_port"].as<uint16_t>() << RS_REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
           point_cloud_thread_flag_ = false;
           packet_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PROTO_PACKET;
@@ -202,10 +202,10 @@ public:
           break;
 
         case MsgSource::MSG_FROM_PROTO_POINTCLOUD:  // point cloud from proto
-          INFO << "------------------------------------------------------" << REND;
-          INFO << "Receive PointCloud From : Protobuf-UDP" << REND;
-          INFO << "PointCloud Port: " << lidar_config[i]["proto"]["point_cloud_recv_port"].as<uint16_t>() << REND;
-          INFO << "------------------------------------------------------" << REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
+          RS_INFO << "Receive PointCloud From : Protobuf-UDP" << RS_REND;
+          RS_INFO << "PointCloud Port: " << lidar_config[i]["proto"]["point_cloud_recv_port"].as<uint16_t>() << RS_REND;
+          RS_INFO << "------------------------------------------------------" << RS_REND;
           point_cloud_thread_flag_ = true;
           packet_thread_flag_ = false;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PROTO_POINTCLOUD;
@@ -219,7 +219,7 @@ public:
           break;
 
         default:
-          ERROR << "Wrong LiDAR message source! Abort!" << REND;
+          RS_ERROR << "Wrong LiDAR message source! Abort!" << RS_REND;
           exit(-1);
       }
       point_cloud_receive_adapter_vec_[i]->regRecvCallback(
@@ -228,12 +228,12 @@ public:
       /*Transmitter*/
       if (send_packet_ros)
       {
-        DEBUG << "------------------------------------------------------" << REND;
-        DEBUG << "Send Packets To : ROS" << REND;
-        DEBUG << "Msop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << REND;
-        DEBUG << "Difop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << "_difop"
-              << REND;
-        DEBUG << "------------------------------------------------------" << REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
+        RS_DEBUG << "Send Packets To : ROS" << RS_REND;
+        RS_DEBUG << "Msop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << RS_REND;
+        RS_DEBUG << "Difop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << "_difop"
+              << RS_REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_packet_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PacketRosAdapter);
@@ -245,12 +245,12 @@ public:
       }
       if (send_packet_proto)
       {
-        DEBUG << "------------------------------------------------------" << REND;
-        DEBUG << "Send Packets To : Protobuf-UDP" << REND;
-        DEBUG << "Msop Port:  " << lidar_config[i]["proto"]["msop_send_port"].as<uint16_t>() << REND;
-        DEBUG << "Difop Port: " << lidar_config[i]["proto"]["difop_send_port"].as<uint16_t>() << REND;
-        DEBUG << "Target IP: " << lidar_config[i]["proto"]["packet_send_ip"].as<std::string>() << REND;
-        DEBUG << "------------------------------------------------------" << REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
+        RS_DEBUG << "Send Packets To : Protobuf-UDP" << RS_REND;
+        RS_DEBUG << "Msop Port:  " << lidar_config[i]["proto"]["msop_send_port"].as<uint16_t>() << RS_REND;
+        RS_DEBUG << "Difop Port: " << lidar_config[i]["proto"]["difop_send_port"].as<uint16_t>() << RS_REND;
+        RS_DEBUG << "Target IP: " << lidar_config[i]["proto"]["packet_send_ip"].as<std::string>() << RS_REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_packet_proto"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PacketProtoAdapter);
@@ -262,10 +262,10 @@ public:
       }
       if (send_point_cloud_ros)
       {
-        DEBUG << "------------------------------------------------------" << REND;
-        DEBUG << "Send PointCloud To : ROS" << REND;
-        DEBUG << "PointCloud Topic: " << lidar_config[i]["ros"]["ros_send_point_cloud_topic"].as<std::string>() << REND;
-        DEBUG << "------------------------------------------------------" << REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
+        RS_DEBUG << "Send PointCloud To : ROS" << RS_REND;
+        RS_DEBUG << "PointCloud Topic: " << lidar_config[i]["ros"]["ros_send_point_cloud_topic"].as<std::string>() << RS_REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_point_cloud_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PointCloudRosAdapter);
@@ -275,11 +275,11 @@ public:
       }
       if (send_point_cloud_proto)
       {
-        DEBUG << "------------------------------------------------------" << REND;
-        DEBUG << "Send PointCloud To : Protobuf-UDP" << REND;
-        DEBUG << "PointCloud Port:  " << lidar_config[i]["proto"]["point_cloud_send_port"].as<uint16_t>() << REND;
-        DEBUG << "Target IP: " << lidar_config[i]["proto"]["point_cloud_send_ip"].as<std::string>() << REND;
-        DEBUG << "------------------------------------------------------" << REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
+        RS_DEBUG << "Send PointCloud To : Protobuf-UDP" << RS_REND;
+        RS_DEBUG << "PointCloud Port:  " << lidar_config[i]["proto"]["point_cloud_send_port"].as<uint16_t>() << RS_REND;
+        RS_DEBUG << "Target IP: " << lidar_config[i]["proto"]["point_cloud_send_ip"].as<std::string>() << RS_REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_point_cloud_proto"] = true;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PointCloudProtoAdapter);
@@ -289,14 +289,14 @@ public:
       }
       if (send_camera_trigger_ros)
       {
-        DEBUG << "------------------------------------------------------" << REND;
-        DEBUG << "Send Camera Trigger To : ROS" << REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
+        RS_DEBUG << "Send Camera Trigger To : ROS" << RS_REND;
         for (auto iter : lidar_config[i]["camera"])
         {
-          DEBUG << "Camera : " << iter["frame_id"].as<std::string>()
-                << "  Trigger Angle : " << iter["trigger_angle"].as<double>() << REND;
+          RS_DEBUG << "Camera : " << iter["frame_id"].as<std::string>()
+                << "  Trigger Angle : " << iter["trigger_angle"].as<double>() << RS_REND;
         }
-        DEBUG << "------------------------------------------------------" << REND;
+        RS_DEBUG << "------------------------------------------------------" << RS_REND;
         AdapterBase::Ptr transmitter_ptr =
             createTransmitter<AdapterBase>(lidar_config[i], AdapterType::CameraTriggerRosAdapter);
         point_cloud_receive_adapter_vec_[i]->regRecvCallback(
@@ -372,7 +372,7 @@ private:
         receiver->init(config);
         break;
 #else
-        ERROR << "ROS not found! Could not use ROS functions!" << REND;
+        RS_ERROR << "ROS not found! Could not use ROS functions!" << RS_REND;
         exit(-1);
 #endif
 
@@ -382,7 +382,7 @@ private:
         receiver->init(config);
         break;
 #else
-        ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
+        RS_ERROR << "Protobuf not found! Could not use Protobuf functions!" << RS_REND;
         exit(-1);
 #endif
 
@@ -392,12 +392,12 @@ private:
         receiver->init(config);
         break;
 #else
-        ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
+        RS_ERROR << "Protobuf not found! Could not use Protobuf functions!" << RS_REND;
         exit(-1);
 #endif
 
       default:
-        ERROR << "Create receiver failed. Abort!" << REND;
+        RS_ERROR << "Create receiver failed. Abort!" << RS_REND;
         exit(-1);
     }
 
@@ -416,7 +416,7 @@ private:
         transmitter->init(config);
         break;
 #else
-        ERROR << "ROS not found! Could not use ROS functions!" << REND;
+        RS_ERROR << "ROS not found! Could not use ROS functions!" << RS_REND;
         exit(-1);
 #endif
 
@@ -426,7 +426,7 @@ private:
         transmitter->init(config);
         break;
 #else
-        ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
+        RS_ERROR << "Protobuf not found! Could not use Protobuf functions!" << RS_REND;
         exit(-1);
 #endif
 
@@ -436,7 +436,7 @@ private:
         transmitter->init(config);
         break;
 #else
-        ERROR << "ROS not found! Could not use ROS functions!" << REND;
+        RS_ERROR << "ROS not found! Could not use ROS functions!" << RS_REND;
         exit(-1);
 #endif
 
@@ -446,7 +446,7 @@ private:
         transmitter->init(config);
         break;
 #else
-        ERROR << "Protobuf not found! Could not use Protobuf functions!" << REND;
+        RS_ERROR << "Protobuf not found! Could not use Protobuf functions!" << RS_REND;
         exit(-1);
 #endif
 
@@ -456,12 +456,12 @@ private:
         transmitter->init(config);
         break;
 #else
-        ERROR << "ROS not found! Could not use ROS functions!" << REND;
+        RS_ERROR << "ROS not found! Could not use ROS functions!" << RS_REND;
         exit(-1);
 #endif
 
       default:
-        ERROR << "Create transmitter failed. Abort!" << REND;
+        RS_ERROR << "Create transmitter failed. Abort!" << RS_REND;
         exit(-1);
     }
 

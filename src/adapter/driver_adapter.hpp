@@ -95,7 +95,7 @@ public:
     {
       if (!driver_ptr_->init(driver_param))
       {
-        ERROR << "Driver Initialize Error...." << REND;
+        RS_ERROR << "Driver Initialize Error...." << RS_REND;
         exit(-1);
       }
     }
@@ -191,13 +191,13 @@ private:
     switch (msg.error_code_type)
     {
       case lidar::ErrCodeType::INFO_CODE:
-        INFO << msg.toString() << REND;
+        RS_INFO << msg.toString() << RS_REND;
         break;
       case lidar::ErrCodeType::WARNING_CODE:
-        WARNING << msg.toString() << REND;
+        RS_WARNING << msg.toString() << RS_REND;
         break;
       case lidar::ErrCodeType::ERROR_CODE:
-        ERROR << msg.toString() << REND;
+        RS_ERROR << msg.toString() << RS_REND;
         break;
     }
   }

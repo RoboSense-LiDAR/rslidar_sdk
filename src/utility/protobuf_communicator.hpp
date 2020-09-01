@@ -228,7 +228,7 @@ public:
     }
     catch (...)
     {
-      ERROR << "Proto Sender Port is already used! Abort!" << REND;
+      RS_ERROR << "Proto Sender Port is already used! Abort!" << RS_REND;
       exit(-1);
     }
     return 0;
@@ -247,7 +247,7 @@ public:
     }
     catch (...)
     {
-      ERROR << "Proto Receiver Port is already used! Abort!" << REND;
+      RS_ERROR << "Proto Receiver Port is already used! Abort!" << RS_REND;
       exit(-1);
     }
     deadline_->expires_at(boost::posix_time::pos_infin);

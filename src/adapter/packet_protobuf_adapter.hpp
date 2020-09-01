@@ -69,7 +69,7 @@ public:
       if ((scan_proto_com_ptr_->initReceiver(msop_recv_port) == -1) ||
           (packet_proto_com_ptr_->initReceiver(difop_recv_port) == -1))
       {
-        ERROR << "LidarPacketsReceiver: Create UDP Receiver Socket failed or Bind Network failed!" << REND;
+        RS_ERROR << "LidarPacketsReceiver: Create UDP Receiver Socket failed or Bind Network failed!" << RS_REND;
         exit(-1);
       }
       send_packet_proto = false;
@@ -79,7 +79,7 @@ public:
       if ((scan_proto_com_ptr_->initSender(msop_send_port, packet_send_ip) == -1) ||
           (packet_proto_com_ptr_->initSender(difop_send_port, packet_send_ip) == -1))
       {
-        ERROR << "LidarPacketsReceiver: Create UDP Sender Socket failed ! " << REND;
+        RS_ERROR << "LidarPacketsReceiver: Create UDP Sender Socket failed ! " << RS_REND;
         exit(-1);
       }
     }
@@ -216,7 +216,7 @@ private:
       }
       if (ret == -1)
       {
-        WARNING << "Packets Protobuf receiving error" << REND;
+        RS_WARNING << "Packets Protobuf receiving error" << RS_REND;
         continue;
       }
       scan_recv_queue_.push(std::make_pair(p_data, tmp_header));
@@ -258,7 +258,7 @@ private:
       proto_msg::LidarPacket proto_msg = toProtoMsg(packet_send_queue_.popFront());
       if (!packet_proto_com_ptr_->sendSingleMsg<proto_msg::LidarPacket>(proto_msg))
       {
-        WARNING << "Difop packets Protobuf sending error" << REND;
+        RS_WARNING << "Difop packets Protobuf sending error" << RS_REND;
       }
     }
     packet_send_queue_.is_task_finished_.store(true);
@@ -271,7 +271,7 @@ private:
       proto_msg::LidarScan proto_msg = toProtoMsg(scan_send_queue_.popFront());
       if (!scan_proto_com_ptr_->sendSplitMsg<proto_msg::LidarScan>(proto_msg))
       {
-        WARNING << "Msop packets Protobuf sending error" << REND;
+        RS_WARNING << "Msop packets Protobuf sending error" << RS_REND;
       }
     }
     scan_send_queue_.is_task_finished_.store(true);

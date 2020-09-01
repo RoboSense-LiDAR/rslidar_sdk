@@ -62,7 +62,7 @@ public:
     {
       if (proto_com_ptr_->initReceiver(point_cloud_recv_port) == -1)
       {
-        ERROR << "PointCloudProtoAdapter: Create UDP Receiver Socket failed or Bind Network failed!" << REND;
+        RS_ERROR << "PointCloudProtoAdapter: Create UDP Receiver Socket failed or Bind Network failed!" << RS_REND;
         exit(-1);
       }
       send_point_cloud_proto = false;
@@ -71,7 +71,7 @@ public:
     {
       if (proto_com_ptr_->initSender(point_cloud_send_port, point_cloud_send_ip) == -1)
       {
-        ERROR << "PointCloudProtoAdapter: Create UDP Sender Socket failed ! " << REND;
+        RS_ERROR << "PointCloudProtoAdapter: Create UDP Sender Socket failed ! " << RS_REND;
         exit(-1);
       }
     }
@@ -103,7 +103,7 @@ public:
   {
     if (point_cloud_send_queue_.size() > 10)
     {
-      WARNING<<"Point Cloud Protobuf Sender buffer over flow!"<<REND;
+      RS_WARNING<<"Point Cloud Protobuf Sender buffer over flow!"<<RS_REND;
       point_cloud_send_queue_.clear();
     }
     point_cloud_send_queue_.push(msg);
@@ -130,7 +130,7 @@ private:
       proto_msg::LidarPointCloud proto_msg = toProtoMsg(point_cloud_send_queue_.popFront());
       if (!proto_com_ptr_->sendSplitMsg<proto_msg::LidarPointCloud>(proto_msg))
       {
-        WARNING << "PointCloud Protobuf sending error" << REND;
+        RS_WARNING << "PointCloud Protobuf sending error" << RS_REND;
       }
     }
     point_cloud_send_queue_.is_task_finished_.store(true);
@@ -157,7 +157,7 @@ private:
       }
       if (ret == -1)
       {
-        WARNING << "PointCloud Protobuf receiving error" << REND;
+        RS_WARNING << "PointCloud Protobuf receiving error" << RS_REND;
         continue;
       }
 

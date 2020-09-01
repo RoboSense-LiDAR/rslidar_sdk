@@ -28,7 +28,7 @@ std::mutex g_mtx;
 std::condition_variable g_cv;
 static void sigHandler(int sig)
 {
-  MSG << "RoboSense-LiDAR-Driver is stopping....." << REND;
+  RS_MSG << "RoboSense-LiDAR-Driver is stopping....." << RS_REND;
 #ifdef ROS_FOUND
   ros::shutdown();
 #endif
@@ -38,12 +38,12 @@ static void sigHandler(int sig)
 int main(int argc, char** argv)
 {
   signal(SIGINT, sigHandler);  ///< bind ctrl+c signal with the sigHandler function
-  TITLE << "********************************************************" << REND;
-  TITLE << "**********                                    **********" << REND;
-  TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR << "." << RSLIDAR_VERSION_MINOR << "."
-        << RSLIDAR_VERSION_PATCH << "     **********" << REND;
-  TITLE << "**********                                    **********" << REND;
-  TITLE << "********************************************************" << REND;
+  RS_TITLE << "********************************************************" << RS_REND;
+  RS_TITLE << "**********                                    **********" << RS_REND;
+  RS_TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR << "." << RSLIDAR_VERSION_MINOR << "."
+        << RSLIDAR_VERSION_PATCH << "     **********" << RS_REND;
+  RS_TITLE << "**********                                    **********" << RS_REND;
+  RS_TITLE << "********************************************************" << RS_REND;
 
   std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
   YAML::Node config;
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
   }
   catch (...)
   {
-    ERROR << "Config file format wrong! Please check the format(e.g. indentation) " << REND;
+    RS_ERROR << "Config file format wrong! Please check the format(e.g. indentation) " << RS_REND;
     return -1;
   }
 
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 
   demo_ptr->init(config);
   demo_ptr->start();
-  MSG << "RoboSense-LiDAR-Driver is running....." << REND;
+  RS_MSG << "RoboSense-LiDAR-Driver is running....." << RS_REND;
 
 #ifdef ROS_FOUND
   ros::spin();
