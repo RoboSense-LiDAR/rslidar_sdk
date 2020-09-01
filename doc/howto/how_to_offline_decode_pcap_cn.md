@@ -1,26 +1,26 @@
-# How to decode pcap bag and send point cloud to ROS
+# 如何解码pcap包并发送点云数据到ROS
 
 
 
-## 1 Introduction
+## 1 简介
 
-This document will show you how to decode pcap bag  and send point cloud to ROS. Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
-
-
-
-## 2 Steps
-
-Please follow the steps below. 
+​	本文档将展示如何解码pcap包并发送点云数据到ROS。 在阅读本文档之前，请确保已阅读雷达用户手册和 [参数简介](../intro/parameter_intro.md) 。
 
 
 
-#### 2.1 Get the data port number & ip address
+## 2 步骤
 
-Please follow the instructions in LiDAR user-guide to connect the LiDAR and set up your computer's ip address. And now you should be able to use RSView to see the point cloud. At this time, you should have already known your LiDAR's msop port number, difop port number, and device ip address. The default is *msop-6699, difop-7788, ip-192.168.1.200*. If you have no idea what it is, please check the LiDAR user-guide first.
+​	请按照以下步骤进行配置。
 
 
 
-#### 2.2 Set up the common part of the config file
+#### 2.1 获取数据端口号 & IP地址
+
+​	首先根据雷达用户手册连接雷达并设置好您的电脑的IP地址。此时应该已经可以使用RSView软件查看点云。并已知雷达的msop端口号, difop端口号和ip地址，默认端口是*msop = 6699* ， *difop = 7788*, 默认ip地址是*ip=192.168.1.200*。 如果不清楚上述内容，请查看雷达用户手册。
+
+
+
+#### 2.2 设置参数文件的common部分
 
 ```yaml
 common:
@@ -37,15 +37,15 @@ common:
   pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-Since the message come from the pcap bag, set *msg_source = 3*. 
+​	由于消息来自pcap包，因此请设置 *msg_source = 3* 。
 
-Send point cloud to ROS so set *send_point_cloud_ros = true*. 
+​    将点云发送到ROS以查看，因此设置 *send_point_cloud_ros = true* 。 
 
-Make sure the *pcap_path* is correct.
+​    请确保 pcap包的路径*pcap_path* 是正确的。
 
 
 
-#### 2.3 Set up the lidar-driver part of the config file
+#### 2.3 设置参数文件的 lidar-driver部分
 
 ```yaml
 lidar:
@@ -63,15 +63,15 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For the latest version lidars, there is no need to use this file.
 ```
 
-Set the *lidar_type*  to your LiDAR type --- RS16, RS32, RSBP, RS128, RS80.
+​	将 *lidar_type* 设置为LiDAR类型 - -RS16，RS32，RSBP，RS128,  RS80。
 
-Set the *device_ip* to your LiDAR's ip address. the default is *device_ip = 192.168.1.200*.
+​    设置 *device_ip* 为LiDAR的IP地址, 默认值为 *device_ip = 192.168.1.200* 。
 
-Set the *msop_port* and *difop_port*  to your LiDAR's port number. The default is *msop = 6699* and *difop = 7788*.
+​	设置 *msop_port* 和 *difop_port* 为雷达数据端口号, 默认值为 *msop = 6699 和 difop = 7788* 。
 
 ​	
 
-#### 2.4 Set up the lidar-ros part of the config file
+#### 2.4设置配置文件的lidar-ros部分
 
 ```yaml
 ros:
@@ -80,13 +80,13 @@ ros:
   ros_send_point_cloud_topic: /rslidar_points      #The topic which used to send point cloud through ROS
 ```
 
-​	Set the *ros_send_point_cloud_topic*  to the topic you want to send. 
+​	将 *ros_send_point_cloud_topic* 设置为发送点云的话题。 
 
 
 
-#### 2.5 Run
+#### 2.5 运行
 
-​	Run the demo 
+​	运行示例程序。
 
 
 
@@ -94,7 +94,7 @@ ros:
 
 
 
-**Here is the overview for the whole config file.**
+**这是整个参数文件的示例**
 
 ```yaml
 common:

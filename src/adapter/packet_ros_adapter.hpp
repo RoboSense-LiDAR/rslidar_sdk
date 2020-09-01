@@ -20,12 +20,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 #pragma once
-
-/*****************************************************
- *
- *            ROS LiDAR packets adapter
- *
- ****************************************************/
 #ifdef ROS_FOUND
 #include "adapter/adapter_base.h"
 #include "msg/ros_msg_translator.h"
@@ -37,11 +31,11 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public LidarAdapterBase
+class PacketRosAdapter : virtual public AdapterBase
 {
 public:
-  LidarPacketsRosAdapter() = default;
-  ~LidarPacketsRosAdapter()
+  PacketRosAdapter() = default;
+  ~PacketRosAdapter()
   {
     stop();
   }
@@ -49,61 +43,59 @@ public:
   void init(const YAML::Node& config)
   {
     int msg_source;
-    bool send_packets_ros;
+    bool send_packet_ros;
     std::string ros_recv_topic;
     std::string ros_send_topic;
     nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
     yamlReadAbort<int>(config, "msg_source", msg_source);
-    yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
-    yamlRead<std::string>(config["ros"], "ros_recv_packets_topic", ros_recv_topic, "rslidar_packets");
-    yamlRead<std::string>(config["ros"], "ros_send_packets_topic", ros_send_topic, "rslidar_packets");
+    yamlRead<bool>(config, "send_packet_ros", send_packet_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", ros_recv_topic, "rslidar_packets");
+    yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
-      lidar_packets_difop_sub_ =
-          nh_->subscribe(ros_recv_topic + "_difop", 1, &LidarPacketsRosAdapter::localLidarPacketsdifopCallback, this);
-      lidar_packets_msop_sub_ =
-          nh_->subscribe(ros_recv_topic, 1, &LidarPacketsRosAdapter::localLidarPacketsmsopCallback, this);
-      send_packets_ros = false;
+      packet_sub_ = nh_->subscribe(ros_recv_topic + "_difop", 1, &PacketRosAdapter::localDifopCallback, this);
+      scan_sub_ = nh_->subscribe(ros_recv_topic, 1, &PacketRosAdapter::localMsopCallback, this);
+      send_packet_ros = false;
     }
-    if (send_packets_ros)
+    if (send_packet_ros)
     {
-      lidar_packets_difop_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
-      lidar_packets_msop_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
+      packet_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
+      scan_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
     }
   }
 
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
-    lidar_packets_msop_cbs_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
-    lidar_packets_difop_cbs_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callback);
   }
 
-  void sendScan(const LidarScanMsg& msg)
+  void sendScan(const ScanMsg& msg)
   {
-    lidar_packets_msop_pub_.publish(toRosMsg(msg));
+    scan_pub_.publish(toRosMsg(msg));
   }
 
-  void sendPacket(const LidarPacketMsg& msg)
+  void sendPacket(const PacketMsg& msg)
   {
-    lidar_packets_difop_pub_.publish(toRosMsg(msg));
+    packet_pub_.publish(toRosMsg(msg));
   }
 
 private:
-  void localLidarPacketsmsopCallback(const rslidar_msgs::rslidarScan& msg)
+  void localMsopCallback(const rslidar_msgs::rslidarScan& msg)
   {
-    for (auto& cb : lidar_packets_msop_cbs_)
+    for (auto& cb : scan_cb_vec_)
     {
       cb(toRsMsg(msg));
     }
   }
 
-  void localLidarPacketsdifopCallback(const rslidar_msgs::rslidarPacket& msg)
+  void localDifopCallback(const rslidar_msgs::rslidarPacket& msg)
   {
-    for (auto& cb : lidar_packets_difop_cbs_)
+    for (auto& cb : packet_cb_vec_)
     {
       cb(toRsMsg(msg));
     }
@@ -111,22 +103,17 @@ private:
 
 private:
   std::unique_ptr<ros::NodeHandle> nh_;
-  std::vector<std::function<void(const LidarScanMsg&)>> lidar_packets_msop_cbs_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> lidar_packets_difop_cbs_;
-  ros::Publisher lidar_packets_msop_pub_;
-  ros::Publisher lidar_packets_difop_pub_;
-  ros::Subscriber lidar_packets_msop_sub_;
-  ros::Subscriber lidar_packets_difop_sub_;
+  std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
+  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
+  ros::Publisher scan_pub_;
+  ros::Publisher packet_pub_;
+  ros::Subscriber scan_sub_;
+  ros::Subscriber packet_sub_;
 };
 }  // namespace lidar
 }  // namespace robosense
 #endif  // ROS_FOUND
 
-/*****************************************************
- *
- *            ROS 2 LiDAR packets adapter
- *
- ****************************************************/
 #ifdef ROS2_FOUND
 #include "adapter/adapter_base.h"
 #include "msg/ros_msg_translator.h"
@@ -135,11 +122,11 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarPacketsRosAdapter : virtual public LidarAdapterBase
+class PacketRosAdapter : virtual public AdapterBase
 {
 public:
-  LidarPacketsRosAdapter() = default;
-  ~LidarPacketsRosAdapter()
+  PacketRosAdapter() = default;
+  ~PacketRosAdapter()
   {
     stop();
   }
@@ -147,28 +134,26 @@ public:
   void init(const YAML::Node& config)
   {
     int msg_source;
-    bool send_packets_ros;
+    bool send_packet_ros;
     std::string ros_recv_topic;
     std::string ros_send_topic;
     node_ptr_.reset(new rclcpp::Node("rslidar_packets_adapter"));
     yamlReadAbort<int>(config, "msg_source", msg_source);
-    yamlRead<bool>(config, "send_packets_ros", send_packets_ros, false);
-    yamlRead<std::string>(config["ros"], "ros_recv_packets_topic", ros_recv_topic, "rslidar_packets");
-    yamlRead<std::string>(config["ros"], "ros_send_packets_topic", ros_send_topic, "rslidar_packets");
+    yamlRead<bool>(config, "send_packet_ros", send_packet_ros, false);
+    yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", ros_recv_topic, "rslidar_packets");
+    yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
     if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
     {
-      lidar_packets_difop_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(
+      packet_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(
           ros_recv_topic + "_difop", 10,
-          [this](const rslidar_msg::msg::RslidarPacket::SharedPtr msg) { localLidarPacketsdifopCallback(msg); });
-      lidar_packets_msop_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarScan>(
-          ros_recv_topic, 10,
-          [this](const rslidar_msg::msg::RslidarScan::SharedPtr msg) { localLidarPacketsmsopCallback(msg); });
+          [this](const rslidar_msg::msg::RslidarPacket::SharedPtr msg) { localDifopCallback(msg); });
+      scan_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarScan>(
+          ros_recv_topic, 10, [this](const rslidar_msg::msg::RslidarScan::SharedPtr msg) { localMsopCallback(msg); });
     }
-    if (send_packets_ros)
+    if (send_packet_ros)
     {
-      lidar_packets_difop_pub_ =
-          node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic + "_difop", 10);
-      lidar_packets_msop_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarScan>(ros_send_topic, 10);
+      packet_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic + "_difop", 10);
+      scan_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarScan>(ros_send_topic, 10);
     }
   }
 
@@ -178,38 +163,38 @@ public:
     t.detach();
   }
 
-  void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
-    lidar_packets_msop_cbs_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callback);
   }
 
-  void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
-    lidar_packets_difop_cbs_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callback);
   }
 
-  void sendScan(const LidarScanMsg& msg)
+  void sendScan(const ScanMsg& msg)
   {
-    lidar_packets_msop_pub_->publish(toRosMsg(msg));
+    scan_pub_->publish(toRosMsg(msg));
   }
 
-  void sendPacket(const LidarPacketMsg& msg)
+  void sendPacket(const PacketMsg& msg)
   {
-    lidar_packets_difop_pub_->publish(toRosMsg(msg));
+    packet_pub_->publish(toRosMsg(msg));
   }
 
 private:
-  void localLidarPacketsmsopCallback(const rslidar_msg::msg::RslidarScan::SharedPtr msg)
+  void localMsopCallback(const rslidar_msg::msg::RslidarScan::SharedPtr msg)
   {
-    for (auto& cb : lidar_packets_msop_cbs_)
+    for (auto& cb : scan_cb_vec_)
     {
       cb(toRsMsg(*msg));
     }
   }
 
-  void localLidarPacketsdifopCallback(const rslidar_msg::msg::RslidarPacket::SharedPtr msg)
+  void localDifopCallback(const rslidar_msg::msg::RslidarPacket::SharedPtr msg)
   {
-    for (auto& cb : lidar_packets_difop_cbs_)
+    for (auto& cb : packet_cb_vec_)
     {
       cb(toRsMsg(*msg));
     }
@@ -217,13 +202,12 @@ private:
 
 private:
   std::shared_ptr<rclcpp::Node> node_ptr_;
-  rclcpp::Publisher<rslidar_msg::msg::RslidarScan>::SharedPtr lidar_packets_msop_pub_;
-  rclcpp::Publisher<rslidar_msg::msg::RslidarPacket>::SharedPtr lidar_packets_difop_pub_;
-  rclcpp::Subscription<rslidar_msg::msg::RslidarScan>::SharedPtr lidar_packets_msop_sub_;
-  rclcpp::Subscription<rslidar_msg::msg::RslidarPacket>::SharedPtr lidar_packets_difop_sub_;
-  std::vector<std::function<void(const LidarScanMsg&)>> lidar_packets_msop_cbs_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> lidar_packets_difop_cbs_;
-  rclcpp::executors::MultiThreadedExecutor executor;
+  rclcpp::Publisher<rslidar_msg::msg::RslidarScan>::SharedPtr scan_pub_;
+  rclcpp::Publisher<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_pub_;
+  rclcpp::Subscription<rslidar_msg::msg::RslidarScan>::SharedPtr scan_sub_;
+  rclcpp::Subscription<rslidar_msg::msg::RslidarPacket>::SharedPtr packet_sub_;
+  std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
+  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
 };
 }  // namespace lidar
 }  // namespace robosense

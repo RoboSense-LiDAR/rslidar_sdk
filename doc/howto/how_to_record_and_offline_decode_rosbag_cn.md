@@ -1,18 +1,18 @@
-# How to record and decode rosbag
+# 如何录制与解码rosbag
 
 
 
-## 1 Introduction
+## 1 介绍
 
-This document will show you how to record and decode rosbag. Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
+​	本文档将展示如何记录与解码rosbag。 在阅读这本文档之前请先阅读雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
 
 
 
-## 2 Record
+## 2 录包
 
-We suppose you are connecting an online LiDAR and you have already sent out the point cloud to ROS.  If you have no idea about this, please read [Online connect lidar and send point cloud through ROS](how_to_online_send_point_cloud_ros.md) first.
+​	首先在线连接雷达并将点云发送至ROS。如果对此不太了解, 请先阅读 [如何在线连接雷达并发送点云数据到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
 
-At this point, the *common* part of your config file should look like this: 
+​    此时，配置文件的*common*部分应如下所示:
 
 ```yaml
 common:
@@ -29,9 +29,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-Actually, you can record the point cloud message now and you don't need to run the driver again when you offline play the bag. But the disadvantage is also obvious that the point cloud message is very large. So normally we recommend to record packets rather than point cloud message. 
+​	现在可以直接录制点云消息，这样在离线播包时不需要再另外运行驱动程序解包。但这种方法会导致录制的包非常大。 因此，通常建议记录雷达packet数据，而不是记录点云数据。
 
-In order to record packets, you need to set *send_packet_ros = true*. Then the *common* part should look like this: 
+​	为了记录雷达packet, 需要设置 *send_packet_ros = true*。然后 *common* 部分应当如下所示： 
 
 ```yaml
 common:
@@ -41,16 +41,16 @@ common:
                                                         #3: packet message comes from Pcap file
                                                         #4: packet message comes from Protobuf-UDP
                                                         #5: point cloud comes from Protobuf-UDP
-  send_packet_ros: true                                 #true: Send packets through ROS or ROS2(Used to record packet)
+  send_packet_ros: true                                #true: Send packets through ROS or ROS2(Used to record packet)
   send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true: Send packets through Protobuf-UDP
   send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
   pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-You can also adjust the packets topic by adjust the *ros_send_packet_topic* in *lidar-ros* part of the config file. This topic represent the topic of the msop, and the topic of the difop will be "msoptopic_difop". e.g., the default topic value is set as *rslidar_packets*, so the msop topic is *rslidar_packets* and the difop topic is *rslidar_packets_difop*. 
+​	可以通过调整参数文件的 *lidar-ros* 部分中的 *ros_send_packet_topic* 来调整发送的话题。 该话题表示msop的话题，而difop的话题为“ msoptopic_difop”。 例： 默认话题设置为 *rslidar_packets*，因此msop话题为 *rslidar_packets*，而difop的话题为 *rslidar_packets_difop*。
 
-**Note:  If you set send_packet_ros = true, both two kinds of packets will be send to ROS. And you must record both of these two kinds of packets.**
+**注意：如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 录包时必须同时记录这两种数据。**
 
 ```sh
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
@@ -58,11 +58,11 @@ rosbag record /rslidar_packets /rslidar_packets_difop -O bag
 
 
 
-## 3 Offline Decode
+## 3 离线解码
 
-We suppose you have recorded a rosbag which contains msop packets with the topic *rslidar_packets* and difop packets with the topic *rslidar_packets_difop*. Please follow the steps below. 
+​	假设录制了一个rosbag，其中包含话题为 *rslidar_packets* 的msop数据包和话题为 *rslidar_packets_difop*的difop数据包。请按照以下步骤进行配置。	
 
-### 3.1 Set up the common part of the config file
+### 3.1 设置文件的 common部分
 
 ```yaml
 common:
@@ -79,13 +79,13 @@ common:
   pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-​	Since the packets message come from the ROS, set *msg_source = 2*. 
+​	由于数据包消息来自ROS，因此请设置 *msg_source = 2* 。
 
-​	We want to send point cloud to ROS so set *send_point_cloud_ros = true*.
+​	将点云发送到ROS，因此设置 *send_point_cloud_ros = true*。
 
 
 
-### 3.2 Set up the lidar-driver part of the config file
+### 3.2 设置配置文件的lidar-driver部分
 
 ```yaml
 lidar:
@@ -103,26 +103,26 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For the latest version lidars, there is no need to use this file.
 ```
 
-​	Set the *lidar_type*  to your LiDAR type --- RS16,RS32,RSBP,RS128, RS80.
+​	将 *lidar_type* 设置为LiDAR类型 - -RS16，RS32，RSBP，RS128, RS80。
 
 
 
-### 3.3 Set the lidar-ros part of the config file
+### 3.3 设置配置文件的lidar-ros部分
 
 ```yaml
 ros:
-  ros_recv_packet_topic: /rslidar_packets    #The topic which used to receive lidar packets from ROS
-  ros_send_packet_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
-  ros_send_point_cloud_topic: /rslidar_points      #The topic which used to send point cloud through ROS
+ ros_recv_packet_topic: /rslidar_packets    #The topic which used to receive lidar packets from ROS
+ ros_send_packet_topic: /rslidar_packets    #The topic which used to send lidar packets through ROS
+ ros_send_point_cloud_topic: /rslidar_points      #The topic which used to send point cloud through ROS
 ```
 
-​	Set up the *ros_recv_packet_topic*  to the *msop* topic in the rosbag.
+​	将 *ros_recv_packet_topic* 设置为rosbag中的*msop*话题。
 
 
 
-### 3.4 Run
+### 3.4 运行
 
-​	Run the demo & play the rosbag.
+​	运行示例程序并播放rosbag。
 
 
 

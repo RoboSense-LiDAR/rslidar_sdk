@@ -22,14 +22,12 @@
 
 #pragma once
 #ifdef PROTO_FOUND
-
-#include <msg/rs_msg/lidar_points_msg.h>
-#include <msg/rs_msg/lidar_packet_msg.h>
-#include <msg/rs_msg/lidar_scan_msg.h>
-#include <msg/proto_msg/Proto_msg.LidarPoints.pb.h>
-#include <msg/proto_msg/Proto_msg.LidarPacket.pb.h>
-#include <msg/proto_msg/Proto_msg.LidarScan.pb.h>
-#include <pcl/io/io.h>
+#include "msg/rs_msg/lidar_point_cloud_msg.h"
+#include "rs_driver/msg/packet_msg.h"
+#include "rs_driver/msg/scan_msg.h"
+#include "msg/proto_msg/point_cloud.pb.h"
+#include "msg/proto_msg/packet.pb.h"
+#include "msg/proto_msg/scan.pb.h"
 namespace robosense
 {
 namespace lidar
@@ -37,9 +35,9 @@ namespace lidar
 /************************************************************************/
 /**Translation functions between RoboSense message and protobuf message**/
 /************************************************************************/
-inline Proto_msg::LidarPoints toProtoMsg(const LidarPointsMsg& rs_msg)
+inline proto_msg::LidarPointCloud toProtoMsg(const LidarPointCloudMsg& rs_msg)
 {
-  Proto_msg::LidarPoints proto_msg;
+  proto_msg::LidarPointCloud proto_msg;
   proto_msg.set_timestamp(rs_msg.timestamp);
   proto_msg.set_seq(rs_msg.seq);
   proto_msg.set_frame_id(rs_msg.frame_id);
@@ -47,27 +45,27 @@ inline Proto_msg::LidarPoints toProtoMsg(const LidarPointsMsg& rs_msg)
   proto_msg.set_width(rs_msg.width);
   proto_msg.set_is_dense(rs_msg.is_dense);
 
-  for (size_t i = 0; i < rs_msg.cloudPtr->size(); i++)
+  for (size_t i = 0; i < rs_msg.point_cloud_ptr->size(); i++)
   {
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].x);
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].y);
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].z);
-    proto_msg.add_data(rs_msg.cloudPtr->points[i].intensity);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].x);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].y);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].z);
+    proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].intensity);
   }
 
   return std::move(proto_msg);
 }
 
-inline LidarPointsMsg toRsMsg(const Proto_msg::LidarPoints& proto_msg)
+inline LidarPointCloudMsg toRsMsg(const proto_msg::LidarPointCloud& proto_msg)
 {
-  LidarPointsMsg rs_msg;
+  LidarPointCloudMsg rs_msg;
   rs_msg.timestamp = proto_msg.timestamp();
   rs_msg.seq = proto_msg.seq();
   rs_msg.frame_id = proto_msg.frame_id();
   rs_msg.height = proto_msg.height();
   rs_msg.width = proto_msg.width();
   rs_msg.is_dense = proto_msg.is_dense();
-  PointCloud* ptr_tmp = new PointCloud();
+  LidarPointCloudMsg::PointCloud* ptr_tmp = new LidarPointCloudMsg::PointCloud();
   for (int i = 0; i < proto_msg.data_size(); i += 4)
   {
     pcl::PointXYZI point;
@@ -80,61 +78,58 @@ inline LidarPointsMsg toRsMsg(const Proto_msg::LidarPoints& proto_msg)
   ptr_tmp->height = rs_msg.height;
   ptr_tmp->width = rs_msg.width;
   ptr_tmp->is_dense = rs_msg.is_dense;
-  rs_msg.cloudPtr.reset(ptr_tmp);
+  rs_msg.point_cloud_ptr.reset(ptr_tmp);
   return rs_msg;
 }
 
-inline Proto_msg::LidarScan toProtoMsg(const LidarScanMsg& rs_msg)
+inline proto_msg::LidarScan toProtoMsg(const ScanMsg& rs_msg)
 {
-  Proto_msg::LidarScan proto_msg;
+  proto_msg::LidarScan proto_msg;
   proto_msg.set_timestamp(rs_msg.timestamp);
   proto_msg.set_seq(rs_msg.seq);
   for (auto iter : rs_msg.packets)
   {
-    void* data_ptr = malloc(1248);
-    memcpy(data_ptr, iter.packet.data(), 1248);
-    proto_msg.add_data(data_ptr, 1248);
+    void* data_ptr = malloc(RSLIDAR_PKT_LEN);
+    memcpy(data_ptr, iter.packet.data(), RSLIDAR_PKT_LEN);
+    proto_msg.add_data(data_ptr, RSLIDAR_PKT_LEN);
     free(data_ptr);
   }
   return proto_msg;
 }
 
-inline LidarScanMsg toRsMsg(const Proto_msg::LidarScan& proto_msg)
+inline ScanMsg toRsMsg(const proto_msg::LidarScan& proto_msg)
 {
-  LidarScanMsg rs_msg;
+  ScanMsg rs_msg;
   rs_msg.timestamp = proto_msg.timestamp();
   rs_msg.seq = proto_msg.seq();
   for (int i = 0; i < proto_msg.data_size(); i++)
   {
     std::string data_str = proto_msg.data(i);
-    LidarPacketMsg tmp_pkt;
+    PacketMsg tmp_pkt;
     memcpy(tmp_pkt.packet.data(), data_str.data(), data_str.size());
     rs_msg.packets.emplace_back(std::move(tmp_pkt));
   }
   return rs_msg;
 }
 
-inline Proto_msg::LidarPacket toProtoMsg(const LidarPacketMsg& rs_msg)
+inline proto_msg::LidarPacket toProtoMsg(const PacketMsg& rs_msg)
 {
-  Proto_msg::LidarPacket proto_msg;
-  proto_msg.set_timestamp(rs_msg.timestamp);
-  void* data_ptr = malloc(1248);
-  memcpy(data_ptr, rs_msg.packet.data(), 1248);
-  proto_msg.set_data(data_ptr, 1248);
+  proto_msg::LidarPacket proto_msg;
+  void* data_ptr = malloc(RSLIDAR_PKT_LEN);
+  memcpy(data_ptr, rs_msg.packet.data(), RSLIDAR_PKT_LEN);
+  proto_msg.set_data(data_ptr, RSLIDAR_PKT_LEN);
   free(data_ptr);
   return proto_msg;
 }
 
-inline LidarPacketMsg toRsMsg(const Proto_msg::LidarPacket& proto_msg)
+inline PacketMsg toRsMsg(const proto_msg::LidarPacket& proto_msg)
 {
-  LidarPacketMsg rs_msg;
-  rs_msg.timestamp = proto_msg.timestamp();
+  PacketMsg rs_msg;
   std::string data_str = proto_msg.data();
   memcpy(rs_msg.packet.data(), data_str.data(), data_str.size());
   return rs_msg;
 }
 
 }  // namespace lidar
-
 }  // namespace robosense
 #endif  // PROTO_FOUND

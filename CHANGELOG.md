@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.0 - 2020-09-01
+
+### Added
+- Add camera software trigger (base on target angle)
+
+### Changed
+- Update driver core, please refer to changelog in rs_driver for details
+- Update the compiler version from C++11 to C++14
+
+
 ## v1.1.0 - 2020-07-01
 
 ### Added

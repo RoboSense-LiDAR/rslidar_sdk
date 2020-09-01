@@ -43,10 +43,10 @@ namespace robosense
 {
 namespace lidar
 {
-enum class RS_DATA_ENDIAN_TYPE
+enum class DataEndianType
 {
-  RS_DATA_BIG_ENDIAN = 0,
-  RS_DATA_LITTLE_ENDIAN = 1,
+  RS_BIG_ENDIAN = 0,
+  RS_SMALL_ENDIAN = 1
 };
 template <typename T>
 class CRSEndian
@@ -58,109 +58,95 @@ public:
 public:
   CRSEndian()
   {
-    unsigned char* pChar = (unsigned char*)(&magicData);
-    if (*pChar == magicBigEndian[0] && (*(pChar + 1)) == magicBigEndian[1] &&
-        (*(pChar + 2)) == magicBigEndian[2] & (*(pChar + 3)) == magicBigEndian[3])
+    unsigned char* p_char = (unsigned char*)(&magic_data_);
+    if (*p_char == magic_big_endian_[0] && (*(p_char + 1)) == magic_big_endian_[1] &&
+        (*(p_char + 2)) == magic_big_endian_[2] && (*(p_char + 3)) == magic_big_endian_[3])
     {
-      m_hostEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN;
+      host_endian_type_ = DataEndianType::RS_BIG_ENDIAN;
     }
-    else if (*pChar == magicLittleEndian[0] && (*(pChar + 1)) == magicLittleEndian[1] &&
-             (*(pChar + 2)) == magicLittleEndian[2] && (*(pChar + 3)) == magicLittleEndian[3])
+    else
     {
-      m_hostEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_LITTLE_ENDIAN;
+      host_endian_type_ = DataEndianType::RS_SMALL_ENDIAN;
     }
   }
 
 public:
-  RS_DATA_ENDIAN_TYPE getHostEndian()
+  DataEndianType getHostEndian()
   {
-    return m_hostEndianType;
+    return host_endian_type_;
   }
 
-  int toTargetEndianArray(T t, void* pArray, unsigned int maxSize, RS_DATA_ENDIAN_TYPE dstEndianType)
+  int toTargetEndianArray(T t, void* p_array, const unsigned int& max_size, const DataEndianType& dst_endian)
   {
-    unsigned int tSize = sizeof(T);
-    assert(tSize <= maxSize);
-    assert(pArray != nullptr);
-    if (m_hostEndianType != dstEndianType)
+    unsigned int t_size = sizeof(T);
+    assert(t_size <= max_size);
+    assert(p_array != nullptr);
+    if (host_endian_type_ != dst_endian)
     {
-      char* pData = (char*)(&t);
-      unsigned int tSize_h = tSize / 2;
-      for (unsigned int idx = 0; idx < tSize_h; ++idx)
+      char* p_data_ = (char*)(&t);
+      unsigned int t_size_h = t_size / 2;
+      for (unsigned int idx = 0; idx < t_size_h; ++idx)
       {
-        char tmp = pData[idx];
-        unsigned int swapIdx = tSize - idx - 1;
-        pData[idx] = pData[swapIdx];
-        pData[swapIdx] = tmp;
+        char tmp = p_data_[idx];
+        unsigned int swapIdx = t_size - idx - 1;
+        p_data_[idx] = p_data_[swapIdx];
+        p_data_[swapIdx] = tmp;
       }
     }
-    memcpy(pArray, &t, tSize);
+    memcpy(p_array, &t, t_size);
     return 0;
   }
 
-  int toHostEndianValue(T& t, const void* pArray, unsigned int maxSize, RS_DATA_ENDIAN_TYPE srcEndianType)
+  int toHostEndianValue(T& t, const void* p_array, const unsigned int& max_size, const DataEndianType& src_endian)
   {
-    unsigned int tSize = sizeof(T);
-    assert(pArray != nullptr);
-    assert(tSize <= maxSize);
-    if (srcEndianType != m_hostEndianType)
+    unsigned int t_size = sizeof(T);
+    assert(p_array != nullptr);
+    assert(t_size <= max_size);
+    if (src_endian != host_endian_type_)
     {
-      char* pData = (char*)(pArray);
-      unsigned int tSize_h = tSize / 2;
-      for (unsigned idx = 0; idx < tSize_h; ++idx)
+      char* p_data_ = (char*)(p_array);
+      unsigned int t_size_h = t_size / 2;
+      for (unsigned idx = 0; idx < t_size_h; ++idx)
       {
-        char tmp = pData[idx];
-        unsigned int swapIdx = tSize - idx - 1;
-        pData[idx] = pData[swapIdx];
-        pData[swapIdx] = tmp;
+        char tmp = p_data_[idx];
+        unsigned int swapIdx = t_size - idx - 1;
+        p_data_[idx] = p_data_[swapIdx];
+        p_data_[swapIdx] = tmp;
       }
     }
-    memcpy(&t, pArray, tSize);
+    memcpy(&t, p_array, t_size);
     return 0;
   }
 
 private:
-  RS_DATA_ENDIAN_TYPE m_hostEndianType;
-
-private:
-  const unsigned int magicData = 0xA1B2C3D4;
-  const unsigned char magicLittleEndian[4] = { (unsigned char)0xD4, (unsigned char)0xC3, (unsigned char)0xB2,
-                                               (unsigned char)0xA1 };
-  const unsigned char magicBigEndian[4] = { (unsigned char)0xA1, (unsigned char)0xB2, (unsigned char)0xC3,
-                                            (unsigned char)0xD4 };
+  DataEndianType host_endian_type_;
+  const unsigned int magic_data_ = 0xA1B2C3D4;
+  const unsigned char magic_small_endian_[4] = { (unsigned char)0xD4, (unsigned char)0xC3, (unsigned char)0xB2,
+                                                 (unsigned char)0xA1 };
+  const unsigned char magic_big_endian_[4] = { (unsigned char)0xA1, (unsigned char)0xB2, (unsigned char)0xC3,
+                                               (unsigned char)0xD4 };
 };
 
 struct alignas(16) ProtoMsgHeader
 {
-  unsigned int msgType;           // 消息类型: 0: obstacle, 1: freespace, 99: keepalive
-  unsigned int frmNumber;         // 消息帧编号
-  unsigned int totalMsgCnt;       // 消息帧中的总消息个数(针对一帧数据量较大)
-  unsigned int msgID;             // 消息序列中的编号
-  unsigned int msgLen;            // 每个消息的长度
-  unsigned int deviceNum;         // 设备编号
-  std::time_t deviceTimeStampMs;  // 时间戳(s): 如果设备包含GPS，则时间为GPS授时时间,
-                                  // 否则，取值为设备系统时间(仅仅用于参考)
-  unsigned int flags;  // 最低位取值为1表示设备时间戳为GPS时间, 取值为0表示为设备系统时间
-  unsigned int totalMsgLen;  // 消息帧中的总消息长度(针对一帧数据量较大)
-  unsigned int res[2];       // 填充
+  unsigned int frame_num;
+  unsigned int total_msg_cnt;
+  unsigned int msg_id;
+  unsigned int msg_length;
+  unsigned int total_msg_length;
 
   ProtoMsgHeader()
   {
-    msgType = 99;
-    frmNumber = 0;
-    totalMsgCnt = 0;
-    msgID = 0;
-    msgLen = 0;
-    deviceNum = 0;
-    deviceTimeStampMs = 0;
-    flags = 0;
-    totalMsgLen = 0;
-    memset(res, 0, sizeof(unsigned int) * 2);
+    frame_num = 0;
+    total_msg_cnt = 0;
+    msg_id = 0;
+    msg_length = 0;
+    total_msg_length = 0;
   }
-  bool toTargetEndianArray(char* pArray, const unsigned int maxArraySize,
-                           const RS_DATA_ENDIAN_TYPE dstEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN) const
+  bool toTargetEndianArray(char* p_array, const unsigned int maxArraySize,
+                           const DataEndianType dst_endian = DataEndianType::RS_BIG_ENDIAN) const
   {
-    if (pArray == nullptr || maxArraySize < sizeof(ProtoMsgHeader))
+    if (p_array == nullptr || maxArraySize < sizeof(ProtoMsgHeader))
     {
       return false;
     }
@@ -169,41 +155,25 @@ struct alignas(16) ProtoMsgHeader
     CRSEndian<std::time_t> uint64Endian;
 
     int offset = 0;
-    uint32Endian.toTargetEndianArray(msgType, pArray + offset, maxArraySize - offset, dstEndianType);
+    uint32Endian.toTargetEndianArray(frame_num, p_array + offset, maxArraySize - offset, dst_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toTargetEndianArray(frmNumber, pArray + offset, maxArraySize - offset, dstEndianType);
+    uint32Endian.toTargetEndianArray(total_msg_cnt, p_array + offset, maxArraySize - offset, dst_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toTargetEndianArray(totalMsgCnt, pArray + offset, maxArraySize - offset, dstEndianType);
+    uint32Endian.toTargetEndianArray(msg_id, p_array + offset, maxArraySize - offset, dst_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toTargetEndianArray(msgID, pArray + offset, maxArraySize - offset, dstEndianType);
+    uint32Endian.toTargetEndianArray(msg_length, p_array + offset, maxArraySize - offset, dst_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toTargetEndianArray(msgLen, pArray + offset, maxArraySize - offset, dstEndianType);
-
-    offset += sizeof(unsigned int);
-    uint32Endian.toTargetEndianArray(deviceNum, pArray + offset, maxArraySize - offset, dstEndianType);
-
-    offset += sizeof(unsigned int);
-    uint64Endian.toTargetEndianArray(deviceTimeStampMs, pArray + offset, maxArraySize - offset, dstEndianType);
-
-    offset += sizeof(std::time_t);
-    uint32Endian.toTargetEndianArray(flags, pArray + offset, maxArraySize - offset, dstEndianType);
-
-    offset += sizeof(unsigned int);
-    uint32Endian.toTargetEndianArray(totalMsgLen, pArray + offset, maxArraySize - offset, dstEndianType);
-    // res: don't care
-    offset += sizeof(unsigned int);
-    memcpy(pArray + offset, &res, sizeof(unsigned int) * 2);
-
+    uint32Endian.toTargetEndianArray(total_msg_length, p_array + offset, maxArraySize - offset, dst_endian);
     return true;
   }
-  bool toHostEndianValue(const char* pArray, const unsigned int arraySize,
-                         const RS_DATA_ENDIAN_TYPE srcEndianType = RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN)
+  bool toHostEndianValue(const char* p_array, const unsigned int arraySize,
+                         const DataEndianType src_endian = DataEndianType::RS_BIG_ENDIAN)
   {
-    if (pArray == nullptr || arraySize < sizeof(ProtoMsgHeader))
+    if (p_array == nullptr || arraySize < sizeof(ProtoMsgHeader))
     {
       return false;
     }
@@ -211,32 +181,19 @@ struct alignas(16) ProtoMsgHeader
     CRSEndian<std::time_t> uint64Endian;
 
     int offset = 0;
-    uint32Endian.toHostEndianValue(msgType, pArray + offset, arraySize - offset, srcEndianType);
+    uint32Endian.toHostEndianValue(frame_num, p_array + offset, arraySize - offset, src_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toHostEndianValue(frmNumber, pArray + offset, arraySize - offset, srcEndianType);
+    uint32Endian.toHostEndianValue(total_msg_cnt, p_array + offset, arraySize - offset, src_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toHostEndianValue(totalMsgCnt, pArray + offset, arraySize - offset, srcEndianType);
+    uint32Endian.toHostEndianValue(msg_id, p_array + offset, arraySize - offset, src_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toHostEndianValue(msgID, pArray + offset, arraySize - offset, srcEndianType);
+    uint32Endian.toHostEndianValue(msg_length, p_array + offset, arraySize - offset, src_endian);
 
     offset += sizeof(unsigned int);
-    uint32Endian.toHostEndianValue(msgLen, pArray + offset, arraySize - offset, srcEndianType);
-
-    offset += sizeof(unsigned int);
-    uint32Endian.toHostEndianValue(deviceNum, pArray + offset, arraySize - offset, srcEndianType);
-
-    offset += sizeof(unsigned int);
-    uint64Endian.toHostEndianValue(deviceTimeStampMs, pArray + offset, arraySize - offset, srcEndianType);
-
-    offset += sizeof(std::time_t);
-    uint32Endian.toHostEndianValue(flags, pArray + offset, arraySize - offset, srcEndianType);
-
-    offset += sizeof(unsigned int);
-    uint32Endian.toHostEndianValue(totalMsgLen, pArray + offset, arraySize - offset, srcEndianType);
-    memset(&res, 0, sizeof(unsigned int) * 2);
+    uint32Endian.toHostEndianValue(total_msg_length, p_array + offset, arraySize - offset, src_endian);
     return true;
   }
 };
@@ -244,7 +201,7 @@ using boost::asio::deadline_timer;
 using boost::asio::ip::udp;
 /**
  * @brief  Protobuf UDP transmission basic class
- * @note   used to initialize socket sender and receiver, and define send function and receive function
+ * @note   Initialize socket sender and receiver, and define send function and receive function
  */
 class ProtoCommunicator
 {
@@ -252,7 +209,6 @@ public:
   ProtoCommunicator() = default;
   ~ProtoCommunicator() = default;
 
-  /* Sender & Receiver initialize function */
   /**
    * @brief  intilize the socket sender
    * @param  proto_send_port: destination port
@@ -272,13 +228,13 @@ public:
     }
     catch (...)
     {
-      ERROR << "Proto Sender Port is already used! Abort!" << REND;
+      RS_ERROR << "Proto Sender Port is already used! Abort!" << RS_REND;
       exit(-1);
     }
     return 0;
   }
   /**
-   * @brief  initialize the socket receiver
+   * @brief  Initialize the socket receiver
    * @param  proto_recv_port: the receiver port number
    * @retval 0:success -1:failed
    */
@@ -291,11 +247,11 @@ public:
     }
     catch (...)
     {
-      ERROR << "Proto Receiver Port is already used! Abort!" << REND;
+      RS_ERROR << "Proto Receiver Port is already used! Abort!" << RS_REND;
       exit(-1);
     }
     deadline_->expires_at(boost::posix_time::pos_infin);
-    check_deadline();
+    checkDeadline();
     return 0;
   }
 
@@ -309,13 +265,13 @@ public:
    */
   inline int sendProtoMsg(const void* pMsgData, const ProtoMsgHeader& header)
   {
-    int sendLen = header.msgLen + sizeof(ProtoMsgHeader);
+    int sendLen = header.msg_length + sizeof(ProtoMsgHeader);
     char* sendBuffer = (char*)malloc(sendLen);
     memset(sendBuffer, 0, sendLen);
-    header.toTargetEndianArray(sendBuffer, sizeof(ProtoMsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
-    if (header.msgLen > 0)
+    header.toTargetEndianArray(sendBuffer, sizeof(ProtoMsgHeader), DataEndianType::RS_BIG_ENDIAN);
+    if (header.msg_length > 0)
     {
-      memcpy(sendBuffer + sizeof(ProtoMsgHeader), pMsgData, header.msgLen);
+      memcpy(sendBuffer + sizeof(ProtoMsgHeader), pMsgData, header.msg_length);
     }
     int ret = send_sock_ptr_->send_to(boost::asio::buffer(sendBuffer, sendLen), *iterator_);
     free(sendBuffer);
@@ -336,7 +292,7 @@ public:
     std::size_t ret = 0;
     char* pRecvBuffer = (char*)malloc(msgMaxLen + sizeof(ProtoMsgHeader));
     recv_sock_ptr_->async_receive(boost::asio::buffer(pRecvBuffer, msgMaxLen + sizeof(ProtoMsgHeader)),
-                                  boost::bind(&ProtoCommunicator::handle_receive, _1, _2, &ec, &ret));
+                                  boost::bind(&ProtoCommunicator::handleReceive, _1, _2, &ec, &ret));
     do
     {
       io_service_.run_one();
@@ -346,15 +302,15 @@ public:
       free(pRecvBuffer);
       return -1;
     }
-    header.toHostEndianValue(pRecvBuffer, sizeof(ProtoMsgHeader), RS_DATA_ENDIAN_TYPE::RS_DATA_BIG_ENDIAN);
-    if (ret < (std::size_t)(header.msgLen + sizeof(ProtoMsgHeader)))
+    header.toHostEndianValue(pRecvBuffer, sizeof(ProtoMsgHeader), DataEndianType::RS_BIG_ENDIAN);
+    if (ret < (std::size_t)(header.msg_length + sizeof(ProtoMsgHeader)))
     {
       free(pRecvBuffer);
       return -1;
     }
-    if (header.msgLen > 0)
+    if (header.msg_length > 0)
     {
-      memcpy(pMsgData, pRecvBuffer + sizeof(ProtoMsgHeader), header.msgLen);
+      memcpy(pMsgData, pRecvBuffer + sizeof(ProtoMsgHeader), header.msg_length);
     }
     free(pRecvBuffer);
     return ret;
@@ -367,15 +323,13 @@ public:
     msg.SerializeToArray(buf, msg.ByteSize());
     int pkt_num = ceil(1.0 * msg.ByteSize() / SPLIT_SIZE);
     ProtoMsgHeader tmp_header;
-    tmp_header.frmNumber = msg.seq();
-    tmp_header.msgLen = SPLIT_SIZE;
-    tmp_header.totalMsgCnt = pkt_num;
-    tmp_header.totalMsgLen = msg.ByteSize();
-    struct timeval time;
-    time.tv_usec = 10;
+    tmp_header.frame_num = msg.seq();
+    tmp_header.msg_length = SPLIT_SIZE;
+    tmp_header.total_msg_cnt = pkt_num;
+    tmp_header.total_msg_length = msg.ByteSize();
     for (int i = 0; i < pkt_num; i++)
     {
-      tmp_header.msgID = i;
+      tmp_header.msg_id = i;
       void* tmp_buf = malloc(SPLIT_SIZE);
       memcpy(tmp_buf, (uint8_t*)buf + i * SPLIT_SIZE, SPLIT_SIZE);
       if (sendProtoMsg(tmp_buf, tmp_header) == -1)
@@ -395,9 +349,9 @@ public:
   bool sendSingleMsg(const T& msg)
   {
     ProtoMsgHeader tmp_header;
-    tmp_header.msgLen = msg.ByteSize();
-    void* buf = malloc(tmp_header.msgLen);
-    msg.SerializeToArray(buf, tmp_header.msgLen);
+    tmp_header.msg_length = msg.ByteSize();
+    void* buf = malloc(tmp_header.msg_length);
+    msg.SerializeToArray(buf, tmp_header.msg_length);
     if (sendProtoMsg(buf, tmp_header) == -1)
     {
       free(buf);
@@ -408,16 +362,16 @@ public:
   }
 
 private:
-  inline void check_deadline()
+  inline void checkDeadline()
   {
     if (deadline_->expires_at() <= deadline_timer::traits_type::now())
     {
       recv_sock_ptr_->cancel();
       deadline_->expires_at(boost::posix_time::pos_infin);
     }
-    deadline_->async_wait(boost::bind(&ProtoCommunicator::check_deadline, this));
+    deadline_->async_wait(boost::bind(&ProtoCommunicator::checkDeadline, this));
   }
-  static void handle_receive(const boost::system::error_code& ec, std::size_t length, boost::system::error_code* out_ec,
+  static void handleReceive(const boost::system::error_code& ec, std::size_t length, boost::system::error_code* out_ec,
                              std::size_t* out_length)
   {
     *out_ec = ec;

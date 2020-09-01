@@ -27,18 +27,17 @@ namespace robosense
 {
 namespace lidar
 {
-class LidarDriverAdapter : virtual public LidarAdapterBase
+class DriverAdapter : virtual public AdapterBase
 {
 public:
-  LidarDriverAdapter()
+  DriverAdapter()
   {
     driver_ptr_.reset(new lidar::LidarDriver<pcl::PointXYZI>());
     thread_pool_ptr_.reset(new lidar::ThreadPool());
-    driver_ptr_->regExceptionCallback(
-        std::bind(&LidarDriverAdapter::localExceptionCallback, this, std::placeholders::_1));
+    driver_ptr_->regExceptionCallback(std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
   }
 
-  ~LidarDriverAdapter()
+  ~DriverAdapter()
   {
     driver_ptr_->stop();
   }
@@ -48,18 +47,19 @@ public:
     lidar::RSDriverParam driver_param;
     int msg_source;
     std::string lidar_type;
+    uint16_t split_frame_mode;
     YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
     yamlReadAbort<int>(config, "msg_source", msg_source);
     yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
     yamlRead<std::string>(driver_config, "angle_path", driver_param.angle_path, "");
     yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
-    yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.use_lidar_clock, false);
     yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
+    yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.decoder_param.use_lidar_clock, false);
     yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
     yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
     yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
     yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
-    yamlRead<uint16_t>(driver_config, "mode_split_frame", driver_param.decoder_param.mode_split_frame, 1);
+    yamlRead<uint16_t>(driver_config, "split_frame_mode", split_frame_mode, 1);
     yamlRead<uint32_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_pkts_split, 0);
     yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.cut_angle, 0);
     yamlRead<std::string>(driver_config, "device_ip", driver_param.input_param.device_ip, "192.168.1.200");
@@ -68,14 +68,34 @@ public:
     yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
     yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
     yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
-    yamlRead<std::string>(driver_config, "pcap_directroy", driver_param.input_param.pcap_directory, "");
+    yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
     driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
-
+    driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
+    if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
+    {
+      for (size_t i = 0; i < config["camera"].size(); i++)
+      {
+        double trigger_angle;
+        std::string frame_id;
+        yamlRead<double>(config["camera"][i], "trigger_angle", trigger_angle, 0);
+        yamlRead<std::string>(config["camera"][i], "frame_id", frame_id, "rs_camera");
+        auto iter = driver_param.decoder_param.trigger_param.trigger_map.find(trigger_angle);
+        if (iter != driver_param.decoder_param.trigger_param.trigger_map.end())
+        {
+          trigger_angle += (double)i / 1000.0;
+          driver_param.decoder_param.trigger_param.trigger_map.emplace(trigger_angle, frame_id);
+        }
+        else
+        {
+          driver_param.decoder_param.trigger_param.trigger_map.emplace(trigger_angle, frame_id);
+        }
+      }
+    }
     if (msg_source == MsgSource::MSG_FROM_LIDAR || msg_source == MsgSource::MSG_FROM_PCAP)
     {
       if (!driver_ptr_->init(driver_param))
       {
-        ERROR << "Driver Initialize Error...." << REND;
+        RS_ERROR << "Driver Initialize Error...." << RS_REND;
         exit(-1);
       }
     }
@@ -83,9 +103,10 @@ public:
     {
       driver_ptr_->initDecoderOnly(driver_param);
     }
-    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPointsCallback, this, std::placeholders::_1));
-    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localScanCallback, this, std::placeholders::_1));
-    driver_ptr_->regRecvCallback(std::bind(&LidarDriverAdapter::localPacketCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
+    driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localCameraTriggerCallback, this, std::placeholders::_1));
   }
 
   void start()
@@ -98,125 +119,111 @@ public:
     driver_ptr_->stop();
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
   {
-    point_cbs_.emplace_back(callBack);
+    point_cloud_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
-    scan_cbs_.emplace_back(callBack);
+    scan_cb_vec_.emplace_back(callback);
   }
 
-  inline void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  inline void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
-    pkt_cbs_.emplace_back(callBack);
+    packet_cb_vec_.emplace_back(callback);
   }
 
-  void decodeScan(const LidarScanMsg& pkt_msg)
+  inline void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
   {
-    lidar::PointcloudMsg<pcl::PointXYZI> pointcloud;
-    if (driver_ptr_->decodeMsopScan(cScan2LScan(pkt_msg), pointcloud))
+    camera_trigger_cb_vec_.emplace_back(callback);
+  }
+
+  void decodeScan(const ScanMsg& msg)
+  {
+    lidar::PointCloudMsg<pcl::PointXYZI> point_cloud_msg;
+    if (driver_ptr_->decodeMsopScan(msg, point_cloud_msg))
     {
-      localPointsCallback(pointcloud);
+      localPointsCallback(point_cloud_msg);
     }
   }
 
-  void decodePacket(const LidarPacketMsg& pkt_msg)
+  void decodePacket(const PacketMsg& msg)
   {
-    driver_ptr_->decodeDifopPkt(cPkt2LPkt(pkt_msg));
+    driver_ptr_->decodeDifopPkt(msg);
   }
 
 private:
-  void localPointsCallback(const lidar::PointcloudMsg<pcl::PointXYZI>& _msg)
+  void localPointsCallback(const PointCloudMsg<pcl::PointXYZI>& msg)
   {
-    for (auto iter : point_cbs_)
+    for (auto iter : point_cloud_cb_vec_)
     {
-      thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPoints2CPoints(_msg)); });
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(lPoints2CPoints(msg)); });
     }
   }
 
-  void localScanCallback(const lidar::ScanMsg& _msg)
+  void localScanCallback(const ScanMsg& msg)
   {
-    for (auto iter : scan_cbs_)
+    for (auto iter : scan_cb_vec_)
     {
-      thread_pool_ptr_->commit([this, _msg, iter]() { iter(lScan2CScan(_msg)); });
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
     }
   }
 
-  void localPacketCallback(const lidar::PacketMsg& _msg)
+  void localPacketCallback(const PacketMsg& msg)
   {
-    for (auto iter : pkt_cbs_)
+    for (auto iter : packet_cb_vec_)
     {
-      thread_pool_ptr_->commit([this, _msg, iter]() { iter(lPkt2CPkt(_msg)); });
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
     }
   }
 
-  void localExceptionCallback(const lidar::Error& _msg)
+  void localCameraTriggerCallback(const CameraTrigger& msg)
   {
-    switch (_msg.error_code_type)
+    for (auto iter : camera_trigger_cb_vec_)
+    {
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
+    }
+  }
+
+  void localExceptionCallback(const lidar::Error& msg)
+  {
+    switch (msg.error_code_type)
     {
       case lidar::ErrCodeType::INFO_CODE:
-        INFO << _msg.toString() << REND;
+        RS_INFO << msg.toString() << RS_REND;
         break;
       case lidar::ErrCodeType::WARNING_CODE:
-        WARNING << _msg.toString() << REND;
+        RS_WARNING << msg.toString() << RS_REND;
         break;
       case lidar::ErrCodeType::ERROR_CODE:
-        ERROR << _msg.toString() << REND;
+        RS_ERROR << msg.toString() << RS_REND;
         break;
     }
   }
 
-  LidarScanMsg lScan2CScan(const lidar::ScanMsg& _msg)
+  LidarPointCloudMsg lPoints2CPoints(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
   {
-    lidar::ScanMsg tmp_msg = _msg;
-    LidarScanMsg* msg = (struct LidarScanMsg*)(&tmp_msg);
-    return std::move(*msg);
-  }
-
-  lidar::ScanMsg cScan2LScan(const LidarScanMsg& _msg)
-  {
-    LidarScanMsg tmp_msg = _msg;
-    lidar::ScanMsg* msg = (struct lidar::ScanMsg*)(&tmp_msg);
-    return std::move(*msg);
-  }
-
-  LidarPacketMsg lPkt2CPkt(const lidar::PacketMsg& _msg)
-  {
-    lidar::PacketMsg tmp_msg = _msg;
-    LidarPacketMsg* msg = (struct LidarPacketMsg*)(&tmp_msg);
-    return std::move(*msg);
-  }
-
-  lidar::PacketMsg cPkt2LPkt(const LidarPacketMsg& _msg)
-  {
-    LidarPacketMsg tmp_msg = _msg;
-    lidar::PacketMsg* msg = (struct lidar::PacketMsg*)(&tmp_msg);
-    return std::move(*msg);
-  }
-
-  LidarPointsMsg lPoints2CPoints(const lidar::PointcloudMsg<pcl::PointXYZI>& _msg)
-  {
-    PointCloudPtr cloud(new pcl::PointCloud<pcl::PointXYZI>);
-    cloud->points.assign(_msg.pointcloud_ptr->begin(), _msg.pointcloud_ptr->end());
-    cloud->height = _msg.height;
-    cloud->width = _msg.width;
-    LidarPointsMsg msg(cloud);
-    msg.frame_id = _msg.frame_id;
-    msg.timestamp = _msg.timestamp;
-    msg.seq = _msg.seq;
-    msg.height = _msg.height;
-    msg.width = _msg.width;
-    msg.is_dense = _msg.is_dense;
-    return std::move(msg);
+    LidarPointCloudMsg::PointCloudPtr point_cloud(new pcl::PointCloud<pcl::PointXYZI>);
+    point_cloud->points.assign(msg.point_cloud_ptr->begin(), msg.point_cloud_ptr->end());
+    point_cloud->height = msg.height;
+    point_cloud->width = msg.width;
+    LidarPointCloudMsg point_cloud_msg(point_cloud);
+    point_cloud_msg.frame_id = msg.frame_id;
+    point_cloud_msg.timestamp = msg.timestamp;
+    point_cloud_msg.seq = msg.seq;
+    point_cloud_msg.height = msg.height;
+    point_cloud_msg.width = msg.width;
+    point_cloud_msg.is_dense = msg.is_dense;
+    return std::move(point_cloud_msg);
   }
 
 private:
   std::shared_ptr<lidar::LidarDriver<pcl::PointXYZI>> driver_ptr_;
-  std::vector<std::function<void(const LidarPointsMsg&)>> point_cbs_;
-  std::vector<std::function<void(const LidarScanMsg&)>> scan_cbs_;
-  std::vector<std::function<void(const LidarPacketMsg&)>> pkt_cbs_;
+  std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
+  std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
+  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
+  std::vector<std::function<void(const CameraTrigger&)>> camera_trigger_cb_vec_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
 };
 }  // namespace lidar

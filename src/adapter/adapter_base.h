@@ -23,30 +23,29 @@
 #pragma once
 #include "utility/common.h"
 #include "utility/yaml_reader.hpp"
-#include "msg/rs_msg/lidar_packet_msg.h"
-#include "msg/rs_msg/lidar_scan_msg.h"
-#include "msg/rs_msg/lidar_points_msg.h"
+#include "rs_driver/msg/packet_msg.h"
+#include "rs_driver/msg/scan_msg.h"
+#include "msg/rs_msg/lidar_point_cloud_msg.h"
 
 namespace robosense
 {
 namespace lidar
 {
-
 enum MsgSource
 {
-  MSG_FROM_LIDAR=1,          
-  MSG_FROM_ROS_PACKET=2, 
-  MSG_FROM_PCAP=3, 
-  MSG_FROM_PROTO_PACKET=4, 
-  MSG_FROM_PROTO_POINTCLOUD=5
+  MSG_FROM_LIDAR = 1,
+  MSG_FROM_ROS_PACKET = 2,
+  MSG_FROM_PCAP = 3,
+  MSG_FROM_PROTO_PACKET = 4,
+  MSG_FROM_PROTO_POINTCLOUD = 5
 };
 
-class LidarAdapterBase
+class AdapterBase
 {
 public:
-  typedef std::shared_ptr<LidarAdapterBase> Ptr;
-  LidarAdapterBase() = default;
-  virtual ~LidarAdapterBase() = default;
+  typedef std::shared_ptr<AdapterBase> Ptr;
+  AdapterBase() = default;
+  virtual ~AdapterBase() = default;
 
   virtual void init(const YAML::Node& config) = 0;
 
@@ -60,42 +59,52 @@ public:
     return;
   }
 
-  virtual void sendScan(const LidarScanMsg& msg)
+  virtual void sendScan(const ScanMsg& msg)
   {
     return;
   }
 
-  virtual void sendPacket(const LidarPacketMsg& msg)
+  virtual void sendPacket(const PacketMsg& msg)
   {
     return;
   }
 
-  virtual void sendPointcloud(const LidarPointsMsg& msg)
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarScanMsg&)> callBack)
+  virtual void sendCameraTrigger(const CameraTrigger& msg)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarPacketMsg&)> callBack)
+  virtual void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
   {
     return;
   }
 
-  virtual void regRecvCallback(const std::function<void(const LidarPointsMsg&)> callBack)
+  virtual void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
   {
     return;
   }
 
-  virtual void decodeScan(const LidarScanMsg& msg)
+  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
   {
     return;
   }
 
-  virtual void decodePacket(const LidarPacketMsg& msg)
+  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
+  {
+    return;
+  }
+
+  virtual void decodeScan(const ScanMsg& msg)
+  {
+    return;
+  }
+
+  virtual void decodePacket(const PacketMsg& msg)
   {
     return;
   }

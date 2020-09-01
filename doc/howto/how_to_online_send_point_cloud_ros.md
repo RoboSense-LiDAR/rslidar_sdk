@@ -1,10 +1,10 @@
-# How to decode pcap bag and send point cloud to ROS
+# How to online connect lidar and send point cloud to ROS
 
 
 
 ## 1 Introduction
 
-This document will show you how to decode pcap bag  and send point cloud to ROS. Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
+This document will show you how to online connect a LiDAR and send point cloud to ROS. Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
 
 
 
@@ -14,9 +14,9 @@ Please follow the steps below.
 
 
 
-#### 2.1 Get the data port number & ip address
+#### 2.1 Get the data port number
 
-Please follow the instructions in LiDAR user-guide to connect the LiDAR and set up your computer's ip address. And now you should be able to use RSView to see the point cloud. At this time, you should have already known your LiDAR's msop port number, difop port number, and device ip address. The default is *msop-6699, difop-7788, ip-192.168.1.200*. If you have no idea what it is, please check the LiDAR user-guide first.
+Please follow the instructions in LiDAR user-guide to connect the LiDAR and set up your computer's ip address. And now you should be able to use RSView to see the point cloud. At this time, you should have already known your LiDAR's msop port number and difop port number, the default is *msop-6699, difop-7788*. If you have no idea what it is, please check the LiDAR user-guide first.
 
 
 
@@ -24,7 +24,7 @@ Please follow the instructions in LiDAR user-guide to connect the LiDAR and set 
 
 ```yaml
 common:
-  msg_source: 3                                         #0: not use Lidar
+  msg_source: 1                                         #0: not use Lidar
                                                         #1: packet message comes from online Lidar
                                                         #2: packet message comes from ROS or ROS2
                                                         #3: packet message comes from Pcap file
@@ -37,11 +37,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 ```
 
-Since the message come from the pcap bag, set *msg_source = 3*. 
+​	Since the message come from the LiDAR, set *msg_source = 1*. 
 
-Send point cloud to ROS so set *send_point_cloud_ros = true*. 
-
-Make sure the *pcap_path* is correct.
+​	Send point cloud to ROS so set *send_point_cloud_ros = true*.
 
 
 
@@ -63,13 +61,11 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For the latest version lidars, there is no need to use this file.
 ```
 
-Set the *lidar_type*  to your LiDAR type --- RS16, RS32, RSBP, RS128, RS80.
+​	Set the *lidar_type*  to your LiDAR type --- RS16, RS32, RSBP, RS128, RS80.
 
-Set the *device_ip* to your LiDAR's ip address. the default is *device_ip = 192.168.1.200*.
+​	Set the *msop_port* and *difop_port*  to LiDAR port number. The default is *msop = 6699* and *difop = 7788*.
 
-Set the *msop_port* and *difop_port*  to your LiDAR's port number. The default is *msop = 6699* and *difop = 7788*.
 
-​	
 
 #### 2.4 Set up the lidar-ros part of the config file
 
@@ -98,7 +94,7 @@ ros:
 
 ```yaml
 common:
-  msg_source: 3                                         #0: not use Lidar
+  msg_source: 1                                         #0: not use Lidar
                                                         #1: packet message comes from online Lidar
                                                         #2: packet message comes from ROS or ROS2
                                                         #3: packet message comes from Pcap file

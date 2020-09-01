@@ -19,27 +19,68 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-
 #pragma once
-#include <string>
-#include <array>
+#ifdef ROS_FOUND
+#include "adapter/adapter_base.h"
+#include "msg/ros_msg_translator.h"
+#include <ros/ros.h>
+#include <ros/publisher.h>
 
 namespace robosense
 {
 namespace lidar
 {
-/**
- * @brief Lidar packet Message for RoboSense SDK.
- * @detail RoboSense LidarPacketMsg is defined for passing lidar single packet such like difop packet accross different
- * modules If ROS is turned on , we provide translation functions between ROS message and RoboSense message
- */
-
-struct alignas(16) LidarPacketMsg
+class CameraTriggerRosAdapter : virtual public AdapterBase
 {
-  double timestamp = 0.0;
-  std::string frame_id = "";
-  std::array<uint8_t, 1248> packet{};  ///< lidar single packet
-};
+public:
+  CameraTriggerRosAdapter() = default;
 
+  ~CameraTriggerRosAdapter()
+  {
+    stop();
+  }
+
+  void init(const YAML::Node& config)
+  {
+    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
+    if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
+    {
+      for (auto iter : config["camera"])
+      {
+        std::string frame_id;
+        yamlRead<std::string>(iter, "frame_id", frame_id, "rs_camera");
+        ros::Publisher pub = nh_->advertise<std_msgs::Time>(frame_id + "_trigger", 10);
+        pub_map_.emplace(frame_id, pub);
+      }
+    }
+  }
+
+  void sendCameraTrigger(const CameraTrigger& msg)
+  {
+    auto iter = pub_map_.find(msg.first);
+    if (iter != pub_map_.end())
+    {
+      iter->second.publish(toRosMsg(msg));
+    }
+  }
+
+private:
+  std::shared_ptr<ros::NodeHandle> nh_;
+  std::map<std::string, ros::Publisher> pub_map_;
+};
 }  // namespace lidar
 }  // namespace robosense
+#endif  // ROS_FOUND
+
+#ifdef ROS2_FOUND
+#include "adapter/adapter_base.h"
+#include "msg/ros_msg_translator.h"
+#include "rclcpp/rclcpp.hpp"
+namespace robosense
+{
+namespace lidar
+{
+  ///< Add in the future
+}  // namespace lidar
+}  // namespace robosense
+#endif  // ROS2_FOUND

@@ -24,22 +24,22 @@
 #include <string>
 #include <array>
 #include <pcl/io/io.h>
-typedef pcl::PointCloud<pcl::PointXYZI> PointCloud;
-typedef pcl::PointCloud<pcl::PointXYZI>::Ptr PointCloudPtr;
-typedef pcl::PointCloud<pcl::PointXYZI>::ConstPtr PointCloudConstPtr;
 namespace robosense
 {
 namespace lidar
 {
 /**
- * @brief Lidar points Message for RoboSense SDK.
- * @detail RoboSense LidarPointsMsg is defined for passing lidar pointcloud accross different modules
+ * @brief Point cloud message for RoboSense SDK.
+ * @detail RoboSense LidarPointCloudMsg is defined for passing lidar point cloud accross different modules
  *         If ROS is turned on , we provide translation functions between ROS message and RoboSense message
  *         If Proto is turned on , we provide translation functions between Protobuf message and RoboSense message
  */
 
-struct alignas(16) LidarPointsMsg
+struct alignas(16) LidarPointCloudMsg
 {
+  typedef pcl::PointCloud<pcl::PointXYZI> PointCloud;
+  typedef pcl::PointCloud<pcl::PointXYZI>::Ptr PointCloudPtr;
+  typedef pcl::PointCloud<pcl::PointXYZI>::ConstPtr PointCloudConstPtr;
   double timestamp = 0.0;
   uint32_t seq = 0;
   std::string frame_id = "";
@@ -47,14 +47,14 @@ struct alignas(16) LidarPointsMsg
   uint32_t width = 0;
   bool is_dense = false;
 
-  PointCloudConstPtr cloudPtr;     ///< the pointcloud pointer
+  PointCloudConstPtr point_cloud_ptr;  ///< the point cloud pointer
 
-  LidarPointsMsg() = default;
-  LidarPointsMsg(PointCloudPtr pointptr) : cloudPtr(pointptr)
+  LidarPointCloudMsg() = default;
+  LidarPointCloudMsg(const PointCloudPtr& ptr) : point_cloud_ptr(ptr)
   {
   }
-  typedef std::shared_ptr<LidarPointsMsg> Ptr;
-  typedef std::shared_ptr<const LidarPointsMsg> ConstPtr;
+  typedef std::shared_ptr<LidarPointCloudMsg> Ptr;
+  typedef std::shared_ptr<const LidarPointCloudMsg> ConstPtr;
 };
 
 }  // namespace lidar
