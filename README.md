@@ -52,7 +52,7 @@ Ubuntu 18.04 - 安装ROS2 Eloquent desktop
 
 **注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时还需要手动安装Yaml库**。
 
-### 3.5 Yaml (必需)
+### 3.3 Yaml (必需)
 
 版本号:  >= v0.5.2 
 
@@ -65,7 +65,7 @@ sudo apt-get update
 sudo apt-get install -y libyaml-cpp-dev
 ```
 
-### 3.6 Pcap (必需)
+### 3.4 Pcap (必需)
 
 版本号： >=v1.7.4
 
@@ -75,7 +75,7 @@ sudo apt-get install -y libyaml-cpp-dev
 sudo apt-get install -y  libpcap-dev
 ```
 
-### 3.7 Protobuf (可选)
+### 3.5 Protobuf (可选)
 
 版本号： >=v2.6.1
 
