@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.1 - 2020-09-04
+
+### Fixed
+
+- Fix bug in driver core, please refer to changelog in rs_driver for details.
+
+
 ## v1.2.0 - 2020-09-01
 
 ### Added
