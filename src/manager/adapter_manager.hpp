@@ -119,7 +119,7 @@ public:
           RS_INFO << "------------------------------------------------------" << RS_REND;
           point_cloud_thread_flag_ = true;
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_LIDAR;
-          recv_ptr = createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter);
+          recv_ptr = createReceiver(lidar_config[i], AdapterType::DriverAdapter);
           point_cloud_receive_adapter_vec_.push_back(recv_ptr);
           if (send_packet_ros || send_packet_proto)
           {
@@ -140,9 +140,9 @@ public:
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_ROS_PACKET;
           send_packet_ros = false;
           point_cloud_receive_adapter_vec_.emplace_back(
-              createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter));
+              createReceiver(lidar_config[i], AdapterType::DriverAdapter));
           packet_receive_adapter_vec_.emplace_back(
-              createReceiver<AdapterBase>(lidar_config[i], AdapterType::PacketRosAdapter));
+              createReceiver(lidar_config[i], AdapterType::PacketRosAdapter));
           packet_receive_adapter_vec_[i]->regRecvCallback(
               std::bind(&AdapterBase::decodeScan, point_cloud_receive_adapter_vec_[i], std::placeholders::_1));
           packet_receive_adapter_vec_[i]->regRecvCallback(
@@ -162,7 +162,7 @@ public:
           lidar_config[i]["driver"]["pcap_path"] = pcap_dir;
           lidar_config[i]["driver"]["pcap_rate"] = pcap_rate;
           lidar_config[i]["driver"]["pcap_repeat"] = pcap_repeat;
-          recv_ptr = createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter);
+          recv_ptr = createReceiver(lidar_config[i], AdapterType::DriverAdapter);
           point_cloud_receive_adapter_vec_.push_back(recv_ptr);
           if (send_packet_ros || send_packet_proto)
           {
@@ -182,9 +182,9 @@ public:
           lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PROTO_PACKET;
           send_packet_proto = false;
           point_cloud_receive_adapter_vec_.emplace_back(
-              createReceiver<AdapterBase>(lidar_config[i], AdapterType::DriverAdapter));
+              createReceiver(lidar_config[i], AdapterType::DriverAdapter));
           packet_receive_adapter_vec_.emplace_back(
-              createReceiver<AdapterBase>(lidar_config[i], AdapterType::PacketProtoAdapter));
+              createReceiver(lidar_config[i], AdapterType::PacketProtoAdapter));
           packet_receive_adapter_vec_[i]->regRecvCallback(
               std::bind(&AdapterBase::decodeScan, point_cloud_receive_adapter_vec_[i], std::placeholders::_1));
           packet_receive_adapter_vec_[i]->regRecvCallback(
@@ -204,7 +204,7 @@ public:
           send_packet_proto = false;
           send_camera_trigger_ros = false;
           point_cloud_receive_adapter_vec_.emplace_back(
-              createReceiver<AdapterBase>(lidar_config[i], AdapterType::PointCloudProtoAdapter));
+              createReceiver(lidar_config[i], AdapterType::PointCloudProtoAdapter));
           packet_receive_adapter_vec_.emplace_back(nullptr);
           break;
 
@@ -226,7 +226,7 @@ public:
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_packet_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
-            createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PacketRosAdapter);
+            createTransmitter(lidar_config[i], AdapterType::PacketRosAdapter);
         packet_transmit_adapter_vec_.emplace_back(transmitter_ptr);
         packet_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendScan, transmitter_ptr, std::placeholders::_1));
@@ -243,7 +243,7 @@ public:
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_packet_proto"] = true;
         AdapterBase::Ptr transmitter_ptr =
-            createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PacketProtoAdapter);
+            createTransmitter(lidar_config[i], AdapterType::PacketProtoAdapter);
         packet_transmit_adapter_vec_.emplace_back(transmitter_ptr);
         packet_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendScan, transmitter_ptr, std::placeholders::_1));
@@ -259,7 +259,7 @@ public:
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_point_cloud_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
-            createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PointCloudRosAdapter);
+            createTransmitter(lidar_config[i], AdapterType::PointCloudRosAdapter);
         point_cloud_transmit_adapter_vec_.emplace_back(transmitter_ptr);
         point_cloud_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendPointCloud, transmitter_ptr, std::placeholders::_1));
@@ -273,7 +273,7 @@ public:
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_point_cloud_proto"] = true;
         AdapterBase::Ptr transmitter_ptr =
-            createTransmitter<AdapterBase>(lidar_config[i], AdapterType::PointCloudProtoAdapter);
+            createTransmitter(lidar_config[i], AdapterType::PointCloudProtoAdapter);
         point_cloud_transmit_adapter_vec_.emplace_back(transmitter_ptr);
         point_cloud_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendPointCloud, transmitter_ptr, std::placeholders::_1));
@@ -289,7 +289,7 @@ public:
         }
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         AdapterBase::Ptr transmitter_ptr =
-            createTransmitter<AdapterBase>(lidar_config[i], AdapterType::CameraTriggerRosAdapter);
+            createTransmitter(lidar_config[i], AdapterType::CameraTriggerRosAdapter);
         point_cloud_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::sendCameraTrigger, transmitter_ptr, std::placeholders::_1));
       }
@@ -346,20 +346,19 @@ public:
   }
 
 private:
-  template <typename T>
-  std::shared_ptr<T> createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
+  std::shared_ptr<AdapterBase> createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
   {
-    std::shared_ptr<T> receiver;
+    std::shared_ptr<AdapterBase> receiver;
     switch (adapter_type)
     {
       case AdapterType::DriverAdapter:
-        receiver = std::dynamic_pointer_cast<T>(std::make_shared<DriverAdapter>());
+        receiver = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<DriverAdapter>());
         receiver->init(config);
         break;
 
       case AdapterType::PacketRosAdapter:
 #if (ROS_FOUND || ROS2_FOUND)
-        receiver = std::dynamic_pointer_cast<T>(std::make_shared<PacketRosAdapter>());
+        receiver = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PacketRosAdapter>());
         receiver->init(config);
         break;
 #else
@@ -369,7 +368,7 @@ private:
 
       case AdapterType::PacketProtoAdapter:
 #ifdef PROTO_FOUND
-        receiver = std::dynamic_pointer_cast<T>(std::make_shared<PacketProtoAdapter>());
+        receiver = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PacketProtoAdapter>());
         receiver->init(config);
         break;
 #else
@@ -379,7 +378,7 @@ private:
 
       case AdapterType::PointCloudProtoAdapter:
 #ifdef PROTO_FOUND
-        receiver = std::dynamic_pointer_cast<T>(std::make_shared<PointCloudProtoAdapter>());
+        receiver = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PointCloudProtoAdapter>());
         receiver->init(config);
         break;
 #else
@@ -395,15 +394,14 @@ private:
     return receiver;
   }
 
-  template <typename T>
-  std::shared_ptr<T> createTransmitter(const YAML::Node& config, const AdapterType& adapter_type)
+  std::shared_ptr<AdapterBase> createTransmitter(const YAML::Node& config, const AdapterType& adapter_type)
   {
-    std::shared_ptr<T> transmitter;
+    std::shared_ptr<AdapterBase> transmitter;
     switch (adapter_type)
     {
       case AdapterType::PacketRosAdapter:
 #if (ROS_FOUND || ROS2_FOUND)
-        transmitter = std::dynamic_pointer_cast<T>(std::make_shared<PacketRosAdapter>());
+        transmitter = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PacketRosAdapter>());
         transmitter->init(config);
         break;
 #else
@@ -413,7 +411,7 @@ private:
 
       case AdapterType::PacketProtoAdapter:
 #ifdef PROTO_FOUND
-        transmitter = std::dynamic_pointer_cast<T>(std::make_shared<PacketProtoAdapter>());
+        transmitter = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PacketProtoAdapter>());
         transmitter->init(config);
         break;
 #else
@@ -423,7 +421,7 @@ private:
 
       case AdapterType::PointCloudRosAdapter:
 #if (ROS_FOUND || ROS2_FOUND)
-        transmitter = std::dynamic_pointer_cast<T>(std::make_shared<PointCloudRosAdapter>());
+        transmitter = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PointCloudRosAdapter>());
         transmitter->init(config);
         break;
 #else
@@ -433,7 +431,7 @@ private:
 
       case AdapterType::PointCloudProtoAdapter:
 #ifdef PROTO_FOUND
-        transmitter = std::dynamic_pointer_cast<T>(std::make_shared<PointCloudProtoAdapter>());
+        transmitter = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PointCloudProtoAdapter>());
         transmitter->init(config);
         break;
 #else
@@ -443,7 +441,7 @@ private:
 
       case AdapterType::CameraTriggerRosAdapter:
 #if (ROS_FOUND)  ///< Camera trigger not support ROS2 yet
-        transmitter = std::dynamic_pointer_cast<T>(std::make_shared<CameraTriggerRosAdapter>());
+        transmitter = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<CameraTriggerRosAdapter>());
         transmitter->init(config);
         break;
 #else
