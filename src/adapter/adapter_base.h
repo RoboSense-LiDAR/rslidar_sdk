@@ -39,7 +39,15 @@ enum MsgSource
   MSG_FROM_PROTO_PACKET = 4,
   MSG_FROM_PROTO_POINTCLOUD = 5
 };
-
+enum class AdapterType
+{
+  DriverAdapter,
+  PointCloudRosAdapter,
+  PointCloudProtoAdapter,
+  PacketRosAdapter,
+  PacketProtoAdapter,
+  CameraTriggerRosAdapter
+};
 class AdapterBase
 {
 public:

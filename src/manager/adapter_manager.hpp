@@ -72,16 +72,6 @@ namespace robosense
 {
 namespace lidar
 {
-enum class AdapterType
-{
-  DriverAdapter,
-  PointCloudRosAdapter,
-  PointCloudProtoAdapter,
-  PacketRosAdapter,
-  PacketProtoAdapter,
-  CameraTriggerRosAdapter
-};
-
 class AdapterManager
 {
 public:
@@ -143,7 +133,7 @@ public:
           RS_INFO << "Receive Packets From : ROS" << RS_REND;
           RS_INFO << "Msop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << RS_REND;
           RS_INFO << "Difop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << "_difop"
-               << RS_REND;
+                  << RS_REND;
           RS_INFO << "------------------------------------------------------" << RS_REND;
           point_cloud_thread_flag_ = false;
           packet_thread_flag_ = true;
@@ -232,7 +222,7 @@ public:
         RS_DEBUG << "Send Packets To : ROS" << RS_REND;
         RS_DEBUG << "Msop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << RS_REND;
         RS_DEBUG << "Difop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << "_difop"
-              << RS_REND;
+                 << RS_REND;
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_packet_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
@@ -264,7 +254,8 @@ public:
       {
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         RS_DEBUG << "Send PointCloud To : ROS" << RS_REND;
-        RS_DEBUG << "PointCloud Topic: " << lidar_config[i]["ros"]["ros_send_point_cloud_topic"].as<std::string>() << RS_REND;
+        RS_DEBUG << "PointCloud Topic: " << lidar_config[i]["ros"]["ros_send_point_cloud_topic"].as<std::string>()
+                 << RS_REND;
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         lidar_config[i]["send_point_cloud_ros"] = true;
         AdapterBase::Ptr transmitter_ptr =
@@ -294,7 +285,7 @@ public:
         for (auto iter : lidar_config[i]["camera"])
         {
           RS_DEBUG << "Camera : " << iter["frame_id"].as<std::string>()
-                << "  Trigger Angle : " << iter["trigger_angle"].as<double>() << RS_REND;
+                   << "  Trigger Angle : " << iter["trigger_angle"].as<double>() << RS_REND;
         }
         RS_DEBUG << "------------------------------------------------------" << RS_REND;
         AdapterBase::Ptr transmitter_ptr =
