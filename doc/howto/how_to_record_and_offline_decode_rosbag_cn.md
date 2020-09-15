@@ -90,7 +90,7 @@ common:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80, RSM1
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The msop port of lidar,default is 6699
@@ -103,7 +103,7 @@ lidar:
       angle_path: /home/robosense/angle.csv   #The path of the angle calibration file. For the latest version lidars, there is no need to use this file.
 ```
 
-​	将 *lidar_type* 设置为LiDAR类型 - -RS16，RS32，RSBP，RS128, RS80。
+​	将 *lidar_type* 设置为LiDAR类型 - -RS16，RS32，RSBP，RS128, RS80, RSM1。
 
 
 

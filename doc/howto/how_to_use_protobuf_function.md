@@ -46,7 +46,7 @@ We want to send packets through protobuf-UDP, so set *send_packet_proto = true*.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80, RSM1
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The msop port of lidar,default is 6699
@@ -101,7 +101,7 @@ We want to watch the point cloud on ROS-Rviz, so set *send_point_cloud_ros = tru
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80, RSM1
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The msop port of lidar,default is 6699

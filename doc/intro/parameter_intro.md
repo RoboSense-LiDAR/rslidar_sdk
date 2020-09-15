@@ -88,7 +88,7 @@ This part need to be adjust according to different LiDAR (in multi-LiDARs case).
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80, RSM1
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The msop port of lidar,default is 6699
@@ -121,7 +121,7 @@ lidar:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80
+      lidar_type: RS128            #The lidar type - RS16, RS32, RSBP, RS128, RS80, RSM1
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.200     #The device ip address
       msop_port: 6699              #The msop port of lidar,default is 6699
@@ -146,7 +146,7 @@ lidar:
       difop_send_port: 60023                      #The port number which the difop packets will be send to 
       packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP             #The lidar type - RS16, RS32, RSBP, RS128, RS80
+      lidar_type: RSBP             #The lidar type - RS16, RS32, RSBP, RS128, RS80, RSM1
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.199     #The device ip address
       msop_port: 1990              #The msop port of lidar,default is 6699
@@ -171,7 +171,7 @@ lidar:
       difop_send_port: 60026                      #The port number which the difop packets will be send to 
       packet_send_ip: 127.0.0.1                   #The ip address which the lidar packets will be send to
   - driver:
-      lidar_type: RSBP            #The lidar type - RS16, RS32, RSBP, RS128, RS80
+      lidar_type: RSBP            #The lidar type - RS16, RS32, RSBP, RS128, RS80, RSM1
       frame_id: /rslidar           #The frame id of message
       device_ip: 192.168.1.201     #The device ip address
       msop_port: 2000              #The msop port of lidar,default is 6699
