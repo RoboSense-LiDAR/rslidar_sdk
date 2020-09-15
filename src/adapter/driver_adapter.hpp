@@ -54,6 +54,7 @@ public:
     yamlRead<std::string>(driver_config, "angle_path", driver_param.angle_path, "");
     yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
     yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
+    yamlRead<bool>(driver_config, "saved_by_rows", driver_param.saved_by_rows, false);
     yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.decoder_param.use_lidar_clock, false);
     yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
     yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
