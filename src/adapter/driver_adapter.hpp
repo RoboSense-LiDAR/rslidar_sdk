@@ -209,13 +209,11 @@ private:
     point_cloud->points.assign(msg.point_cloud_ptr->begin(), msg.point_cloud_ptr->end());
     point_cloud->height = msg.height;
     point_cloud->width = msg.width;
+    point_cloud->is_dense = msg.is_dense;
     LidarPointCloudMsg point_cloud_msg(point_cloud);
     point_cloud_msg.frame_id = msg.frame_id;
     point_cloud_msg.timestamp = msg.timestamp;
     point_cloud_msg.seq = msg.seq;
-    point_cloud_msg.height = msg.height;
-    point_cloud_msg.width = msg.width;
-    point_cloud_msg.is_dense = msg.is_dense;
     return std::move(point_cloud_msg);
   }
 

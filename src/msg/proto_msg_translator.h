@@ -41,9 +41,9 @@ inline proto_msg::LidarPointCloud toProtoMsg(const LidarPointCloudMsg& rs_msg)
   proto_msg.set_timestamp(rs_msg.timestamp);
   proto_msg.set_seq(rs_msg.seq);
   proto_msg.set_frame_id(rs_msg.frame_id);
-  proto_msg.set_height(rs_msg.height);
-  proto_msg.set_width(rs_msg.width);
-  proto_msg.set_is_dense(rs_msg.is_dense);
+  proto_msg.set_height(rs_msg.point_cloud_ptr->height);
+  proto_msg.set_width(rs_msg.point_cloud_ptr->width);
+  proto_msg.set_is_dense(rs_msg.point_cloud_ptr->is_dense);
 
   for (size_t i = 0; i < rs_msg.point_cloud_ptr->size(); i++)
   {
@@ -62,9 +62,6 @@ inline LidarPointCloudMsg toRsMsg(const proto_msg::LidarPointCloud& proto_msg)
   rs_msg.timestamp = proto_msg.timestamp();
   rs_msg.seq = proto_msg.seq();
   rs_msg.frame_id = proto_msg.frame_id();
-  rs_msg.height = proto_msg.height();
-  rs_msg.width = proto_msg.width();
-  rs_msg.is_dense = proto_msg.is_dense();
   LidarPointCloudMsg::PointCloud* ptr_tmp = new LidarPointCloudMsg::PointCloud();
   for (int i = 0; i < proto_msg.data_size(); i += 4)
   {
@@ -75,9 +72,9 @@ inline LidarPointCloudMsg toRsMsg(const proto_msg::LidarPointCloud& proto_msg)
     point.intensity = proto_msg.data(i + 3);
     ptr_tmp->push_back(point);
   }
-  ptr_tmp->height = rs_msg.height;
-  ptr_tmp->width = rs_msg.width;
-  ptr_tmp->is_dense = rs_msg.is_dense;
+  ptr_tmp->height = proto_msg.height();
+  ptr_tmp->width = proto_msg.width();
+  ptr_tmp->is_dense = proto_msg.is_dense();
   rs_msg.point_cloud_ptr.reset(ptr_tmp);
   return rs_msg;
 }
