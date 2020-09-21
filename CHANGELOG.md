@@ -31,8 +31,6 @@
 ### Removed
 - Remove some unused variables in message struct
 
----  
-
 ## v1.0.0 - 2020-06-01
 
 ### Added
