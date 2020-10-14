@@ -52,7 +52,8 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 }
 inline PacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
 {
-  PacketMsg rs_msg;
+  PacketMsg rs_msg(RSLIDAR_PKT_LEN);
+  #pragma omp parallel for
   for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
   {
     rs_msg.packet[i] = std::move(ros_msg.data[i]);
@@ -62,6 +63,7 @@ inline PacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
 inline rslidar_msgs::rslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msgs::rslidarPacket ros_msg;
+  #pragma omp parallel for
   for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
   {
     ros_msg.data[i] = std::move(rs_msg.packet[i]);
@@ -130,7 +132,7 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 }
 inline PacketMsg toRsMsg(const rslidar_msg::msg::RslidarPacket& ros_msg)
 {
-  PacketMsg rs_msg;
+  PacketMsg rs_msg(RSLIDAR_PKT_LEN);
 #pragma omp parallel for
   for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
   {

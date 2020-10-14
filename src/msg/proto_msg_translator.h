@@ -102,7 +102,7 @@ inline ScanMsg toRsMsg(const proto_msg::LidarScan& proto_msg)
   for (int i = 0; i < proto_msg.data_size(); i++)
   {
     std::string data_str = proto_msg.data(i);
-    PacketMsg tmp_pkt;
+    PacketMsg tmp_pkt(data_str.size());
     memcpy(tmp_pkt.packet.data(), data_str.data(), data_str.size());
     rs_msg.packets.emplace_back(std::move(tmp_pkt));
   }
@@ -121,8 +121,8 @@ inline proto_msg::LidarPacket toProtoMsg(const PacketMsg& rs_msg)
 
 inline PacketMsg toRsMsg(const proto_msg::LidarPacket& proto_msg)
 {
-  PacketMsg rs_msg;
   std::string data_str = proto_msg.data();
+  PacketMsg rs_msg(data_str.size());
   memcpy(rs_msg.packet.data(), data_str.data(), data_str.size());
   return rs_msg;
 }
