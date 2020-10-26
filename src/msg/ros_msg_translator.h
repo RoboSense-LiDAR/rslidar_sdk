@@ -182,7 +182,7 @@ inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msg::msg::RslidarPacket ros_msg;
 #pragma omp parallel for
-  for (size_t i = 0; i < MECH_PKT_LEN; i++)
+  for (size_t i = 0; i < rs_msg.packet.size(); i++)
   {
     ros_msg.data[i] = std::move(rs_msg.packet[i]);
   }
