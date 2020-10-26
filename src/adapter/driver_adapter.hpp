@@ -32,7 +32,7 @@ class DriverAdapter : virtual public AdapterBase
 public:
   DriverAdapter()
   {
-    driver_ptr_.reset(new lidar::LidarDriver<pcl::PointXYZI>());
+    driver_ptr_.reset(new lidar::LidarDriver<PointT>());
     thread_pool_ptr_.reset(new lidar::ThreadPool());
     driver_ptr_->regExceptionCallback(std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
   }
@@ -143,7 +143,7 @@ public:
 
   void decodeScan(const ScanMsg& msg)
   {
-    lidar::PointCloudMsg<pcl::PointXYZI> point_cloud_msg;
+    lidar::PointCloudMsg<PointT> point_cloud_msg;
     if (driver_ptr_->decodeMsopScan(msg, point_cloud_msg))
     {
       localPointsCallback(point_cloud_msg);
@@ -156,7 +156,7 @@ public:
   }
 
 private:
-  void localPointsCallback(const PointCloudMsg<pcl::PointXYZI>& msg)
+  void localPointsCallback(const PointCloudMsg<PointT>& msg)
   {
     for (auto iter : point_cloud_cb_vec_)
     {
@@ -204,7 +204,7 @@ private:
     }
   }
 
-  LidarPointCloudMsg core2SDK(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
+  LidarPointCloudMsg core2SDK(const lidar::PointCloudMsg<PointT>& msg)
   {
     LidarPointCloudMsg::PointCloudPtr point_cloud(new LidarPointCloudMsg::PointCloud);
     point_cloud->points.assign(msg.point_cloud_ptr->begin(), msg.point_cloud_ptr->end());
@@ -219,7 +219,7 @@ private:
   }
 
 private:
-  std::shared_ptr<lidar::LidarDriver<pcl::PointXYZI>> driver_ptr_;
+  std::shared_ptr<lidar::LidarDriver<PointT>> driver_ptr_;
   std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
   std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
   std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;

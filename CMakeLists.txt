@@ -6,6 +6,17 @@ project(rslidar_sdk)
 #=======================================
 set(COMPILE_METHOD ORIGINAL)
 
+#=======================================
+# Custom Point Type
+#=======================================
+option(CUSTOM_POINT "option for custom point type" OFF)
+if (CUSTOM_POINT)
+message(=============================================================)
+message("-- CUSTOM_POINT is ON. Custom point is used!")
+message(=============================================================)
+add_definitions(-DCUSTOM_POINT)
+endif()
+
 #========================
 # Project Version
 #========================

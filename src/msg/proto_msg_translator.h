@@ -65,7 +65,7 @@ inline LidarPointCloudMsg toRsMsg(const proto_msg::LidarPointCloud& proto_msg)
   LidarPointCloudMsg::PointCloud* ptr_tmp = new LidarPointCloudMsg::PointCloud();
   for (int i = 0; i < proto_msg.data_size(); i += 4)
   {
-    pcl::PointXYZI point;
+    PointT point;
     point.x = proto_msg.data(i);
     point.y = proto_msg.data(i + 1);
     point.z = proto_msg.data(i + 2);

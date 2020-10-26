@@ -19,11 +19,28 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-
 #pragma once
 #include <string>
 #include <array>
 #include <pcl/io/io.h>
+#include <pcl/point_types.h>
+
+struct RS_POINT
+{
+  PCL_ADD_POINT4D;
+  uint8_t intensity;
+  double timestamp;
+  uint16_t ring;
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} EIGEN_ALIGN16;
+POINT_CLOUD_REGISTER_POINT_STRUCT(RS_POINT, (float, x, x)(float, y, y)(float, z, z)(uint8_t, intensity, intensity)(
+                                                double, timestamp, timestamp)(uint16_t, ring, ring))
+#ifdef CUSTOM_POINT
+typedef RS_POINT PointT;
+#else
+typedef pcl::PointXYZI PointT;
+#endif
+
 namespace robosense
 {
 namespace lidar
@@ -37,9 +54,9 @@ namespace lidar
 
 struct alignas(16) LidarPointCloudMsg
 {
-  typedef pcl::PointCloud<pcl::PointXYZI> PointCloud;
-  typedef pcl::PointCloud<pcl::PointXYZI>::Ptr PointCloudPtr;
-  typedef pcl::PointCloud<pcl::PointXYZI>::ConstPtr PointCloudConstPtr;
+  typedef pcl::PointCloud<PointT> PointCloud;
+  typedef pcl::PointCloud<PointT>::Ptr PointCloudPtr;
+  typedef pcl::PointCloud<PointT>::ConstPtr PointCloudConstPtr;
   double timestamp = 0.0;
   uint32_t seq = 0;
   std::string frame_id = "";
