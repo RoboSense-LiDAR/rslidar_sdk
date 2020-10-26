@@ -160,7 +160,7 @@ private:
   {
     for (auto iter : point_cloud_cb_vec_)
     {
-      thread_pool_ptr_->commit([this, msg, iter]() { iter(lPoints2CPoints(msg)); });
+      thread_pool_ptr_->commit([this, msg, iter]() { iter(core2SDK(msg)); });
     }
   }
 
@@ -204,7 +204,7 @@ private:
     }
   }
 
-  LidarPointCloudMsg lPoints2CPoints(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
+  LidarPointCloudMsg core2SDK(const lidar::PointCloudMsg<pcl::PointXYZI>& msg)
   {
     LidarPointCloudMsg::PointCloudPtr point_cloud(new LidarPointCloudMsg::PointCloud);
     point_cloud->points.assign(msg.point_cloud_ptr->begin(), msg.point_cloud_ptr->end());
