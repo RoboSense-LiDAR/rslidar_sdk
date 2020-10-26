@@ -86,9 +86,9 @@ inline proto_msg::LidarScan toProtoMsg(const ScanMsg& rs_msg)
   proto_msg.set_seq(rs_msg.seq);
   for (auto iter : rs_msg.packets)
   {
-    void* data_ptr = malloc(RSLIDAR_PKT_LEN);
-    memcpy(data_ptr, iter.packet.data(), RSLIDAR_PKT_LEN);
-    proto_msg.add_data(data_ptr, RSLIDAR_PKT_LEN);
+    void* data_ptr = malloc(MECH_PKT_LEN);
+    memcpy(data_ptr, iter.packet.data(), MECH_PKT_LEN);
+    proto_msg.add_data(data_ptr, MECH_PKT_LEN);
     free(data_ptr);
   }
   return proto_msg;
@@ -112,9 +112,9 @@ inline ScanMsg toRsMsg(const proto_msg::LidarScan& proto_msg)
 inline proto_msg::LidarPacket toProtoMsg(const PacketMsg& rs_msg)
 {
   proto_msg::LidarPacket proto_msg;
-  void* data_ptr = malloc(RSLIDAR_PKT_LEN);
-  memcpy(data_ptr, rs_msg.packet.data(), RSLIDAR_PKT_LEN);
-  proto_msg.set_data(data_ptr, RSLIDAR_PKT_LEN);
+  void* data_ptr = malloc(MECH_PKT_LEN);
+  memcpy(data_ptr, rs_msg.packet.data(), MECH_PKT_LEN);
+  proto_msg.set_data(data_ptr, MECH_PKT_LEN);
   free(data_ptr);
   return proto_msg;
 }

@@ -22,17 +22,19 @@
 
 #pragma once
 #ifdef ROS_FOUND
-#include "msg/rs_msg/lidar_point_cloud_msg.h"
-#include "msg/ros_msg/lidar_scan_ros.h"
-#include "rs_driver/msg/packet_msg.h"
-#include "rs_driver/msg/scan_msg.h"
+#include <std_msgs/Time.h>
 #include <ros/duration.h>
 #include <ros/rate.h>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
-#include <std_msgs/Time.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/transforms.h>
+#include "msg/rs_msg/lidar_point_cloud_msg.h"
+#include "msg/ros_msg/lidar_packet_ros.h"
+#include "msg/ros_msg/lidar_scan_ros.h"
+#include "rs_driver/msg/packet_msg.h"
+#include "rs_driver/msg/scan_msg.h"
+#include "rs_driver/driver/driver_param.h"
 
 namespace robosense
 {
@@ -50,11 +52,29 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   ros_msg.header.seq = rs_msg.seq;
   return std::move(ros_msg);
 }
-inline PacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
+inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
+                         const rslidar_msgs::rslidarPacket& ros_msg)
 {
-  PacketMsg rs_msg(RSLIDAR_PKT_LEN);
-  #pragma omp parallel for
-  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
+  size_t pkt_length;
+  switch (lidar_type)
+  {
+    case LidarType::RSM1:
+      if (pkt_type == PktType::MSOP)
+      {
+        pkt_length = MEMS_MSOP_LEN;
+      }
+      else
+      {
+        pkt_length = MEMS_DIFOP_LEN;
+      }
+      break;
+    default:
+      pkt_length = MECH_PKT_LEN;
+      break;
+  }
+  PacketMsg rs_msg(pkt_length);
+#pragma omp parallel for
+  for (size_t i = 0; i < pkt_length; i++)
   {
     rs_msg.packet[i] = std::move(ros_msg.data[i]);
   }
@@ -63,14 +83,14 @@ inline PacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
 inline rslidar_msgs::rslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msgs::rslidarPacket ros_msg;
-  #pragma omp parallel for
-  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
+#pragma omp parallel for
+  for (size_t i = 0; i < rs_msg.packet.size(); i++)
   {
     ros_msg.data[i] = std::move(rs_msg.packet[i]);
   }
   return std::move(ros_msg);
 }
-inline ScanMsg toRsMsg(const rslidar_msgs::rslidarScan& ros_msg)
+inline ScanMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type, const rslidar_msgs::rslidarScan& ros_msg)
 {
   ScanMsg rs_msg;
   rs_msg.seq = ros_msg.header.seq;
@@ -79,7 +99,7 @@ inline ScanMsg toRsMsg(const rslidar_msgs::rslidarScan& ros_msg)
 
   for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
   {
-    PacketMsg tmp = toRsMsg(ros_msg.packets[i]);
+    PacketMsg tmp = toRsMsg(lidar_type, pkt_type, ros_msg.packets[i]);
     rs_msg.packets.emplace_back(std::move(tmp));
   }
   return std::move(rs_msg);
@@ -130,11 +150,29 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   ros_msg.header.frame_id = rs_msg.frame_id;
   return std::move(ros_msg);
 }
-inline PacketMsg toRsMsg(const rslidar_msg::msg::RslidarPacket& ros_msg)
+inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
+                         const rslidar_msg::msg::RslidarPacket& ros_msg)
 {
-  PacketMsg rs_msg(RSLIDAR_PKT_LEN);
+  size_t pkt_length;
+  switch (lidar_type)
+  {
+    case LidarType::RSM1:
+      if (pkt_type == PktType::MSOP)
+      {
+        pkt_length = MEMS_MSOP_LEN;
+      }
+      else
+      {
+        pkt_length = MEMS_DIFOP_LEN;
+      }
+      break;
+    default:
+      pkt_length = MECH_PKT_LEN;
+      break;
+  }
+  PacketMsg rs_msg(pkt_length);
 #pragma omp parallel for
-  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
+  for (size_t i = 0; i < pkt_length; i++)
   {
     rs_msg.packet[i] = std::move(ros_msg.data[i]);
   }
@@ -144,20 +182,21 @@ inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msg::msg::RslidarPacket ros_msg;
 #pragma omp parallel for
-  for (size_t i = 0; i < RSLIDAR_PKT_LEN; i++)
+  for (size_t i = 0; i < MECH_PKT_LEN; i++)
   {
     ros_msg.data[i] = std::move(rs_msg.packet[i]);
   }
   return ros_msg;
 }
-inline ScanMsg toRsMsg(const rslidar_msg::msg::RslidarScan& ros_msg)
+inline ScanMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
+                       const rslidar_msg::msg::RslidarScan& ros_msg)
 {
   ScanMsg rs_msg;
   rs_msg.timestamp = ros_msg.header.stamp.sec + double(ros_msg.header.stamp.nanosec) / 1e9;
   rs_msg.frame_id = ros_msg.header.frame_id;
   for (uint32_t i = 0; i < ros_msg.packets.size(); i++)
   {
-    PacketMsg tmp = toRsMsg(ros_msg.packets[i]);
+    PacketMsg tmp = toRsMsg(lidar_type, pkt_type, ros_msg.packets[i]);
     rs_msg.packets.emplace_back(std::move(tmp));
   }
   return rs_msg;
