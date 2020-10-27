@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+cmake_policy(SET CMP0048 NEW)
 project(rslidar_sdk)
 
 #=======================================
@@ -18,30 +19,14 @@ add_definitions(-DCUSTOM_POINT)
 endif()
 
 #========================
-# Project Version
-#========================
-set (PROJECT_VERSION_MAJOR 1)
-set (PROJECT_VERSION_MINOR 2)
-set (PROJECT_VERSION_PATCH 1)
-
-#========================
 # Project details / setup
 #========================
 set(PROJECT_NAME rslidar_sdk)
 add_definitions(-DPROJECT_PATH="${PROJECT_SOURCE_DIR}")
-cmake_policy(SET CMP0048 NEW)
 set(CMAKE_BUILD_TYPE RELEASE)
 add_definitions(-O3)
 add_definitions(-std=c++14)
 add_compile_options(-Wall)
-
-#========================
-# Version
-#========================
-configure_file (
-  "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h.in"
-  "${PROJECT_SOURCE_DIR}/src/rs_driver/src/rs_driver/macro/version.h"
-)
 
 #========================
 # Dependencies Setup
@@ -130,8 +115,8 @@ endif(${COMPILE_METHOD} MATCHES "CATKIN")
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
 #Driver core#
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/src/rs_driver/cmake)
-include(rs_driver)
+add_subdirectory(src/rs_driver)
+find_package(rs_driver REQUIRED)
 include_directories(${rs_driver_INCLUDE_DIRS})
 
 #========================
