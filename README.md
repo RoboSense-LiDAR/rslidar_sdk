@@ -6,8 +6,6 @@
 
 **rslidar_sdk** is the lidar driver software development kit under Ubuntu operating system, which contains the lidar driver core, ROS support, ROS2 support and Protobuf-UDP communication functions. For user who want to get point cloud through ROS or ROS2,  this software development kit can be used directly. For user who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core [rs_driver](https://github.com/RoboSense-LiDAR/rs_driver).
 
-
-
 **LiDAR Support**
 
 - RS16
@@ -37,7 +35,7 @@ git submodule update
 
 User can access  [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslidar_sdk/releases) to download the latest version of rslidar_sdk. Please download the **rslidar_sdk.tar.gz** instead of Source code because the Source code zip file does not contain the submodule(rs_driver), and user need to download it manually.
 
-
+![](doc/img/download_page.png)
 
 ## 3 Dependencies
 
@@ -45,9 +43,9 @@ User can access  [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslida
 
 If use rslidar_sdk in ROS environment, ROS related libraries need to be installed. 
 
-Ubuntu 16.04 - Install ROS kinetic desktop-full
+Ubuntu 16.04 - ROS kinetic desktop-full
 
-Ubuntu 18.04 - install ROS melodic desktop-full
+Ubuntu 18.04 - ROS melodic desktop-full
 
 Installation： please refer to  http://wiki.ros.org
 
@@ -59,7 +57,7 @@ If use rslidar_sdk in ROS2 environment, ROS2 related libraries need to be instal
 
 Ubuntu 16.04 - Not support 
 
-Ubuntu 18.04 - Install ROS2 eloquent desktop
+Ubuntu 18.04 - ROS2 eloquent desktop
 
 Installation: please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
@@ -165,36 +163,17 @@ ros2 launch rslidar_sdk start.py
 
 
 
-### 5 File Structure
-
-```sh
-.						
-├── config        #Store all the config files
-├── doc           #Store all the documents
-│   ├── howto       #Store the guide documents
-│   └── intro       #Store the introduction documents
-├── launch        #Store the launch files for ROS & ROS2
-├── node          #Store the node code(main function)
-├── rviz          #Store the rviz config file for ROS & ROS2
-└── src           #Store all the source codes
-    ├── adapter     #Store the code of adapters
-    ├── manager     #Store the code of adapter manager
-    ├── msg         #Store the message definition
-    ├── rs_driver   #The lidar driver core
-    └── utility     #Store the tool codes
-```
-
-
-
-### 6 Introduction to parameters
+## 5 Introduction to parameters
 
 **This part is very important so please read carefully. All the functions of this software development kit will be reach by modifying parameters.**
 
 [Intro to parameters](doc/intro/parameter_intro.md)
 
+[Intro to hiding parameters](doc/intro/hiding_parameters_intro.md)
 
 
-### 7 Quick start
+
+## 6 Quick start
 
 **The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and user can use rslidar_sdk in their own way by modifying parameters.**
 
@@ -206,10 +185,12 @@ ros2 launch rslidar_sdk start.py
 
 
 
-### 8 Advanced
-
-[Intro to hiding parameters](doc/intro/hiding_parameters_intro.md)
+## 7 Advanced
 
 [Use protobuf send & receive](doc/howto/how_to_use_protobuf_function.md)
 
 [Multi-LiDARs](doc/howto/how_to_use_multi_lidars.md)
+
+[Multi-Cast](doc/howto/how_to_use_multi_cast_function.md) 
+
+[Switch Point Type.md](doc/howto/how_to_switch_point_type.md) 

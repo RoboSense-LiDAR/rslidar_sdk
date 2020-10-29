@@ -3,20 +3,14 @@ cmake_policy(SET CMP0048 NEW)
 project(rslidar_sdk)
 
 #=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
+# Compile setup (ORIGINAL, CATKIN, COLCON)
 #=======================================
 set(COMPILE_METHOD ORIGINAL)
 
 #=======================================
-# Custom Point Type
+# Custom Point Type (XYZI, XYZIRT)
 #=======================================
-option(CUSTOM_POINT "option for custom point type" OFF)
-if (CUSTOM_POINT)
-message(=============================================================)
-message("-- CUSTOM_POINT is ON. Custom point is used!")
-message(=============================================================)
-add_definitions(-DCUSTOM_POINT)
-endif()
+set(POINT_TYPE XYZIRT)
 
 #========================
 # Project details / setup
@@ -102,7 +96,7 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 #Catkin#
-if(${COMPILE_METHOD} MATCHES "CATKIN")
+if(${COMPILE_METHOD} STREQUAL "CATKIN")
   find_package(catkin REQUIRED COMPONENTS
           roscpp
           sensor_msgs
@@ -111,13 +105,25 @@ if(${COMPILE_METHOD} MATCHES "CATKIN")
   catkin_package(
           CATKIN_DEPENDS sensor_msgs
   )
-endif(${COMPILE_METHOD} MATCHES "CATKIN")
+endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
 #Driver core#
 add_subdirectory(src/rs_driver)
 find_package(rs_driver REQUIRED)
 include_directories(${rs_driver_INCLUDE_DIRS})
+
+#========================
+# Point Type Definition
+#========================
+if(${POINT_TYPE} STREQUAL "XYZI")
+add_definitions(-DPOINT_TYPE_XYZI)
+elseif(${POINT_TYPE} STREQUAL "XYZIRT")
+add_definitions(-DPOINT_TYPE_XYZIRT)
+endif()
+message(=============================================================)
+message("-- POINT_TYPE is ${POINT_TYPE}")
+message(=============================================================)
 
 #========================
 # Build Setup

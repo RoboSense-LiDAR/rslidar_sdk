@@ -1,9 +1,7 @@
 # **rslidar_sdk**
 
 ## 1 工程简介
- **rslidar_sdk** 为速腾聚创在Ubuntu环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
-
-
+ **rslidar_sdk** 为速腾聚创在Ubuntu环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有更深一步二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
 
 **雷达型号支持**
 
@@ -34,7 +32,7 @@ git submodule update
 
 用户可以直接访问  [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslidar_sdk/releases) 下载最新版本的rslidar_sdk. 请下载 **rslidar_sdk.tar.gz** 压缩包， 不要下载Source code。 因为Source code压缩包内不包含子模块rs_driver的代码， 用户还需自行下载rs_driver的代码放入其中才行。
 
-
+![](doc/img/download_page.png)
 
 
 
@@ -44,9 +42,9 @@ git submodule update
 
 *若需在ROS环境下使用雷达驱动，则需安装ROS相关依赖库*
 
-Ubuntu 16.04 - 安装ROS kinetic desktop-full  
+Ubuntu 16.04 - ROS kinetic desktop-full  
 
-Ubuntu 18.04 - 安装ROS melodic desktop-full
+Ubuntu 18.04 - ROS melodic desktop-full
 
 安装方式： 参考 http://wiki.ros.org
 
@@ -58,11 +56,11 @@ Ubuntu 18.04 - 安装ROS melodic desktop-full
 
 Ubuntu 16.04 - 不支持
 
-Ubuntu 18.04 - 安装ROS2 Eloquent desktop
+Ubuntu 18.04 - ROS2 Eloquent desktop
 
 安装方式：参考 https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
-**注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时还需要手动安装Yaml库**
+**注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时还需要手动安装Yaml库。**
 
 ### 3.3 Yaml (必需)
 
@@ -164,36 +162,17 @@ ros2 launch rslidar_sdk start.py
 
 
 
-## 5 文件结构
-
-```sh
-.						
-├── config        #存放所有的参数文件
-├── doc           #存放所有的文档
-│   ├── howto       #存放使用文档
-│   └── intro       #存放介绍文档
-├── launch        #存放ROS与ROS2的启动脚本
-├── node          #存放节点代码（main函数)
-├── rviz          #存放ROS与ROS2的rviz配置文件
-└── src           #存放所有源代码
-    ├── adapter     #存放外围适配器的代码
-    ├── manager     #存放适配器管理器的代码
-    ├── msg         #存放消息定义
-    ├── rs_driver   #驱动内核
-    └── utility     #存放工具类代码
-```
-
-
-
-## 6 参数介绍
+## 5 参数介绍
 
 **参数介绍非常重要，请仔细阅读。 本软件包的所有功能都将通过配置参数文件来实现。**
 
 [参数介绍](doc/intro/parameter_intro.md)
 
+[隐藏参数介绍](doc/intro/hiding_parameters_intro.md)
 
 
-## 7 快速上手
+
+## 6 快速上手
 
 **以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 可通过配置参数改变不同的工作模式。**
 
@@ -205,12 +184,12 @@ ros2 launch rslidar_sdk start.py
 
 
 
-## 8 使用进阶
-
-[隐藏参数介绍](doc/intro/hiding_parameters_intro.md)
+## 7 使用进阶
 
 [使用Protobuf发送&接收](doc/howto/how_to_use_protobuf_function_cn.md)
 
 [多雷达](doc/howto/how_to_use_multi_lidars_cn.md)
 
+[组播功能](doc/howto/how_to_use_multi_cast_function.md) 
 
+[改变点的类型](doc/howto/how_to_switch_point_type.md) 
