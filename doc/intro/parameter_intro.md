@@ -1,6 +1,6 @@
 # Parameters Introduction
 
-There is only one configure file **config.yaml**, which is stored in ```rslidar_sdk/config```.  The config.yaml can be divided into two parts, the ```common``` part  and ```lidar``` part . In multi-LiDARs case, the parameters in ```common``` part will be shared by all LiDARs, while the parameters in ```lidar``` part need to be adjust for each LiDAR.
+There is only one configure file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  The config.yaml can be divided into two parts, the common part  and lidar part . *In multi-LiDARs case, the parameters in common part will be shared by all LiDARs, while the parameters in lidar part need to be adjust for each LiDAR.*
 
 **The config.yaml is very strict to indentation! Please make sure the indentation is not changed when adjusting the parameters!**
 
@@ -40,9 +40,7 @@ common:
 
    - false -- Do nothing.
 
-   **If the msg_source =2, there is no use to set send_packet_ros to true because the packet come from ROS and there is no reason to send them back to ROS.**
-
-   **Since the ROS packet message type is robosense self-defined type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.**
+   *Since the ROS packet message type is robosense self-defined type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.*
 
 - send_point_cloud_ros
 
@@ -50,7 +48,7 @@ common:
    
    - false -- Do nothing.
    
-   **The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, that's why we suggest to  record packets.**
+   *The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, that's why we suggest to  record packets.*
 
 - send_packet_proto
 
@@ -63,11 +61,11 @@ common:
    - true -- The lidar point cloud will be sent out as protobuf message through ethernet in UDP protocal. 
    - false -- Do nothing
 
-   **We suggest send packets through ethernet rather than point cloud because point cloud size is too larger and it may take up a lot of bandwidth.**
+   *We suggest sending packets through ethernet by protobuf rather than point cloud because point cloud size is too larger and it may take up a lot of bandwidth.*
 
 - pcap_path
 
-   If the ```msg_source = 3```, please make sure the pcap_path is correct, otherwise this paramter can be igonred.
+   If the msg_source = 3, please make sure the pcap_path is correct, otherwise this paramter can be igonred.
 
 
 
@@ -80,7 +78,6 @@ lidar:
   - driver:
       lidar_type: RS128           
       frame_id: /rslidar           
-      device_ip: 192.168.1.200     
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -111,13 +108,13 @@ lidar:
 
   The frame id of the point cloud message.
 
-- device_ip, msop_port, difop_port
+- msop_port, difop_port
 
-  The ip address, msop port and difop_port of LiDAR. **Please check these three parameters first is no data received.**
+  The msop port and difop_port of LiDAR. *Please check these parameters first is no data received.*
 
 - start_angle, end_angle
 
-  The start angle and end angle of the point cloud, which should be set in range of 0~360°. (**start_angle can be larger than end_angle**).
+  The start angle and end angle of the point cloud, which should be set in range of 0~360°. (*start_angle **can** be larger than end_angle*).
 
 - min_distance, max_distance
 
@@ -134,7 +131,7 @@ lidar:
 
 Here are two examples for one LiDAR and three LiDAR configure files. Please adjust the specific parameters according to your own case.
 
-### 3.1 Online connect one LiDAR & Send point cloud to ROS
+- Online connect one LiDAR & Send point cloud to ROS
 
 ```yaml
 common:
@@ -148,7 +145,6 @@ lidar:
   - driver:
       lidar_type: RS128           
       frame_id: /rslidar           
-      device_ip: 192.168.1.200     
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -171,7 +167,7 @@ lidar:
       packet_send_ip: 127.0.0.1                
 ```
 
-### 3.2 Online connect three LiDARs & Send point cloud to ROS
+- Online connect three LiDARs & Send point cloud to ROS
 
 *Pay attention to the indentation of lidar part*
 
@@ -187,7 +183,6 @@ lidar:
   - driver:
       lidar_type: RS128           
       frame_id: /rslidar           
-      device_ip: 192.168.1.200     
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -211,7 +206,6 @@ lidar:
   - driver:
       lidar_type: RSBP           
       frame_id: /rslidar           
-      device_ip: 192.168.1.199     
       msop_port: 1990             
       difop_port: 1991            
       start_angle: 0              
@@ -235,7 +229,6 @@ lidar:
   - driver:
       lidar_type: RSBP           
       frame_id: /rslidar           
-      device_ip: 192.168.1.201     
       msop_port: 2010             
       difop_port: 2011            
       start_angle: 0              

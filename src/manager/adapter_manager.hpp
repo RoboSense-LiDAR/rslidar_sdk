@@ -152,7 +152,6 @@ public:
         case MsgSource::MSG_FROM_PCAP:  // pcap
           RS_INFO << "------------------------------------------------------" << RS_REND;
           RS_INFO << "Receive Packets From : Pcap" << RS_REND;
-          RS_INFO << "Device Ip: " << lidar_config[i]["driver"]["device_ip"].as<std::string>() << RS_REND;
           RS_INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << RS_REND;
           RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
           RS_INFO << "------------------------------------------------------" << RS_REND;

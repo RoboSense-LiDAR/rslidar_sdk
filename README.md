@@ -165,7 +165,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 5 Introduction to parameters
 
-**This part is very important so please read carefully. All the functions of this software development kit will be reach by modifying parameters.**
+This part is very important so please read carefully. All the functions of this software development kit will be reach by modifying parameters.
 
 [Intro to parameters](doc/intro/parameter_intro.md)
 
@@ -175,7 +175,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 6 Quick start
 
-**The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and user can use rslidar_sdk in their own way by modifying parameters.**
+The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and user can use rslidar_sdk in their own way by modifying parameters.
 
 [Online connect lidar and send point cloud through ROS](doc/howto/how_to_online_send_point_cloud_ros.md)
 
@@ -193,4 +193,4 @@ ros2 launch rslidar_sdk start.py
 
 [Multi-Cast](doc/howto/how_to_use_multi_cast_function.md) 
 
-[Switch Point Type.md](doc/howto/how_to_switch_point_type.md) 
+[Switch Point Type](doc/howto/how_to_switch_point_type.md) 

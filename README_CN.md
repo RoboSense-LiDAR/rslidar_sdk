@@ -164,7 +164,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 5 参数介绍
 
-**参数介绍非常重要，请仔细阅读。 本软件包的所有功能都将通过配置参数文件来实现。**
+参数介绍非常重要，请仔细阅读。 本软件包的所有功能都将通过配置参数文件来实现。
 
 [参数介绍](doc/intro/parameter_intro.md)
 
@@ -174,7 +174,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 6 快速上手
 
-**以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 可通过配置参数改变不同的工作模式。**
+以下仅为一些常用功能的快速使用指南， 实际使用时并不仅限于以下几种工作模式， 可通过配置参数改变不同的工作模式。
 
 [在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_point_cloud_ros_cn.md)
 
@@ -192,4 +192,4 @@ ros2 launch rslidar_sdk start.py
 
 [组播功能](doc/howto/how_to_use_multi_cast_function.md) 
 
-[改变点的类型](doc/howto/how_to_switch_point_type.md) 
+[选择点的类型](doc/howto/how_to_switch_point_type.md) 
