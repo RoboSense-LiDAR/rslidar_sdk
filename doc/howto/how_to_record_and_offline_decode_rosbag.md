@@ -1,12 +1,8 @@
 # How to record and decode rosbag
 
-
-
 ## 1 Introduction
 
 This document will show you how to record and decode rosbag. Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
-
-
 
 ## 2 Record
 
@@ -28,8 +24,6 @@ common:
 
 In order to record packets, set ```send_packet_ros = true```. 
 
-
-
 ### 2.2 Record according to the topic
 
 ```yaml
@@ -45,9 +39,7 @@ User can also adjust the packets topic by adjust the ```ros_send_packet_topic```
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
 ```
 
-**Note:  If you set send_packet_ros = true, both two kinds of packets will be send to ROS. And you must record both of these two kinds of packets.**
-
-
+**If you set send_packet_ros = true, both two kinds of packets will be send to ROS. And you must record both of these two kinds of packets.**
 
 ## 3 Offline Decode
 
@@ -69,8 +61,6 @@ Since the packets message come from the ROS, set ```msg_source = 2```.
 
 We want to send point cloud to ROS so set ```send_point_cloud_ros = true```.
 
-
-
 ### 3.2 Set up the lidar-driver part of the config file
 
 ```yaml
@@ -89,8 +79,6 @@ lidar:
 
 Set the ```lidar_type```  to your LiDAR type.
 
-
-
 ### 3.3 Set the lidar-ros part of the config file
 
 ```yaml
@@ -101,8 +89,6 @@ ros:
 ```
 
 Set up the ```ros_recv_packet_topic```  to the ```msop``` topic in the rosbag.
-
-
 
 ### 3.4 Run
 

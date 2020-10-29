@@ -4,8 +4,6 @@
 
 ​	本文档将展示如何记录与解码rosbag。 在阅读这本文档之前请先阅读雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
 
-
-
 ## 2 录包
 
 ### 2.1 将packet发送至ROS
@@ -41,9 +39,7 @@ ros:
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
 ```
 
-**注意：如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 录包时必须同时记录这两种数据。**
-
-
+**如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 录包时必须同时记录这两种数据。**
 
 ## 3 离线解码
 
@@ -65,8 +61,6 @@ common:
 
 ​	将点云发送到ROS，因此设置 ```send_point_cloud_ros = true```。
 
-
-
 ### 3.2 设置配置文件的lidar-driver部分
 
 ```yaml
@@ -85,8 +79,6 @@ lidar:
 
 ​	将 ```lidar_type``` 设置为LiDAR类型 。
 
-
-
 ### 3.3 设置配置文件的lidar-ros部分
 
 ```yaml
@@ -97,8 +89,6 @@ ros:
 ```
 
 ​	将 ```ros_recv_packet_topic``` 设置为rosbag中的```msop```数据的话题。
-
-
 
 ### 3.4 运行
 

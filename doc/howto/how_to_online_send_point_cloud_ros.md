@@ -1,12 +1,8 @@
 # How to online connect lidar and send point cloud to ROS
 
-
-
 ## 1 Introduction
 
 This document will show you how to online connect a LiDAR and send point cloud to ROS. Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
-
-
 
 ## 2 Steps
 
@@ -29,8 +25,6 @@ common:
 Since the message come from the LiDAR, set ```msg_source = 1```. 
 
 Send point cloud to ROS so set ```send_point_cloud_ros = true```.
-
-
 
 ### 2.3 Set up the lidar-driver part of the config file
 
@@ -55,8 +49,6 @@ Set the ```lidar_type```  to your LiDAR type.
 
 Set the ```msop_port``` and ```difop_port```  to your LiDAR's port number. 
 
-
-
 ### 2.4 Set up the lidar-ros part of the config file
 
 ```yaml
@@ -67,8 +59,6 @@ ros:
 ```
 
 Set the ```ros_send_point_cloud_topic```  to the topic you want to send. 
-
-
 
 ### 2.5 Run
 

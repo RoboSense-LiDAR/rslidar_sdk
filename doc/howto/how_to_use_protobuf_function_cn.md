@@ -10,8 +10,6 @@
 
 rslidar_sdk提供这两种方式，但是通常建议使用第一种方法，因为点云消息非常大，对带宽有较高要求。  
 
-
-
 ## 2 通过Protobuf-UDP发送和接收 packets
 
 ​	首先请阅读[参数简介](.. / intro / parameter_intro.md)，了解基本的参数配置。 
@@ -66,8 +64,6 @@ lidar:
 
 ​	设置 ```msop_send_port```, ```difop_send_port```, 和 ```packet_send_ip```.
 
-
-
 ### 2.2 PC-B(接收端)
 
 ```yaml
@@ -117,13 +113,9 @@ lidar:
 
 ​	将```msop_recv_port```和```difop_recv_port```与PC-A的配置文件中设置的```msop_send_port```和```difop_send_port```设置为一致。
 
-
-
 ## 3 通过Protobuf-UDP发送和接收点云
 
  首先请阅读[参数简介](... / intro / parameter_intro.md)，了解基本的参数配置。 
-
-
 
 ### 3.1 PC-A(发送端)
 
@@ -175,8 +167,6 @@ lidar:
 
 ​	设置 ```point_cloud_send_port``` 和 ```point_cloud_send_ip```.
 
-
-
 ### 3.2 PC-B(接收端)
 
 ```yaml
@@ -223,8 +213,6 @@ lidar:
 ​	确认PC-B的ip地址与PC-A的配置文件中设置的```point_cloud_send_ip```一致。
 
 ​	将```point_cloud_recv_port```与PC-A的配置文件中设置的```point_cloud_send_port```设置为一致。
-
-
 
 
 

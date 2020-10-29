@@ -4,8 +4,6 @@
 
 This document will show you how to decode pcap bag  and send point cloud to ROS. Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
 
-
-
 ## 2 Steps
 
 ### 2.1 Get the data port number & ip address
@@ -30,8 +28,6 @@ Send point cloud to ROS so set ```send_point_cloud_ros = true```.
 
 Make sure the ```pcap_path``` is correct.
 
-
-
 ### 2.3 Set up the lidar-driver part of the config file
 
 ```yaml
@@ -52,8 +48,6 @@ Set the ```lidar_type```  to your LiDAR type.
 
 Set the ```msop_port``` and ```difop_port```  to your LiDAR's port number. 
 
-​	
-
 ### 2.4 Set up the lidar-ros part of the config file
 
 ```yaml
@@ -64,8 +58,6 @@ ros:
 ```
 
 Set the ```ros_send_point_cloud_topic```  to the topic you want to send. 
-
-
 
 ### 2.5 Run
 
