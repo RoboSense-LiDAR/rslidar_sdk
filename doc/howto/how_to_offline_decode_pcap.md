@@ -6,7 +6,7 @@ This document will show you how to decode pcap bag  and send point cloud to ROS.
 
 ## 2 Steps
 
-### 2.1 Get the data port number & ip address
+### 2.1 Get the LiDAR port number
 
 Please follow the instructions in LiDAR user-guide to connect the LiDAR and set up your computer's ip address. At this time, you should have already known your LiDAR's msop port number and difop port number. The default is ```msop-6699, difop-7788```. If you have no idea about what it is, please check the LiDAR user-guide first.
 

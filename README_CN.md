@@ -13,7 +13,10 @@
 - RSM1-B3
 - RSHELIOS
 
+### 1.2 点的类型支持
 
+- XYZI - x, y, z, intensity
+- XYZIRT - x, y, z, intensity, timestamp, ring
 
 ## 2 下载
 
