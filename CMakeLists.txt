@@ -91,7 +91,7 @@ if(OPENMP_FOUND)
 endif()
 #Others#
 find_package(yaml-cpp REQUIRED)
-find_package(PCL REQUIRED)
+find_package(PCL QUIET REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
