@@ -193,6 +193,6 @@ ros2 launch rslidar_sdk start.py
 
 [多雷达](doc/howto/how_to_use_multi_lidars_cn.md)
 
-[组播功能](doc/howto/how_to_use_multi_cast_function.md) 
-
 [选择点的类型](doc/howto/how_to_switch_point_type.md) 
+
+[组播功能](doc/howto/how_to_use_multi_cast_function.md) 

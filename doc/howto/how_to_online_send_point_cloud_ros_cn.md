@@ -33,7 +33,6 @@ lidar:
   - driver:
       lidar_type: RS128            
       frame_id: /rslidar           
-      device_ip: 192.168.1.200     
       msop_port: 6699             
       difop_port: 7788           
       start_angle: 0               

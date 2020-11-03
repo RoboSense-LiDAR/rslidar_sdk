@@ -2,7 +2,7 @@
 
 ## 1 Introduction
 
-This document will show you how to switch the point type. The supported point type is listed in README. To switch the type, open the ```CMakeLists.txt``` in the project and check the top of the file.
+This document will show you how to switch the point type. The supported point type is listed in README. To switch the type, open the ```CMakeLists.txt``` in the project and check the top of the file. Remember to **rebuild** the project after changing the point type.
 
 ```cmake
 #=======================================
@@ -11,13 +11,11 @@ This document will show you how to switch the point type. The supported point ty
 set(POINT_TYPE XYZI)
 ```
 
-User can set the point type to ```XYZI``` or ```XYZIRT``` and rebuild the project.
-
 
 
 ## 2 XYZI
 
-The default point type is the pcl official type```pcl::PointXYZI```.  Here is an example of transform the ros point cloud to pcl point cloud.
+The default point type is the pcl official type```pcl::PointXYZI```.  Here is an example of transforming the ros point cloud to pcl point cloud. User can take this as an reference in their receiving program.
 
 ```c++
 #include <pcl_conversions/pcl_conversions.h>
@@ -30,7 +28,7 @@ pcl::fromROSMsg(ros_msg, *cloud_ptr);
 
 ## 3 XYZIRT
 
-Since this is the custom pcl point type, user need to add the definition of the point in the receiver program. The definition is shown below.
+Since this is the custom pcl point type, user need to add the definition of the point in the receiving program. The definition is shown below.
 
 ```c++
 #include <pcl_conversions/pcl_conversions.h>

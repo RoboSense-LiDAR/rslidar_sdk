@@ -194,6 +194,6 @@ The following documents are some quick guides for using some of the most common 
 
 [Multi-LiDARs](doc/howto/how_to_use_multi_lidars.md)
 
-[Multi-Cast](doc/howto/how_to_use_multi_cast_function.md) 
-
 [Switch Point Type](doc/howto/how_to_switch_point_type.md) 
+
+[Multi-Cast](doc/howto/how_to_use_multi_cast_function.md) 
