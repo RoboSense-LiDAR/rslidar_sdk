@@ -129,11 +129,10 @@ inline std_msgs::Time toRosMsg(const CameraTrigger& rs_msg)
 #endif  // ROS_FOUND
 
 #ifdef ROS2_FOUND
+#include <pcl_conversions/pcl_conversions.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include "rslidar_msg/msg/rslidar_packet.hpp"
 #include "rslidar_msg/msg/rslidar_scan.hpp"
-
-#include <sensor_msgs/msg/point_cloud2.hpp>
-#include <pcl_conversions/pcl_conversions.h>
 namespace robosense
 {
 namespace lidar

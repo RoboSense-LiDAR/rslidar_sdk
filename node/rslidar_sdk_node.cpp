@@ -20,9 +20,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 #include <signal.h>
-#include <mutex>
-#include <condition_variable>
-#include "manager/adapter_manager.hpp"
+#include "manager/adapter_manager.h"
 using namespace robosense::lidar;
 std::mutex g_mtx;
 std::condition_variable g_cv;

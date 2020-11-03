@@ -53,69 +53,86 @@ class AdapterBase
 public:
   typedef std::shared_ptr<AdapterBase> Ptr;
   AdapterBase() = default;
-  virtual ~AdapterBase() = default;
-
+  virtual ~AdapterBase();
   virtual void init(const YAML::Node& config) = 0;
-
-  virtual void start()
-  {
-    return;
-  }
-
-  virtual void stop()
-  {
-    return;
-  }
-
-  virtual void sendScan(const ScanMsg& msg)
-  {
-    return;
-  }
-
-  virtual void sendPacket(const PacketMsg& msg)
-  {
-    return;
-  }
-
-  virtual void sendPointCloud(const LidarPointCloudMsg& msg)
-  {
-    return;
-  }
-
-  virtual void sendCameraTrigger(const CameraTrigger& msg)
-  {
-    return;
-  }
-
-  virtual void regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
-  {
-    return;
-  }
-
-  virtual void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
-  {
-    return;
-  }
-
-  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
-  {
-    return;
-  }
-
-  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
-  {
-    return;
-  }
-
-  virtual void decodeScan(const ScanMsg& msg)
-  {
-    return;
-  }
-
-  virtual void decodePacket(const PacketMsg& msg)
-  {
-    return;
-  }
+  virtual void start();
+  virtual void stop();
+  virtual void sendScan(const ScanMsg& msg);
+  virtual void sendPacket(const PacketMsg& msg);
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual void sendCameraTrigger(const CameraTrigger& msg);
+  virtual void regRecvCallback(const std::function<void(const ScanMsg&)>& callback);
+  virtual void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
+  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
+  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback);
+  virtual void decodeScan(const ScanMsg& msg);
+  virtual void decodePacket(const PacketMsg& msg);
 };
+
+inline AdapterBase::~AdapterBase()
+{
+  stop();
+}
+
+inline void AdapterBase::start()
+{
+  return;
+}
+
+inline void AdapterBase::stop()
+{
+  return;
+}
+
+inline void AdapterBase::sendScan(const ScanMsg& msg)
+{
+  return;
+}
+
+inline void AdapterBase::sendPacket(const PacketMsg& msg)
+{
+  return;
+}
+
+inline void AdapterBase::sendPointCloud(const LidarPointCloudMsg& msg)
+{
+  return;
+}
+
+inline void AdapterBase::sendCameraTrigger(const CameraTrigger& msg)
+{
+  return;
+}
+
+inline void AdapterBase::regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
+{
+  return;
+}
+
+inline void AdapterBase::regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
+{
+  return;
+}
+
+inline void AdapterBase::regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
+{
+  return;
+}
+
+inline void AdapterBase::regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
+{
+  return;
+}
+
+inline void AdapterBase::decodeScan(const ScanMsg& msg)
+{
+  return;
+}
+
+inline void AdapterBase::decodePacket(const PacketMsg& msg)
+{
+  return;
+}
+
 }  // namespace lidar
 }  // namespace robosense

@@ -132,6 +132,7 @@ message(=============================================================)
 if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
+              src/manager/adapter_manager.cpp
               ${PROTO_FILE_PATH}/packet.pb.cc
               ${PROTO_FILE_PATH}/scan.pb.cc
               ${PROTO_FILE_PATH}/point_cloud.pb.cc
@@ -145,6 +146,7 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
+              manager/adapter_manager.cpp
               )
   target_link_libraries(rslidar_sdk_node                   
                       ${PCL_LIBRARIES}
