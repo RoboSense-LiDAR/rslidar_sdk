@@ -6,7 +6,7 @@
 
 **rslidar_sdk** is the lidar driver software development kit under Ubuntu operating system, which contains the lidar driver core, ROS support, ROS2 support and Protobuf-UDP communication functions. For user who want to get point cloud through ROS or ROS2,  this software development kit can be used directly. For user who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core [rs_driver](https://github.com/RoboSense-LiDAR/rs_driver).
 
-**LiDAR Support**
+### **1.1 LiDAR Support**
 
 - RS16
 - RS32

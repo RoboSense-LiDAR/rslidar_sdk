@@ -191,7 +191,7 @@ void AdapterManager::init(const YAML::Node& config)
         break;
 
       default:
-        RS_ERROR << "Wrong LiDAR message source! Abort!" << RS_REND;
+        RS_ERROR << "Not use LiDAR or Wrong LiDAR message source! Abort!" << RS_REND;
         exit(-1);
     }
 

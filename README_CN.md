@@ -3,7 +3,7 @@
 ## 1 工程简介
  **rslidar_sdk** 为速腾聚创在Ubuntu环境下的雷达驱动软件包，包括了雷达驱动内核， ROS拓展功能，ROS2拓展功能，Protobuf-UDP通信拓展功能。对于没有二次开发需求的用户，或是想直接使用ROS或ROS2进行二次开发的用户，可直接使用本软件包， 配合ROS或ROS2自带的RVIZ可视化工具即可查看点云。 对于有更深一步二次开发需求，想将雷达驱动集成到自己工程内的客户， 请参考雷达驱动内核的相关文档，直接使用内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)进行二次开发。
 
-**雷达型号支持**
+### **1.1 雷达型号支持**
 
 - RS16
 - RS32
@@ -169,9 +169,9 @@ ros2 launch rslidar_sdk start.py
 
 参数介绍非常重要，请仔细阅读。 本软件包的所有功能都将通过配置参数文件来实现。
 
-[参数介绍](doc/intro/parameter_intro.md)
+[参数介绍](doc/intro/parameter_intro_cn.md)
 
-[隐藏参数介绍](doc/intro/hiding_parameters_intro.md)
+[隐藏参数介绍](doc/intro/hiding_parameters_intro_cn.md)
 
 
 
@@ -193,6 +193,6 @@ ros2 launch rslidar_sdk start.py
 
 [多雷达](doc/howto/how_to_use_multi_lidars_cn.md)
 
-[选择点的类型](doc/howto/how_to_switch_point_type.md) 
+[切换点的类型](doc/howto/how_to_switch_point_type_cn.md) 
 
-[组播功能](doc/howto/how_to_use_multi_cast_function.md) 
+[组播模式](doc/howto/how_to_use_multi_cast_function_cn.md) 

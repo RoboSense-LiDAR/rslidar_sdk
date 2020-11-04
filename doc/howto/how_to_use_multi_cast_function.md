@@ -41,7 +41,7 @@ lidar:
 
 In multi-cast case, the ip address of PC has no limit but user need to make sure **the PC and LiDAR are in the same net work**, which means PC can ping to LiDAR.
 
-### 2.3 Add the ethernet to the group
+### 2.3 Add the PC to the group
 
 Use the following command to check the PC's ethernet card name:
 
