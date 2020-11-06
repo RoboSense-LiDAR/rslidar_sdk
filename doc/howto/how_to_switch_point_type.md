@@ -18,8 +18,6 @@ set(POINT_TYPE XYZI)
 The default point type is the pcl official type```pcl::PointXYZI```.  Here is an example of transforming the ros point cloud to pcl point cloud. User can take this as an reference in their receiving program.
 
 ```c++
-#include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_types.h>
 pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_ptr (new pcl::PointCloud<pcl::PointXYZI>);
 pcl::fromROSMsg(ros_msg, *cloud_ptr);
 ```
@@ -31,7 +29,7 @@ pcl::fromROSMsg(ros_msg, *cloud_ptr);
 Since this is the custom pcl point type, user need to add the definition of the point in the receiving program. The definition is shown below.
 
 ```c++
-#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/io/io.h>
 #include <pcl/point_types.h>
 struct RsPointXYZIRT
 {

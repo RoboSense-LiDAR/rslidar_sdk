@@ -18,8 +18,6 @@ set(POINT_TYPE XYZI)
 默认的点的类型是pcl的官方类型```pcl::PointXYZI```. 此处给出了一个将ros点云消息转换成pcl点云的例子，用户在编写ros点云接收端时可以作为参考。
 
 ```c++
-#include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_types.h>
 pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_ptr (new pcl::PointCloud<pcl::PointXYZI>);
 pcl::fromROSMsg(ros_msg, *cloud_ptr);
 ```
@@ -31,7 +29,7 @@ pcl::fromROSMsg(ros_msg, *cloud_ptr);
 由于这时速腾自定义的点的类型，用户需要在接收端程序添加对应的点的定义，点的定义如下所示。
 
 ```c++
-#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/io/io.h>
 #include <pcl/point_types.h>
 struct RsPointXYZIRT
 {

@@ -216,7 +216,6 @@ inline void PacketRosAdapter::sendPacket(const PacketMsg& msg)
   packet_pub_->publish(toRosMsg(msg));
 }
 
-private:
 inline void PacketRosAdapter::localMsopCallback(const rslidar_msg::msg::RslidarScan::SharedPtr msg)
 {
   for (auto& cb : scan_cb_vec_)

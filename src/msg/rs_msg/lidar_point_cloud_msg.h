@@ -24,9 +24,6 @@
 #include <array>
 #include <pcl/io/io.h>
 #include <pcl/point_types.h>
-
-#include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_types.h>
 struct RsPointXYZIRT
 {
   PCL_ADD_POINT4D;

@@ -34,7 +34,7 @@ To enable the transformation function, the option ```ENABLE_TRANSFORM``` needs t
 - ROS2
 
   ```bash
-  colcon build -DENABLE_TRANSFORM=ON
+  colcon build --cmake-args '-DENABLE_TRANSFORM=ON'
   ```
 
 ## 4 Set up parameters

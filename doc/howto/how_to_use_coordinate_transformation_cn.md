@@ -38,7 +38,7 @@
 - ROS2
 
   ```bash
-  colcon build -DENABLE_TRANSFORM=ON
+  colcon build --cmake-args '-DENABLE_TRANSFORM=ON'
   ```
 
 ## 4 参数设置
