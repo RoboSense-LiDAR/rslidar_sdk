@@ -2,13 +2,13 @@
 
 ## 1 简介
 
-​	本文档将展示如何在仅运行一个驱动程序的情况解析并发送多台雷达的点云。理论上，一个驱动可以同时解码无限数量的雷达。为了方便起见，本文档将会使用三个雷达作为示例。在阅读本文档之前， 请确保已经阅读过雷达用户手册和[参数简介](../intro/parameter_intro.md) 。
+本文档将展示如何在仅运行一个驱动程序的情况解析并发送多台雷达的点云。理论上，一个驱动可以同时解码无限数量的雷达。为了方便起见，本文档将会使用三个雷达作为示例。在阅读本文档之前， 请确保已经阅读过雷达用户手册和[参数简介](../intro/parameter_intro.md) 。
 
 ## 2 在线解析多雷达
 
 ### 2.1 获取数据端口号
 
-​	首先将三个雷达与计算机正确连接，此时应已知每个LiDAR的msop端口号 与 difop端口号。  如果不清楚上述内容，请查看雷达用户手册。
+首先将三个雷达与计算机正确连接，此时应已知每个LiDAR的msop端口号 与 difop端口号。  如果不清楚上述内容，请查看雷达用户手册。
 
 ### 2.2 设置参数文件的common部分
 
@@ -22,9 +22,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap     
 ```
 
-​	由于消息来源于在线雷达，因此请设置```msg_source=1```。
+由于消息来源于在线雷达，因此请设置```msg_source=1```。
 
-​	将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。
+将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。
 
 ### 2.3 设置配置文件中的lidar部分
 
@@ -101,15 +101,15 @@ lidar:
       packet_send_ip: 127.0.0.1    
 ```
 
-​	为每个雷达类型设置型号```lidar_type```。
+为每个雷达类型设置型号```lidar_type```。
 
-​	为每个雷达设置对应的端口号 ```msop_port``` 和```difop_port``` 。
+为每个雷达设置对应的端口号 ```msop_port``` 和```difop_port``` 。
 
-​	为每个雷达设置点云发送的话题```ros_send_point_cloud_topic```。
+为每个雷达设置点云发送的话题```ros_send_point_cloud_topic```。
 
 ### 2.4 运行
 
-​	运行程序。
+运行程序。
 
 ## 3 离线解析多雷达rosbag
 
@@ -125,9 +125,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap   
 ```
 
-​	由于数据包消息来自ROS，因此设置 ```msg_source = 2``` 。
+由于数据包消息来自ROS，因此设置 ```msg_source = 2``` 。
 
-​	将点云发送到ROS，因此设置 ```send_point_cloud_ros = true```。
+将点云发送到ROS，因此设置 ```send_point_cloud_ros = true```。
 
 ### 3.2 设置配置文件中的lidar部分
 
@@ -204,12 +204,12 @@ lidar:
       packet_send_ip: 127.0.0.1    
 ```
 
-​	为每个雷达类型设置型号```lidar_type```。
+为每个雷达类型设置型号```lidar_type```。
 
-​	为每个雷达设置接收的Packet话题名```ros_recv_packet_topic```。
+为每个雷达设置接收的Packet话题名```ros_recv_packet_topic```。
 
-​	为每个雷达设置点云发送的话题```ros_send_point_cloud_topic```。
+为每个雷达设置点云发送的话题```ros_send_point_cloud_topic```。
 
 ### 3.3 运行
 
-​	运行程序并播放rosbag。
+运行程序并播放rosbag。

@@ -2,7 +2,7 @@
 
 ## 1 简介
 
-​	假设有两台计算机，PC-A和PC-B，并且它们彼此相距很远。 将LiDAR与PC-A连接，由于某些原因，用户想在PC-B中使用点云消息。 此时，可能需要使用protobuf功能。 通常，有两种方法可以实现此目标。
+假设有两台计算机，PC-A和PC-B，并且它们彼此相距很远。 将LiDAR与PC-A连接，由于某些原因，用户想在PC-B中使用点云消息。 此时，可能需要使用protobuf功能。 通常，有两种方法可以实现此目标。
 
 - PC-A将雷达packet消息发送到PC-B。 PC-B收到雷达packet消息并对其进行解码，然后PC-B获得点云消息并使用它。
 
@@ -26,9 +26,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap 
 ```
 
-​	由于消息来源于在线雷达，因此请设置```msg_source=1```。
+由于消息来源于在线雷达，因此请设置```msg_source=1```。
 
-​	将packet数据通过Protobuf-UDP发出，因此设置 ```send_packet_proto = true``` 。
+将packet数据通过Protobuf-UDP发出，因此设置 ```send_packet_proto = true``` 。
 
 ```yaml
 lidar:
@@ -57,12 +57,12 @@ lidar:
       packet_send_ip: 127.0.0.1  
 ```
 
-​	将 ```lidar_type``` 设置为LiDAR类型 。
+将 ```lidar_type``` 设置为LiDAR类型 。
 
 
-​	设置 ```msop_port``` 和 ```difop_port``` 为雷达数据端口号。
+设置 ```msop_port``` 和 ```difop_port``` 为雷达数据端口号。
 
-​	设置 ```msop_send_port```, ```difop_send_port```, 和 ```packet_send_ip```.
+设置 ```msop_send_port```, ```difop_send_port```, 和 ```packet_send_ip```.
 
 ### 2.2 PC-B(接收端)
 
@@ -76,9 +76,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap 
 ```
 
-​	由于packet消息来源于protobuf-UDP，因此设置 ```msg_source = 4``` 。
+由于packet消息来源于protobuf-UDP，因此设置 ```msg_source = 4``` 。
 
-​	将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。
+将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。
 
 ```yaml
 lidar:
@@ -107,15 +107,15 @@ lidar:
       packet_send_ip: 127.0.0.1  
 ```
 
-​	将 ```lidar_type``` 设置为LiDAR类型 。
+将 ```lidar_type``` 设置为LiDAR类型 。
 
-​	确认PC-B的ip地址与PC-A的配置文件中设置的```packet_send_ip```一致。
+确认PC-B的ip地址与PC-A的配置文件中设置的```packet_send_ip```一致。
 
-​	将```msop_recv_port```和```difop_recv_port```与PC-A的配置文件中设置的```msop_send_port```和```difop_send_port```设置为一致。
+将```msop_recv_port```和```difop_recv_port```与PC-A的配置文件中设置的```msop_send_port```和```difop_send_port```设置为一致。
 
 ## 3 通过Protobuf-UDP发送和接收点云
 
- 首先请阅读[参数简介](... / intro / parameter_intro.md)，了解基本的参数配置。 
+首先请阅读[参数简介](... / intro / parameter_intro.md)，了解基本的参数配置。 
 
 ### 3.1 PC-A(发送端)
 
@@ -129,9 +129,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap 
 ```
 
-​	由于消息来源于在线雷达，因此请设置```msg_source=1```。
+由于消息来源于在线雷达，因此请设置```msg_source=1```。
 
-​	将点云数据通过Protobuf-UDP发出，因此设置 ```send_point_cloud_proto = true``` 。
+将点云数据通过Protobuf-UDP发出，因此设置 ```send_point_cloud_proto = true``` 。
 
 ```yaml
 lidar:
@@ -160,12 +160,12 @@ lidar:
       packet_send_ip: 127.0.0.1  
 ```
 
-​	将 ```lidar_type``` 设置为LiDAR类型 。
+将 ```lidar_type``` 设置为LiDAR类型 。
 
 
-​	设置 ```msop_port``` 和 ```difop_port``` 为雷达数据端口号。
+设置 ```msop_port``` 和 ```difop_port``` 为雷达数据端口号。
 
-​	设置 ```point_cloud_send_port``` 和 ```point_cloud_send_ip```.
+设置 ```point_cloud_send_port``` 和 ```point_cloud_send_ip```.
 
 ### 3.2 PC-B(接收端)
 
@@ -179,9 +179,9 @@ common:
   pcap_path: /home/robosense/lidar.pcap 
 ```
 
-​	由于点云消息来源于protobuf-UDP，因此设置 ```msg_source = 5``` 。
+由于点云消息来源于protobuf-UDP，因此设置 ```msg_source = 5``` 。
 
-​	将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。
+将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。
 
 ```yaml
 lidar:
@@ -210,9 +210,9 @@ lidar:
       packet_send_ip: 127.0.0.1  
 ```
 
-​	确认PC-B的ip地址与PC-A的配置文件中设置的```point_cloud_send_ip```一致。
+确认PC-B的ip地址与PC-A的配置文件中设置的```point_cloud_send_ip```一致。
 
-​	将```point_cloud_recv_port```与PC-A的配置文件中设置的```point_cloud_send_port```设置为一致。
+将```point_cloud_recv_port```与PC-A的配置文件中设置的```point_cloud_send_port```设置为一致。
 
 
 

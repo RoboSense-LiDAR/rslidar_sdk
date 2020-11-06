@@ -6,7 +6,7 @@ This document will show you how to use rslidar_sdk to receive point cloud from t
 
 ## 2 Steps (Linux)
 
-For convenience, we suppose the multi-cast address of LiDAR is ```224.1.1.1```.  
+Suppose the multi-cast address of LiDAR is ```224.1.1.1```.  
 
 ### 2.1 Set up hiding parameters
 
