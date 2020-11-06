@@ -196,4 +196,6 @@ The following documents are some quick guides for using some of the most common 
 
 [Switch Point Type](doc/howto/how_to_switch_point_type.md) 
 
+[Coordinate Transformation](doc/howto/how_to_use_coordinate_transformation.md) 
+
 [Multi-Cast](doc/howto/how_to_use_multi_cast_function.md) 

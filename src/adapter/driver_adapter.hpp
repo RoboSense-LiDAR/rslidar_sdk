@@ -100,6 +100,12 @@ inline void DriverAdapter::init(const YAML::Node& config)
   yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
   yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
+  yamlRead<float>(driver_config, "x", driver_param.decoder_param.transform_param.x, 0);
+  yamlRead<float>(driver_config, "y", driver_param.decoder_param.transform_param.y, 0);
+  yamlRead<float>(driver_config, "z", driver_param.decoder_param.transform_param.z, 0);
+  yamlRead<float>(driver_config, "roll", driver_param.decoder_param.transform_param.roll, 0);
+  yamlRead<float>(driver_config, "pitch", driver_param.decoder_param.transform_param.pitch, 0);
+  yamlRead<float>(driver_config, "yaw", driver_param.decoder_param.transform_param.yaw, 0);
   driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
   driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
   if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)

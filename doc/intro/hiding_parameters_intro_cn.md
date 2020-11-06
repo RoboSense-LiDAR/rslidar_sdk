@@ -43,6 +43,12 @@ lidar:
       wait_for_difop: true         
       saved_by_rows: false
       multi_cast_address: 0.0.0.0
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
 ```
 
 - ```angle_path``` -- angle.csv外参文件的路径，仅用于调试，可忽略。
@@ -54,4 +60,6 @@ lidar:
 - ```num_pkts_split``` -- 用于分帧的包数，在 ```split_frame_mode = 3```时才生效，默认值为1。
 - ```wait_for_difop``` -- 若设置为false， 驱动将不会等待difop包而是立即解析并发出点云。 默认值为```true```，也就是必须要有difop包才会进行点云解析。
 - ```saved_by_rows``` --  点云的默认储存方式为```按列储存```，也就是说假设有一个点msg.point_cloud_ptr->at(i) ，那么与这个点同一行的下一个点应该为msg.point_cloud_ptr->at(i+msg.height)。如果此参数设置为```true```,那么输出的点云将会```按行储存```。
-- ```multi_cast_address``` -- 如果雷达为组播模式，此参数需要被设置为组播的地址。更多的细节可以参考 [组播模式](../howto/how_to_use_multi_cast_function_cn.md) 
+- ```multi_cast_address``` -- 如果雷达为组播模式，此参数需要被设置为组播的地址。具体使用方式可以参考 [组播模式](../howto/how_to_use_multi_cast_function_cn.md) 
+
+- ```x, y, z, roll, pitch, yaw ``` -- 坐标变换参数，若启用了内核的坐标变换功能，将会使用此参数输出经过变换后的点云。x, y, z, 单位为```米```, roll, pitch, yaw, 单位为```弧度```。具体使用方式可以参考 [坐标变换功能](../howto/how_to_use_coordinate_transformation_cn.md) 

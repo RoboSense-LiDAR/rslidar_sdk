@@ -45,6 +45,12 @@ lidar:
       wait_for_difop: true         
       saved_by_rows: false
       multi_cast_address: 0.0.0.0
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
 ```
 
 - ```angle_path``` -- The path of the angle.csv. For latest version of LiDARs, this parameter can be ignored.
@@ -57,3 +63,5 @@ lidar:
 - ```wait_for_difop``` -- If set to false, the driver will not wait for difop packet and send out the point cloud immediately. The default value is ```true```.
 - ```saved_by_rows``` --  The default point cloud is stored in **column major order**, which means if there is  a point msg.point_cloud_ptr->at(i) , the next point on the same ring should be msg.point_cloud_ptr->at(i+msg.height). If this parameter is set to  ```true``` , the point cloud will be stored in **row major order**.
 - ```multi_cast_address``` -- If use multi-cast function, this parameter need to be set correctly. For more details, please refer to  [Multi-Cast](../howto/how_to_use_multi_cast_function.md) 
+
+- ```x, y, z, roll, pitch, yaw ``` -- The parameters to do cooridiante transformation. If the coordinate transformation function is enabled in driver core,  the output point cloud will be auto transformed based on these parameters. For more details, please refer to [Coordinate Transformation](../howto/how_to_use_coordinate_transformation.md) 

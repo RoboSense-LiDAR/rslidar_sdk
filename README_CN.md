@@ -195,4 +195,6 @@ ros2 launch rslidar_sdk start.py
 
 [切换点的类型](doc/howto/how_to_switch_point_type_cn.md) 
 
+[坐标变换功能](doc/howto/how_to_use_coordinate_transformation_cn.md) 
+
 [组播模式](doc/howto/how_to_use_multi_cast_function_cn.md) 

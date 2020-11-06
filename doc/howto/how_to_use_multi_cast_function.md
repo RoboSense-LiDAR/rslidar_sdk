@@ -8,7 +8,7 @@ This document will show you how to use rslidar_sdk to receive point cloud from t
 
 For convenience, we suppose the multi-cast address of LiDAR is ```224.1.1.1```.  
 
-### 2.1 Set up hiding parameter
+### 2.1 Set up hiding parameters
 
 User need to set up the hiding parameter ```multi_cast_address``` in lidar part of the config.yaml. Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
 
@@ -49,7 +49,7 @@ Use the following command to check the PC's ethernet card name:
 ifconfig
 ```
 
-![ethernet](/home/xzd/work/rslidar_sdk/doc/img/ethernet.png)
+![ethernet](../img/ethernet.png)
 
 As the figure shows, the ethernet card name is ```enp2s0```. Then execute the following command to add the PC to the group (replace the ```enp2s0``` with your ethernet card name):
 

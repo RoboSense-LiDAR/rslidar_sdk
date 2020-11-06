@@ -20,10 +20,6 @@ common:
 
 - msg_source
 
-  - 
-
-  - ## 2 lidar
-
   - 1 -- 连接在线雷达. 更多使用细节请参考[在线读取雷达数据发送到ROS](../howto/how_to_online_send_point_cloud_ros_cn.md)。
 
   - 2 -- 离线解析ROS或ROS2的packet包。更多使用细节请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。
@@ -117,8 +113,6 @@ lidar:
 
   - true -- 使用雷达时间作为消息时间戳。
   - false -- 使用系统时间作为消息时间戳。 
-
-
 
 
 
