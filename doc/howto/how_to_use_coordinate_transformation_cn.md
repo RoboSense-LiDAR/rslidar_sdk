@@ -43,7 +43,7 @@
 
 ## 4 参数设置
 
-用户需要将lidar部分的隐藏参数```x, y, z, roll, pitch ,yaw ``` ，更多的细节可以参考[隐藏参数介绍](../intro/hiding_parameters_intro.md)。此处为参数文件的一个示例，用户可根据实际情况配置。
+用户需要设置lidar部分的隐藏参数```x, y, z, roll, pitch ,yaw ``` ，更多的细节可以参考[隐藏参数介绍](../intro/hiding_parameters_intro.md)。此处为参数文件的一个示例，用户可根据实际情况配置。
 
 ```yaml
 common:

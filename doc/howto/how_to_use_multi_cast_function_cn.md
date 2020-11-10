@@ -49,7 +49,7 @@ lidar:
 ifconfig
 ```
 
-![ethernet](/home/xzd/work/rslidar_sdk/doc/img/ethernet.png)
+![ethernet](../img/ethernet.png)
 
 如图所示，网卡名为```enp2s0```。 然后运行以下指令将电脑加入组内（将指令中的```enp2s0```替换为用户电脑的网卡名:
 

@@ -206,7 +206,7 @@ lidar:
 
 为每个雷达类型设置型号```lidar_type```。
 
-为每个雷达设置接收的Packet话题名```ros_recv_packet_topic```。
+为每个雷达设置接收的packet话题名```ros_recv_packet_topic```。
 
 为每个雷达设置点云发送的话题```ros_send_point_cloud_topic```。
 
