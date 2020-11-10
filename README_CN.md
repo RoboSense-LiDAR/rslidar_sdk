@@ -16,7 +16,7 @@
 ### 1.2 点的类型支持
 
 - XYZI - x, y, z, intensity
-- XYZIRT - x, y, z, intensity, timestamp, ring
+- XYZIRT - x, y, z, intensity, ring, timestamp
 
 ## 2 下载
 

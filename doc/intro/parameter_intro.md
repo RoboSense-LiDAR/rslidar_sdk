@@ -1,6 +1,6 @@
 # Parameters Introduction
 
-There is only one configure file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  The config.yaml can be divided into two parts, the common part  and lidar part . *In multi-LiDARs case, the parameters in common part will be shared by all LiDARs, while the parameters in lidar part need to be adjust for each LiDAR.*
+There is only one configure file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  The config.yaml can be divided into two parts, the common part  and the lidar part . *In multi-LiDARs case, the parameters in common part will be shared by all LiDARs, while the parameters in lidar part need to be adjust for each LiDAR.*
 
 **The config.yaml is very strict to indentation! Please make sure the indentation is not changed when adjusting the parameters!**
 
@@ -126,7 +126,7 @@ lidar:
 
 ## 3 Example
 
-Here are two examples for one LiDAR and three LiDAR configure files. Please adjust the specific parameters according to your own case.
+Here are two example configure files for one LiDAR and three LiDAR configure files. Please adjust the specific parameters according to your own case.
 
 - Online connect one LiDAR & Send point cloud to ROS
 

@@ -26,7 +26,7 @@ pcl::fromROSMsg(ros_msg, *cloud_ptr);
 
 ## 3 XYZIRT
 
-Since this is the custom pcl point type, user need to add the definition of the point in the receiving program. The definition is shown below.
+Since this is the custom pcl point type, user needs to add the definition of the point in the receiving program. The definition is shown below.
 
 ```c++
 #include <pcl/io/io.h>

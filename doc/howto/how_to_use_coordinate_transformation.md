@@ -39,7 +39,7 @@ To enable the transformation function, the option ```ENABLE_TRANSFORM``` needs t
 
 ## 4 Set up parameters
 
-User need to set up the hiding parameter```x, y, z, roll, pitch ,yaw ``` in lidar part of the config.yaml. Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
+User needs to set up the hiding parameter```x, y, z, roll, pitch ,yaw ``` in lidar part of the config.yaml. Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
 
 ```yaml
 common:

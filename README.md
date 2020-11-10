@@ -19,13 +19,13 @@
 ### 1.2 Point type support
 
 - XYZI - x, y, z, intensity
-- XYZIRT - x, y, z, intensity, timestamp, ring
+- XYZIRT - x, y, z, intensity, ring, timestamp
 
 ## 2 Download
 
 ### 2.1 Use git clone
 
-Since rslidar_sdk project include the submodule --- rs_driver, user need to excute the following commands after git clone.
+Since rslidar_sdk project include the submodule --- rs_driver, user needs to excute the following commands after git clone.
 
 ```sh
 git clone https://github.com/RoboSense-LiDAR/rslidar_sdk.git
@@ -36,7 +36,7 @@ git submodule update
 
 ### 2.2 Download directly
 
-User can access  [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslidar_sdk/releases) to download the latest version of rslidar_sdk. Please download the **rslidar_sdk.tar.gz** instead of Source code because the Source code zip file does not contain the submodule(rs_driver), and user need to download it manually.
+User can access  [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslidar_sdk/releases) to download the latest version of rslidar_sdk. Please download the **rslidar_sdk.tar.gz** instead of Source code because the Source code zip file does not contain the submodule(rs_driver), and user needs to download it manually.
 
 ![](doc/img/download_page.png)
 
@@ -168,7 +168,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 5 Introduction to parameters
 
-This part is very important so please read carefully. All the functions of this software development kit will be reach by modifying parameters.
+This part is very important so please read carefully. All the functions of this software development kit will be reached by modifying parameters.
 
 [Intro to parameters](doc/intro/parameter_intro.md)
 
@@ -178,7 +178,7 @@ This part is very important so please read carefully. All the functions of this 
 
 ## 6 Quick start
 
-The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and user can use rslidar_sdk in their own way by modifying parameters.
+The following documents are some quick guides for using some of the most common features of the rslidar_sdk.  The rslidar_sdk are not limited to the following modes of operation and users can use rslidar_sdk in their own way by modifying parameters.
 
 [Online connect lidar and send point cloud through ROS](doc/howto/how_to_online_send_point_cloud_ros.md)
 

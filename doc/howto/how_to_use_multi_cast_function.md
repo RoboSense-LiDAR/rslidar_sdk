@@ -39,7 +39,7 @@ lidar:
 
 ### 2.2 Set up the PC ip address
 
-In multi-cast case, the ip address of PC has no limit but user need to make sure **the PC and LiDAR are in the same net work**, which means PC can ping to LiDAR.
+In multi-cast case, the ip address of PC has no limit but user needs to make sure **the PC and LiDAR are in the same net work**, which means PC can ping to LiDAR.
 
 ### 2.3 Add the PC to the group
 

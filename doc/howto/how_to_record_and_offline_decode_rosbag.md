@@ -39,7 +39,7 @@ User can also adjust the packets topic by adjust the ```ros_send_packet_topic```
 rosbag record /rslidar_packets /rslidar_packets_difop -O bag
 ```
 
-**If you set send_packet_ros = true, both two kinds of packets will be send to ROS. And you must record both of these two kinds of packets.**
+**If you set send_packet_ros = true, both two kinds of packets will be sent to ROS. And you must record both of these two kinds of packets.**
 
 ## 3 Offline Decode
 
