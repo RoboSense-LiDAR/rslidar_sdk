@@ -83,20 +83,18 @@ inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
       break;
   }
   PacketMsg rs_msg(pkt_length);
-#pragma omp parallel for
   for (size_t i = 0; i < pkt_length; i++)
   {
-    rs_msg.packet[i] = std::move(ros_msg.data[i]);
+    rs_msg.packet[i] = ros_msg.data[i];
   }
   return std::move(rs_msg);
 }
 inline rslidar_msgs::rslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msgs::rslidarPacket ros_msg;
-#pragma omp parallel for
   for (size_t i = 0; i < rs_msg.packet.size(); i++)
   {
-    ros_msg.data[i] = std::move(rs_msg.packet[i]);
+    ros_msg.data[i] = rs_msg.packet[i];
   }
   return std::move(ros_msg);
 }
@@ -180,22 +178,20 @@ inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
       break;
   }
   PacketMsg rs_msg(pkt_length);
-#pragma omp parallel for
   for (size_t i = 0; i < pkt_length; i++)
   {
-    rs_msg.packet[i] = std::move(ros_msg.data[i]);
+    rs_msg.packet[i] = ros_msg.data[i];
   }
-  return rs_msg;
+  return std::move(rs_msg);
 }
 inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msg::msg::RslidarPacket ros_msg;
-#pragma omp parallel for
   for (size_t i = 0; i < rs_msg.packet.size(); i++)
   {
-    ros_msg.data[i] = std::move(rs_msg.packet[i]);
+    ros_msg.data[i] = rs_msg.packet[i];
   }
-  return ros_msg;
+  return std::move(ros_msg);
 }
 inline ScanMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
                        const rslidar_msg::msg::RslidarScan& ros_msg)
