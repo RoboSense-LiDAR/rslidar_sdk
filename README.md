@@ -174,7 +174,7 @@ This section is very important since all functions and features provided by rsli
 
 [Intro to parameters](doc/intro/parameter_intro.md)
 
-[Intro to hiding parameters](doc/intro/hiding_parameters_intro.md)
+[Intro to hidden parameters](doc/intro/hiding_parameters_intro.md)
 
 
 
@@ -192,7 +192,7 @@ The following documents are some quick guides for using some of the most common 
 
 ## 7 Advanced
 
-[Use protobuf send & receive](doc/howto/how_to_use_protobuf_function.md)
+[Send & Receive via Protobuf](doc/howto/how_to_use_protobuf_function.md)
 
 [Multi-LiDARs](doc/howto/how_to_use_multi_lidars.md)
 

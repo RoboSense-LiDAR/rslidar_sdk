@@ -1,6 +1,6 @@
-# Introduction to hiding parameters
+# Introduction to hidden parameters
 
-In order to make the config file as simple as possible, we hide some of the parameters and give them a default value in the program. This document show you the use of those hiding parameters and you can decide whether to add them back or not. 
+In order to make the config file as simple as possible, we selectively hide some of the parameters and give them a default value in the program. If not added to  ```config.yaml```, the default values will be used. This document explains the meanings of these these hidden parameters. 
 
 
 
@@ -55,13 +55,13 @@ lidar:
 
 - ```angle_path``` -- The path of the angle.csv. For latest version of LiDARs, this parameter can be ignored.
 - ```split_frame_mode``` -- The mode to split the LiDAR frames. Default value is ```1```.
-  - 1 -- Spliting frames depends on the cut_angle
-  - 2 -- Spliting frames depends on a fixed number of packets
-  - 3 -- Spliting frames depends on num_pkts_split
+  - 1 -- Spliting frames depending on the cut_angle
+  - 2 -- Spliting frames depending on a fixed number of packets
+  - 3 -- Spliting frames depending on num_pkts_split
 - ```cut_angle``` --  The angle(degree) to split frames. Only be used when ```split_frame_mode = 1```. The default value is ```0```.
 - ```num_pkts_split``` -- The number of packets in one frame. Only be used when ```split_frame_mode = 3```.
 - ```wait_for_difop``` -- If set to false, the driver will not wait for difop packet and send out the point cloud immediately. The default value is ```true```.
 - ```saved_by_rows``` --  The default point cloud is stored in **column major order**, which means if there is  a point msg.point_cloud_ptr->at(i) , the next point on the same ring should be msg.point_cloud_ptr->at(i+msg.height). If this parameter is set to  ```true``` , the point cloud will be stored in **row major order**.
 - ```multi_cast_address``` -- If use multi-cast function, this parameter need to be set correctly. For more details, please refer to  [Multi-Cast](../howto/how_to_use_multi_cast_function.md) 
 
-- ```x, y, z, roll, pitch, yaw ``` -- The parameters to do cooridiante transformation. If the coordinate transformation function is enabled in driver core,  the output point cloud will be auto transformed based on these parameters. For more details, please refer to [Coordinate Transformation](../howto/how_to_use_coordinate_transformation.md) 
+- ```x, y, z, roll, pitch, yaw ``` -- The parameters to do cooridiante transformation. If the coordinate transformation function is enabled in driver core,  the output point cloud will be transformed based on these parameters. For more details, please refer to [Coordinate Transformation](../howto/how_to_use_coordinate_transformation.md) 

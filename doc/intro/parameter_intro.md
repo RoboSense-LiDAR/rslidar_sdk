@@ -1,14 +1,16 @@
 # Parameters Introduction
 
-There is only one configure file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  The config.yaml can be divided into two parts, the common part  and the lidar part . *In multi-LiDARs case, the parameters in common part will be shared by all LiDARs, while the parameters in lidar part need to be adjust for each LiDAR.*
+There is only one configure file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  The ```config.yaml``` can be divided into two parts, the common part  and the lidar part . 
 
-**The config.yaml is very strict to indentation! Please make sure the indentation is not changed when adjusting the parameters!**
+*In multi-LiDARs case, the parameters in common part will be shared by all LiDARs, while the parameters in lidar part need to be adjust for each LiDAR.*
+
+**config.yaml is indentation sensitive! Please make sure the indentation is not changed when adjusting the parameters!**
 
 
 
 ## 1 Common
 
-This part is used to decide the source of LiDAR data, and whether to send out the result or not.
+This part is used to decide the source of LiDAR data, and whether to publish point clouds or not.
 
 ```yaml
 common:
@@ -39,8 +41,7 @@ common:
    - true -- The lidar packets will be sent to ROS or ROS2. 
 
    
-
-*Since the ROS packet message type is robosense self-defined type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.*
+*Since the ROS packet message is of a customized message type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.*
 
 - send_point_cloud_ros
 
@@ -58,7 +59,7 @@ common:
    - true -- The lidar point cloud will be sent out as protobuf message through ethernet in UDP protocal. 
    
 
-*We suggest sending packets through ethernet by protobuf rather than point cloud because point cloud size is too larger and it may take up a lot of bandwidth.*
+*We suggest sending packets rather than point clouds through ethernet by protobuf  because point cloud size is too large which may take up a lot of bandwidth.*
 
 - pcap_path
 
@@ -68,7 +69,7 @@ common:
 
 ## 2 lidar
 
-This part need to be adjust according to different LiDAR (in multi-LiDARs case). 
+This part needs to be adjusted for every LiDAR seperately (in multi-LiDARs case). 
 
 ```yaml
 lidar:
@@ -126,9 +127,9 @@ lidar:
 
 ## 3 Example
 
-Here are two example configure files for one LiDAR and three LiDAR configure files. Please adjust the specific parameters according to your own case.
+Here are two examples. The first configure file is for single LiDAR case and second is used for the case where there are 3 LiDARs. Please adjust the specific parameters according to your own case.
 
-- Online connect one LiDAR & Send point cloud to ROS
+- Online connection to single LiDAR & Send point cloud to ROS
 
 ```yaml
 common:
@@ -164,7 +165,7 @@ lidar:
       packet_send_ip: 127.0.0.1                
 ```
 
-- Online connect three LiDARs & Send point cloud to ROS
+- Online connection to three LiDARs & Send point cloud to ROS
 
 *Pay attention to the indentation of lidar part*
 
