@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.3.0 - 2020-11-10
+
+### Added
+
+- Add multi-cast support
+- Add saved_by_rows argument
+- Add different point types( XYZI & XYZIRT)
+
+### Changed
+
+- Update driver core, please refer to CHANGELOG in rs_driver for details
+- Update some documents
+- Change angle_path argument to hiding parameter
+
+### Removed
+
+- Remove RSAUTO for lidar type
+- Remove device_ip argument
+
+
+
 ## v1.2.1 - 2020-09-04
 
 ### Fixed
@@ -30,8 +51,6 @@
 
 ### Removed
 - Remove some unused variables in message struct
-
----  
 
 ## v1.0.0 - 2020-06-01
 

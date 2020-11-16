@@ -1,16 +1,12 @@
-# Parameters Introduction
+# 参数介绍
 
-There is only one configure file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  The ```config.yaml``` can be divided into two parts, the common part  and the lidar part . 
+本工程只有一份参数文件 ```config.yaml```， 储存于```rslidar_sdk/config```文件夹内。 整个参数文件可以被分为两部分，common部分以及lidar部分。 *在多雷达情况下，common部分的参数设置将会被所有雷达共享，而lidar部分需要根据每台雷达实际情况分别进行设置。*
 
-*In multi-LiDARs case, the parameters in common part will be shared by all LiDARs, while the parameters in lidar part need to be adjust for each LiDAR.*
-
-**config.yaml is indentation sensitive! Please make sure the indentation is not changed when adjusting the parameters!**
-
-
+**参数文件config.yaml对缩进有严格的要求！请确保修改参数之后每行开头的缩进仍保持一致！**
 
 ## 1 Common
 
-This part is used to decide the source of LiDAR data, and whether to publish point clouds or not.
+此部分用于设置雷达的消息来源，以及是否将结果发布。
 
 ```yaml
 common:
@@ -24,52 +20,47 @@ common:
 
 - msg_source
 
-  - 0 -- Not use lidar. Basically you will never set this parameter to 0.
+  - 1 -- 连接在线雷达. 更多使用细节请参考[在线读取雷达数据发送到ROS](../howto/how_to_online_send_point_cloud_ros_cn.md)。
 
-  - 1 -- When connecting with a running lidar, set to 1. For more details, please refer to [Online connect lidar and send point cloud through ROS](../howto/how_to_online_send_point_cloud_ros.md)
+  - 2 -- 离线解析ROS或ROS2的packet包。更多使用细节请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。
 
-  - 2 -- The lidar packet come from ROS or ROS2. This will be used in offline decode rosbag.  For more details, please refer to [Record rosbag & Offline decode rosbag](../howto/how_to_record_and_offline_decode_rosbag.md)
+  - 3 -- 离线解析pcap包。更多使用细节请参考[离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)。
 
-  - 3 -- The lidar packet come from offline pcap bag. For more details, please refer to  [Decode pcap bag and send point cloud through ROS](../howto/how_to_offline_decode_pcap.md)
+  - 4 -- 雷达消息来源为Protobuf-UDP的packet消息，更多使用细节请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
 
-  - 4 -- The lidar packet come from Protobuf-UDP. For more details, please refer to [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
-
-  - 5 -- The lidar point cloud come from Protobuf-UDP. For more details, please refer to  [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
+  - 5 -- 雷达消息来源为Protobuf-UDP的点云消息，更多使用细节请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
 
 - send_packet_ros
 
-   - true -- The lidar packets will be sent to ROS or ROS2. 
+   - true -- 雷达packet消息将通过ROS或ROS2发出 
 
+     *由于雷达ROS packet消息为速腾聚创自定义ROS消息，因此用户无法直接echo话题查看消息具体内容。实际上packet主要用于录制离线ROS包，因为packet的体积小于点云。*
    
-*Since the ROS packet message is of a customized message type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline bag because the size is much smaller than point cloud.*
-
 - send_point_cloud_ros
 
-   - true -- The lidar point cloud will be sent to ROS or ROS2. 
-   
-   
-   *The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, that's why we suggest to  record packets.*
-   
+   - true -- 雷达点云消息将通过ROS或ROS2发出 
+
+   *点云消息类型为ROS官方定义的点云类型sensor_msgs/PointCloud2, 因此用户可以直接使用Rviz查看点云。同时，用户也可以选择录包时直接录制点云，但这样做包的体积会非常大，因此我们建议离线录制ROS包时录制packet消息。*
+
 - send_packet_proto
 
-   - true -- The lidar packets will be sent out as protobuf message through ethernet by UDP protocal.
-   
+   - true -- 雷达packet消息将通过Protobuf-UDP发出
+
 - send_point_cloud_proto
 
-   - true -- The lidar point cloud will be sent out as protobuf message through ethernet in UDP protocal. 
-   
+   - true -- 雷达点云消息将通过Protobuf-UDP发出
 
-*We suggest sending packets rather than point clouds through ethernet by protobuf  because point cloud size is too large which may take up a lot of bandwidth.*
+   *我们建议发送packet消息而不是点云，因为点云消息体积过大，对带宽有较高的要求。.*
 
 - pcap_path
 
-   If the msg_source = 3, please make sure the pcap_path is correct, otherwise this paramter can be igonred.
+   如果msg_dource = 3, 请确保此参数设置为正确的pcap包的路径。
 
 
 
 ## 2 lidar
 
-This part needs to be adjusted for every LiDAR seperately (in multi-LiDARs case). 
+本部分需要根据不同的雷达进行设置（多雷达时）。
 
 ```yaml
 lidar:
@@ -100,36 +91,34 @@ lidar:
 
 - lidar_type
 
-  Supported types of LiDAR are listed in README.
+  目前支持的雷达型号已在README中列出。
 
 - frame_id
 
-  The frame id of the point cloud message.
+  点云消息的frame_id。
 
 - msop_port, difop_port
 
-  The msop port and difop_port of LiDAR. *Please check these parameters first is no data received.*
+  点云的msop端口号和difop端口号。 *若收不到消息，请优先确认这两个参数是否配置正确。*
 
 - start_angle, end_angle
 
-  The start angle and end angle of the point cloud, which should be set in range of 0~360°. (*start_angle **can** be larger than end_angle*).
+  点云消息的起始角度和结束角度，此处设置为软件屏蔽，无法减小每帧点云的体积，只会将区域外的点设置为NAN点。 起始角和结束角的范围应在0~360°之间。(**起始角可以大于结束角**).
 
 - min_distance, max_distance
 
-  The minimum distance and maximum distance of the point cloud. 
+  点云的最小距离和最大距离，此处设置为软件屏蔽，无法减小每帧点云的体积，只会将区域外的点设置为NAN点。
 
 - use_lidar_clock
 
-  - true -- Use the lidar internal clock as the message timestamp
-  - false -- Use the system clock as the message timestamp
+  - true -- 使用雷达时间作为消息时间戳。
+  - false -- 使用系统时间作为消息时间戳。 
 
 
 
-## 3 Example
+## 3 示例
 
-Here are two examples. The first configure file is for single LiDAR case and second is used for the case where there are 3 LiDARs. Please adjust the specific parameters according to your own case.
-
-- Online connection to single LiDAR & Send point cloud to ROS
+在线连接一台雷达，并发送点云到ROS。
 
 ```yaml
 common:
@@ -165,9 +154,9 @@ lidar:
       packet_send_ip: 127.0.0.1                
 ```
 
-- Online connection to three LiDARs & Send point cloud to ROS
+在线连接3台雷达，并发送点云到ROS。
 
-*Pay attention to the indentation of lidar part*
+*注意lidar部分参数的缩进*
 
 ```yaml
 common:
