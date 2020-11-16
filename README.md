@@ -4,7 +4,7 @@
 
 ## 1 Introduction
 
-**rslidar_sdk** is the lidar driver software development kit under Ubuntu operating system, which contains the lidar driver core, ROS support, ROS2 support and Protobuf-UDP communication functions. For user who want to get point cloud through ROS or ROS2,  this software development kit can be used directly. For user who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core [rs_driver](https://github.com/RoboSense-LiDAR/rs_driver).
+**rslidar_sdk** is the lidar driver software development kit running on Ubuntu operating system, which contains the lidar driver core, ROS support, ROS2 support and Protobuf-UDP communication functions. For users who want to get point cloud through ROS or ROS2,  this software development kit can be used directly. For those who want to do advanced development or integrate the lidar driver into their own projects, please refer to the lidar driver core [rs_driver](https://github.com/RoboSense-LiDAR/rs_driver).
 
 ### **1.1 LiDAR Support**
 
@@ -23,9 +23,9 @@
 
 ## 2 Download
 
-### 2.1 Use git clone
+### 2.1 Download via Git 
 
-Since rslidar_sdk project include the submodule --- rs_driver, user needs to excute the following commands after git clone.
+Since rslidar_sdk project includes a submodule --- rs_driver, user needs to run the following commands after git clone to download the submodule properly.
 
 ```sh
 git clone https://github.com/RoboSense-LiDAR/rslidar_sdk.git
@@ -36,7 +36,7 @@ git submodule update
 
 ### 2.2 Download directly
 
-User can access  [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslidar_sdk/releases) to download the latest version of rslidar_sdk. Please download the **rslidar_sdk.tar.gz** instead of Source code because the Source code zip file does not contain the submodule(rs_driver), and user needs to download it manually.
+Instead of using Git, user can also access [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslidar_sdk/releases) to download the latest version of rslidar_sdk. Please download the **rslidar_sdk.tar.gz** archive instead of Source code because the Source code zip file does not contain the submodule(rs_driver), which should be downloaded manaully.
 
 ![](doc/img/download_page.png)
 
@@ -44,33 +44,33 @@ User can access  [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslida
 
 ### 3.1 ROS
 
-If use rslidar_sdk in ROS environment, ROS related libraries need to be installed. 
+To run rslidar_sdk in ROS environment, ROS related libraries need to be installed. 
 
-Ubuntu 16.04 - ROS kinetic desktop-full
+**Ubuntu 16.04**: ros-kinetic-desktop-full
 
-Ubuntu 18.04 - ROS melodic desktop-full
+**Ubuntu 18.04**: ros-melodic-desktop-full
 
-Installation： please refer to  http://wiki.ros.org
+**Installation**: please refer to  http://wiki.ros.org
 
-**If you install ROS kinetic desktop-full or ROS melodic desktop-full，then the correspond PCL and Boost  will be installed at the same time. It will bring you a lot of convenience since you don't need to handle the version confliction. Thus, its highly recommanded to install ROS  desktop-full**.
+If you install ros-kinetic-desktop-full or ros-melodic-desktop-full， the corresponding PCL and Boost  will be installed at the same time. It will bring you a lot of convenience since you don't need to handle the version confliction. Thus, **it's highly recommanded to install ros-distro-desktop-full**.
 
 ### 3.2 ROS2
 
 If use rslidar_sdk in ROS2 environment, ROS2 related libraries need to be installed. 
 
-Ubuntu 16.04 - Not support 
+**Ubuntu 16.04**: Not supportted
 
-Ubuntu 18.04 - ROS2 eloquent desktop
+**Ubuntu 18.04**: ROS2 eloquent desktop
 
-Installation: please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
+**Installation**: please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
-**Note! Please avoid to install ROS and ROS2 in one computer at the same time! This may cause confliction! Also you may need to install Yaml  manually.**
+**Note! Please avoid installing ROS and ROS2 on the same computer! This may cause conflict! Also you may need to install Yaml manually.**
 
 ### 3.3 Yaml(Essential) 
 
 version: >= v0.5.2
 
-*If installed ROS desktop-full, this part can be ignored*
+*If ros-distro-desktop-full is installed, this section can be skipped*
 
 Installation:
 
@@ -107,7 +107,7 @@ We offer three ways to compile and run the driver.
 
 ### 4.1 Compile directly
 
- In this way, user can also use ROS functions(Not include ROS2), but need to start **roscore** manually before running the driver and need to start **rviz** manually to watch the point cloud.
+ In this way, user can use ROS facilities(not ROS2) if ROS master node is launched in advance via ```roscore```. Also, rviz can be launched seperately for visualization. 
 
 ```sh
 cd rslidar_sdk
@@ -116,7 +116,9 @@ cmake .. && make -j4
 ./rslidar_sdk_node
 ```
 
-### 4.2 Compile with ROS-catkin
+
+
+### 4.2 Compile with ROS catkin tools
 
 (1) Open the *CMakeLists.txt* in the project，modify the line  on top of the file **set(COMPILE_METHOD ORIGINAL)** to **set(COMPILE_METHOD CATKIN)**.
 
@@ -129,9 +131,9 @@ set(COMPILE_METHOD CATKIN)
 
 (2) Rename the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
 
-(3) Create a new folder as the workspace, and create a *src* folder in the workspace. Then put the rslidar_sdk project in the *src* folder.
+(3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project into the *src* folder.
 
-(4) Return back to the workspace, excute the following command to compile and run. (if use .zsh, replace the 2nd command with *source devel/setup.zsh*).
+(4) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
 
 ```sh
 catkin_make
@@ -152,11 +154,11 @@ set(COMPILE_METHOD COLCON)
 
 (2) Rename the file *package_ros2.xml*  in the rslidar_sdk to *package.xml*
 
-(3) Create a new folder as the workspace, and create a *src* folder in the workspace. Then put the rslidar_sdk project in the *src* folder.
+(3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project in the *src* folder.
 
 (4) Download the packet definition project in ROS2 through [link](https://github.com/RoboSense-LiDAR/rslidar_msg), then put the project rslidar_msg in the *src* folder you just created.
 
-(5) Return back to the workspace, excute the following command to compile and run. (if use .zsh, replace the 2nd command with *source install/setup.zsh*).
+(5) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
 
 ```sh
 colcon build
@@ -168,7 +170,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 5 Introduction to parameters
 
-This part is very important so please read carefully. All the functions of this software development kit will be reached by modifying parameters.
+This section is very important since all functions and features provided by rslidar_sdk is configured via parameter modification. So please read the following links carefully. 
 
 [Intro to parameters](doc/intro/parameter_intro.md)
 
