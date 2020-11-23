@@ -36,8 +36,6 @@ lidar:
       msop_port: 6699             
       difop_port: 7788           
       start_angle: 0               
-	Run the demo & play the rosbag.
-
       end_angle: 360              
       min_distance: 0.2            
       max_distance: 200           

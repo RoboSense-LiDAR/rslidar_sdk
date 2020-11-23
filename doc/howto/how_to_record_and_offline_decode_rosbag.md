@@ -92,6 +92,6 @@ Set up the ```ros_recv_packet_topic```  to the ```msop``` topic in the rosbag.
 
 ### 3.4 Run
 
-Run the program & play rosbag.
+Run the demo & play rosbag.
 
  
