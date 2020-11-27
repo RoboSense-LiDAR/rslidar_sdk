@@ -8,13 +8,13 @@
 
 ### **1.1 LiDAR Support**
 
-- RS16
-- RS32
-- RSBP
-- RS128
-- RS80
-- RSM1-B3
-- RSHELIOS
+- RS-LiDAR-16
+- RS-LiDAR-32
+- RS-Bpearl
+- RS-Ruby
+- RS-Ruby Lite
+- RS-LiDAR-M1
+- RS-Helios
 
 ### 1.2 Point type support
 
