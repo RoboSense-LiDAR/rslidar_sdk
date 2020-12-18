@@ -92,7 +92,8 @@ inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
 inline rslidar_msgs::rslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msgs::rslidarPacket ros_msg;
-  for (size_t i = 0; i < rs_msg.packet.size(); i++)
+  size_t pkt_size = rs_msg.packet.size();
+  for (size_t i = 0; i < pkt_size; i++)
   {
     ros_msg.data[i] = rs_msg.packet[i];
   }
