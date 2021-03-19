@@ -75,6 +75,7 @@ void AdapterManager::init(const YAML::Node& config)
         RS_INFO << "Receive Packets From : Online LiDAR" << RS_REND;
         RS_INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << RS_REND;
         RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
+        RS_INFO << "Time Offset: " << lidar_config[i]["driver"]["time_offset"].as<std::string>() << RS_REND;
         RS_INFO << "------------------------------------------------------" << RS_REND;
         point_cloud_thread_flag_ = true;
         lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_LIDAR;
@@ -111,6 +112,7 @@ void AdapterManager::init(const YAML::Node& config)
         RS_INFO << "Receive Packets From : Pcap" << RS_REND;
         RS_INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << RS_REND;
         RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
+        RS_INFO << "Time Offset: " << lidar_config[i]["driver"]["time_offset"].as<std::string>() << RS_REND;
         RS_INFO << "------------------------------------------------------" << RS_REND;
         point_cloud_thread_flag_ = true;
         lidar_config[i]["msg_source"] = (int)MsgSource::MSG_FROM_PCAP;
