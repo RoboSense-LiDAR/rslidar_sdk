@@ -32,6 +32,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <signal.h>
 #include "manager/adapter_manager.h"
+
+#ifdef ROS_FOUND
+  #include <ros/package.h>
+#endif
+
 using namespace robosense::lidar;
 std::mutex g_mtx;
 std::condition_variable g_cv;
@@ -58,7 +63,12 @@ int main(int argc, char** argv)
   YAML::Node config;
   try
   {
-    config = YAML::LoadFile((std::string)PROJECT_PATH + "/config/config.yaml");
+    #ifdef RUN_IN_ROS_WORKSPACE 
+      std::string path  = ros::package::getPath("rslidar_sdk") ;
+    #else
+      std::string path = (std::string)PROJECT_PATH;
+    #endif
+      config = YAML::LoadFile((std::string)PROJECT_PATH + "/config/config.yaml");
   }
   catch (...)
   {

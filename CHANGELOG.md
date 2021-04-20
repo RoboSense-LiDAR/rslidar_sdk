@@ -1,5 +1,11 @@
 # Changelog
 
+## unrelease
+
+### Added
+  - add install command when building using catkin
+
+
 ## v1.3.0 - 2020-11-10
 
 ### Added
