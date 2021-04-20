@@ -118,7 +118,6 @@ if(${COMPILE_METHOD} STREQUAL "CATKIN")
   
   catkin_package(
           CATKIN_DEPENDS sensor_msgs roslib
-          DEPENDS PCL yaml-cpp rs_driver
   )
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 
