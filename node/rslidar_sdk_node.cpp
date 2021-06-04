@@ -59,16 +59,31 @@ int main(int argc, char** argv)
   RS_TITLE << "**********                                    **********" << RS_REND;
   RS_TITLE << "********************************************************" << RS_REND;
 
-  std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
+#ifdef ROS_FOUND
+  ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
+#endif
+
+#ifdef ROS2_FOUND
+  rclcpp::init(argc, argv);
+#endif
+
+#ifdef RUN_IN_ROS_WORKSPACE
+    std::string pkg_path = ros::package::getPath("rslidar_sdk");
+#else
+    std::string pkg_path = (std::string)PROJECT_PATH;
+#endif
+
+  std::string config_path = pkg_path + "/config/config.yaml";
+
+#ifdef ROS_FOUND
+  ros::NodeHandle nh("~");
+  nh.param("config_path", config_path, config_path);
+#endif
+
   YAML::Node config;
   try
   {
-#ifdef RUN_IN_ROS_WORKSPACE
-    std::string path = ros::package::getPath("rslidar_sdk");
-#else
-    std::string path = (std::string)PROJECT_PATH;
-#endif
-    config = YAML::LoadFile((std::string)path + "/config/config.yaml");
+    config = YAML::LoadFile(config_path);
   }
   catch (...)
   {
@@ -76,23 +91,10 @@ int main(int argc, char** argv)
     return -1;
   }
 
-#ifdef ROS_FOUND  ///< if ROS is found, call the ros::init function
-  ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
-  ros::NodeHandle priv_hh("~");
-  std::string config_path;
-  priv_hh.param("config_path", config_path, std::string(""));
-  if (!config_path.empty())
-  {
-    config = YAML::LoadFile(config_path);
-  }
-#endif
-
-#ifdef ROS2_FOUND  ///< if ROS2 is found, call the rclcpp::init function
-  rclcpp::init(argc, argv);
-#endif
-
+  std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
   demo_ptr->init(config);
   demo_ptr->start();
+
   RS_MSG << "RoboSense-LiDAR-Driver is running....." << RS_REND;
 
 #ifdef ROS_FOUND
