@@ -31,11 +31,13 @@ if(roscpp_FOUND)
   message(=============================================================)
   message("-- ROS Found, Ros Support is turned On!")
   message(=============================================================)
+  add_definitions(-DROS_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/package_ros1.xml ${CMAKE_CURRENT_SOURCE_DIR}/package.xml COPYONLY)
 
   find_package(roslib QUIET)
-  add_definitions(-DROS_FOUND)
   include_directories(${roscpp_INCLUDE_DIRS} ${roslib_INCLUDE_DIRS})
   set(ROS_LIBS ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
+
 else(roscpp_FOUND)
   message(=============================================================)
   message("-- ROS Not Found, Ros Support is turned Off!")
@@ -45,18 +47,20 @@ endif(roscpp_FOUND)
 #ROS2#
 find_package(rclcpp QUIET)
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
+  message(=============================================================)
+  message("-- ROS2 Found, Ros2 Support is turned On!")
+  message(=============================================================)
+  add_definitions(-DROS2_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/package_ros2.xml ${CMAKE_CURRENT_SOURCE_DIR}/package.xml COPYONLY)
+  set(CMAKE_CXX_STANDARD 14)
+
   find_package(ament_cmake REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(sensor_msgs REQUIRED)
   find_package(rslidar_msg REQUIRED)
   find_package(pcl_conversions REQUIRED)
-
-  set(CMAKE_CXX_STANDARD 14)
-  message(=============================================================)
-  message("-- ROS2 Found, Ros2 Support is turned On!")
-  message(=============================================================)
-  add_definitions(-DROS2_FOUND)
   include_directories(${rclcpp_INCLUDE_DIRS})
+
 else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   message(=============================================================)
   message("-- ROS2 Not Found, Ros2 Support is turned Off!")
@@ -71,6 +75,7 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   message("-- Protobuf Found, Protobuf Support is turned On!")
   message(=============================================================)
   add_definitions(-DPROTO_FOUND)
+
   include_directories(${PROTOBUF_INCLUDE_DIRS})
   SET(PROTO_FILE_PATH ${PROJECT_SOURCE_DIR}/src/msg/proto_msg)
   file(GLOB PROTOBUF_FILELIST ${PROTO_FILE_PATH}/*.proto)
@@ -146,7 +151,7 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
               ${PROTO_FILE_PATH}/scan.pb.cc
               ${PROTO_FILE_PATH}/point_cloud.pb.cc
               )
-  target_link_libraries(rslidar_sdk_node                   
+  target_link_libraries(rslidar_sdk_node
                       ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
                       ${PROTOBUF_LIBRARY}
@@ -157,7 +162,7 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
               node/rslidar_sdk_node.cpp
               src/manager/adapter_manager.cpp
               )
-  target_link_libraries(rslidar_sdk_node                   
+  target_link_libraries(rslidar_sdk_node
                       ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES}
