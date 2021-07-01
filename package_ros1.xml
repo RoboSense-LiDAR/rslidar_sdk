@@ -13,6 +13,9 @@
   <build_depend>roslib</build_depend>
   <build_depend>yaml-cpp</build_depend>
 
+  <depend>libpcap</depend>
+  <depend>libpcl-all-dev</depend>
+
   <run_depend>roscpp</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>roslib</run_depend>
