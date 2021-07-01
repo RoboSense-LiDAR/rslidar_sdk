@@ -8,6 +8,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+
   <build_depend>rclcpp</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
@@ -23,6 +24,7 @@
   <depend>rslidar_msg</depend>
   <depend>yaml-cpp</depend>
   <depend>libpcap</depend>
+  <depend>pcl_conversions</depend>
   <depend>libpcl-all-dev</depend>
 
   <export>
