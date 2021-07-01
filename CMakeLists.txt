@@ -43,8 +43,9 @@ endif(roscpp_FOUND)
 find_package(rclcpp QUIET)
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   find_package(ament_cmake REQUIRED)
-  find_package(sensor_msgs REQUIRED)
+  find_package(pcl_conversions REQUIRED)
   find_package(rslidar_msg REQUIRED)
+  find_package(sensor_msgs REQUIRED)
   find_package(std_msgs REQUIRED)
   set(CMAKE_CXX_STANDARD 14)
   message(=============================================================)
@@ -89,13 +90,17 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 #Catkin#
 if(${COMPILE_METHOD} STREQUAL "CATKIN")
-  find_package(catkin REQUIRED COMPONENTS
-          roscpp
-          sensor_msgs
-          )
+  find_package(catkin REQUIRED
+    COMPONENTS
+      pcl_conversions
+      roscpp
+      sensor_msgs
+  )
 
   catkin_package(
-          CATKIN_DEPENDS sensor_msgs
+    CATKIN_DEPENDS
+      pcl_conversions
+      sensor_msgs
   )
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 #Include directory#
