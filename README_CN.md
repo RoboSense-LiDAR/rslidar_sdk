@@ -41,11 +41,11 @@ git submodule update
 
 ## 3 依赖介绍
 
-### 3.1 ROS 
+### 3.1 ROS
 
 *若需在ROS环境下使用雷达驱动，则需安装ROS相关依赖库*
 
-Ubuntu 16.04 - ROS kinetic desktop-full 
+Ubuntu 16.04 - ROS kinetic desktop-full
 
 Ubuntu 18.04 - ROS melodic desktop-full
 
@@ -77,7 +77,7 @@ Ubuntu 20.04 - ROS2 Galactic desktop
 
 ### 3.3 Yaml (必需)
 
-版本号:  >= v0.5.2 
+版本号:  >= v0.5.2
 
 *若已安装ROS desktop-full, 可跳过*
 
@@ -127,20 +127,9 @@ cmake .. && make -j4
 
 ### 4.2 依赖于ROS-catkin编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD CATKIN)**。
+(1) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD CATKIN)
-```
-
-(2) 将rslidar_sdk工程目录下的*package_ros1.xml*文件重命名为*package.xml*。
-
-(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
-
-(4) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
+(2) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
 
 ```sh
 catkin_make
@@ -150,22 +139,11 @@ roslaunch rslidar_sdk start.launch
 
 ### 4.3 依赖于ROS2-colcon编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD COLCON)**。
+(1) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD COLCON)
-```
+(2) 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)下载ROS2环境下的雷达packet消息定义， 将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列。
 
-(2) 将rslidar_sdk工程目录下的*package_ros2.xml*文件重命名为*package.xml*。
-
-(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
-
-(4) 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)下载ROS2环境下的雷达packet消息定义， 将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列。
-
-(5) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)。
+(3) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)。
 
 ```sh
 colcon build
@@ -203,8 +181,8 @@ ros2 launch rslidar_sdk start.py
 
 [多雷达](doc/howto/how_to_use_multi_lidars_cn.md)
 
-[切换点的类型](doc/howto/how_to_switch_point_type_cn.md) 
+[切换点的类型](doc/howto/how_to_switch_point_type_cn.md)
 
-[坐标变换功能](doc/howto/how_to_use_coordinate_transformation_cn.md) 
+[坐标变换功能](doc/howto/how_to_use_coordinate_transformation_cn.md)
 
-[组播模式](doc/howto/how_to_use_multi_cast_function_cn.md) 
+[组播模式](doc/howto/how_to_use_multi_cast_function_cn.md)
