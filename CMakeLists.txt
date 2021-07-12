@@ -5,7 +5,7 @@ project(rslidar_sdk)
 #=======================================
 # Compile setup (ORIGINAL, CATKIN, COLCON)
 #=======================================
-set(COMPILE_METHOD COLCON)
+set(COMPILE_METHOD COLCON CACHE STRING "Compilation method")
 
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
@@ -89,14 +89,20 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 #Catkin#
 if(${COMPILE_METHOD} STREQUAL "CATKIN")
+  set(PROJECT_CATKIN_DEPS
+      sensor_msgs
+      nodelet
+      pluginlib
+  )
   find_package(catkin REQUIRED COMPONENTS
-          roscpp
-          sensor_msgs
-          )
+               roscpp
+               ${PROJECT_CATKIN_DEPS}
+               )
 
   catkin_package(
-          CATKIN_DEPENDS sensor_msgs
+    CATKIN_DEPENDS ${PROJECT_CATKIN_DEPS}
   )
+
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
@@ -122,14 +128,28 @@ message(=============================================================)
 #========================
 #Protobuf#
 if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+  set(PROTOBUF_SOURCES
+      ${PROTO_FILE_PATH}/packet.pb.cc
+      ${PROTO_FILE_PATH}/scan.pb.cc
+      ${PROTO_FILE_PATH}/point_cloud.pb.cc
+      )
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
               src/manager/adapter_manager.cpp
-              ${PROTO_FILE_PATH}/packet.pb.cc
-              ${PROTO_FILE_PATH}/scan.pb.cc
-              ${PROTO_FILE_PATH}/point_cloud.pb.cc
+              ${PROTOBUF_SOURCES}
               )
   target_link_libraries(rslidar_sdk_node
+                      ${PCL_LIBRARIES}
+                      ${YAML_CPP_LIBRARIES}
+                      ${PROTOBUF_LIBRARY}
+                      ${rs_driver_LIBRARIES}
+                      )
+  add_library(rslidar_sdk_nodelet
+              node/rslidar_sdk_nodelet.cpp
+              src/manager/adapter_manager.cpp
+              ${PROTOBUF_SOURCES}
+              )
+  target_link_libraries(rslidar_sdk_nodelet
                       ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
                       ${PROTOBUF_LIBRARY}
@@ -145,10 +165,22 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES}
                       )
+
+  add_library(rslidar_sdk_nodelet
+              node/rslidar_sdk_nodelet.cpp
+              src/manager/adapter_manager.cpp
+              )
+  target_link_libraries(rslidar_sdk_nodelet
+                      ${PCL_LIBRARIES}
+                      ${YAML_CPP_LIBRARIES}
+                      ${rs_driver_LIBRARIES}
+                      )
+
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 #Ros#
 if(roscpp_FOUND)
   target_link_libraries(rslidar_sdk_node ${roscpp_LIBRARIES})
+  target_link_libraries(rslidar_sdk_nodelet ${roscpp_LIBRARIES})
 endif(roscpp_FOUND)
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")

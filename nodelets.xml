@@ -1,0 +1,9 @@
+<library path="lib/librslidar_sdk_nodelet">
+  <class name="robosense_lidar/CloudNodelet"
+         type="robosense::lidar::CloudNodelet"
+         base_class_type="nodelet::Nodelet">
+    <description>
+      Aggregates points from multiple packets, publishing PointCloud2.
+    </description>
+  </class>
+</library>
