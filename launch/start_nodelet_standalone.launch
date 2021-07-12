@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="manager" default="rslidar_nodelet_manager" />
+    <arg name="config_file" default="config/config.yaml" />
+    <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" />
+    <node pkg="nodelet" type="nodelet" name="$(arg manager)_cloud"
+          args="load robosense_lidar/CloudNodelet $(arg manager)" output="screen">
+        <param name="rslidar_config_file" value="$(find rslidar_sdk)/$(arg config_file)" />
+    </node>
+    <node pkg="rviz" name="rviz" type="rviz" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" />
+</launch>
