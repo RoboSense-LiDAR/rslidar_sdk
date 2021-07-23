@@ -10,7 +10,7 @@ set(COMPILE_METHOD CATKIN)
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
 #=======================================
-set(POINT_TYPE XYZI)
+set(POINT_TYPE XYZIRT)
 
 #========================
 # Project details / setup
