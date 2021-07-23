@@ -54,21 +54,22 @@ int main(int argc, char** argv)
   RS_TITLE << "**********                                    **********" << RS_REND;
   RS_TITLE << "********************************************************" << RS_REND;
 
-#ifdef ROS_FOUND  ///< if ROS is found, call the ros::init function
+  std::string config_file = (std::string)PROJECT_PATH + "/config/config.yaml";
+
+#ifdef ROS_FOUND  ///< if ROS is found, call the ros::init function and load the config path
   ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
+  ros::NodeHandle nh("~");
+  nh.param("rslidar_config_file", config_file, config_file);
 #endif
 
 #ifdef ROS2_FOUND  ///< if ROS2 is found, call the rclcpp::init function
   rclcpp::init(argc, argv);
+  auto node = std::make_shared<rclcpp::Node>("rslidar_sdk_node");
+  node->declare_parameter("rslidar_config_file", config_file);
+  node->get_parameter("rslidar_config_file", config_file);
 #endif
 
-
-  std::string config_file = (std::string)PROJECT_PATH + "/config/config.yaml";
-
-#ifdef ROS_FOUND  ///< if ROS is found, call 
-  ros::NodeHandle nh("~");
-  nh.param("rslidar_config_file", config_file, config_file);
-#endif
+  RS_INFO << "Using config file " << config_file << RS_REND;
 
   std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
   YAML::Node config;
