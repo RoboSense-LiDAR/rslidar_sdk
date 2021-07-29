@@ -1,5 +1,5 @@
 common:
-  msg_source: 2                                         #0: not use Lidar
+  msg_source: 1                                         #0: not use Lidar
                                                         #1: packet message comes from online Lidar
                                                         #2: packet message comes from ROS or ROS2
                                                         #3: packet message comes from Pcap file
@@ -9,7 +9,7 @@ common:
   send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true: Send packets through Protobuf-UDP
   send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
-  pcap_path: /home/xzd/Downloads/5m.pcap                 #The path of pcap file
+  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 lidar:
   - driver:
       lidar_type: RSM1            #LiDAR type - RS16, RS32, RSBP, RS128, RS80, RSM1, RSHELIOS

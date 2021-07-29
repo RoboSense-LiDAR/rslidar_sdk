@@ -34,7 +34,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "manager/adapter_manager.h"
 
 #ifdef ROS_FOUND
-  #include <ros/package.h>
+#include <ros/package.h>
 #endif
 
 using namespace robosense::lidar;
@@ -63,12 +63,12 @@ int main(int argc, char** argv)
   YAML::Node config;
   try
   {
-    #ifdef RUN_IN_ROS_WORKSPACE 
-      std::string path  = ros::package::getPath("rslidar_sdk") ;
-    #else
-      std::string path = (std::string)PROJECT_PATH;
-    #endif
-      config = YAML::LoadFile((std::string)PROJECT_PATH + "/config/config.yaml");
+#ifdef RUN_IN_ROS_WORKSPACE
+    std::string path = ros::package::getPath("rslidar_sdk");
+#else
+    std::string path = (std::string)PROJECT_PATH;
+#endif
+    config = YAML::LoadFile((std::string)path + "/config/config.yaml");
   }
   catch (...)
   {
@@ -78,6 +78,13 @@ int main(int argc, char** argv)
 
 #ifdef ROS_FOUND  ///< if ROS is found, call the ros::init function
   ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
+  ros::NodeHandle priv_hh("~");
+  std::string config_path;
+  priv_hh.param("config_path", config_path, std::string(""));
+  if (!config_path.empty())
+  {
+    config = YAML::LoadFile(config_path);
+  }
 #endif
 
 #ifdef ROS2_FOUND  ///< if ROS2 is found, call the rclcpp::init function

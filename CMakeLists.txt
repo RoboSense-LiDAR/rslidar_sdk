@@ -5,7 +5,7 @@ project(rslidar_sdk)
 #=======================================
 # Compile setup (ORIGINAL, CATKIN, COLCON)
 #=======================================
-set(COMPILE_METHOD ORIGINAL)
+set(COMPILE_METHOD CATKIN)
 
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
@@ -41,6 +41,7 @@ else(roscpp_FOUND)
   message("-- ROS Not Found, Ros Support is turned Off!")
   message(=============================================================)
 endif(roscpp_FOUND)
+
 #ROS2#
 find_package(rclcpp QUIET)
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
@@ -59,6 +60,7 @@ else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   message("-- ROS2 Not Found, Ros2 Support is turned Off!")
   message(=============================================================)
 endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
+
 #Protobuf#
 find_package(Protobuf QUIET)
 find_program(PROTOC protoc)
@@ -82,12 +84,14 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   message("-- Protobuf Not Found, Protobuf Support is turned Off!")
   message(=============================================================)
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+
 #Others#
 find_package(yaml-cpp REQUIRED)
 find_package(PCL QUIET REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
+
 #Catkin#
 if(${COMPILE_METHOD} STREQUAL "CATKIN")
   add_definitions(-DRUN_IN_ROS_WORKSPACE)
@@ -106,20 +110,6 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(src/rs_driver)
 find_package(rs_driver REQUIRED)
 include_directories(${rs_driver_INCLUDE_DIRS})
-
-#Catkin#
-if(${COMPILE_METHOD} STREQUAL "CATKIN")
-  add_definitions(-DRUN_IN_ROS_WORKSPACE)
-  find_package(catkin REQUIRED COMPONENTS
-          roscpp
-          sensor_msgs
-          roslib
-          )
-  
-  catkin_package(
-          CATKIN_DEPENDS sensor_msgs roslib
-  )
-endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 
 #========================
 # Point Type Definition
