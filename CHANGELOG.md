@@ -4,6 +4,7 @@
 
 ### Added
   - add install command when building using catkin
+  - add use_vlan and use_someip support
 
 
 ## v1.3.0 - 2020-11-10
