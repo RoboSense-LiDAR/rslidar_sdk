@@ -99,9 +99,14 @@ if(${COMPILE_METHOD} STREQUAL "CATKIN")
           roscpp
           sensor_msgs
           roslib
+          pcl_conversions
+          pcl_ros
           )
   catkin_package(
-          CATKIN_DEPENDS sensor_msgs roslib
+          CATKIN_DEPENDS roscpp sensor_msgs roslib pcl_conversions pcl_ros
+  )
+  include_directories(
+          ${catkin_INCLUDE_DIRS}
   )
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 #Include directory#

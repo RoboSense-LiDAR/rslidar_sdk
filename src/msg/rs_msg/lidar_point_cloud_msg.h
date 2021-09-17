@@ -33,7 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <string>
 #include <array>
-#include <pcl/io/io.h>
+#include <pcl/common/io.h>
 #include <pcl/point_types.h>
 struct RsPointXYZIRT
 {
