@@ -102,19 +102,21 @@ add_definitions(${PCL_DEFINITIONS})
 #Catkin#
 if(${COMPILE_METHOD} STREQUAL "CATKIN")
   add_definitions(-DRUN_IN_ROS_WORKSPACE)
-
   find_package(catkin REQUIRED
     COMPONENTS
       roscpp
       sensor_msgs
       roslib
+      pcl_ros
       pcl_conversions
   )
 
   catkin_package(
     CATKIN_DEPENDS
+      roscpp
       sensor_msgs
       roslib
+      pclros
       pcl_conversions
   )
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
