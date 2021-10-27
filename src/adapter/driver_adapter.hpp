@@ -54,15 +54,14 @@ public:
   void decodePacket(const PacketMsg& msg);
 
 private:
-  void localPointsCallback(const PointCloudMsg<PointT>& msg);
+  void localPointsCallback(const LidarPointCloudMsg& msg);
   void localScanCallback(const ScanMsg& msg);
   void localPacketCallback(const PacketMsg& msg);
   void localCameraTriggerCallback(const CameraTrigger& msg);
   void localExceptionCallback(const lidar::Error& msg);
-  LidarPointCloudMsg core2SDK(const lidar::PointCloudMsg<PointT>& msg);
 
 private:
-  std::shared_ptr<lidar::LidarDriver<PointT>> driver_ptr_;
+  std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
   std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
   std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
   std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
@@ -72,7 +71,7 @@ private:
 
 inline DriverAdapter::DriverAdapter()
 {
-  driver_ptr_.reset(new lidar::LidarDriver<PointT>());
+  driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
   thread_pool_ptr_.reset(new lidar::ThreadPool());
   driver_ptr_->regExceptionCallback(std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
 }
@@ -191,7 +190,7 @@ inline void DriverAdapter::regRecvCallback(const std::function<void(const Camera
 
 inline void DriverAdapter::decodeScan(const ScanMsg& msg)
 {
-  lidar::PointCloudMsg<PointT> point_cloud_msg;
+  LidarPointCloudMsg point_cloud_msg;
   if (driver_ptr_->decodeMsopScan(msg, point_cloud_msg))
   {
     localPointsCallback(point_cloud_msg);
@@ -203,11 +202,11 @@ inline void DriverAdapter::decodePacket(const PacketMsg& msg)
   driver_ptr_->decodeDifopPkt(msg);
 }
 
-inline void DriverAdapter::localPointsCallback(const PointCloudMsg<PointT>& msg)
+inline void DriverAdapter::localPointsCallback(const LidarPointCloudMsg& msg)
 {
   for (auto iter : point_cloud_cb_vec_)
   {
-    thread_pool_ptr_->commit([this, msg, iter]() { iter(core2SDK(msg)); });
+    thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
   }
 }
 
@@ -249,20 +248,6 @@ inline void DriverAdapter::localExceptionCallback(const lidar::Error& msg)
       RS_ERROR << msg.toString() << RS_REND;
       break;
   }
-}
-
-inline LidarPointCloudMsg DriverAdapter::core2SDK(const lidar::PointCloudMsg<PointT>& msg)
-{
-  LidarPointCloudMsg::PointCloudPtr point_cloud(new LidarPointCloudMsg::PointCloud);
-  point_cloud->points.assign(msg.point_cloud_ptr->begin(), msg.point_cloud_ptr->end());
-  point_cloud->height = msg.height;
-  point_cloud->width = msg.width;
-  point_cloud->is_dense = msg.is_dense;
-  LidarPointCloudMsg point_cloud_msg(point_cloud);
-  point_cloud_msg.frame_id = msg.frame_id;
-  point_cloud_msg.timestamp = msg.timestamp;
-  point_cloud_msg.seq = msg.seq;
-  return std::move(point_cloud_msg);
 }
 
 }  // namespace lidar

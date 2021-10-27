@@ -56,7 +56,7 @@ namespace lidar
 inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 {
   sensor_msgs::PointCloud2 ros_msg;
-  pcl::toROSMsg(*rs_msg.point_cloud_ptr, ros_msg);
+  pcl::toROSMsg(rs_msg, ros_msg);
   ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
   ros_msg.header.frame_id = rs_msg.frame_id;
   ros_msg.header.seq = rs_msg.seq;
@@ -152,7 +152,7 @@ namespace lidar
 inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 {
   sensor_msgs::msg::PointCloud2 ros_msg;
-  pcl::toROSMsg(*rs_msg.point_cloud_ptr, ros_msg);
+  pcl::toROSMsg(rs_msg, ros_msg);
   ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
   ros_msg.header.stamp.nanosec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
   ros_msg.header.frame_id = rs_msg.frame_id;

@@ -31,13 +31,22 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
+
 #include <string>
 #include <array>
+
 #include <pcl/io/io.h>
 #include <pcl/point_types.h>
+
+#ifdef POINT_TYPE_XYZI
+
+typedef pcl::PointXYZI PointT;
+
+#elif POINT_TYPE_XYZIRT
+
 struct RsPointXYZIRT
 {
-  PCL_ADD_POINT4D;
+  
   uint8_t intensity;
   uint16_t ring = 0;
   double timestamp = 0;
@@ -45,11 +54,9 @@ struct RsPointXYZIRT
 } EIGEN_ALIGN16;
 POINT_CLOUD_REGISTER_POINT_STRUCT(RsPointXYZIRT, (float, x, x)(float, y, y)(float, z, z)(uint8_t, intensity, intensity)(
                                                      uint16_t, ring, ring)(double, timestamp, timestamp))
-#ifdef POINT_TYPE_XYZI
-typedef pcl::PointXYZI PointT;
-#elif POINT_TYPE_XYZIRT
 
 typedef RsPointXYZIRT PointT;
+
 #endif
 
 namespace robosense
@@ -63,24 +70,20 @@ namespace lidar
  *         If Proto is turned on , we provide translation functions between Protobuf message and RoboSense message
  */
 
-struct alignas(16) LidarPointCloudMsg
+template <typename T_Point>
+class PointCloudT : public pcl::PointCloud<T_Point>
 {
-  typedef pcl::PointCloud<PointT> PointCloud;
-  typedef pcl::PointCloud<PointT>::Ptr PointCloudPtr;
-  typedef pcl::PointCloud<PointT>::ConstPtr PointCloudConstPtr;
+public:
+
+  typedef T_Point PointT;
+  typedef typename pcl::PointCloud<T_Point>::VectorType VectorT;
+
   double timestamp = 0.0;
-  uint32_t seq = 0;
-  std::string frame_id = "";
-
-  PointCloudConstPtr point_cloud_ptr;  ///< the point cloud pointer
-
-  LidarPointCloudMsg() = default;
-  LidarPointCloudMsg(const PointCloudPtr& ptr) : point_cloud_ptr(ptr)
-  {
-  }
-  typedef std::shared_ptr<LidarPointCloudMsg> Ptr;
-  typedef std::shared_ptr<const LidarPointCloudMsg> ConstPtr;
+  std::string frame_id = "";      ///< Point cloud frame id
+  uint32_t seq = 0;               ///< Sequence number of message
 };
+
+typedef PointCloudT<PointT> LidarPointCloudMsg; 
 
 }  // namespace lidar
 }  // namespace robosense
