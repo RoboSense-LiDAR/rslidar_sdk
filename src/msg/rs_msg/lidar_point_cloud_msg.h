@@ -46,7 +46,7 @@ typedef pcl::PointXYZI PointT;
 
 struct RsPointXYZIRT
 {
-  
+  PCL_ADD_POINT4D;
   uint8_t intensity;
   uint16_t ring = 0;
   double timestamp = 0;
