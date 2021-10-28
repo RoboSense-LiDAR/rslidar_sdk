@@ -206,7 +206,8 @@ inline void DriverAdapter::localPointsCallback(const LidarPointCloudMsg& msg)
 {
   for (auto iter : point_cloud_cb_vec_)
   {
-    thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
+    //thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
+    iter(msg);;
   }
 }
 
