@@ -1,6 +1,12 @@
 # Changelog
 
-## unrelease
+## v1.4.0
+
+### Updated
+  - replace point with point cloud, as rs_driver's template parameter
+  - handle point cloud in rs_driver's thread
+
+## v1.3.1
 
 ### Added
   - add install command when building using catkin
