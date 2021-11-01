@@ -382,7 +382,7 @@ private:
     deadline_->async_wait(boost::bind(&ProtoCommunicator::checkDeadline, this));
   }
   static void handleReceive(const boost::system::error_code& ec, std::size_t length, boost::system::error_code* out_ec,
-                             std::size_t* out_length)
+                            std::size_t* out_length)
   {
     *out_ec = ec;
     *out_length = length;
