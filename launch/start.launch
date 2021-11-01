@@ -3,5 +3,5 @@
     <param name="config_path" value=""/>
   </node>
   <!-- rviz -->
-  <!-- node pkg="rviz" name="rviz" type="rviz" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" /-->
+  <node pkg="rviz" name="rviz" type="rviz" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" />
 </launch>

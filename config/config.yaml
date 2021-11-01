@@ -12,8 +12,7 @@ common:
   pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 lidar:
   - driver:
-      lidar_type: RSBP            #LiDAR type - RS16, RS32, RSBP, RS128, RS80, RSM1, RSHELIOS
-      angle_path: /mnt/share/channel_bp/angle.csv 
+      lidar_type: RSM1            #LiDAR type - RS16, RS32, RSBP, RS128, RS80, RSM1, RSHELIOS
       frame_id: /rslidar           #Frame id of message
       msop_port: 6699              #Msop port of lidar
       difop_port: 7788             #Difop port of lidar
@@ -21,7 +20,6 @@ lidar:
       end_angle: 360               #End angle of point cloud 
       min_distance: 0.2            #Minimum distance of point cloud
       max_distance: 200            #Maximum distance of point cloud
-      use_vlan: false              #Use vlan or not
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp
                                    #False-- Use the system clock as the timestamp
     ros:
