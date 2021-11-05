@@ -95,6 +95,7 @@ inline void DriverAdapter::init(const YAML::Node& config)
   yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
   yamlRead<bool>(driver_config, "saved_by_rows", driver_param.saved_by_rows, false);
   yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.decoder_param.use_lidar_clock, false);
+  yamlRead<bool>(driver_config, "is_dense", driver_param.decoder_param.is_dense, false);
   yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
   yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
   yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
