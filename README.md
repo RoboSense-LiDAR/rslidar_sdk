@@ -63,8 +63,12 @@ If use rslidar_sdk in ROS2 environment, ROS2 related libraries need to be instal
 **Ubuntu 16.04**: Not supported
 
 **Ubuntu 18.04**: ROS2 eloquent desktop
-
+  
 **Installation**: please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
+
+**Ubuntu 20.04**: ROS2 foxy desktop
+
+**Installation**: please refer to https:https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
 
 **Ubuntu 20.04**: ROS2 galactic desktop
 

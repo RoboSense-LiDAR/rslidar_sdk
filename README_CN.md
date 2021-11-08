@@ -65,6 +65,10 @@ Ubuntu 18.04 - ROS2 Eloquent desktop
 
 安装方式：参考 https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
+Ubuntu 20.04 - ROS2 Foxy desktop
+
+安装方式：参考 https:https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
+
 Ubuntu 20.04 - ROS2 Galactic desktop
 
 安装方式：参考 https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html
