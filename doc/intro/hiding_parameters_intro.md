@@ -38,6 +38,7 @@ lidar:
       max_distance: 200           
       use_lidar_clock: false       
       angle_path: /home/robosense/angle.csv   
+      is_dense: true
       split_frame_mode: 1	      
       cut_angle: 0   
 	  num_pkts_split: 1 	                    
@@ -54,6 +55,7 @@ lidar:
 ```
 
 - ```angle_path``` -- The path of the angle.csv. For latest version of LiDARs, this parameter can be ignored.
+- ```is_dense``` -- Whether to discard NAN points. discard if ```true```, reserve if ```false```. The default value is ```false```.
 - ```split_frame_mode``` -- The mode to split the LiDAR frames. Default value is ```1```.
   - 1 -- Spliting frames depending on the cut_angle
   - 2 -- Spliting frames depending on a fixed number of packets

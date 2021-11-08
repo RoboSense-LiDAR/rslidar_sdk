@@ -37,9 +37,10 @@ lidar:
       max_distance: 200           
       use_lidar_clock: false       
       angle_path: /home/robosense/angle.csv   
+      is_dense: true
       split_frame_mode: 1	      
       cut_angle: 0   
-	  num_pkts_split: 1 	                    
+      num_pkts_split: 1 	                    
       wait_for_difop: true         
       saved_by_rows: false
       multi_cast_address: 0.0.0.0
@@ -53,6 +54,7 @@ lidar:
 ```
 
 - ```angle_path``` -- angle.csv外参文件的路径，仅用于调试，可忽略。
+- ```is_dense``` -- 输出的点云中是否剔除NAN points。```true```为剔除，```false```为不剔除。默认值为```false```。
 - ```split_frame_mode``` -- 分帧模式设置，默认值为```1```。
   - 1 -- 角度分帧
   - 2 -- 固定包数分帧
