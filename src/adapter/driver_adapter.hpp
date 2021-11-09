@@ -54,7 +54,8 @@ public:
   void decodePacket(const PacketMsg& msg);
 
 private:
-  void localPointsCallback(const LidarPointCloudMsg& msg);
+  std::shared_ptr<LidarPointCloudMsg> localPointsGetCallback(void);
+  void localPointsCallback(std::shared_ptr<LidarPointCloudMsg> msg);
   void localScanCallback(const ScanMsg& msg);
   void localPacketCallback(const PacketMsg& msg);
   void localCameraTriggerCallback(const CameraTrigger& msg);
@@ -67,12 +68,14 @@ private:
   std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
   std::vector<std::function<void(const CameraTrigger&)>> camera_trigger_cb_vec_;
   lidar::ThreadPool::Ptr thread_pool_ptr_;
+  std::shared_ptr<LidarPointCloudMsg> point_cloud_;
 };
 
 inline DriverAdapter::DriverAdapter()
 {
   driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
   thread_pool_ptr_.reset(new lidar::ThreadPool());
+  point_cloud_.reset (new LidarPointCloudMsg);
   driver_ptr_->regExceptionCallback(std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
 }
 
@@ -154,7 +157,8 @@ inline void DriverAdapter::init(const YAML::Node& config)
   {
     driver_ptr_->initDecoderOnly(driver_param);
   }
-  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
+  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1),
+      std::bind(&DriverAdapter::localPointsGetCallback, this));
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localCameraTriggerCallback, this, std::placeholders::_1));
@@ -192,8 +196,8 @@ inline void DriverAdapter::regRecvCallback(const std::function<void(const Camera
 
 inline void DriverAdapter::decodeScan(const ScanMsg& msg)
 {
-  LidarPointCloudMsg point_cloud_msg;
-  if (driver_ptr_->decodeMsopScan(msg, point_cloud_msg))
+  std::shared_ptr<LidarPointCloudMsg> point_cloud_msg;
+  if (driver_ptr_->decodeMsopScan(msg, *point_cloud_msg))
   {
     localPointsCallback(point_cloud_msg);
   }
@@ -204,13 +208,16 @@ inline void DriverAdapter::decodePacket(const PacketMsg& msg)
   driver_ptr_->decodeDifopPkt(msg);
 }
 
-inline void DriverAdapter::localPointsCallback(const LidarPointCloudMsg& msg)
+inline std::shared_ptr<LidarPointCloudMsg> DriverAdapter::localPointsGetCallback(void)
+{
+  return point_cloud_;
+}
+
+inline void DriverAdapter::localPointsCallback(std::shared_ptr<LidarPointCloudMsg> msg)
 {
   for (auto iter : point_cloud_cb_vec_)
   {
-    // thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
-    iter(msg);
-    ;
+    iter(*msg);
   }
 }
 
