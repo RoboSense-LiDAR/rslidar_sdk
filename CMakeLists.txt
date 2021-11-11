@@ -5,12 +5,12 @@ project(rslidar_sdk)
 #=======================================
 # Compile setup (ORIGINAL, CATKIN, COLCON)
 #=======================================
-set(COMPILE_METHOD COLCON)
+set(COMPILE_METHOD CATKIN)
 
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
 #=======================================
-set(POINT_TYPE XYZI)
+set(POINT_TYPE XYZIRT)
 
 #========================
 # Project details / setup
@@ -149,6 +149,20 @@ endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 #Ros#
 if(roscpp_FOUND)
   target_link_libraries(rslidar_sdk_node ${roscpp_LIBRARIES})
+  install(TARGETS
+    rslidar_sdk_node
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+  install(DIRECTORY
+    config
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  )
+  install(DIRECTORY
+    launch
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  )
 endif(roscpp_FOUND)
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
