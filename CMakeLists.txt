@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0048 NEW)
-project(rslidar_sdk)
+project(rslidar_sdk 1.4.1)
 
 #=======================================
 # Compile setup (ORIGINAL, CATKIN, COLCON)
