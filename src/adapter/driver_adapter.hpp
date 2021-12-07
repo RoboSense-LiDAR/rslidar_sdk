@@ -100,6 +100,14 @@ inline void DriverAdapter::init(const YAML::Node& config)
   yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
   yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
   yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
+
+  yamlReadAbort<bool>(driver_config, "stamping_kf_enable", driver_param.decoder_param.stamping_kf_enable);
+  yamlReadAbort<double>(driver_config, "stamping_kf_F", driver_param.decoder_param.stamping_kf_F);
+  yamlReadAbort<double>(driver_config, "stamping_kf_H", driver_param.decoder_param.stamping_kf_H);
+  yamlReadAbort<double>(driver_config, "stamping_kf_P", driver_param.decoder_param.stamping_kf_P);
+  yamlReadAbort<double>(driver_config, "stamping_kf_Q", driver_param.decoder_param.stamping_kf_Q);
+  yamlReadAbort<double>(driver_config, "stamping_kf_R", driver_param.decoder_param.stamping_kf_R);
+
   yamlRead<uint16_t>(driver_config, "split_frame_mode", split_frame_mode, 1);
   yamlRead<uint32_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_pkts_split, 0);
   yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.cut_angle, 0);

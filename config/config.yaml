@@ -22,7 +22,14 @@ lidar:
       min_distance: 0.2            #Minimum distance of point cloud
       max_distance: 200            #Maximum distance of point cloud
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp
-                                   #False-- Use the system clock as the timestamp  
+                                   #False-- Use the system clock as the timestamp
+      stamping_kf_enable: true     # Enable time-stamping jitter KF
+      stamping_kf_F: 1.0           # State transition matrix
+      stamping_kf_H: 1.0           # Measurement-to-state space transformation matrix
+      stamping_kf_P: 0.103         # State covariance matrix which was tunning on ms
+      stamping_kf_Q: 0.00145       # Process noise covariance matrix which was tunning on ms
+      stamping_kf_R: 6.3           # Measurement covariance matrix which was tunning on ms
+
     ros:
       ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
       ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
