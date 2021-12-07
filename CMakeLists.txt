@@ -163,6 +163,14 @@ if(roscpp_FOUND)
     launch
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   )
+
+  install(DIRECTORY
+    config
+    DESTINATION lib/${PROJECT_NAME}
+  )
+
+#  file(COPY config DESTINATION lib)
+
 endif(roscpp_FOUND)
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
