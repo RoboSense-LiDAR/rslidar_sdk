@@ -1,5 +1,7 @@
 <launch>
   <node pkg="rslidar_sdk" name="rslidar_sdk_node" type="rslidar_sdk_node" output="screen">
+    <param name="config_path" value="/home/lanhxg/work/ros/ws_lidar/src/rslidar_sdk/config/config.yaml" />
+    <remap from="/rslidar_points" to="/rslidar_top_points"/>
   </node>
   <!-- rviz -->
   <!-- <node pkg="rviz" name="rviz" type="rviz" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" /> -->
