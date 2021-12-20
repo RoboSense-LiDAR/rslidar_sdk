@@ -72,11 +72,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include "utility/yaml_reader.hpp"
 #include "adapter/driver_adapter.hpp"
-#include "adapter/packet_ros_adapter.hpp"
 #include "adapter/point_cloud_ros_adapter.hpp"
+#if 0
+#include "adapter/packet_ros_adapter.hpp"
 #include "adapter/packet_protobuf_adapter.hpp"
 #include "adapter/point_cloud_protobuf_adapter.hpp"
 #include "adapter/camera_trigger_adapter.hpp"
+#endif
 
 namespace robosense
 {

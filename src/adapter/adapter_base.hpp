@@ -67,16 +67,18 @@ public:
   virtual void init(const YAML::Node& config) = 0;
   virtual void start();
   virtual void stop();
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
+#if 0
   virtual void sendScan(const ScanMsg& msg);
   virtual void sendPacket(const PacketMsg& msg);
-  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
   virtual void sendCameraTrigger(const CameraTrigger& msg);
   virtual void regRecvCallback(const std::function<void(const ScanMsg&)>& callback);
   virtual void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
-  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
   virtual void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback);
   virtual void decodeScan(const ScanMsg& msg);
   virtual void decodePacket(const PacketMsg& msg);
+#endif
 };
 
 inline AdapterBase::~AdapterBase()
@@ -94,17 +96,24 @@ inline void AdapterBase::stop()
   return;
 }
 
+inline void AdapterBase::sendPointCloud(const LidarPointCloudMsg& msg)
+{
+  return;
+}
+
+inline void AdapterBase::regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
+{
+  return;
+}
+
+
+#if 0
 inline void AdapterBase::sendScan(const ScanMsg& msg)
 {
   return;
 }
 
 inline void AdapterBase::sendPacket(const PacketMsg& msg)
-{
-  return;
-}
-
-inline void AdapterBase::sendPointCloud(const LidarPointCloudMsg& msg)
 {
   return;
 }
@@ -124,11 +133,6 @@ inline void AdapterBase::regRecvCallback(const std::function<void(const PacketMs
   return;
 }
 
-inline void AdapterBase::regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
-{
-  return;
-}
-
 inline void AdapterBase::regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
 {
   return;
@@ -143,6 +147,7 @@ inline void AdapterBase::decodePacket(const PacketMsg& msg)
 {
   return;
 }
+#endif
 
 }  // namespace lidar
 }  // namespace robosense

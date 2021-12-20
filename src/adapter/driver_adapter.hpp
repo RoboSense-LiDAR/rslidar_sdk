@@ -47,26 +47,32 @@ public:
   void start();
   void stop();
   inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
+#if 0
   inline void regRecvCallback(const std::function<void(const ScanMsg&)>& callback);
   inline void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
   inline void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback);
   void decodeScan(const ScanMsg& msg);
   void decodePacket(const PacketMsg& msg);
+#endif
 
 private:
   std::shared_ptr<LidarPointCloudMsg> localPointsGetCallback(void);
   void localPointsCallback(std::shared_ptr<LidarPointCloudMsg> msg);
+#if 0
   void localScanCallback(const ScanMsg& msg);
   void localPacketCallback(const PacketMsg& msg);
   void localCameraTriggerCallback(const CameraTrigger& msg);
+#endif
   void localExceptionCallback(const lidar::Error& msg);
 
 private:
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
   std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
+#if 0
   std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
   std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
   std::vector<std::function<void(const CameraTrigger&)>> camera_trigger_cb_vec_;
+#endif
   lidar::ThreadPool::Ptr thread_pool_ptr_;
   std::shared_ptr<LidarPointCloudMsg> point_cloud_;
 };
@@ -86,45 +92,52 @@ inline DriverAdapter::~DriverAdapter()
 
 inline void DriverAdapter::init(const YAML::Node& config)
 {
+
   lidar::RSDriverParam driver_param;
   int msg_source;
   std::string lidar_type;
+  std::string input_type;
   uint16_t split_frame_mode;
   YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
   yamlReadAbort<int>(config, "msg_source", msg_source);
-  yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
-  yamlRead<std::string>(driver_config, "angle_path", driver_param.angle_path, "");
+  //yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
+  yamlRead<std::string>(driver_config, "angle_path", driver_param.decoder_param.angle_path, "");
   yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
-  yamlRead<bool>(driver_config, "wait_for_difop", driver_param.wait_for_difop, true);
-  yamlRead<bool>(driver_config, "saved_by_rows", driver_param.saved_by_rows, false);
+  yamlRead<bool>(driver_config, "wait_for_difop", driver_param.decoder_param.wait_for_difop, true);
+  //yamlRead<bool>(driver_config, "saved_by_rows", driver_param.saved_by_rows, false);
   yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.decoder_param.use_lidar_clock, false);
-  yamlRead<bool>(driver_config, "is_dense", driver_param.decoder_param.is_dense, false);
+  yamlRead<bool>(driver_config, "is_dense", driver_param.decoder_param.dense_points, false);
   yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
   yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
   yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
   yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
   yamlRead<uint16_t>(driver_config, "split_frame_mode", split_frame_mode, 1);
-  yamlRead<uint32_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_pkts_split, 0);
-  yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.cut_angle, 0);
-  yamlRead<std::string>(driver_config, "device_ip", driver_param.input_param.device_ip, "192.168.1.200");
+  yamlRead<uint16_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_blks_split, 0);
+  yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.split_angle, 0);
+  //yamlRead<std::string>(driver_config, "device_ip", driver_param.input_param.device_ip, "192.168.1.200");
   yamlRead<std::string>(driver_config, "multi_cast_address", driver_param.input_param.multi_cast_address, "0.0.0.0");
   yamlRead<std::string>(driver_config, "host_address", driver_param.input_param.host_address, "0.0.0.0");
   yamlRead<uint16_t>(driver_config, "msop_port", driver_param.input_param.msop_port, 6699);
   yamlRead<uint16_t>(driver_config, "difop_port", driver_param.input_param.difop_port, 7788);
-  yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
+  //yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
   yamlRead<bool>(driver_config, "use_vlan", driver_param.input_param.use_vlan, false);
   yamlRead<bool>(driver_config, "use_someip", driver_param.input_param.use_someip, false);
-  yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
+  yamlRead<float>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
   yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
+#if 0
   yamlRead<float>(driver_config, "x", driver_param.decoder_param.transform_param.x, 0);
   yamlRead<float>(driver_config, "y", driver_param.decoder_param.transform_param.y, 0);
   yamlRead<float>(driver_config, "z", driver_param.decoder_param.transform_param.z, 0);
   yamlRead<float>(driver_config, "roll", driver_param.decoder_param.transform_param.roll, 0);
   yamlRead<float>(driver_config, "pitch", driver_param.decoder_param.transform_param.pitch, 0);
   yamlRead<float>(driver_config, "yaw", driver_param.decoder_param.transform_param.yaw, 0);
-  driver_param.lidar_type = driver_param.strToLidarType(lidar_type);
+#endif
+
+  driver_param.lidar_type = strToLidarType(lidar_type);
   driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
+
+#if 0
   if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
   {
     for (size_t i = 0; i < config["camera"].size(); i++)
@@ -145,23 +158,39 @@ inline void DriverAdapter::init(const YAML::Node& config)
       }
     }
   }
-  if (msg_source == MsgSource::MSG_FROM_LIDAR || msg_source == MsgSource::MSG_FROM_PCAP)
+#endif
+  std::cout << "driver_adapter init" << std::endl;
+  switch (msg_source)
   {
-    if (!driver_ptr_->init(driver_param))
-    {
-      RS_ERROR << "Driver Initialize Error...." << RS_REND;
-      exit(-1);
-    }
+    case MsgSource::MSG_FROM_LIDAR:
+      driver_param.input_type = InputType::ONLINE_LIDAR;
+      break;
+    case MsgSource::MSG_FROM_PCAP:
+      driver_param.input_type = InputType::PCAP_FILE;
+      break;
+    case MsgSource::MSG_FROM_ROS_PACKET:
+      driver_param.input_type = InputType::RAW_PACKET;
+      break;
   }
+
+  if (!driver_ptr_->init(driver_param))
+  {
+    RS_ERROR << "Driver Initialize Error...." << RS_REND;
+    exit(-1);
+  }
+#if 0
   else
   {
     driver_ptr_->initDecoderOnly(driver_param);
   }
-  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1),
-      std::bind(&DriverAdapter::localPointsGetCallback, this));
+#endif
+  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsGetCallback, this), 
+      std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
+#if 0
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localCameraTriggerCallback, this, std::placeholders::_1));
+#endif
 }
 
 inline void DriverAdapter::start()
@@ -179,6 +208,7 @@ inline void DriverAdapter::regRecvCallback(const std::function<void(const LidarP
   point_cloud_cb_vec_.emplace_back(callback);
 }
 
+#if 0
 inline void DriverAdapter::regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
 {
   scan_cb_vec_.emplace_back(callback);
@@ -207,6 +237,7 @@ inline void DriverAdapter::decodePacket(const PacketMsg& msg)
 {
   driver_ptr_->decodeDifopPkt(msg);
 }
+#endif
 
 inline std::shared_ptr<LidarPointCloudMsg> DriverAdapter::localPointsGetCallback(void)
 {
@@ -221,6 +252,7 @@ inline void DriverAdapter::localPointsCallback(std::shared_ptr<LidarPointCloudMs
   }
 }
 
+#if 0
 inline void DriverAdapter::localScanCallback(const ScanMsg& msg)
 {
   for (auto iter : scan_cb_vec_)
@@ -244,6 +276,7 @@ inline void DriverAdapter::localCameraTriggerCallback(const CameraTrigger& msg)
     thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
   }
 }
+#endif
 
 inline void DriverAdapter::localExceptionCallback(const lidar::Error& msg)
 {

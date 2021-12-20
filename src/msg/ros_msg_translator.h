@@ -62,6 +62,7 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   ros_msg.header.seq = rs_msg.seq;
   return std::move(ros_msg);
 }
+#if 0
 inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
                          const rslidar_msgs::rslidarPacket& ros_msg)
 {
@@ -132,6 +133,7 @@ inline std_msgs::Time toRosMsg(const CameraTrigger& rs_msg)
   ros_msg.data = ros_msg.data.fromSec(rs_msg.second);
   return ros_msg;
 }
+#endif
 
 }  // namespace lidar
 }  // namespace robosense
@@ -158,6 +160,7 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   ros_msg.header.frame_id = rs_msg.frame_id;
   return std::move(ros_msg);
 }
+#if 0
 inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
                          const rslidar_msg::msg::RslidarPacket& ros_msg)
 {
@@ -220,6 +223,7 @@ inline rslidar_msg::msg::RslidarScan toRosMsg(const ScanMsg& rs_msg)
   }
   return ros_msg;
 }
+#endif
 }  // namespace lidar
 }  // namespace robosense
 #endif  // ROS2_FOUND

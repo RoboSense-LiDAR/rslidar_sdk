@@ -79,7 +79,7 @@ inline void PacketRosAdapter::init(const YAML::Node& config)
   yamlRead<std::string>(config["driver"], "lidar_type", lidar_type_str, "RS16");
   yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", ros_recv_topic, "rslidar_packets");
   yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
-  lidar_type_ = RSDriverParam::strToLidarType(lidar_type_str);
+  lidar_type_ = strToLidarType(lidar_type_str);
   if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
   {
     packet_sub_ = nh_->subscribe(ros_recv_topic + "_difop", 1, &PacketRosAdapter::localDifopCallback, this);

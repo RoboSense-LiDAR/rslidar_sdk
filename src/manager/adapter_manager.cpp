@@ -87,6 +87,7 @@ void AdapterManager::init(const YAML::Node& config)
         }
         break;
 
+#if 0
       case MsgSource::MSG_FROM_ROS_PACKET:  // pkt from ros
         RS_INFO << "------------------------------------------------------" << RS_REND;
         RS_INFO << "Receive Packets From : ROS" << RS_REND;
@@ -105,6 +106,7 @@ void AdapterManager::init(const YAML::Node& config)
         packet_receive_adapter_vec_[i]->regRecvCallback(
             std::bind(&AdapterBase::decodePacket, point_cloud_receive_adapter_vec_[i], std::placeholders::_1));
         break;
+#endif
 
       case MsgSource::MSG_FROM_PCAP:  // pcap
         RS_INFO << "------------------------------------------------------" << RS_REND;
@@ -127,6 +129,7 @@ void AdapterManager::init(const YAML::Node& config)
         }
         break;
 
+#if 0
       case MsgSource::MSG_FROM_PROTO_PACKET:  // packets from proto
         RS_INFO << "------------------------------------------------------" << RS_REND;
         RS_INFO << "Receive Packets From : Protobuf-UDP" << RS_REND;
@@ -161,12 +164,14 @@ void AdapterManager::init(const YAML::Node& config)
             createReceiver(lidar_config[i], AdapterType::PointCloudProtoAdapter));
         packet_receive_adapter_vec_.emplace_back(nullptr);
         break;
+#endif
 
       default:
         RS_ERROR << "Not use LiDAR or Wrong LiDAR message source! Abort!" << RS_REND;
         exit(-1);
     }
 
+#if 0
     /*Transmitter*/
     if (send_packet_ros)
     {
@@ -200,6 +205,7 @@ void AdapterManager::init(const YAML::Node& config)
       packet_receive_adapter_vec_[i]->regRecvCallback(
           std::bind(&AdapterBase::sendPacket, transmitter_ptr, std::placeholders::_1));
     }
+#endif
     if (send_point_cloud_ros)
     {
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
@@ -213,6 +219,7 @@ void AdapterManager::init(const YAML::Node& config)
       point_cloud_receive_adapter_vec_[i]->regRecvCallback(
           std::bind(&AdapterBase::sendPointCloud, transmitter_ptr, std::placeholders::_1));
     }
+#if 0
     if (send_point_cloud_proto)
     {
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
@@ -240,6 +247,7 @@ void AdapterManager::init(const YAML::Node& config)
       point_cloud_receive_adapter_vec_[i]->regRecvCallback(
           std::bind(&AdapterBase::sendCameraTrigger, transmitter_ptr, std::placeholders::_1));
     }
+#endif
   }
 }
 
@@ -253,6 +261,7 @@ void AdapterManager::start()
         iter->start();
     }
   }
+#if 0
   if (packet_thread_flag_)
   {
     for (auto& iter : packet_receive_adapter_vec_)
@@ -263,6 +272,7 @@ void AdapterManager::start()
       }
     }
   }
+#endif
 }
 
 void AdapterManager::stop()
@@ -275,6 +285,7 @@ void AdapterManager::stop()
         iter->stop();
     }
   }
+#if 0
   if (packet_thread_flag_)
   {
     for (auto& iter : packet_receive_adapter_vec_)
@@ -285,6 +296,7 @@ void AdapterManager::stop()
       }
     }
   }
+#endif
 }
 
 std::shared_ptr<AdapterBase> AdapterManager::createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
@@ -297,6 +309,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createReceiver(const YAML::Node& co
       receiver->init(config);
       break;
 
+#if 0
     case AdapterType::PacketRosAdapter:
 #if (ROS_FOUND || ROS2_FOUND)
       receiver = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PacketRosAdapter>());
@@ -326,6 +339,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createReceiver(const YAML::Node& co
       RS_ERROR << "Protobuf not found! Could not use Protobuf functions!" << RS_REND;
       exit(-1);
 #endif
+#endif
 
     default:
       RS_ERROR << "Create receiver failed. Abort!" << RS_REND;
@@ -341,6 +355,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createTransmitter(const YAML::Node&
   std::shared_ptr<AdapterBase> transmitter;
   switch (adapter_type)
   {
+#if 0
     case AdapterType::PacketRosAdapter:
 #if (ROS_FOUND || ROS2_FOUND)
       transmitter = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PacketRosAdapter>());
@@ -360,6 +375,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createTransmitter(const YAML::Node&
       RS_ERROR << "Protobuf not found! Could not use Protobuf functions!" << RS_REND;
       exit(-1);
 #endif
+#endif
 
     case AdapterType::PointCloudRosAdapter:
 #if (ROS_FOUND || ROS2_FOUND)
@@ -371,6 +387,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createTransmitter(const YAML::Node&
       exit(-1);
 #endif
 
+#if 0
     case AdapterType::PointCloudProtoAdapter:
 #ifdef PROTO_FOUND
       transmitter = std::dynamic_pointer_cast<AdapterBase>(std::make_shared<PointCloudProtoAdapter>());
@@ -389,6 +406,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createTransmitter(const YAML::Node&
 #else
       RS_ERROR << "ROS not found! Could not use ROS functions!" << RS_REND;
       exit(-1);
+#endif
 #endif
 
     default:
