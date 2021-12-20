@@ -173,6 +173,14 @@ inline void DriverAdapter::init(const YAML::Node& config)
       break;
   }
 
+  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsGetCallback, this), 
+      std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
+#if 0
+  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
+  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
+  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localCameraTriggerCallback, this, std::placeholders::_1));
+#endif
+
   if (!driver_ptr_->init(driver_param))
   {
     RS_ERROR << "Driver Initialize Error...." << RS_REND;
@@ -183,13 +191,6 @@ inline void DriverAdapter::init(const YAML::Node& config)
   {
     driver_ptr_->initDecoderOnly(driver_param);
   }
-#endif
-  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsGetCallback, this), 
-      std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
-#if 0
-  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
-  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
-  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localCameraTriggerCallback, this, std::placeholders::_1));
 #endif
 }
 

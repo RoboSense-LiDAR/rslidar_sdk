@@ -32,57 +32,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include <string>
-#include <array>
+#include "rs_driver/msg/pcl_point_cloud_msg.h"
+typedef PointCloudT<PointXYZI> LidarPointCloudMsg;
 
-#include <pcl/io/io.h>
-#include <pcl/point_types.h>
-
-#ifdef POINT_TYPE_XYZI
-
-typedef pcl::PointXYZI PointT;
-
-#elif POINT_TYPE_XYZIRT
-
-struct RsPointXYZIRT
-{
-  PCL_ADD_POINT4D;
-  uint8_t intensity;
-  uint16_t ring = 0;
-  double timestamp = 0;
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-} EIGEN_ALIGN16;
-POINT_CLOUD_REGISTER_POINT_STRUCT(RsPointXYZIRT, (float, x, x)(float, y, y)(float, z, z)(uint8_t, intensity, intensity)(
-                                                     uint16_t, ring, ring)(double, timestamp, timestamp))
-
-typedef RsPointXYZIRT PointT;
-
-#endif
-
-namespace robosense
-{
-namespace lidar
-{
-/**
- * @brief Point cloud message for RoboSense SDK.
- * @detail RoboSense LidarPointCloudMsg is defined for passing lidar point cloud accross different modules
- *         If ROS is turned on , we provide translation functions between ROS message and RoboSense message
- *         If Proto is turned on , we provide translation functions between Protobuf message and RoboSense message
- */
-
-template <typename T_Point>
-class PointCloudT : public pcl::PointCloud<T_Point>
-{
-public:
-  typedef T_Point PointT;
-  typedef typename pcl::PointCloud<T_Point>::VectorType VectorT;
-
-  double timestamp = 0.0;
-  std::string frame_id = "rslidar";  ///< Point cloud frame id
-  uint32_t seq = 0;           ///< Sequence number of message
-};
-
-typedef PointCloudT<PointT> LidarPointCloudMsg;
-
-}  // namespace lidar
-}  // namespace robosense
