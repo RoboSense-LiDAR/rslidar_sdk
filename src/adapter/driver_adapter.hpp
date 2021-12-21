@@ -196,7 +196,8 @@ inline void DriverAdapter::regRecvCallback(const std::function<void(const Camera
 
 inline void DriverAdapter::decodeScan(const ScanMsg& msg)
 {
-  std::shared_ptr<LidarPointCloudMsg> point_cloud_msg;
+  std::shared_ptr<LidarPointCloudMsg> point_cloud_msg = 
+    std::make_shared<LidarPointCloudMsg>();
   if (driver_ptr_->decodeMsopScan(msg, *point_cloud_msg))
   {
     localPointsCallback(point_cloud_msg);

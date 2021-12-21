@@ -107,6 +107,7 @@ endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
 #Driver core#
+add_definitions(-DENABLE_PUBLISH_RAW_MSG)
 add_subdirectory(src/rs_driver)
 find_package(rs_driver REQUIRED)
 include_directories(${rs_driver_INCLUDE_DIRS})
