@@ -92,39 +92,47 @@ inline DriverAdapter::~DriverAdapter()
 
 inline void DriverAdapter::init(const YAML::Node& config)
 {
-
-  lidar::RSDriverParam driver_param;
   int msg_source;
-  std::string lidar_type;
-  std::string input_type;
-  uint16_t split_frame_mode;
-  YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
   yamlReadAbort<int>(config, "msg_source", msg_source);
-  //yamlRead<std::string>(driver_config, "frame_id", driver_param.frame_id, "rslidar");
-  yamlRead<std::string>(driver_config, "angle_path", driver_param.decoder_param.angle_path, "");
-  yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
-  yamlRead<bool>(driver_config, "wait_for_difop", driver_param.decoder_param.wait_for_difop, true);
-  //yamlRead<bool>(driver_config, "saved_by_rows", driver_param.saved_by_rows, false);
-  yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.decoder_param.use_lidar_clock, false);
-  yamlRead<bool>(driver_config, "is_dense", driver_param.decoder_param.dense_points, false);
-  yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
-  yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
-  yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
-  yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
-  yamlRead<uint16_t>(driver_config, "split_frame_mode", split_frame_mode, 1);
-  yamlRead<uint16_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_blks_split, 0);
-  yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.split_angle, 0);
-  //yamlRead<std::string>(driver_config, "device_ip", driver_param.input_param.device_ip, "192.168.1.200");
+
+  YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
+  lidar::RSDriverParam driver_param;
+
+  // input related
   yamlRead<std::string>(driver_config, "multi_cast_address", driver_param.input_param.multi_cast_address, "0.0.0.0");
   yamlRead<std::string>(driver_config, "host_address", driver_param.input_param.host_address, "0.0.0.0");
   yamlRead<uint16_t>(driver_config, "msop_port", driver_param.input_param.msop_port, 6699);
   yamlRead<uint16_t>(driver_config, "difop_port", driver_param.input_param.difop_port, 7788);
-  //yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
   yamlRead<bool>(driver_config, "use_vlan", driver_param.input_param.use_vlan, false);
   yamlRead<bool>(driver_config, "use_someip", driver_param.input_param.use_someip, false);
+  yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
   yamlRead<float>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
-  yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
+
+  // decoder related
+  std::string lidar_type;
+  yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
+  driver_param.lidar_type = strToLidarType(lidar_type);
+
+  // decoder
+  yamlRead<bool>(driver_config, "wait_for_difop", driver_param.decoder_param.wait_for_difop, true);
+  yamlRead<bool>(driver_config, "use_lidar_clock", driver_param.decoder_param.use_lidar_clock, false);
+  yamlRead<float>(driver_config, "min_distance", driver_param.decoder_param.min_distance, 0.2);
+  yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
+  yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
+  yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
+  yamlRead<bool>(driver_config, "is_dense", driver_param.decoder_param.dense_points, false);
+
+  // mechanical decoder
+  yamlRead<std::string>(driver_config, "angle_path", driver_param.decoder_param.angle_path, "");
+
+  uint16_t split_frame_mode;
+  yamlRead<uint16_t>(driver_config, "split_frame_mode", split_frame_mode, 1);
+  driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
+
+  yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.split_angle, 0);
+  yamlRead<uint16_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_blks_split, 0);
+
 #if 0
   yamlRead<float>(driver_config, "x", driver_param.decoder_param.transform_param.x, 0);
   yamlRead<float>(driver_config, "y", driver_param.decoder_param.transform_param.y, 0);
@@ -134,8 +142,6 @@ inline void DriverAdapter::init(const YAML::Node& config)
   yamlRead<float>(driver_config, "yaw", driver_param.decoder_param.transform_param.yaw, 0);
 #endif
 
-  driver_param.lidar_type = strToLidarType(lidar_type);
-  driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
 
 #if 0
   if (config["camera"] && config["camera"].Type() != YAML::NodeType::Null)
@@ -159,7 +165,6 @@ inline void DriverAdapter::init(const YAML::Node& config)
     }
   }
 #endif
-  std::cout << "driver_adapter init" << std::endl;
   switch (msg_source)
   {
     case MsgSource::MSG_FROM_LIDAR:
@@ -180,6 +185,8 @@ inline void DriverAdapter::init(const YAML::Node& config)
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localCameraTriggerCallback, this, std::placeholders::_1));
 #endif
+
+  driver_param.print();
 
   if (!driver_ptr_->init(driver_param))
   {

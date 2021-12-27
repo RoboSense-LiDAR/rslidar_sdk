@@ -70,7 +70,7 @@ void AdapterManager::init(const YAML::Node& config)
     /*Receiver*/
     switch (msg_source)
     {
-      case MsgSource::MSG_FROM_LIDAR:  // use driver
+      case MsgSource::MSG_FROM_LIDAR:  // online lidar
         RS_INFO << "------------------------------------------------------" << RS_REND;
         RS_INFO << "Receive Packets From : Online LiDAR" << RS_REND;
         RS_INFO << "Msop Port: " << lidar_config[i]["driver"]["msop_port"].as<uint16_t>() << RS_REND;
