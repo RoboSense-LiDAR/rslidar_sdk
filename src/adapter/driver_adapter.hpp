@@ -124,6 +124,7 @@ inline void DriverAdapter::init(const YAML::Node& config)
   yamlRead<bool>(driver_config, "is_dense", driver_param.decoder_param.dense_points, false);
 
   // mechanical decoder
+  yamlRead<bool>(driver_config, "config_from_file", driver_param.decoder_param.config_from_file, false);
   yamlRead<std::string>(driver_config, "angle_path", driver_param.decoder_param.angle_path, "");
 
   uint16_t split_frame_mode;
