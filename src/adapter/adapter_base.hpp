@@ -31,8 +31,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
-#include "utility/common.h"
-#include "utility/yaml_reader.hpp"
+
+//#include "utility/common.h"
 #include "rs_driver/msg/packet_msg.h"
 #include "rs_driver/msg/scan_msg.h"
 #include "msg/rs_msg/lidar_point_cloud_msg.h"
@@ -41,6 +41,7 @@ namespace robosense
 {
 namespace lidar
 {
+
 enum MsgSource
 {
   MSG_FROM_LIDAR = 1,
@@ -49,6 +50,7 @@ enum MsgSource
   MSG_FROM_PROTO_PACKET = 4,
   MSG_FROM_PROTO_POINTCLOUD = 5
 };
+
 enum class AdapterType
 {
   DriverAdapter,
@@ -58,6 +60,7 @@ enum class AdapterType
   PacketProtoAdapter,
   CameraTriggerRosAdapter
 };
+
 class AdapterBase
 {
 public:

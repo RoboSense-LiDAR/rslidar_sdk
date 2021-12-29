@@ -70,23 +70,19 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ******************************************************************************************************************/
 
 #pragma once
+
 #include "utility/yaml_reader.hpp"
-#include "adapter/driver_adapter.hpp"
-#include "adapter/point_cloud_ros_adapter.hpp"
-#if 0
-#include "adapter/packet_ros_adapter.hpp"
-#include "adapter/packet_protobuf_adapter.hpp"
-#include "adapter/point_cloud_protobuf_adapter.hpp"
-#include "adapter/camera_trigger_adapter.hpp"
-#endif
+#include "adapter/adapter_base.hpp"
 
 namespace robosense
 {
 namespace lidar
 {
+
 class AdapterManager
 {
 public:
+
   AdapterManager() = default;
   ~AdapterManager();
   void init(const YAML::Node& config);
@@ -94,10 +90,10 @@ public:
   void stop();
 
 private:
+
   std::shared_ptr<AdapterBase> createReceiver(const YAML::Node& config, const AdapterType& adapter_type);
   std::shared_ptr<AdapterBase> createTransmitter(const YAML::Node& config, const AdapterType& adapter_type);
 
-private:
   bool packet_thread_flag_;
   bool point_cloud_thread_flag_;
   std::vector<AdapterBase::Ptr> packet_receive_adapter_vec_;
@@ -105,5 +101,6 @@ private:
   std::vector<AdapterBase::Ptr> packet_transmit_adapter_vec_;
   std::vector<AdapterBase::Ptr> point_cloud_transmit_adapter_vec_;
 };
+
 }  // namespace lidar
 }  // namespace robosense

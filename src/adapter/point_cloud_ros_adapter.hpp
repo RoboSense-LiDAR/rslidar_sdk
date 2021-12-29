@@ -31,7 +31,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
+
 #ifdef ROS_FOUND
+
 #include <ros/ros.h>
 #include "adapter/adapter_base.hpp"
 #include "msg/ros_msg_translator.h"

@@ -160,7 +160,7 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   ros_msg.header.frame_id = rs_msg.frame_id;
   return std::move(ros_msg);
 }
-#if 0
+#if 1
 inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
                          const rslidar_msg::msg::RslidarPacket& ros_msg)
 {

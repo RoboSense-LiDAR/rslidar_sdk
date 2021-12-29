@@ -30,76 +30,101 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
-#include <signal.h>
+#include "rs_driver/macro/version.h"
 #include "manager/adapter_manager.h"
 
+#include <signal.h>
+
 #ifdef ROS_FOUND
+#include <ros/ros.h>
 #include <ros/package.h>
 #endif
 
+#ifdef ROS2_FOUND
+#include <rclcpp/rclcpp.hpp>
+#endif
+
 using namespace robosense::lidar;
+
+#ifdef ROS2_FOUND
 std::mutex g_mtx;
 std::condition_variable g_cv;
+#endif
+
 static void sigHandler(int sig)
 {
   RS_MSG << "RoboSense-LiDAR-Driver is stopping....." << RS_REND;
+
 #ifdef ROS_FOUND
   ros::shutdown();
-#endif
+#else // ROS2_FOUND
   g_cv.notify_all();
+#endif
 }
 
 int main(int argc, char** argv)
 {
   signal(SIGINT, sigHandler);  ///< bind ctrl+c signal with the sigHandler function
+
   RS_TITLE << "********************************************************" << RS_REND;
   RS_TITLE << "**********                                    **********" << RS_REND;
-  RS_TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR << "." << RSLIDAR_VERSION_MINOR << "."
-           << RSLIDAR_VERSION_PATCH << "     **********" << RS_REND;
+  RS_TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR 
+    << "." << RSLIDAR_VERSION_MINOR 
+    << "." << RSLIDAR_VERSION_PATCH << "     **********" << RS_REND;
   RS_TITLE << "**********                                    **********" << RS_REND;
   RS_TITLE << "********************************************************" << RS_REND;
 
-  std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
-  YAML::Node config;
-  try
-  {
-#ifdef RUN_IN_ROS_WORKSPACE
-    std::string path = ros::package::getPath("rslidar_sdk");
-#else
-    std::string path = (std::string)PROJECT_PATH;
-#endif
-    config = YAML::LoadFile((std::string)path + "/config/config.yaml");
-  }
-  catch (...)
-  {
-    RS_ERROR << "Config file format wrong! Please check the format(e.g. indentation) " << RS_REND;
-    return -1;
-  }
-
-#ifdef ROS_FOUND  ///< if ROS is found, call the ros::init function
+#ifdef ROS_FOUND
   ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
-  ros::NodeHandle priv_hh("~");
-  std::string config_path;
-  priv_hh.param("config_path", config_path, std::string(""));
-  if (!config_path.empty())
-  {
-    config = YAML::LoadFile(config_path);
-  }
-#endif
-
-#ifdef ROS2_FOUND  ///< if ROS2 is found, call the rclcpp::init function
+#else // ROS2_FOUND
   rclcpp::init(argc, argv);
 #endif
 
+  std::string config_path;
+
+#ifdef RUN_IN_ROS_WORKSPACE
+   config_path = ros::package::getPath("rslidar_sdk");
+#else
+   config_path = (std::string)PROJECT_PATH;
+#endif
+
+   config_path += "/config/config.yaml";
+
+#ifdef ROS_FOUND
+  ros::NodeHandle priv_hh("~");
+
+  std::string path;
+  priv_hh.param("config_path", path, std::string(""));
+  if (!path.empty())
+  {
+    config_path = path;
+  }
+#endif
+
+  YAML::Node config;
+  try
+  {
+    config = YAML::LoadFile(config_path);
+  }
+  catch (...)
+  {
+    RS_ERROR << "The format of config file " << config_path 
+      << " is wrong. Please check (e.g. indentation)." << RS_REND;
+    return -1;
+  }
+
+  std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
   demo_ptr->init(config);
   demo_ptr->start();
+
   RS_MSG << "RoboSense-LiDAR-Driver is running....." << RS_REND;
 
 #ifdef ROS_FOUND
   ros::spin();
-#else
+#else // ROS2_FOUND
   std::unique_lock<std::mutex> lck(g_mtx);
   g_cv.wait(lck);
 #endif
+
   return 0;
 }
