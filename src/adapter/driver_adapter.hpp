@@ -31,6 +31,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
+
 #include "adapter/adapter_base.hpp"
 #include "rs_driver/api/lidar_driver.h"
 
@@ -38,56 +39,64 @@ namespace robosense
 {
 namespace lidar
 {
+
 class DriverAdapter : virtual public AdapterBase
 {
 public:
-  DriverAdapter();
-  ~DriverAdapter();
-  void init(const YAML::Node& config);
-  void start();
-  void stop();
-  inline void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
+
+  virtual void init(const YAML::Node& config);
+  virtual void start();
+  virtual void stop();
+
+  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
+  inline void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
+
 #if 0
   inline void regRecvCallback(const std::function<void(const ScanMsg&)>& callback);
-  inline void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
   inline void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback);
   void decodeScan(const ScanMsg& msg);
   void decodePacket(const PacketMsg& msg);
 #endif
 
-private:
-  std::shared_ptr<LidarPointCloudMsg> localPointsGetCallback(void);
-  void localPointsCallback(std::shared_ptr<LidarPointCloudMsg> msg);
-#if 0
-  void localScanCallback(const ScanMsg& msg);
-  void localPacketCallback(const PacketMsg& msg);
-  void localCameraTriggerCallback(const CameraTrigger& msg);
-#endif
-  void localExceptionCallback(const lidar::Error& msg);
+  virtual ~DriverAdapter();
+  DriverAdapter();
 
 private:
+
+  void putException(const lidar::Error& msg);
+  std::shared_ptr<LidarPointCloudMsg> getPointCloud(void);
+  void putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg);
+  void localPacketCallback(const PacketMsg& msg);
+
+#if 0
+  void localScanCallback(const ScanMsg& msg);
+  void localCameraTriggerCallback(const CameraTrigger& msg);
+#endif
+
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
   std::vector<std::function<void(const LidarPointCloudMsg&)>> point_cloud_cb_vec_;
+  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
+  std::shared_ptr<LidarPointCloudMsg> point_cloud_;
 #if 0
   std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
-  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
   std::vector<std::function<void(const CameraTrigger&)>> camera_trigger_cb_vec_;
 #endif
-  lidar::ThreadPool::Ptr thread_pool_ptr_;
-  std::shared_ptr<LidarPointCloudMsg> point_cloud_;
+ // lidar::ThreadPool::Ptr thread_pool_ptr_;
 };
 
 inline DriverAdapter::DriverAdapter()
 {
+  point_cloud_.reset (new LidarPointCloudMsg);
+#if 0
   driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
   thread_pool_ptr_.reset(new lidar::ThreadPool());
-  point_cloud_.reset (new LidarPointCloudMsg);
   driver_ptr_->regExceptionCallback(std::bind(&DriverAdapter::localExceptionCallback, this, std::placeholders::_1));
+#endif
 }
 
 inline DriverAdapter::~DriverAdapter()
 {
-  driver_ptr_->stop();
+//  driver_ptr_->stop();
 }
 
 inline void DriverAdapter::init(const YAML::Node& config)
@@ -179,8 +188,8 @@ inline void DriverAdapter::init(const YAML::Node& config)
       break;
   }
 
-  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPointsGetCallback, this), 
-      std::bind(&DriverAdapter::localPointsCallback, this, std::placeholders::_1));
+  driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::getPointCloud, this), 
+      std::bind(&DriverAdapter::putPointCloud, this, std::placeholders::_1));
 #if 0
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localScanCallback, this, std::placeholders::_1));
   driver_ptr_->regRecvCallback(std::bind(&DriverAdapter::localPacketCallback, this, std::placeholders::_1));
@@ -212,20 +221,59 @@ inline void DriverAdapter::stop()
   driver_ptr_->stop();
 }
 
-inline void DriverAdapter::regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
+inline void DriverAdapter::putException(const lidar::Error& msg)
+{
+  switch (msg.error_code_type)
+  {
+    case lidar::ErrCodeType::INFO_CODE:
+      RS_INFO << msg.toString() << RS_REND;
+      break;
+    case lidar::ErrCodeType::WARNING_CODE:
+      RS_WARNING << msg.toString() << RS_REND;
+      break;
+    case lidar::ErrCodeType::ERROR_CODE:
+      RS_ERROR << msg.toString() << RS_REND;
+      break;
+  }
+}
+
+inline std::shared_ptr<LidarPointCloudMsg> DriverAdapter::getPointCloud(void)
+{
+  return point_cloud_;
+}
+
+inline void DriverAdapter::putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
+{
+  for (auto iter : point_cloud_cb_vec_)
+  {
+    iter(*msg);
+  }
+}
+
+inline void DriverAdapter::regRecvCallback(
+    const std::function<void(const LidarPointCloudMsg&)>& callback)
 {
   point_cloud_cb_vec_.emplace_back(callback);
+}
+
+inline void DriverAdapter::regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
+{
+  packet_cb_vec_.emplace_back(callback);
+}
+
+inline void DriverAdapter::localPacketCallback(const PacketMsg& msg)
+{
+  for (auto iter : packet_cb_vec_)
+  {
+    iter(msg);
+    //thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
+  }
 }
 
 #if 0
 inline void DriverAdapter::regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
 {
   scan_cb_vec_.emplace_back(callback);
-}
-
-inline void DriverAdapter::regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
-{
-  packet_cb_vec_.emplace_back(callback);
 }
 
 inline void DriverAdapter::regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
@@ -248,31 +296,10 @@ inline void DriverAdapter::decodePacket(const PacketMsg& msg)
 }
 #endif
 
-inline std::shared_ptr<LidarPointCloudMsg> DriverAdapter::localPointsGetCallback(void)
-{
-  return point_cloud_;
-}
-
-inline void DriverAdapter::localPointsCallback(std::shared_ptr<LidarPointCloudMsg> msg)
-{
-  for (auto iter : point_cloud_cb_vec_)
-  {
-    iter(*msg);
-  }
-}
-
 #if 0
 inline void DriverAdapter::localScanCallback(const ScanMsg& msg)
 {
   for (auto iter : scan_cb_vec_)
-  {
-    thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
-  }
-}
-
-inline void DriverAdapter::localPacketCallback(const PacketMsg& msg)
-{
-  for (auto iter : packet_cb_vec_)
   {
     thread_pool_ptr_->commit([this, msg, iter]() { iter(msg); });
   }
@@ -287,21 +314,6 @@ inline void DriverAdapter::localCameraTriggerCallback(const CameraTrigger& msg)
 }
 #endif
 
-inline void DriverAdapter::localExceptionCallback(const lidar::Error& msg)
-{
-  switch (msg.error_code_type)
-  {
-    case lidar::ErrCodeType::INFO_CODE:
-      RS_INFO << msg.toString() << RS_REND;
-      break;
-    case lidar::ErrCodeType::WARNING_CODE:
-      RS_WARNING << msg.toString() << RS_REND;
-      break;
-    case lidar::ErrCodeType::ERROR_CODE:
-      RS_ERROR << msg.toString() << RS_REND;
-      break;
-  }
-}
 
 }  // namespace lidar
 }  // namespace robosense

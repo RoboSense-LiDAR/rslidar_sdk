@@ -64,14 +64,16 @@ enum class AdapterType
 class AdapterBase
 {
 public:
+
   typedef std::shared_ptr<AdapterBase> Ptr;
-  AdapterBase() = default;
-  virtual ~AdapterBase();
-  virtual void init(const YAML::Node& config) = 0;
-  virtual void start();
-  virtual void stop();
-  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+
+  virtual void init(const YAML::Node& config) {}
+  virtual void start() {}
+  virtual void stop() {}
   virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
+  virtual ~AdapterBase() = default;
+  AdapterBase() = default;
+
 #if 0
   virtual void sendScan(const ScanMsg& msg);
   virtual void sendPacket(const PacketMsg& msg);
@@ -82,33 +84,9 @@ public:
   virtual void decodeScan(const ScanMsg& msg);
   virtual void decodePacket(const PacketMsg& msg);
 #endif
+
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
 };
-
-inline AdapterBase::~AdapterBase()
-{
-  stop();
-}
-
-inline void AdapterBase::start()
-{
-  return;
-}
-
-inline void AdapterBase::stop()
-{
-  return;
-}
-
-inline void AdapterBase::sendPointCloud(const LidarPointCloudMsg& msg)
-{
-  return;
-}
-
-inline void AdapterBase::regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback)
-{
-  return;
-}
-
 
 #if 0
 inline void AdapterBase::sendScan(const ScanMsg& msg)

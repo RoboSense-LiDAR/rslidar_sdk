@@ -31,12 +31,15 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
+
 #include <yaml-cpp/yaml.h>
 #include "utility/common.h"
+
 namespace robosense
 {
 namespace lidar
 {
+
 template <typename T>
 inline void yamlReadAbort(const YAML::Node& yaml, const std::string& key, T& out_val)
 {

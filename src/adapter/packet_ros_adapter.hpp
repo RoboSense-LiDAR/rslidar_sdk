@@ -31,119 +31,127 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
-#ifdef ROS_FOUND
-#include <ros/ros.h>
+
 #include "adapter/adapter_base.hpp"
-#include "msg/ros_msg_translator.h"
+//#include "msg/ros_msg_translator.h"
 
 namespace robosense
 {
 namespace lidar
 {
+
+#ifdef ROS_FOUND
+#include <ros/ros.h>
+
+inline PacketMsg toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
+{
+  PacketMsg rs_msg(1500);
+#if 0
+  rs_msg.seq = ros_msg.header.seq;
+  rs_msg.timestamp = ros_msg.header.stamp.toSec();
+  rs_msg.frame_id = ros_msg.header.frame_id;
+#endif
+  for (size_t i = 0; i < pkt_length; i++)
+  {
+    rs_msg.packet[i] = ros_msg.data[i];
+  }
+  return std::move(rs_msg);
+}
+
+class PacketRosSource 
+{ 
+public:
+  void init(const YAML::Node& config)
+  {
+    std::string ros_recv_topic;
+    yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", ros_recv_topic, "rslidar_packets");
+
+    nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
+    pkt_sub_ = nh_->subscribe(ros_recv_topic, 1, &PacketRosAdapter::putPacket, this);
+  }
+
+  void regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
+  {
+    cb_pkt_ = cb_pkt;
+  }
+
+private:
+
+  void putPacket(const rslidar_msgs::rslidarPacket& msg)
+  {
+    if (cb_pkt_)
+    {
+      cb_pkt_(toRsMsg(msg));
+    }
+  }
+
+  std::unique_ptr<ros::NodeHandle> nh_;
+  ros::Subscriber pkt_sub_;
+  std::function<void(const PacketMsg&)> cb_pkt_;
+};
+
+inline rslidar_msgs::rslidarPacket toRosMsg(const PacketMsg& rs_msg)
+{
+  rslidar_msgs::rslidarPacket ros_msg;
+  size_t pkt_size = rs_msg.packet.size();
+  for (size_t i = 0; i < pkt_size; i++)
+  {
+    ros_msg.data[i] = rs_msg.packet[i];
+  }
+  return std::move(ros_msg);
+}
+
 class PacketRosAdapter : virtual public AdapterBase
 {
 public:
+
   PacketRosAdapter() = default;
   virtual ~PacketRosAdapter() = default;
+
   void init(const YAML::Node& config);
-  void regRecvCallback(const std::function<void(const ScanMsg&)>& callback);
-  void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
-  void sendScan(const ScanMsg& msg);
   void sendPacket(const PacketMsg& msg);
 
 private:
-  void localMsopCallback(const rslidar_msgs::rslidarScan& msg);
-  void localDifopCallback(const rslidar_msgs::rslidarPacket& msg);
 
-private:
   std::unique_ptr<ros::NodeHandle> nh_;
-  LidarType lidar_type_;
-  std::vector<std::function<void(const ScanMsg&)>> scan_cb_vec_;
-  std::vector<std::function<void(const PacketMsg&)>> packet_cb_vec_;
-  ros::Publisher scan_pub_;
-  ros::Publisher packet_pub_;
-  ros::Subscriber scan_sub_;
-  ros::Subscriber packet_sub_;
+  ros::Publisher pkt_pub_;
 };
 
 inline void PacketRosAdapter::init(const YAML::Node& config)
 {
+  std::string ros_send_topic;
+  yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
+
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-
-  std::string lidar_type_str;
-  yamlRead<std::string>(config["driver"], "lidar_type", lidar_type_str, "RS16");
-  lidar_type_ = strToLidarType(lidar_type_str);
-
-  int msg_source;
-  yamlReadAbort<int>(config, "msg_source", msg_source);
-  if (msg_source == MsgSource::MSG_FROM_ROS_PACKET)
-  {
-    std::string ros_recv_topic;
-    yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", ros_recv_topic, "rslidar_packets");
-    packet_sub_ = nh_->subscribe(ros_recv_topic + "_difop", 1, &PacketRosAdapter::localDifopCallback, this);
-    scan_sub_ = nh_->subscribe(ros_recv_topic, 1, &PacketRosAdapter::localMsopCallback, this);
-    send_packet_ros = false;
-  }
-
-  bool send_packet_ros;
-  yamlRead<bool>(config, "send_packet_ros", send_packet_ros, false);
-  if (send_packet_ros)
-  {
-    std::string ros_send_topic;
-    yamlRead<std::string>(config["ros"], "ros_send_packet_topic", ros_send_topic, "rslidar_packets");
-    packet_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic + "_difop", 10);
-    scan_pub_ = nh_->advertise<rslidar_msgs::rslidarScan>(ros_send_topic, 10);
-  }
-}
-
-inline void PacketRosAdapter::regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
-{
-  scan_cb_vec_.emplace_back(callback);
-}
-
-inline void PacketRosAdapter::regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
-{
-  packet_cb_vec_.emplace_back(callback);
-}
-
-inline void PacketRosAdapter::sendScan(const ScanMsg& msg)
-{
-  scan_pub_.publish(toRosMsg(msg));
+  pkt_pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic, 10);
 }
 
 inline void PacketRosAdapter::sendPacket(const PacketMsg& msg)
 {
-  packet_pub_.publish(toRosMsg(msg));
+  pkt_pub_.publish(toRosMsg(msg));
 }
 
-inline void PacketRosAdapter::localMsopCallback(const rslidar_msgs::rslidarScan& msg)
-{
-  for (auto& cb : scan_cb_vec_)
-  {
-    cb(toRsMsg(lidar_type_, PktType::MSOP, msg));
-  }
-}
-
-inline void PacketRosAdapter::localDifopCallback(const rslidar_msgs::rslidarPacket& msg)
-{
-  for (auto& cb : packet_cb_vec_)
-  {
-    cb(toRsMsg(lidar_type_, PktType::DIFOP, msg));
-  }
-}
-
-}  // namespace lidar
-}  // namespace robosense
 #endif  // ROS_FOUND
 
 #ifdef ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
-#include "adapter/adapter_base.hpp"
-#include "msg/ros_msg_translator.h"
-namespace robosense
+
+#if 0
+inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
-namespace lidar
-{
+  rslidar_msg::msg::RslidarPacket ros_msg;
+#if 0
+  ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
+  ros_msg.header.stamp.nanosec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
+  ros_msg.header.frame_id = rs_msg.frame_id;
+#endif
+  for (size_t i = 0; i < rs_msg.packet.size(); i++)
+  {
+    ros_msg.data[i] = rs_msg.packet[i];
+  }
+  return std::move(ros_msg);
+}
+
 class PacketRosAdapter : virtual public AdapterBase
 {
 public:
@@ -251,6 +259,6 @@ inline void PacketRosAdapter::localDifopCallback(const rslidar_msg::msg::Rslidar
     cb(toRsMsg(lidar_type_, PktType::DIFOP, *msg));
   }
 }
-}  // namespace lidar
-}  // namespace robosense
+#endif
+
 #endif  // ROS2_FOUND

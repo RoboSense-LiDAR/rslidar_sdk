@@ -32,23 +32,38 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#ifdef ROS_FOUND
-
-#include <ros/ros.h>
 #include "adapter/adapter_base.hpp"
-#include "msg/ros_msg_translator.h"
+//#include "msg/ros_msg_translator.h"
+
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl_ros/transforms.h>
 
 namespace robosense
 {
 namespace lidar
 {
-class PointCloudRosAdapter : virtual public AdapterBase
+
+#ifdef ROS_FOUND
+#include <ros/ros.h>
+
+inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
+{
+  sensor_msgs::PointCloud2 ros_msg;
+  pcl::toROSMsg(rs_msg, ros_msg);
+  ros_msg.header.frame_id = rs_msg.frame_id;
+  ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
+  ros_msg.header.seq = rs_msg.seq;
+  return std::move(ros_msg);
+}
+
+class PointCloudRosAdapter : public AdapterBase
 {
 public:
-  PointCloudRosAdapter() = default;
-  ~PointCloudRosAdapter() = default;
+
   void init(const YAML::Node& config);
   void sendPointCloud(const LidarPointCloudMsg& msg);
+  ~PointCloudRosAdapter() = default;
+  PointCloudRosAdapter() = default;
 
 private:
   std::shared_ptr<ros::NodeHandle> nh_;
@@ -57,15 +72,12 @@ private:
 
 inline void PointCloudRosAdapter::init(const YAML::Node& config)
 {
-  bool send_point_cloud_ros;
   std::string ros_send_topic;
+  yamlRead<std::string>(config["ros"], 
+      "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
+
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-  yamlRead<bool>(config, "send_point_cloud_ros", send_point_cloud_ros, false);
-  yamlRead<std::string>(config["ros"], "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
-  if (send_point_cloud_ros)
-  {
-    point_cloud_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
-  }
+  point_cloud_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
 }
 
 inline void PointCloudRosAdapter::sendPointCloud(const LidarPointCloudMsg& msg)
@@ -73,18 +85,22 @@ inline void PointCloudRosAdapter::sendPointCloud(const LidarPointCloudMsg& msg)
   point_cloud_pub_.publish(toRosMsg(msg));
 }
 
-}  // namespace lidar
-}  // namespace robosense
 #endif  // ROS_FOUND
 
 #ifdef ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
-#include "adapter/adapter_base.hpp"
-#include "msg/ros_msg_translator.h"
-namespace robosense
+
+inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 {
-namespace lidar
-{
+  sensor_msgs::msg::PointCloud2 ros_msg;
+  pcl::toROSMsg(rs_msg, ros_msg);
+  ros_msg.header.frame_id = rs_msg.frame_id;
+  ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
+  ros_msg.header.stamp.nanosec = 
+    (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
+  return std::move(ros_msg);
+}
+
 class PointCloudRosAdapter : virtual public AdapterBase
 {
 public:
@@ -100,22 +116,20 @@ private:
 
 inline void PointCloudRosAdapter::init(const YAML::Node& config)
 {
-  bool send_point_cloud_ros;
   std::string ros_send_topic;
+  yamlRead<std::string>(config["ros"], 
+      "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
+
   node_ptr_.reset(new rclcpp::Node("rslidar_points_adapter"));
-  yamlRead<bool>(config, "send_point_cloud_ros", send_point_cloud_ros, false);
-  yamlRead<std::string>(config["ros"], "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
-  if (send_point_cloud_ros)
-  {
-    point_cloud_pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
-  }
+  point_cloud_pub_ = 
+    node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
 }
 
 inline void PointCloudRosAdapter::sendPointCloud(const LidarPointCloudMsg& msg)
 {
   point_cloud_pub_->publish(toRosMsg(msg));
 }
+#endif
 
 }  // namespace lidar
 }  // namespace robosense
-#endif  // ROS2_FOUND

@@ -73,8 +73,10 @@ void AdapterManager::init(const YAML::Node& config)
   bool send_packet_proto;
   yamlRead<bool>(common_config, "send_packet_proto", send_packet_proto, false);
 
+#if 0
   bool send_camera_trigger_ros;
   yamlRead<bool>(common_config, "send_camera_trigger_ros", send_camera_trigger_ros, false);
+#endif
 
   std::string pcap_dir;
   double pcap_rate;
