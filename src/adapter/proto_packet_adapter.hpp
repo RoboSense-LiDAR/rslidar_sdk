@@ -33,7 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "adapter/adapter.hpp"
-#include "utility/protobuf_communicator.hpp"
+//#include "utility/protobuf_communicator.hpp"
 #include "rs_driver/utility/sync_queue.h"
 
 #ifdef PROTO_FOUND
@@ -60,7 +60,7 @@ private:
   void recvPacket();
   void splicePacket();
 
-  std::unique_ptr<ProtoCommunicator> pkt_proto_com_ptr_;
+  //std::unique_ptr<ProtoCommunicator> pkt_proto_com_ptr_;
   //SyncQueue<Packet> pkt_queue_;
   std::thread recv_thread_;
   std::thread splice_thread_;
@@ -146,8 +146,8 @@ private:
 
   void internSendPacket();
 
-  std::unique_ptr<ProtoCommunicator> packet_proto_com_ptr_;
-  SyncQueue<Packet> pkt_queue_;
+  //std::unique_ptr<ProtoCommunicator> packet_proto_com_ptr_;
+  //SyncQueue<Packet> pkt_queue_;
   std::thread send_thread_;
   bool to_exit_;
 };
@@ -188,7 +188,7 @@ inline ProtoPacketDestination::~ProtoPacketDestination()
 
 inline void ProtoPacketDestination::sendPacket(const Packet& msg)
 {
-  pkt_queue_.push(msg);
+  //pkt_queue_.push(msg);
 }
 
 inline void ProtoPacketDestination::internSendPacket()

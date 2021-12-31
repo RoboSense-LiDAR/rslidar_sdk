@@ -32,7 +32,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "manager/adapter_manager.h"
 #include "adapter/driver_adapter.hpp"
+#if 0
 #include "adapter/ros_point_cloud_adapter.hpp"
+#endif
 #include "adapter/ros_packet_adapter.hpp"
 #include "adapter/proto_packet_adapter.hpp"
 #include "adapter/proto_point_cloud_adapter.hpp"
@@ -42,13 +44,9 @@ namespace robosense
 namespace lidar
 {
 
-AdapterManager::~AdapterManager()
-{
-  stop();
-}
-
 void AdapterManager::init(const YAML::Node& config)
 {
+#if 0
   packet_thread_flag_ = false;
   point_cloud_thread_flag_ = false;
 
@@ -68,11 +66,6 @@ void AdapterManager::init(const YAML::Node& config)
 
   bool send_packet_proto;
   yamlRead<bool>(common_config, "send_packet_proto", send_packet_proto, false);
-
-#if 0
-  bool send_camera_trigger_ros;
-  yamlRead<bool>(common_config, "send_camera_trigger_ros", send_camera_trigger_ros, false);
-#endif
 
   std::string pcap_dir;
   double pcap_rate;
@@ -302,6 +295,7 @@ void AdapterManager::init(const YAML::Node& config)
     }
 #endif
   }
+#endif
 }
 
 void AdapterManager::start()
@@ -352,6 +346,12 @@ void AdapterManager::stop()
 #endif
 }
 
+AdapterManager::~AdapterManager()
+{
+  stop();
+}
+
+#if 0
 std::shared_ptr<AdapterBase> AdapterManager::createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
 {
   std::shared_ptr<AdapterBase> receiver;
@@ -469,6 +469,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createTransmitter(const YAML::Node&
 
   return transmitter;
 }
+#endif
 
 }  // namespace lidar
 }  // namespace robosense

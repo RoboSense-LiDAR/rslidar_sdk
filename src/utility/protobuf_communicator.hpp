@@ -58,8 +58,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define MAX_RECEIVE_LENGTH 5200
 
-#if 0
-
 namespace robosense
 {
 namespace lidar

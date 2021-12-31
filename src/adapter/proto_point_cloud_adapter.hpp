@@ -35,7 +35,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef PROTO_FOUND
 
 #include "adapter/adapter.hpp"
-#include "utility/protobuf_communicator.hpp"
+//#include "utility/protobuf_communicator.hpp"
 
 constexpr size_t RECEIVE_BUF_SIZE = 10000000;
 
@@ -58,7 +58,7 @@ private:
   void recvPointCloud();
   void splicePointCloud();
 
-  std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
+  //std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
   //SyncQueue<std::pair<void*, ProtoMsgHeader>> point_cloud_recv_queue_;
   std::thread recv_thread_;
   int old_frmnum_;
@@ -168,9 +168,9 @@ private:
 
   void internSendPointCloud();
 
-  std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
+  //std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
   std::thread send_thread_;
-  SyncQueue<LidarPointCloudMsg> point_cloud_send_queue_;
+  //SyncQueue<LidarPointCloudMsg> point_cloud_send_queue_;
   bool to_exit_;
 };
 
@@ -206,7 +206,7 @@ inline void ProtoPointCloudDestination::stop()
 
 inline void ProtoPointCloudDestination::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  point_cloud_send_queue_.push(msg);
+  //point_cloud_send_queue_.push(msg);
 }
 
 inline void ProtoPointCloudDestination::internSendPointCloud()

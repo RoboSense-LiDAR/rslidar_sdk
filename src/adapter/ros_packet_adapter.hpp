@@ -258,6 +258,10 @@ inline void PacketRosAdapter::localDifopCallback(const rslidar_msg::msg::Rslidar
     cb(toRsMsg(lidar_type_, PktType::DIFOP, *msg));
   }
 }
-#endif
 
+#endif
 #endif  // ROS2_FOUND
+
+}  // namespace lidar
+}  // namespace robosense
+
