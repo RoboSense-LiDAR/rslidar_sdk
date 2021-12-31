@@ -34,7 +34,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef PROTO_FOUND
 
-#include "adapter/adapter_base.hpp"
+#include "adapter/adapter.hpp"
 #include "utility/protobuf_communicator.hpp"
 
 constexpr size_t RECEIVE_BUF_SIZE = 10000000;

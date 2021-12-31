@@ -29,50 +29,11 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSE
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
-/********************************************************************************************************************
- * Basic struct:
- *
- *
- *                                              AdapterBase
- *                                            /      |      \
- *                                           /       |       \
- *     ROS:                        PacketRosAdapter  |   PointCloudRosAdapter
- *     Protobuf:          PacketProtoAdapter         |            PointCloudProtoAdapter
- *     Driver:                       \         DriverAdapter           /
- *                                    \        /           \          /
- *                                     \      /             \        /
- *                                      \    /               \      /
- *                                      Packet              PointCloud
- *
- *
- * AdapterManager:
- *
- * step1
- *                  -msg_source=1 -> packet receiver: DriverAdapter; point cloud receiver: DriverAdapter
- *                  -msg_source=2 -> packet receiver: PacketRosAdapter; point cloud receiver: DriverAdapter
- * createReceiver ->-msg_source=3 -> packet receiver: DriverAdapter; point cloud receiver: DriverAdapter
- *                  -msg_source=4 -> packet receiver: PacketProtoAdapter; point cloud receiver: DriverAdapter
- *                  -msg_source=5 -> packet receiver: None; point cloud receiver: PointCloudProtoAdapter
- *
- * step2
- *
- *                      -send_packet_ros=true -> PacketRosAdapter
- * createTransmitter -> -send_point_cloud_ros=true -> PointCloudRosAdapter
- *                      -send_packet_proto=true -> PacketProtoAdapter
- *                      -send_point_cloud_proto=true -> PointCloudProtoAdapter
- *
- * step3
- * Register the transmitter's sending functions into the receiver
- *
- * step4
- * Start all the receivers
- *
- * ******************************************************************************************************************/
 
 #pragma once
 
 #include "utility/yaml_reader.hpp"
-#include "adapter/adapter_base.hpp"
+#include "adapter/adapter.hpp"
 
 namespace robosense
 {
@@ -83,11 +44,12 @@ class AdapterManager
 {
 public:
 
-  AdapterManager() = default;
-  ~AdapterManager();
   void init(const YAML::Node& config);
   void start();
   void stop();
+
+  ~AdapterManager();
+  AdapterManager() = default;
 
 private:
 

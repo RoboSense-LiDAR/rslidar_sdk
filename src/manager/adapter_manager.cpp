@@ -32,10 +32,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "manager/adapter_manager.h"
 #include "adapter/driver_adapter.hpp"
-#include "adapter/point_cloud_ros_adapter.hpp"
-#include "adapter/packet_ros_adapter.hpp"
-#include "adapter/packet_protobuf_adapter.hpp"
-#include "adapter/point_cloud_protobuf_adapter.hpp"
+#include "adapter/ros_point_cloud_adapter.hpp"
+#include "adapter/ros_packet_adapter.hpp"
+#include "adapter/proto_packet_adapter.hpp"
+#include "adapter/proto_point_cloud_adapter.hpp"
 
 namespace robosense
 {

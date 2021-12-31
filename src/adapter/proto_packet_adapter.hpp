@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/adapter_base.hpp"
+#include "adapter/adapter.hpp"
 #include "utility/protobuf_communicator.hpp"
 #include "rs_driver/utility/sync_queue.h"
 

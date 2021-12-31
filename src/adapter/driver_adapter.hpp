@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/adapter_base.hpp"
+#include "adapter/adapter.hpp"
 #include "rs_driver/api/lidar_driver.h"
 
 namespace robosense
@@ -63,19 +63,11 @@ protected:
 inline void DriverSource::init(SourceType src_type, const YAML::Node& config)
 {
   point_cloud_.reset (new LidarPointCloudMsg);
-
   driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
-
   driver_ptr_->regRecvCallback(std::bind(&DriverSource::getPointCloud, this), 
       std::bind(&DriverSource::putPointCloud, this, std::placeholders::_1));
-
   driver_ptr_->regExceptionCallback(
       std::bind(&DriverSource::putException, this, std::placeholders::_1));
-
-#if 0
-  int msg_source;
-  yamlReadAbort<int>(config, "msg_source", msg_source);
-#endif
 
   YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
   lidar::RSDriverParam driver_param;

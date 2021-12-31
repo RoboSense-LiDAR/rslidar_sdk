@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/adapter_base.hpp"
+#include "adapter/adapter.hpp"
 #include "msg/ros_msg/lidar_packet_ros.h"
 
 namespace robosense
@@ -136,6 +136,7 @@ inline void RosPacketDestination::sendPacket(const Packet& msg)
 #ifdef ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
 
+#if 0
 inline rslidar_msg::msg::RslidarPacket toRosMsg(const Packet& rs_msg)
 {
   rslidar_msg::msg::RslidarPacket ros_msg;
@@ -257,5 +258,6 @@ inline void PacketRosAdapter::localDifopCallback(const rslidar_msg::msg::Rslidar
     cb(toRsMsg(lidar_type_, PktType::DIFOP, *msg));
   }
 }
+#endif
 
 #endif  // ROS2_FOUND

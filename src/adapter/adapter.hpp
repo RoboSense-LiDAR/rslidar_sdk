@@ -32,7 +32,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-//#include "utility/common.h"
 #include "rs_driver/msg/packet.h"
 #include "msg/rs_msg/lidar_point_cloud_msg.h"
 
@@ -40,15 +39,6 @@ namespace robosense
 {
 namespace lidar
 {
-
-enum SourceType
-{
-  MSG_FROM_LIDAR = 1,
-  MSG_FROM_ROS_PACKET = 2,
-  MSG_FROM_PCAP = 3,
-  MSG_FROM_PROTO_PACKET = 4,
-  MSG_FROM_PROTO_POINTCLOUD = 5
-};
 
 class PointCloudDestination
 {
@@ -73,6 +63,16 @@ public:
   virtual void sendPacket(const Packet& msg);
   virtual ~PacketDestination() = default;
 };
+
+enum SourceType
+{
+  MSG_FROM_LIDAR = 1,
+  MSG_FROM_ROS_PACKET = 2,
+  MSG_FROM_PCAP = 3,
+  MSG_FROM_PROTO_PACKET = 4,
+  MSG_FROM_PROTO_POINTCLOUD = 5
+};
+
 class Source
 {
 public:
