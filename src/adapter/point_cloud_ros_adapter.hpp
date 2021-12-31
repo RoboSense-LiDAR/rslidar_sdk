@@ -33,8 +33,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "adapter/adapter_base.hpp"
-//#include "msg/ros_msg_translator.h"
-
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/transforms.h>
 
@@ -56,33 +54,32 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   return std::move(ros_msg);
 }
 
-class PointCloudRosAdapter : public AdapterBase
+class RosPointCloudDestination : public PointCloudDestination
 {
 public:
 
-  void init(const YAML::Node& config);
-  void sendPointCloud(const LidarPointCloudMsg& msg);
-  ~PointCloudRosAdapter() = default;
-  PointCloudRosAdapter() = default;
+  virtual void init(const YAML::Node& config);
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual ~RosPointCloudDestination() = default;
 
 private:
   std::shared_ptr<ros::NodeHandle> nh_;
-  ros::Publisher point_cloud_pub_;
+  ros::Publisher pub_;
 };
 
-inline void PointCloudRosAdapter::init(const YAML::Node& config)
+inline void RosPointCloudDestination::init(const YAML::Node& config)
 {
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], 
       "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
 
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-  point_cloud_pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
+  pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
 }
 
-inline void PointCloudRosAdapter::sendPointCloud(const LidarPointCloudMsg& msg)
+inline void RosPointCloudDestination::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  point_cloud_pub_.publish(toRosMsg(msg));
+  pub_.publish(toRosMsg(msg));
 }
 
 #endif  // ROS_FOUND
@@ -101,33 +98,32 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   return std::move(ros_msg);
 }
 
-class PointCloudRosAdapter : virtual public AdapterBase
+class RosPointCloudDestination : virtual public RosPointCloudDestination
 {
 public:
-  PointCloudRosAdapter() = default;
-  ~PointCloudRosAdapter() = default;
-  void init(const YAML::Node& config);
-  void sendPointCloud(const LidarPointCloudMsg& msg);
+
+  virtual void init(const YAML::Node& config);
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual ~RosPointCloudDestination() = default;
 
 private:
   std::shared_ptr<rclcpp::Node> node_ptr_;
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr point_cloud_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_;
 };
 
-inline void PointCloudRosAdapter::init(const YAML::Node& config)
+inline void RosPointCloudDestination::init(const YAML::Node& config)
 {
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], 
       "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
 
   node_ptr_.reset(new rclcpp::Node("rslidar_points_adapter"));
-  point_cloud_pub_ = 
-    node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
+  pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
 }
 
-inline void PointCloudRosAdapter::sendPointCloud(const LidarPointCloudMsg& msg)
+inline void RosPointCloudDestination::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  point_cloud_pub_->publish(toRosMsg(msg));
+  pub_->publish(toRosMsg(msg));
 }
 #endif
 

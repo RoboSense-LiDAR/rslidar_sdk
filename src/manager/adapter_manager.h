@@ -91,15 +91,19 @@ public:
 
 private:
 
+#if 0
   std::shared_ptr<AdapterBase> createReceiver(const YAML::Node& config, const AdapterType& adapter_type);
   std::shared_ptr<AdapterBase> createTransmitter(const YAML::Node& config, const AdapterType& adapter_type);
 
   bool packet_thread_flag_;
   bool point_cloud_thread_flag_;
+
   std::vector<AdapterBase::Ptr> packet_receive_adapter_vec_;
   std::vector<AdapterBase::Ptr> point_cloud_receive_adapter_vec_;
   std::vector<AdapterBase::Ptr> packet_transmit_adapter_vec_;
   std::vector<AdapterBase::Ptr> point_cloud_transmit_adapter_vec_;
+#endif
+  std::vector<Source::Ptr> sources_;
 };
 
 }  // namespace lidar

@@ -31,7 +31,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
+
 #ifdef PROTO_FOUND
+
+#if 0
 #include <string>
 #include <iostream>
 #include <memory.h>
@@ -43,21 +46,31 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 #include <cstdlib>
 #include <iostream>
+#endif
+#include <boost/system/error_code.hpp>
+#if 0
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#endif
+
 #define SPLIT_SIZE 5000
+
 #define MAX_RECEIVE_LENGTH 5200
+
+#if 0
 
 namespace robosense
 {
 namespace lidar
 {
+
 enum class DataEndianType
 {
   RS_BIG_ENDIAN = 0,
   RS_SMALL_ENDIAN = 1
 };
+
 template <typename T>
 class CRSEndian
 {
@@ -399,4 +412,7 @@ private:
 
 }  // namespace lidar
 }  // namespace robosense
+#endif
+
 #endif  // PROTO_FOUND
+

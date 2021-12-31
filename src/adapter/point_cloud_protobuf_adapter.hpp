@@ -36,7 +36,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "adapter/adapter_base.hpp"
 #include "utility/protobuf_communicator.hpp"
-#include "msg/proto_msg_translator.h"
 
 constexpr size_t RECEIVE_BUF_SIZE = 10000000;
 
@@ -45,68 +44,51 @@ namespace robosense
 namespace lidar
 {
 
-class PointCloudProtoSource : virtual public AdapterBase
+class ProtoPointCloudSource : public Source
 {
 public:
 
-  PointCloudProtoAdapter();
-  ~PointCloudProtoAdapter();
-
-  void init(const YAML::Node& config);
-  void start();
-  void stop();
-  void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
+  virtual void init(SourceType src_type, const YAML::Node& config);
+  virtual void start();
+  virtual void stop();
+  virtual ~ProtoPointCloudSource();
 
 private:
 
-  void localCallback(const LidarPointCloudMsg& msg);
   void recvPointCloud();
   void splicePointCloud();
 
   std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
-  lidar::Thread recv_thread_;
-
-  std::function<void(const LidarPointCloudMsg&)> cb_pkt_;
-  lidar::Queue<std::pair<void*, ProtoMsgHeader>> point_cloud_recv_queue_;
+  //SyncQueue<std::pair<void*, ProtoMsgHeader>> point_cloud_recv_queue_;
+  std::thread recv_thread_;
   int old_frmnum_;
   int new_frmnum_;
 };
 
-inline void PointCloudProtoSource::regRecvCallback(
-    const std::function<void(const LidarPointCloudMsg&)>& cb_pkt)
-{
-  cb_pkt_ = cb_pkt;
-}
-
-inline void PointCloudProtoSource::putPointCloud(const LidarPointCloudMsg& rs_msg)
-{
-  if (cb_pkt_)
-  {
-    cb_pkt_(rs_msg);
-  }
-}
-
-inline void PointCloudProtoSource::init(const YAML::Node& config)
+inline void ProtoPointCloudSource::init(SourceType src_type, const YAML::Node& config)
 {
   uint16_t point_cloud_recv_port;
   yamlReadAbort<uint16_t>(config["proto"], "point_cloud_recv_port", point_cloud_recv_port);
 
+#if 0
   proto_com_ptr_.reset(new ProtoCommunicator);
   int ret = proto_com_ptr_->initReceiver(point_cloud_recv_port);
-  if (ret == -1)
+  if (ret < 0)
   {
     RS_ERROR << "Create UDP Receiver Socket failed or Bind Network failed!" << RS_REND;
     exit(-1);
   }
+#endif
 }
 
-inline void PointCloudProtoSource::start()
+inline void ProtoPointCloudSource::start()
 {
-  recv_thread_ = std::thread(std::bind(&PointCloudProtoSource::recvPointCloud, this));
+  recv_thread_ = std::thread(std::bind(&ProtoPointCloudSource::recvPointCloud, this));
 }
 
-inline void PointCloudProtoAdapter::recvPointCloud()
+inline void ProtoPointCloudSource::recvPointCloud()
 {
+#if 0
   bool start_check = true;
   while (recv_thread_.start_.load())
   {
@@ -124,7 +106,8 @@ inline void PointCloudProtoAdapter::recvPointCloud()
         continue;
       }
     }
-    if (ret == -1)
+
+    if (ret < 0)
     {
       RS_WARNING << "PointCloud Protobuf receiving error" << RS_REND;
       continue;
@@ -138,10 +121,12 @@ inline void PointCloudProtoAdapter::recvPointCloud()
       thread_pool_ptr_->commit([&]() { splicePoints(); });
     }
   }
+#endif
 }
 
-inline void PointCloudProtoAdapter::splicePointCloud()
+inline void ProtoPointCloudSource::splicePointCloud()
 {
+#if 0
   while (point_cloud_recv_queue_.size() > 0)
   {
     if (recv_thread_.start_.load())
@@ -154,35 +139,30 @@ inline void PointCloudProtoAdapter::splicePointCloud()
       {
         proto_msg::LidarPointCloud proto_msg;
         proto_msg.ParseFromArray(buff_, pair.second.total_msg_length);
-        localCallback(toRsMsg(proto_msg));
+
+        // sendPointCloud(toRsMsg(proto_msg));
       }
     }
     free(point_cloud_recv_queue_.front().first);
     point_cloud_recv_queue_.pop();
   }
+#endif
 }
 
-inline void PointCloudProtoSource::stop()
+inline void ProtoPointCloudSource::stop()
 {
-  if (recv_thread_.start_.load())
-  {
-    recv_thread_.start_.store(false);
-    recv_thread_.thread_->join();
-    free(buff_);
-  }
+  recv_thread_.join();
 }
 
-class PointCloudProtoAdapter : virtual public AdapterBase
+class ProtoPointCloudDestination : public PointCloudDestination
 {
 public:
 
-  PointCloudProtoAdapter();
-  ~PointCloudProtoAdapter();
-  void init(const YAML::Node& config);
-  void start();
-  void stop();
-
-  void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual void init(const YAML::Node& config);
+  virtual void start();
+  virtual void stop();
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual ~ProtoPointCloudDestination() = default;
 
 private:
 
@@ -190,51 +170,48 @@ private:
 
   std::unique_ptr<ProtoCommunicator> proto_com_ptr_;
   std::thread send_thread_;
-  lidar::Queue<LidarPointCloudMsg> point_cloud_send_queue_;
+  SyncQueue<LidarPointCloudMsg> point_cloud_send_queue_;
+  bool to_exit_;
 };
 
-inline PointCloudProtoAdapter::PointCloudProtoAdapter() 
-{
-}
-
-inline PointCloudProtoAdapter::~PointCloudProtoAdapter()
-{
-  stop();
-}
-
-inline void PointCloudProtoAdapter::init(const YAML::Node& config)
+inline void ProtoPointCloudDestination::init(const YAML::Node& config)
 {
   std::string point_cloud_send_port;
   yamlReadAbort<std::string>(config["proto"], "point_cloud_send_port", point_cloud_send_port);
   std::string point_cloud_send_ip;
   yamlReadAbort<std::string>(config["proto"], "point_cloud_send_ip", point_cloud_send_ip);
 
+#if 0
   proto_com_ptr_.reset(new ProtoCommunicator);
-  if (proto_com_ptr_->initSender(point_cloud_send_port, point_cloud_send_ip) == -1)
+  int ret = proto_com_ptr_->initSender(point_cloud_send_port, point_cloud_send_ip);
+  if (ret < 0)
   {
     RS_ERROR << "Create UDP Sender Socket failed ! " << RS_REND;
     exit(-1);
   }
+#endif
 }
 
-inline void PointCloudProtoAdapter::start()
+inline void ProtoPointCloudDestination::start()
 {
-  send_thread_ = std::thread(std::bind(&PacketProtoAdapter::internSendPointCloud, this));
+  send_thread_ = 
+    std::thread(std::bind(&ProtoPointCloudDestination::internSendPointCloud, this));
 }
 
-inline void PointCloudProtoAdapter::stop()
+inline void ProtoPointCloudDestination::stop()
 {
   to_exit_ = true;
   send_thread_.join();
 }
 
-inline void PointCloudProtoAdapter::sendPointCloud(const LidarPointCloudMsg& msg)
+inline void ProtoPointCloudDestination::sendPointCloud(const LidarPointCloudMsg& msg)
 {
   point_cloud_send_queue_.push(msg);
 }
 
-inline void PointCloudProtoAdapter::internSendPoints()
+inline void ProtoPointCloudDestination::internSendPointCloud()
 {
+#if 0
   while (point_cloud_send_queue_.size() > 0)
   {
     proto_msg::LidarPointCloud proto_msg = toProtoMsg(point_cloud_send_queue_.popFront());
@@ -244,6 +221,7 @@ inline void PointCloudProtoAdapter::internSendPoints()
     }
   }
   point_cloud_send_queue_.is_task_finished_.store(true);
+#endif
 }
 
 

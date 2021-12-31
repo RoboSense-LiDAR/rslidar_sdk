@@ -34,168 +34,174 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "adapter/adapter_base.hpp"
 #include "utility/protobuf_communicator.hpp"
-#include "msg/proto_msg_translator.h"
+#include "rs_driver/utility/sync_queue.h"
 
 #ifdef PROTO_FOUND
 
 constexpr size_t PKT_RECEIVE_BUF_SIZE = 2000000;
+
+class ProtoCommunicator;
 
 namespace robosense
 {
 namespace lidar
 {
 
-class PacketProtoSource
+class ProtoPacketSource : DriverSource
 {
 public:
-  void init(const YAML::Node& config);
-  void start();
-  void stop();
 
-  void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
+  virtual void init(SourceType src_type, const YAML::Node& config);
+  virtual void start();
+  virtual void stop();
 
 private:
 
-  void putPacket(const PacketMsg& msg);
+  void recvPacket();
+  void splicePacket();
 
   std::unique_ptr<ProtoCommunicator> pkt_proto_com_ptr_;
-  std::function<void(const PacketMsg&)> cb_pkt_;
+  //SyncQueue<Packet> pkt_queue_;
   std::thread recv_thread_;
   std::thread splice_thread_;
 };
 
-void PacketProtoSource::regRecvCallback(const std::function<void(const PacketMsg&)>& cb_pkt)
+void ProtoPacketSource::init(SourceType src_type, const YAML::Node& config)
 {
-  cb_pkt_ = cb_pkt;
-}
+  DriverSource::init(src_type, config);
 
-inline void PacketProtoSource::putPacket(const PacketMsg& msg)
-{
-  if (cb_pkt_)
-  {
-    cb_pkt_(msg);
-  }
-}
-
-void PacketProtoSource::init(const YAML::Node& config)
-{
   uint16_t packet_recv_port;
   yamlReadAbort<uint16_t>(config["proto"], "packet_recv_port", packet_recv_port);
 
+#if 0
   pkt_proto_com_ptr_.reset(new ProtoCommunicator);
   int ret = pkt_proto_com_ptr_->initReceiver(packet_recv_port);
-  if (ret == -1)
+  if (ret < 0)
   {
     RS_ERROR << "Failed to create UDP receiver socket failed or bind." << RS_REND;
     exit(-1);
   }
+#endif
 }
 
-inline void PacketProtoSource::start()
+inline void ProtoPacketSource::start()
 {
-  recv_thread_ = std::thread(std::bind(&PacketProtoSource::recvPacket, this));
+  recv_thread_ = std::thread(std::bind(&ProtoPacketSource::recvPacket, this));
+  splice_thread_ = std::thread(std::bind(&ProtoPacketSource::splicePacket, this));
 }
 
-inline void PacketProtoSource::stop()
+inline void ProtoPacketSource::stop()
 {
-  thread.join();
+  recv_thread_.join();
+  splice_thread_.join();
 }
 
-inline void PacketProtoSource::recvPacket()
+inline void ProtoPacketSource::recvPacket()
 {
-  while (packet_recv_thread_.start_.load())
+#if 0
+  while (1)
   {
     void* p_data = malloc(MAX_RECEIVE_LENGTH);
 
     ProtoMsgHeader tmp_header;
     int ret = packet_proto_com_ptr_->receiveProtoMsg(p_data, MAX_RECEIVE_LENGTH, tmp_header);
-    if (ret == -1)
+    if (ret < 0)
     {
       continue;
     }
 
-    packet_recv_queue_.push(std::make_pair(p_data, tmp_header));
+    pkt_queue_.push(std::make_pair(p_data, tmp_header));
   }
+#endif
 }
 
-inline void PacketProtoSource::splicePacket()
+inline void ProtoPacketSource::splicePacket()
 {
+#if 0
   while (1)
   {
-    auto pair = packet_recv_queue_.pop();
+    auto pair = pkt_queue_.pop();
 
     proto_msg::LidarPacket protomsg;
     protomsg.ParseFromArray(pair.first, pair.second.msg_length);
 
-    putPacket(toRsMsg(protomsg));
-    free(packet_recv_queue_.front().first);
+    _driver_ptr_->decodePacket(toRsMsg(protomsg));
+
+    free(pkt_queue_.front().first);
   }
+#endif
 }
 
-class PacketProtoAdapter : virtual public AdapterBase
+class ProtoPacketDestination : public PacketDestination
 {
 public:
 
-  void init(const YAML::Node& config);
-  void start();
-  void stop();
-  void sendPacket(const PacketMsg& msg);
-  virtual ~PacketProtoAdapter();
+  virtual void init(const YAML::Node& config);
+  virtual void start();
+  virtual void stop();
+  virtual void sendPacket(const Packet& msg);
+  virtual ~ProtoPacketDestination();
 
 private:
 
   void internSendPacket();
 
   std::unique_ptr<ProtoCommunicator> packet_proto_com_ptr_;
-  lidar::SyncQueue<PacketMsg> pkt_queue_;
+  SyncQueue<Packet> pkt_queue_;
   std::thread send_thread_;
+  bool to_exit_;
 };
 
-inline PacketProtoAdapter::~PacketProtoAdapter()
-{
-  stop();
-}
-
-inline void PacketProtoAdapter::init(const YAML::Node& config)
+inline void ProtoPacketDestination::init(const YAML::Node& config)
 {
   std::string packet_send_ip;
   yamlReadAbort<std::string>(config["proto"], "packet_send_ip", packet_send_ip);
   std::string packet_send_port;
   yamlReadAbort<std::string>(config["proto"], "packet_send_port", packet_send_port);
 
+#if 0
   packet_proto_com_ptr_.reset(new ProtoCommunicator);
   int ret = packet_proto_com_ptr_->initSender(packet_send_port, packet_send_ip);
-  if (ret == -1)
+  if (ret < -1)
   {
     RS_ERROR << "LidarPacketsReceiver: Create UDP Sender Socket failed ! " << RS_REND;
     exit(-1);
   }
+#endif
 }
 
-inline void PacketProtoAdapter::start()
+inline void ProtoPacketDestination::start()
 {
-  send_thread_ = std::thread(std::bind(&PacketProtoAdapter::internSendPacket, this));
+  send_thread_ = std::thread(std::bind(&ProtoPacketDestination::internSendPacket, this));
 }
 
-inline void PacketProtoAdapter::stop()
+inline void ProtoPacketDestination::stop()
 {
   to_exit_ = true;
   send_thread_.join();
 }
 
-inline void PacketProtoAdapter::sendPacket(const PacketMsg& msg)
+inline ProtoPacketDestination::~ProtoPacketDestination()
+{
+  stop();
+}
+
+inline void ProtoPacketDestination::sendPacket(const Packet& msg)
 {
   pkt_queue_.push(msg);
 }
 
-inline void PacketProtoAdapter::internSendPacket()
+inline void ProtoPacketDestination::internSendPacket()
 {
+#if 0
   PacketMsg msg = pkt_send_queue_.popWait(1000);
+
   proto_msg::LidarPacket proto_msg = toProtoMsg(msg);
   if (!packet_proto_com_ptr_->sendSingleMsg<proto_msg::LidarPacket>(proto_msg))
   {
     RS_WARNING << "Difop packets Protobuf sending error" << RS_REND;
   }
+#endif
 }
 
 }  // namespace lidar

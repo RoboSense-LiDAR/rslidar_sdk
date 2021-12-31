@@ -33,8 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 //#include "utility/common.h"
-#include "rs_driver/msg/packet_msg.h"
-#include "rs_driver/msg/scan_msg.h"
+#include "rs_driver/msg/packet.h"
 #include "msg/rs_msg/lidar_point_cloud_msg.h"
 
 namespace robosense
@@ -42,7 +41,7 @@ namespace robosense
 namespace lidar
 {
 
-enum MsgSource
+enum SourceType
 {
   MSG_FROM_LIDAR = 1,
   MSG_FROM_ROS_PACKET = 2,
@@ -51,84 +50,75 @@ enum MsgSource
   MSG_FROM_PROTO_POINTCLOUD = 5
 };
 
-enum class AdapterType
-{
-  DriverAdapter,
-  PointCloudRosAdapter,
-  PointCloudProtoAdapter,
-  PacketRosAdapter,
-  PacketProtoAdapter,
-  CameraTriggerRosAdapter
-};
-
-class AdapterBase
+class PointCloudDestination
 {
 public:
+  typedef std::shared_ptr<PointCloudDestination> Ptr;
 
-  typedef std::shared_ptr<AdapterBase> Ptr;
-
-  virtual void init(const YAML::Node& config) {}
+  virtual void init(const YAML::Node& config){}
   virtual void start() {}
   virtual void stop() {}
-  virtual void regRecvCallback(const std::function<void(const LidarPointCloudMsg&)>& callback);
-  virtual ~AdapterBase() = default;
-  AdapterBase() = default;
-
-#if 0
-  virtual void sendScan(const ScanMsg& msg);
-  virtual void sendPacket(const PacketMsg& msg);
-  virtual void sendCameraTrigger(const CameraTrigger& msg);
-  virtual void regRecvCallback(const std::function<void(const ScanMsg&)>& callback);
-  virtual void regRecvCallback(const std::function<void(const PacketMsg&)>& callback);
-  virtual void regRecvCallback(const std::function<void(const CameraTrigger&)>& callback);
-  virtual void decodeScan(const ScanMsg& msg);
-  virtual void decodePacket(const PacketMsg& msg);
-#endif
-
   virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual ~PointCloudDestination() = default;
 };
 
-#if 0
-inline void AdapterBase::sendScan(const ScanMsg& msg)
+class PacketDestination
 {
-  return;
+public:
+  typedef std::shared_ptr<PacketDestination> Ptr;
+
+  virtual void init(const YAML::Node& config){}
+  virtual void start() {}
+  virtual void stop() {}
+  virtual void sendPacket(const Packet& msg);
+  virtual ~PacketDestination() = default;
+};
+class Source
+{
+public:
+  typedef std::shared_ptr<Source> Ptr;
+
+  virtual void init(SourceType src_type, const YAML::Node& config) {}
+  virtual void start() {}
+  virtual void stop() {}
+  virtual void regRecvCallback(PointCloudDestination::Ptr dst);
+  virtual void regRecvCallback(PacketDestination::Ptr dst);
+  virtual ~Source() = default;
+
+protected:
+
+  void sendPacket(const Packet& msg);
+  void sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg);
+
+  std::vector<PointCloudDestination::Ptr> pc_cb_vec_;
+  std::vector<PacketDestination::Ptr> pkt_cb_vec_;
+};
+
+inline void Source::regRecvCallback(PacketDestination::Ptr dst)
+{
+  pkt_cb_vec_.emplace_back(dst);
 }
 
-inline void AdapterBase::sendPacket(const PacketMsg& msg)
+inline void Source::regRecvCallback(PointCloudDestination::Ptr dst)
 {
-  return;
+  pc_cb_vec_.emplace_back(dst);
 }
 
-inline void AdapterBase::sendCameraTrigger(const CameraTrigger& msg)
+inline void Source::sendPacket(const Packet& msg)
 {
-  return;
+  for (auto iter : pkt_cb_vec_)
+  {
+    iter->sendPacket(msg);
+  }
 }
 
-inline void AdapterBase::regRecvCallback(const std::function<void(const ScanMsg&)>& callback)
+inline void Source::sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
 {
-  return;
+  for (auto iter : pc_cb_vec_)
+  {
+    iter->sendPointCloud(*msg);
+  }
 }
-
-inline void AdapterBase::regRecvCallback(const std::function<void(const PacketMsg&)>& callback)
-{
-  return;
-}
-
-inline void AdapterBase::regRecvCallback(const std::function<void(const CameraTrigger&)>& callback)
-{
-  return;
-}
-
-inline void AdapterBase::decodeScan(const ScanMsg& msg)
-{
-  return;
-}
-
-inline void AdapterBase::decodePacket(const PacketMsg& msg)
-{
-  return;
-}
-#endif
 
 }  // namespace lidar
 }  // namespace robosense
