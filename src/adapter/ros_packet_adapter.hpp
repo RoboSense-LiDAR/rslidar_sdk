@@ -33,7 +33,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "adapter/adapter.hpp"
-#include "msg/ros_msg/lidar_packet_ros.h"
 
 namespace robosense
 {
@@ -42,6 +41,7 @@ namespace lidar
 
 #ifdef ROS_FOUND
 #include <ros/ros.h>
+#include "msg/ros_msg/lidar_packet_ros.h"
 
 inline Packet toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
 {
@@ -135,6 +135,7 @@ inline void RosPacketDestination::sendPacket(const Packet& msg)
 
 #ifdef ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
+#include "msg/ros_msg/lidar_packet_ros.h"
 
 #if 0
 inline rslidar_msg::msg::RslidarPacket toRosMsg(const Packet& rs_msg)

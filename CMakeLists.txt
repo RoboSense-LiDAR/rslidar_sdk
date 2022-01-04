@@ -1,5 +1,8 @@
+
 cmake_minimum_required(VERSION 3.5)
+
 cmake_policy(SET CMP0048 NEW)
+
 project(rslidar_sdk)
 
 #=======================================
@@ -17,6 +20,7 @@ set(POINT_TYPE XYZI)
 #========================
 set(PROJECT_NAME rslidar_sdk)
 add_definitions(-DPROJECT_PATH="${PROJECT_SOURCE_DIR}")
+
 set(CMAKE_BUILD_TYPE RELEASE)
 add_definitions(-O3)
 add_definitions(-std=c++14)
@@ -27,6 +31,7 @@ add_compile_options(-Wall)
 #========================
 #ROS#
 find_package(roscpp 1.12 QUIET)
+
 if(roscpp_FOUND)
   message(=============================================================)
   message("-- ROS Found, Ros Support is turned On!")
@@ -44,6 +49,7 @@ endif(roscpp_FOUND)
 
 #ROS2#
 find_package(rclcpp QUIET)
+
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   find_package(ament_cmake REQUIRED)
   find_package(sensor_msgs REQUIRED)
@@ -63,6 +69,7 @@ endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
 #Protobuf#
 find_package(Protobuf QUIET)
+
 find_program(PROTOC protoc)
 if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   message(=============================================================)
@@ -104,8 +111,10 @@ if(${COMPILE_METHOD} STREQUAL "CATKIN")
           CATKIN_DEPENDS sensor_msgs roslib
   )
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
+
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
+
 #Driver core#
 add_subdirectory(src/rs_driver)
 find_package(rs_driver REQUIRED)
@@ -119,6 +128,7 @@ add_definitions(-DPOINT_TYPE_XYZI)
 elseif(${POINT_TYPE} STREQUAL "XYZIRT")
 add_definitions(-DPOINT_TYPE_XYZIRT)
 endif()
+
 message(=============================================================)
 message("-- POINT_TYPE is ${POINT_TYPE}")
 message(=============================================================)
@@ -152,6 +162,7 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
                       ${rs_driver_LIBRARIES}
                       )
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+
 #Ros#
 if(roscpp_FOUND)
   target_link_libraries(rslidar_sdk_node ${ROS_LIBS})
@@ -171,6 +182,7 @@ if(roscpp_FOUND)
             PATTERN ".svn" EXCLUDE)
   endif()
 endif(roscpp_FOUND)
+
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)
@@ -185,3 +197,4 @@ if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   )
   ament_package()
 endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
+
