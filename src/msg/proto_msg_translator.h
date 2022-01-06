@@ -63,7 +63,7 @@ inline proto_msg::LidarPointCloud toProtoMsg(const LidarPointCloudMsg& rs_msg)
     proto_msg.add_data(rs_msg.point_cloud_ptr->points[i].intensity);
   }
 
-  return std::move(proto_msg);
+  return proto_msg;
 }
 
 inline LidarPointCloudMsg toRsMsg(const proto_msg::LidarPointCloud& proto_msg)

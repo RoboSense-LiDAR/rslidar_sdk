@@ -75,7 +75,7 @@ inline YAML::Node yamlSubNodeAbort(const YAML::Node& yaml, const std::string& no
     RS_ERROR << " : Cannot find subnode " << node << ". Aborting!!!" << RS_REND;
     exit(-1);
   }
-  return std::move(ret);
+  return ret;
 }
 
 }  // namespace lidar
