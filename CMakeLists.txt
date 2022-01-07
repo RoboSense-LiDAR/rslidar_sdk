@@ -116,7 +116,6 @@ if(${COMPILE_METHOD} STREQUAL "CATKIN")
       roscpp
       sensor_msgs
       roslib
-      pclros
       pcl_conversions
   )
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")

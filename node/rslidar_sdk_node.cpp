@@ -67,18 +67,22 @@ int main(int argc, char** argv)
   rclcpp::init(argc, argv);
 #endif
 
+  std::string config_path;
+
+#ifdef ROS_FOUND
+  ros::NodeHandle nh("~");
+  nh.param("config_path", config_path, std::string(""));
+#endif
+
+  if (config_path.empty())
+  {
 #ifdef RUN_IN_ROS_WORKSPACE
     std::string pkg_path = ros::package::getPath("rslidar_sdk");
 #else
     std::string pkg_path = (std::string)PROJECT_PATH;
 #endif
-
-  std::string config_path = pkg_path + "/config/config.yaml";
-
-#ifdef ROS_FOUND
-  ros::NodeHandle nh("~");
-  nh.param("config_path", config_path, config_path);
-#endif
+    config_path = pkg_path + "/config/config.yaml";
+  }
 
   YAML::Node config;
   try
