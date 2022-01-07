@@ -45,13 +45,15 @@ git submodule update
 
 *若需在ROS环境下使用雷达驱动，则需安装ROS相关依赖库*
 
-Ubuntu 16.04 - ROS kinetic desktop-full  
+Ubuntu 16.04 - ROS kinetic desktop-full 
 
 Ubuntu 18.04 - ROS melodic desktop-full
 
+Ubuntu 20.04 - ROS noetic desktop-full
+
 安装方式： 参考 http://wiki.ros.org
 
-**如果安装了ROS kinetic desktop-full版或ROS melodic desktop-full版，那么兼容版本其他依赖库也应该同时被安装了，所以不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将节省大量的时间来逐个安装和配置库**。
+**如果安装了ROS kinetic desktop-full版、ROS melodic desktop-full版或ROS noetic desktop-full，那么兼容版本其他依赖库也应该同时被安装了，所以不需要重新安装它们以避免多个版本冲突引起的问题, 因此，强烈建议安装desktop-full版，这将节省大量的时间来逐个安装和配置库**。
 
 ### 3.2 ROS2
 
@@ -62,6 +64,10 @@ Ubuntu 16.04 - 不支持
 Ubuntu 18.04 - ROS2 Eloquent desktop
 
 安装方式：参考 https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
+
+Ubuntu 20.04 - ROS2 Galactic desktop
+
+安装方式：参考 https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html
 
 **注意！ 请避免在同一台电脑上同时安装ROS和ROS2， 这可能会产生冲突！ 同时还需要手动安装Yaml库。**
 

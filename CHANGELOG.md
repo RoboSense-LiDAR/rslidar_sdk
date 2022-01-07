@@ -5,8 +5,13 @@
 ### Added
   - add install command when building using catkin
   - add use_vlan and use_someip support
-
-
+  - add use_vlan and use_someip support
+  - support customer protocol layer
+  - adapt to ros2 galactic
+  - get config file path from param (thanks to @mtlazaro, @Tim.Clephas)
+  - copy package.xml instead of renaming it manually (thanks to @VictorLee)
+  - add missing dependencies in build files. (thanks to @Tim.Clephas, @Baltashov.Ilia)
+  
 ## v1.3.0 - 2020-11-10
 
 ### Added
