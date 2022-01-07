@@ -46,9 +46,11 @@ endif(roscpp_FOUND)
 find_package(rclcpp QUIET)
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   find_package(ament_cmake REQUIRED)
+  find_package(std_msgs REQUIRED)
   find_package(sensor_msgs REQUIRED)
   find_package(rslidar_msg REQUIRED)
-  find_package(std_msgs REQUIRED)                      
+  find_package(pcl_conversions REQUIRED)
+
   set(CMAKE_CXX_STANDARD 14)
   message(=============================================================)
   message("-- ROS2 Found, Ros2 Support is turned On!")
@@ -95,17 +97,26 @@ add_definitions(${PCL_DEFINITIONS})
 #Catkin#
 if(${COMPILE_METHOD} STREQUAL "CATKIN")
   add_definitions(-DRUN_IN_ROS_WORKSPACE)
-  find_package(catkin REQUIRED COMPONENTS
-          roscpp
-          sensor_msgs
-          roslib
-          )
+
+  find_package(catkin REQUIRED
+    COMPONENTS
+      roscpp
+      sensor_msgs
+      roslib
+      pcl_conversions
+  )
+
   catkin_package(
-          CATKIN_DEPENDS sensor_msgs roslib
+    CATKIN_DEPENDS
+      sensor_msgs
+      roslib
+      pcl_conversions
   )
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
+
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
+
 #Driver core#
 add_subdirectory(src/rs_driver)
 find_package(rs_driver REQUIRED)
@@ -152,6 +163,7 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
                       ${rs_driver_LIBRARIES}
                       )
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+
 #Ros#
 if(roscpp_FOUND)
   target_link_libraries(rslidar_sdk_node ${ROS_LIBS})
@@ -171,6 +183,7 @@ if(roscpp_FOUND)
             PATTERN ".svn" EXCLUDE)
   endif()
 endif(roscpp_FOUND)
+
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)

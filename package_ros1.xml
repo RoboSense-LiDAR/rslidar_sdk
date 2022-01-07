@@ -5,13 +5,24 @@
   <description>The rslidar_sdk package</description>
   <maintainer email="zdxiao@robosense.cn">robosense</maintainer>
   <license>BSD</license>
+
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>roslib</build_depend>
+  <build_depend>yaml-cpp</build_depend>
+
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>yaml-cpp</depend>
+  <depend>libpcap</depend>
+  <depend>pcl_conversions</depend>
+  <depend>libpcl-all-dev</depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>roslib</run_depend>
+
 </package>
+
