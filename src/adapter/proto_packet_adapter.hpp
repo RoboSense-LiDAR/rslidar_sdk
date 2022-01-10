@@ -34,7 +34,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "adapter/adapter.hpp"
 //#include "utility/protobuf_communicator.hpp"
-#include "rs_driver/utility/sync_queue.h"
+#include "rs_driver/utility/sync_queue.hpp"
 
 #ifdef PROTO_FOUND
 

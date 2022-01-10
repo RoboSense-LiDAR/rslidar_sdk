@@ -33,7 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "adapter/adapter.hpp"
-#include "rs_driver/api/lidar_driver.h"
+#include "rs_driver/api/lidar_driver.hpp"
 
 namespace robosense
 {

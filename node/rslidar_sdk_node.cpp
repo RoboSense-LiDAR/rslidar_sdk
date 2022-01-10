@@ -30,7 +30,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
-#include "rs_driver/macro/version.h"
+#include "rs_driver/macro/version.hpp"
 #include "manager/adapter_manager.h"
 
 #include <signal.h>

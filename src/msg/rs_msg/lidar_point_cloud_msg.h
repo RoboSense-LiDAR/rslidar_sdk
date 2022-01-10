@@ -32,6 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "rs_driver/msg/pcl_point_cloud_msg.h"
+#include "rs_driver/msg/pcl_point_cloud_msg.hpp"
+
 typedef PointCloudT<PointXYZI> LidarPointCloudMsg;
 
