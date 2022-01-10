@@ -30,23 +30,19 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
-#include "manager/adapter_manager.h"
-
-#include "adapter/driver_source.hpp"
-#if 0
-#include "adapter/ros_point_cloud_adapter.hpp"
-#endif
-#include "adapter/ros_packet_source.hpp"
-
-#include "adapter/proto_packet_adapter.hpp"
-#include "adapter/proto_point_cloud_adapter.hpp"
+#include "manager/node_manager.hpp"
+#include "source/source_driver.hpp"
+#include "source/source_pointcloud_ros.hpp"
+#include "source/source_packet_ros.hpp"
+#include "source/source_packet_proto.hpp"
+#include "source/source_pointcloud_proto.hpp"
 
 namespace robosense
 {
 namespace lidar
 {
 
-void AdapterManager::init(const YAML::Node& config)
+void NodeManager::init(const YAML::Node& config)
 {
 #if 0
   packet_thread_flag_ = false;
@@ -300,7 +296,7 @@ void AdapterManager::init(const YAML::Node& config)
 #endif
 }
 
-void AdapterManager::start()
+void NodeManager::start()
 {
 #if 0
   if (point_cloud_thread_flag_)
@@ -324,7 +320,7 @@ void AdapterManager::start()
 #endif
 }
 
-void AdapterManager::stop()
+void NodeManager::stop()
 {
 #if 0
   if (point_cloud_thread_flag_)
@@ -348,13 +344,13 @@ void AdapterManager::stop()
 #endif
 }
 
-AdapterManager::~AdapterManager()
+NodeManager::~NodeManager()
 {
   stop();
 }
 
 #if 0
-std::shared_ptr<AdapterBase> AdapterManager::createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
+std::shared_ptr<AdapterBase> NodeManager::createReceiver(const YAML::Node& config, const AdapterType& adapter_type)
 {
   std::shared_ptr<AdapterBase> receiver;
   switch (adapter_type)
@@ -404,7 +400,7 @@ std::shared_ptr<AdapterBase> AdapterManager::createReceiver(const YAML::Node& co
   return receiver;
 }
 
-std::shared_ptr<AdapterBase> AdapterManager::createTransmitter(const YAML::Node& config,
+std::shared_ptr<AdapterBase> NodeManager::createTransmitter(const YAML::Node& config,
                                                                const AdapterType& adapter_type)
 {
   std::shared_ptr<AdapterBase> transmitter;

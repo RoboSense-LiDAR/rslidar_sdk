@@ -149,8 +149,8 @@ message(=============================================================)
 if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
   add_executable(rslidar_sdk_node
-              src/manager/adapter_manager.cpp
               node/rslidar_sdk_node.cpp
+              src/manager/node_manager.cpp
               ${PROTO_FILE_PATH}/packet.pb.cc
               ${PROTO_FILE_PATH}/scan.pb.cc
               ${PROTO_FILE_PATH}/point_cloud.pb.cc

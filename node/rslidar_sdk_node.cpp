@@ -30,9 +30,9 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
-#include "rs_driver/macro/version.hpp"
-#include "manager/adapter_manager.h"
+#include "manager/node_manager.hpp"
 
+#include <rs_driver/macro/version.hpp>
 #include <signal.h>
 
 #ifdef ROS_FOUND
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  std::shared_ptr<AdapterManager> demo_ptr = std::make_shared<AdapterManager>();
+  std::shared_ptr<NodeManager> demo_ptr = std::make_shared<NodeManager>();
   demo_ptr->init(config);
   demo_ptr->start();
 

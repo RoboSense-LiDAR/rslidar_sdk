@@ -32,7 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "msg/rs_msg/lidar_point_cloud_msg.h"
+#include "msg/rs_msg/lidar_point_cloud_msg.hpp"
+
 #include "utility/yaml_reader.hpp"
 
 #include <rs_driver/msg/packet.hpp>
@@ -42,28 +43,28 @@ namespace robosense
 namespace lidar
 {
 
-class PointCloudDestination
+class DestinationPointCloud
 {
 public:
-  typedef std::shared_ptr<PointCloudDestination> Ptr;
+  typedef std::shared_ptr<DestinationPointCloud> Ptr;
 
   virtual void init(const YAML::Node& config){}
   virtual void start() {}
   virtual void stop() {}
   virtual void sendPointCloud(const LidarPointCloudMsg& msg) = 0;
-  virtual ~PointCloudDestination() = default;
+  virtual ~DestinationPointCloud() = default;
 };
 
-class PacketDestination
+class DestinationPacket
 {
 public:
-  typedef std::shared_ptr<PacketDestination> Ptr;
+  typedef std::shared_ptr<DestinationPacket> Ptr;
 
   virtual void init(const YAML::Node& config){}
   virtual void start() {}
   virtual void stop() {}
   virtual void sendPacket(const Packet& msg) = 0;
-  virtual ~PacketDestination() = default;
+  virtual ~DestinationPacket() = default;
 };
 
 enum SourceType
@@ -83,8 +84,8 @@ public:
   virtual void init(SourceType src_type, const YAML::Node& config) {}
   virtual void start() {}
   virtual void stop() {}
-  virtual void regRecvCallback(PointCloudDestination::Ptr dst);
-  virtual void regRecvCallback(PacketDestination::Ptr dst);
+  virtual void regRecvCallback(DestinationPointCloud::Ptr dst);
+  virtual void regRecvCallback(DestinationPacket::Ptr dst);
   virtual ~Source() = default;
 
 protected:
@@ -92,16 +93,16 @@ protected:
   void sendPacket(const Packet& msg);
   void sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg);
 
-  std::vector<PointCloudDestination::Ptr> pc_cb_vec_;
-  std::vector<PacketDestination::Ptr> pkt_cb_vec_;
+  std::vector<DestinationPointCloud::Ptr> pc_cb_vec_;
+  std::vector<DestinationPacket::Ptr> pkt_cb_vec_;
 };
 
-inline void Source::regRecvCallback(PacketDestination::Ptr dst)
+inline void Source::regRecvCallback(DestinationPacket::Ptr dst)
 {
   pkt_cb_vec_.emplace_back(dst);
 }
 
-inline void Source::regRecvCallback(PointCloudDestination::Ptr dst)
+inline void Source::regRecvCallback(DestinationPointCloud::Ptr dst)
 {
   pc_cb_vec_.emplace_back(dst);
 }

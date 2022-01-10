@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/source.hpp"
+#include "source/source.hpp"
 //#include "utility/protobuf_communicator.hpp"
 #include "rs_driver/utility/sync_queue.hpp"
 
@@ -47,7 +47,7 @@ namespace robosense
 namespace lidar
 {
 
-class ProtoPacketSource : DriverSource
+class SourcePacketProto : SourceDriver
 {
 public:
 
@@ -66,9 +66,9 @@ private:
   std::thread splice_thread_;
 };
 
-void ProtoPacketSource::init(SourceType src_type, const YAML::Node& config)
+void SourcePacketProto::init(SourceType src_type, const YAML::Node& config)
 {
-  DriverSource::init(src_type, config);
+  SourceDriver::init(src_type, config);
 
   uint16_t packet_recv_port;
   yamlReadAbort<uint16_t>(config["proto"], "packet_recv_port", packet_recv_port);
@@ -84,19 +84,19 @@ void ProtoPacketSource::init(SourceType src_type, const YAML::Node& config)
 #endif
 }
 
-inline void ProtoPacketSource::start()
+inline void SourcePacketProto::start()
 {
-  recv_thread_ = std::thread(std::bind(&ProtoPacketSource::recvPacket, this));
-  splice_thread_ = std::thread(std::bind(&ProtoPacketSource::splicePacket, this));
+  recv_thread_ = std::thread(std::bind(&SourcePacketProto::recvPacket, this));
+  splice_thread_ = std::thread(std::bind(&SourcePacketProto::splicePacket, this));
 }
 
-inline void ProtoPacketSource::stop()
+inline void SourcePacketProto::stop()
 {
   recv_thread_.join();
   splice_thread_.join();
 }
 
-inline void ProtoPacketSource::recvPacket()
+inline void SourcePacketProto::recvPacket()
 {
 #if 0
   while (1)
@@ -115,7 +115,7 @@ inline void ProtoPacketSource::recvPacket()
 #endif
 }
 
-inline void ProtoPacketSource::splicePacket()
+inline void SourcePacketProto::splicePacket()
 {
 #if 0
   while (1)
@@ -132,7 +132,7 @@ inline void ProtoPacketSource::splicePacket()
 #endif
 }
 
-class ProtoPacketDestination : public PacketDestination
+class DestinationPacketProto : public DestinationPacket
 {
 public:
 
@@ -140,7 +140,7 @@ public:
   virtual void start();
   virtual void stop();
   virtual void sendPacket(const Packet& msg);
-  virtual ~ProtoPacketDestination();
+  virtual ~DestinationPacketProto();
 
 private:
 
@@ -152,7 +152,7 @@ private:
   bool to_exit_;
 };
 
-inline void ProtoPacketDestination::init(const YAML::Node& config)
+inline void DestinationPacketProto::init(const YAML::Node& config)
 {
   std::string packet_send_ip;
   yamlReadAbort<std::string>(config["proto"], "packet_send_ip", packet_send_ip);
@@ -170,28 +170,28 @@ inline void ProtoPacketDestination::init(const YAML::Node& config)
 #endif
 }
 
-inline void ProtoPacketDestination::start()
+inline void DestinationPacketProto::start()
 {
-  send_thread_ = std::thread(std::bind(&ProtoPacketDestination::internSendPacket, this));
+  send_thread_ = std::thread(std::bind(&DestinationPacketProto::internSendPacket, this));
 }
 
-inline void ProtoPacketDestination::stop()
+inline void DestinationPacketProto::stop()
 {
   to_exit_ = true;
   send_thread_.join();
 }
 
-inline ProtoPacketDestination::~ProtoPacketDestination()
+inline DestinationPacketProto::~DestinationPacketProto()
 {
   stop();
 }
 
-inline void ProtoPacketDestination::sendPacket(const Packet& msg)
+inline void DestinationPacketProto::sendPacket(const Packet& msg)
 {
   //pkt_queue_.push(msg);
 }
 
-inline void ProtoPacketDestination::internSendPacket()
+inline void DestinationPacketProto::internSendPacket()
 {
 #if 0
   PacketMsg msg = pkt_send_queue_.popWait(1000);

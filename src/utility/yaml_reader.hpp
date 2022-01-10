@@ -33,7 +33,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include <yaml-cpp/yaml.h>
-#include "utility/common.h"
+
+#include "utility/common.hpp"
 
 namespace robosense
 {

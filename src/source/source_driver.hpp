@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/source.hpp"
+#include "source/source.hpp"
 
 #include <rs_driver/api/lidar_driver.hpp>
 
@@ -41,15 +41,15 @@ namespace robosense
 namespace lidar
 {
 
-class DriverSource : public Source
+class SourceDriver : public Source
 {
 public:
 
   virtual void init(SourceType src, const YAML::Node& config);
   virtual void start();
   virtual void stop();
-  virtual void regRecvCallback(PacketDestination::Ptr dst);
-  virtual ~DriverSource();
+  virtual void regRecvCallback(DestinationPacket::Ptr dst);
+  virtual ~SourceDriver();
 
 protected:
 
@@ -62,14 +62,14 @@ protected:
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
 };
 
-inline void DriverSource::init(SourceType src_type, const YAML::Node& config)
+inline void SourceDriver::init(SourceType src_type, const YAML::Node& config)
 {
   point_cloud_.reset (new LidarPointCloudMsg);
   driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
-  driver_ptr_->regRecvCallback(std::bind(&DriverSource::getPointCloud, this), 
-      std::bind(&DriverSource::putPointCloud, this, std::placeholders::_1));
+  driver_ptr_->regRecvCallback(std::bind(&SourceDriver::getPointCloud, this), 
+      std::bind(&SourceDriver::putPointCloud, this, std::placeholders::_1));
   driver_ptr_->regExceptionCallback(
-      std::bind(&DriverSource::putException, this, std::placeholders::_1));
+      std::bind(&SourceDriver::putException, this, std::placeholders::_1));
 
   YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
   lidar::RSDriverParam driver_param;
@@ -131,48 +131,48 @@ inline void DriverSource::init(SourceType src_type, const YAML::Node& config)
   }
 }
 
-inline void DriverSource::start()
+inline void SourceDriver::start()
 {
   driver_ptr_->start();
 }
 
-inline DriverSource::~DriverSource()
+inline SourceDriver::~SourceDriver()
 {
   stop();
 }
 
-inline void DriverSource::stop()
+inline void SourceDriver::stop()
 {
   driver_ptr_->stop();
 }
 
-inline std::shared_ptr<LidarPointCloudMsg> DriverSource::getPointCloud(void)
+inline std::shared_ptr<LidarPointCloudMsg> SourceDriver::getPointCloud(void)
 {
   return point_cloud_;
 }
 
-inline void DriverSource::regRecvCallback(PacketDestination::Ptr dst)
+inline void SourceDriver::regRecvCallback(DestinationPacket::Ptr dst)
 {
   Source::regRecvCallback(dst);
 
   if (pkt_cb_vec_.size() == 1)
   {
     driver_ptr_->regRecvCallback(
-        std::bind(&DriverSource::putPacket, this, std::placeholders::_1));
+        std::bind(&SourceDriver::putPacket, this, std::placeholders::_1));
   }
 }
 
-inline void DriverSource::putPacket(const Packet& msg)
+inline void SourceDriver::putPacket(const Packet& msg)
 {
   sendPacket(msg);
 }
 
-void DriverSource::putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
+void SourceDriver::putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
 {
   sendPointCloud(msg);
 }
 
-inline void DriverSource::putException(const lidar::Error& msg)
+inline void SourceDriver::putException(const lidar::Error& msg)
 {
   switch (msg.error_code_type)
   {

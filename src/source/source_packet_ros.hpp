@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/driver_source.hpp"
+#include "source/source_driver.hpp"
 #include "msg/ros_msg/lidar_packet_ros.h"
 
 #ifdef ROS_FOUND
@@ -57,7 +57,7 @@ inline Packet toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
   return std::move(rs_msg);
 }
 
-class RosPacketSource : public DriverSource
+class SourcePacketRos : public SourceDriver
 { 
 public:
 
@@ -71,19 +71,19 @@ private:
   ros::Subscriber pkt_sub_;
 };
 
-void RosPacketSource::init(SourceType src_type, const YAML::Node& config)
+void SourcePacketRos::init(SourceType src_type, const YAML::Node& config)
 {
-  DriverSource::init(src_type, config);
+  SourceDriver::init(src_type, config);
 
   std::string ros_recv_topic;
   yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", 
       ros_recv_topic, "rslidar_packets");
 
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-  pkt_sub_ = nh_->subscribe(ros_recv_topic, 1, &RosPacketSource::putPacket, this);
+  pkt_sub_ = nh_->subscribe(ros_recv_topic, 1, &SourcePacketRos::putPacket, this);
 }
 
-void RosPacketSource::putPacket(const rslidar_msgs::rslidarPacket& msg)
+void SourcePacketRos::putPacket(const rslidar_msgs::rslidarPacket& msg)
 {
   driver_ptr_->decodePacket(toRsMsg(msg));
 }
@@ -102,13 +102,13 @@ inline rslidar_msgs::rslidarPacket toRosMsg(const Packet& rs_msg)
   return std::move(ros_msg);
 }
 
-class RosPacketDestination : public PacketDestination
+class DestinationPacketRos : public DestinationPacket
 {
 public:
 
   virtual void init(const YAML::Node& config);
   virtual void sendPacket(const Packet& msg);
-  virtual ~RosPacketDestination() = default;
+  virtual ~DestinationPacketRos() = default;
 
 private:
 
@@ -116,7 +116,7 @@ private:
   ros::Publisher pub_;
 };
 
-inline void RosPacketDestination::init(const YAML::Node& config)
+inline void DestinationPacketRos::init(const YAML::Node& config)
 {
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], "ros_send_packet_topic", 
@@ -126,7 +126,7 @@ inline void RosPacketDestination::init(const YAML::Node& config)
   pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic, 10);
 }
 
-inline void RosPacketDestination::sendPacket(const Packet& msg)
+inline void DestinationPacketRos::sendPacket(const Packet& msg)
 {
   pub_.publish(toRosMsg(msg));
 }

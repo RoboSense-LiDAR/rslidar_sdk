@@ -31,17 +31,31 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #pragma once
-#include <rs_driver/common/common_header.h>
-#include <chrono>
+
+#include "utility/yaml_reader.hpp"
+#include "source/source.hpp"
+
 namespace robosense
 {
 namespace lidar
 {
-inline double getTime(void)
+
+class NodeManager
 {
-  const auto t = std::chrono::system_clock::now();
-  const auto t_sec = std::chrono::duration_cast<std::chrono::duration<double>>(t.time_since_epoch());
-  return (double)t_sec.count();
-}
+public:
+
+  void init(const YAML::Node& config);
+  void start();
+  void stop();
+
+  ~NodeManager();
+  NodeManager() = default;
+
+private:
+
+  std::vector<Source::Ptr> sources_;
+};
+
 }  // namespace lidar
 }  // namespace robosense
+

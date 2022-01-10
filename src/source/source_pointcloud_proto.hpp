@@ -34,7 +34,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef PROTO_FOUND
 
-#include "adapter/source.hpp"
+#include "source/source.hpp"
 //#include "utility/protobuf_communicator.hpp"
 
 constexpr size_t RECEIVE_BUF_SIZE = 10000000;
@@ -44,14 +44,14 @@ namespace robosense
 namespace lidar
 {
 
-class ProtoPointCloudSource : public Source
+class SourcePointCloudProto : public Source
 {
 public:
 
   virtual void init(SourceType src_type, const YAML::Node& config);
   virtual void start();
   virtual void stop();
-  virtual ~ProtoPointCloudSource();
+  virtual ~SourcePointCloudProto();
 
 private:
 
@@ -65,7 +65,7 @@ private:
   int new_frmnum_;
 };
 
-inline void ProtoPointCloudSource::init(SourceType src_type, const YAML::Node& config)
+inline void SourcePointCloudProto::init(SourceType src_type, const YAML::Node& config)
 {
   uint16_t point_cloud_recv_port;
   yamlReadAbort<uint16_t>(config["proto"], "point_cloud_recv_port", point_cloud_recv_port);
@@ -81,22 +81,22 @@ inline void ProtoPointCloudSource::init(SourceType src_type, const YAML::Node& c
 #endif
 }
 
-inline void ProtoPointCloudSource::start()
+inline void SourcePointCloudProto::start()
 {
-  recv_thread_ = std::thread(std::bind(&ProtoPointCloudSource::recvPointCloud, this));
+  recv_thread_ = std::thread(std::bind(&SourcePointCloudProto::recvPointCloud, this));
 }
 
-inline void ProtoPointCloudSource::stop()
+inline void SourcePointCloudProto::stop()
 {
   recv_thread_.join();
 }
 
-inline ProtoPointCloudSource::~ProtoPointCloudSource()
+inline SourcePointCloudProto::~SourcePointCloudProto()
 {
   stop();
 }
 
-inline void ProtoPointCloudSource::recvPointCloud()
+inline void SourcePointCloudProto::recvPointCloud()
 {
 #if 0
   bool start_check = true;
@@ -134,7 +134,7 @@ inline void ProtoPointCloudSource::recvPointCloud()
 #endif
 }
 
-inline void ProtoPointCloudSource::splicePointCloud()
+inline void SourcePointCloudProto::splicePointCloud()
 {
 #if 0
   while (point_cloud_recv_queue_.size() > 0)
@@ -159,7 +159,7 @@ inline void ProtoPointCloudSource::splicePointCloud()
 #endif
 }
 
-class ProtoPointCloudDestination : public PointCloudDestination
+class DestinationPointCloudProto : public DestinationPointCloud
 {
 public:
 
@@ -167,7 +167,7 @@ public:
   virtual void start();
   virtual void stop();
   virtual void sendPointCloud(const LidarPointCloudMsg& msg);
-  virtual ~ProtoPointCloudDestination() = default;
+  virtual ~DestinationPointCloudProto() = default;
 
 private:
 
@@ -179,7 +179,7 @@ private:
   bool to_exit_;
 };
 
-inline void ProtoPointCloudDestination::init(const YAML::Node& config)
+inline void DestinationPointCloudProto::init(const YAML::Node& config)
 {
   std::string point_cloud_send_port;
   yamlReadAbort<std::string>(config["proto"], "point_cloud_send_port", point_cloud_send_port);
@@ -197,24 +197,24 @@ inline void ProtoPointCloudDestination::init(const YAML::Node& config)
 #endif
 }
 
-inline void ProtoPointCloudDestination::start()
+inline void DestinationPointCloudProto::start()
 {
   send_thread_ = 
-    std::thread(std::bind(&ProtoPointCloudDestination::internSendPointCloud, this));
+    std::thread(std::bind(&DestinationPointCloudProto::internSendPointCloud, this));
 }
 
-inline void ProtoPointCloudDestination::stop()
+inline void DestinationPointCloudProto::stop()
 {
   to_exit_ = true;
   send_thread_.join();
 }
 
-inline void ProtoPointCloudDestination::sendPointCloud(const LidarPointCloudMsg& msg)
+inline void DestinationPointCloudProto::sendPointCloud(const LidarPointCloudMsg& msg)
 {
   //point_cloud_send_queue_.push(msg);
 }
 
-inline void ProtoPointCloudDestination::internSendPointCloud()
+inline void DestinationPointCloudProto::internSendPointCloud()
 {
 #if 0
   while (point_cloud_send_queue_.size() > 0)
@@ -228,7 +228,6 @@ inline void ProtoPointCloudDestination::internSendPointCloud()
   point_cloud_send_queue_.is_task_finished_.store(true);
 #endif
 }
-
 
 }  // namespace lidar
 }  // namespace robosense

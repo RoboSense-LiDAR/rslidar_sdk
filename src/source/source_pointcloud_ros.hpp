@@ -32,17 +32,18 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/adapter.hpp"
+#include "source/source.hpp"
+
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/transforms.h>
+
+#ifdef ROS_FOUND
+#include <ros/ros.h>
 
 namespace robosense
 {
 namespace lidar
 {
-
-#ifdef ROS_FOUND
-#include <ros/ros.h>
 
 inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 {
@@ -54,20 +55,20 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   return std::move(ros_msg);
 }
 
-class RosPointCloudDestination : public PointCloudDestination
+class DestinationPointCloudRos : public DestinationPointCloud
 {
 public:
 
   virtual void init(const YAML::Node& config);
   virtual void sendPointCloud(const LidarPointCloudMsg& msg);
-  virtual ~RosPointCloudDestination() = default;
+  virtual ~DestinationPointCloudRos() = default;
 
 private:
   std::shared_ptr<ros::NodeHandle> nh_;
   ros::Publisher pub_;
 };
 
-inline void RosPointCloudDestination::init(const YAML::Node& config)
+inline void DestinationPointCloudRos::init(const YAML::Node& config)
 {
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], 
@@ -77,15 +78,23 @@ inline void RosPointCloudDestination::init(const YAML::Node& config)
   pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
 }
 
-inline void RosPointCloudDestination::sendPointCloud(const LidarPointCloudMsg& msg)
+inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
   pub_.publish(toRosMsg(msg));
 }
+
+}  // namespace lidar
+}  // namespace robosense
 
 #endif  // ROS_FOUND
 
 #ifdef ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
+
+namespace robosense
+{
+namespace lidar
+{
 
 inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 {
@@ -98,20 +107,20 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   return std::move(ros_msg);
 }
 
-class RosPointCloudDestination : virtual public RosPointCloudDestination
+class DestinationPointCloudRos : virtual public DestinationPointCloudRos
 {
 public:
 
   virtual void init(const YAML::Node& config);
   virtual void sendPointCloud(const LidarPointCloudMsg& msg);
-  virtual ~RosPointCloudDestination() = default;
+  virtual ~DestinationPointCloudRos() = default;
 
 private:
   std::shared_ptr<rclcpp::Node> node_ptr_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_;
 };
 
-inline void RosPointCloudDestination::init(const YAML::Node& config)
+inline void DestinationPointCloudRos::init(const YAML::Node& config)
 {
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], 
@@ -121,11 +130,13 @@ inline void RosPointCloudDestination::init(const YAML::Node& config)
   pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
 }
 
-inline void RosPointCloudDestination::sendPointCloud(const LidarPointCloudMsg& msg)
+inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
   pub_->publish(toRosMsg(msg));
 }
-#endif
 
 }  // namespace lidar
 }  // namespace robosense
+
+#endif
+
