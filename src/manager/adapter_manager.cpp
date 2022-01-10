@@ -31,11 +31,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************************************************************/
 
 #include "manager/adapter_manager.h"
-#include "adapter/driver_adapter.hpp"
+
+#include "adapter/driver_source.hpp"
 #if 0
 #include "adapter/ros_point_cloud_adapter.hpp"
 #endif
-#include "adapter/ros_packet_adapter.hpp"
+#include "adapter/ros_packet_source.hpp"
+
 #include "adapter/proto_packet_adapter.hpp"
 #include "adapter/proto_point_cloud_adapter.hpp"
 

@@ -34,7 +34,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "msg/rs_msg/lidar_point_cloud_msg.h"
 #include "utility/yaml_reader.hpp"
-#include "rs_driver/msg/packet.hpp"
+
+#include <rs_driver/msg/packet.hpp>
 
 namespace robosense
 {
@@ -120,6 +121,7 @@ inline void Source::sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
     iter->sendPointCloud(*msg);
   }
 }
+
 
 }  // namespace lidar
 }  // namespace robosense

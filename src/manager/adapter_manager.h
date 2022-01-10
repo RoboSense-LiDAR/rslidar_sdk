@@ -33,7 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "utility/yaml_reader.hpp"
-#include "adapter/adapter.hpp"
+#include "adapter/source.hpp"
 
 namespace robosense
 {

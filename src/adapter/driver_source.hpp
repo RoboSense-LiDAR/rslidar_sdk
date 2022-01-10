@@ -32,8 +32,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "adapter/adapter.hpp"
-#include "rs_driver/api/lidar_driver.hpp"
+#include "adapter/source.hpp"
+
+#include <rs_driver/api/lidar_driver.hpp>
 
 namespace robosense
 {
@@ -43,6 +44,7 @@ namespace lidar
 class DriverSource : public Source
 {
 public:
+
   virtual void init(SourceType src, const YAML::Node& config);
   virtual void start();
   virtual void stop();
