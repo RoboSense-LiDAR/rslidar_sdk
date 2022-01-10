@@ -300,6 +300,7 @@ void AdapterManager::init(const YAML::Node& config)
 
 void AdapterManager::start()
 {
+#if 0
   if (point_cloud_thread_flag_)
   {
     for (auto& iter : point_cloud_receive_adapter_vec_)
@@ -308,7 +309,6 @@ void AdapterManager::start()
         iter->start();
     }
   }
-#if 0
   if (packet_thread_flag_)
   {
     for (auto& iter : packet_receive_adapter_vec_)
@@ -324,6 +324,7 @@ void AdapterManager::start()
 
 void AdapterManager::stop()
 {
+#if 0
   if (point_cloud_thread_flag_)
   {
     for (auto& iter : point_cloud_receive_adapter_vec_)
@@ -332,7 +333,6 @@ void AdapterManager::stop()
         iter->stop();
     }
   }
-#if 0
   if (packet_thread_flag_)
   {
     for (auto& iter : packet_receive_adapter_vec_)

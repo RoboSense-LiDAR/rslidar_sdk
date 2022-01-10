@@ -32,8 +32,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "rs_driver/msg/packet.h"
 #include "msg/rs_msg/lidar_point_cloud_msg.h"
+#include "rs_driver/msg/packet.h"
+#include "utility/yaml_reader.hpp"
 
 namespace robosense
 {
@@ -48,7 +49,7 @@ public:
   virtual void init(const YAML::Node& config){}
   virtual void start() {}
   virtual void stop() {}
-  virtual void sendPointCloud(const LidarPointCloudMsg& msg);
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg) = 0;
   virtual ~PointCloudDestination() = default;
 };
 
@@ -60,7 +61,7 @@ public:
   virtual void init(const YAML::Node& config){}
   virtual void start() {}
   virtual void stop() {}
-  virtual void sendPacket(const Packet& msg);
+  virtual void sendPacket(const Packet& msg) = 0;
   virtual ~PacketDestination() = default;
 };
 

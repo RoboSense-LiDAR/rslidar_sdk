@@ -36,11 +36,12 @@ if(roscpp_FOUND)
   message(=============================================================)
   message("-- ROS Found, Ros Support is turned On!")
   message(=============================================================)
+  add_definitions(-DROS_FOUND)
 
   find_package(roslib QUIET)
-  add_definitions(-DROS_FOUND)
   include_directories(${roscpp_INCLUDE_DIRS} ${roslib_INCLUDE_DIRS})
   set(ROS_LIBS ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
+
 else(roscpp_FOUND)
   message(=============================================================)
   message("-- ROS Not Found, Ros Support is turned Off!")
@@ -51,16 +52,18 @@ endif(roscpp_FOUND)
 find_package(rclcpp QUIET)
 
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
-  find_package(ament_cmake REQUIRED)
-  find_package(sensor_msgs REQUIRED)
-  find_package(rslidar_msg REQUIRED)
-  find_package(std_msgs REQUIRED)                      
-  set(CMAKE_CXX_STANDARD 14)
   message(=============================================================)
   message("-- ROS2 Found, Ros2 Support is turned On!")
   message(=============================================================)
   add_definitions(-DROS2_FOUND)
   include_directories(${rclcpp_INCLUDE_DIRS})
+  set(CMAKE_CXX_STANDARD 14)
+
+  find_package(ament_cmake REQUIRED)
+  find_package(sensor_msgs REQUIRED)
+  find_package(rslidar_msg REQUIRED)
+  find_package(std_msgs REQUIRED)                      
+
 else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   message(=============================================================)
   message("-- ROS2 Not Found, Ros2 Support is turned Off!")
@@ -77,15 +80,19 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   message(=============================================================)
   add_definitions(-DPROTO_FOUND)
   include_directories(${PROTOBUF_INCLUDE_DIRS})
+
   SET(PROTO_FILE_PATH ${PROJECT_SOURCE_DIR}/src/msg/proto_msg)
+
   file(GLOB PROTOBUF_FILELIST ${PROTO_FILE_PATH}/*.proto)
   foreach(proto_file ${PROTOBUF_FILELIST})
     message(STATUS "COMPILING ${proto_file} USING ${PROTOBUF_PROTOC_EXECUTABLE}")
+
     execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
                     --proto_path=${PROTO_FILE_PATH}
                     --cpp_out=${PROTO_FILE_PATH}
                     ${proto_file})
   endforeach()
+
 else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   message(=============================================================)
   message("-- Protobuf Not Found, Protobuf Support is turned Off!")
@@ -94,6 +101,7 @@ endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
 #Others#
 find_package(yaml-cpp REQUIRED)
+
 find_package(PCL QUIET REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
@@ -136,11 +144,13 @@ message(=============================================================)
 #========================
 # Build Setup
 #========================
+
 #Protobuf#
 if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+
   add_executable(rslidar_sdk_node
-              node/rslidar_sdk_node.cpp
               src/manager/adapter_manager.cpp
+              node/rslidar_sdk_node.cpp
               ${PROTO_FILE_PATH}/packet.pb.cc
               ${PROTO_FILE_PATH}/scan.pb.cc
               ${PROTO_FILE_PATH}/point_cloud.pb.cc
@@ -151,7 +161,9 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
                       ${PROTOBUF_LIBRARY}
                       ${rs_driver_LIBRARIES}
                       )
+
 else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
               src/manager/adapter_manager.cpp
@@ -161,6 +173,7 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES}
                       )
+
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
 #Ros#

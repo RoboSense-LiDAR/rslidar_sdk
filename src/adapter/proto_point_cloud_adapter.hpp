@@ -86,6 +86,16 @@ inline void ProtoPointCloudSource::start()
   recv_thread_ = std::thread(std::bind(&ProtoPointCloudSource::recvPointCloud, this));
 }
 
+inline void ProtoPointCloudSource::stop()
+{
+  recv_thread_.join();
+}
+
+inline ProtoPointCloudSource::~ProtoPointCloudSource()
+{
+  stop();
+}
+
 inline void ProtoPointCloudSource::recvPointCloud()
 {
 #if 0
@@ -147,11 +157,6 @@ inline void ProtoPointCloudSource::splicePointCloud()
     point_cloud_recv_queue_.pop();
   }
 #endif
-}
-
-inline void ProtoPointCloudSource::stop()
-{
-  recv_thread_.join();
 }
 
 class ProtoPointCloudDestination : public PointCloudDestination
