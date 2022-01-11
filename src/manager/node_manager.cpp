@@ -67,11 +67,6 @@ void NodeManager::init(const YAML::Node& config)
   {
     std::shared_ptr<Source> source;
 
-    //AdapterBase::Ptr recv_ptr;
-
-    //
-    // Receiver
-    //
     switch (msg_source)
     {
       case SourceType::MSG_FROM_LIDAR:  // online lidar
@@ -192,6 +187,8 @@ void NodeManager::init(const YAML::Node& config)
       dst->init(lidar_config[i]);
       source->regRecvCallback(dst);
     }
+
+    sources_.emplace_back(source);
   }
 }
 
