@@ -36,6 +36,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "utility/protobuf_communicator.hpp"
 #include "msg/proto_msg_translator.h"
 constexpr size_t PKT_RECEIVE_BUF_SIZE = 2000000;
+constexpr size_t PKT_QUEUE_MAX_SIZE = 100;
 
 namespace robosense
 {
@@ -107,8 +108,10 @@ inline void PacketProtoAdapter::init(const YAML::Node& config)
   yamlReadAbort<std::string>(config["proto"], "difop_send_port", difop_send_port);
   yamlReadAbort<uint16_t>(config["proto"], "msop_recv_port", msop_recv_port);
   yamlReadAbort<uint16_t>(config["proto"], "difop_recv_port", difop_recv_port);
+
   scan_proto_com_ptr_.reset(new ProtoCommunicator);
   packet_proto_com_ptr_.reset(new ProtoCommunicator);
+
   if (msg_source == MsgSource::MSG_FROM_PROTO_PACKET)
   {
     if ((scan_proto_com_ptr_->initReceiver(msop_recv_port) == -1) ||
@@ -119,6 +122,7 @@ inline void PacketProtoAdapter::init(const YAML::Node& config)
     }
     send_packet_proto = false;
   }
+
   if (send_packet_proto)
   {
     if ((scan_proto_com_ptr_->initSender(msop_send_port, packet_send_ip) == -1) ||
@@ -166,6 +170,11 @@ inline void PacketProtoAdapter::regRecvCallback(const std::function<void(const P
 
 inline void PacketProtoAdapter::sendScan(const ScanMsg& msg)
 {
+  if (scan_send_queue_.size() > PKT_QUEUE_MAX_SIZE) 
+  {
+    scan_send_queue_.clear();
+  }
+
   scan_send_queue_.push(msg);
   if (scan_send_queue_.is_task_finished_.load())
   {
@@ -176,6 +185,11 @@ inline void PacketProtoAdapter::sendScan(const ScanMsg& msg)
 
 inline void PacketProtoAdapter::sendPacket(const PacketMsg& msg)
 {
+  if (packet_send_queue_.size() > PKT_QUEUE_MAX_SIZE) 
+  {
+    packet_send_queue_.clear();
+  }
+
   packet_send_queue_.push(msg);
   if (packet_send_queue_.is_task_finished_.load())
   {
@@ -258,6 +272,7 @@ inline void PacketProtoAdapter::sendMsop()
       RS_WARNING << "Msop packets Protobuf sending error" << RS_REND;
     }
   }
+
   scan_send_queue_.is_task_finished_.store(true);
 }
 
