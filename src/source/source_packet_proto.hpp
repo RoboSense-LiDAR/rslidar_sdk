@@ -47,7 +47,7 @@ namespace robosense
 namespace lidar
 {
 
-class SourcePacketProto : SourceDriver
+class SourcePacketProto : public SourceDriver
 {
 public:
 
