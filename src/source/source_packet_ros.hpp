@@ -88,13 +88,13 @@ void SourcePacketRos::putPacket(const rslidar_sdk::rslidarPacket& msg)
   driver_ptr_->decodePacket(toRsMsg(msg));
 }
 
-inline rslidar_sdk::rslidarPacket toRosMsg(const Packet& rs_msg)
+inline rslidar_sdk::rslidarPacket toRosMsg(const Packet& rs_msg, const std::string& frame_id)
 {
   rslidar_sdk::rslidarPacket ros_msg;
   ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
   ros_msg.header.stamp.nsec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
   ros_msg.header.seq = rs_msg.seq;
-  ros_msg.header.frame_id = "/rslidar";
+  ros_msg.header.frame_id = frame_id;
   ros_msg.is_difop = rs_msg.is_difop;
   ros_msg.is_frame_begin = rs_msg.is_frame_begin;
 
@@ -118,10 +118,14 @@ private:
 
   std::unique_ptr<ros::NodeHandle> nh_;
   ros::Publisher pub_;
+  std::string frame_id_;
 };
 
 inline void DestinationPacketRos::init(const YAML::Node& config)
 {
+  yamlRead<std::string>(config["ros"], 
+      "ros_frame_id", frame_id_, "/rslidar");
+
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], "ros_send_packet_topic", 
       ros_send_topic, "rslidar_packets");
@@ -132,7 +136,7 @@ inline void DestinationPacketRos::init(const YAML::Node& config)
 
 inline void DestinationPacketRos::sendPacket(const Packet& msg)
 {
-  pub_.publish(toRosMsg(msg));
+  pub_.publish(toRosMsg(msg, frame_id_));
 }
 
 }  // namespace lidar

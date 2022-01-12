@@ -45,13 +45,13 @@ namespace robosense
 namespace lidar
 {
 
-inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
+inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id)
 {
   sensor_msgs::PointCloud2 ros_msg;
   pcl::toROSMsg(rs_msg, ros_msg);
-  ros_msg.header.frame_id = rs_msg.frame_id;
   ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
   ros_msg.header.seq = rs_msg.seq;
+  ros_msg.header.frame_id = frame_id;
   return std::move(ros_msg);
 }
 
@@ -66,10 +66,14 @@ public:
 private:
   std::shared_ptr<ros::NodeHandle> nh_;
   ros::Publisher pub_;
+  std::string frame_id_;
 };
 
 inline void DestinationPointCloudRos::init(const YAML::Node& config)
 {
+  yamlRead<std::string>(config["ros"], 
+      "ros_frame_id", frame_id_, "/rslidar");
+
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], 
       "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
@@ -80,7 +84,7 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  pub_.publish(toRosMsg(msg));
+  pub_.publish(toRosMsg(msg, frame_id_));
 }
 
 }  // namespace lidar
