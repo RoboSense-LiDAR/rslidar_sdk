@@ -62,7 +62,10 @@ inline Packet toRsMsg(const rslidar_sdk::rslidarPacket& ros_msg)
 class SourcePacketRos : public SourceDriver
 { 
 public: 
-  virtual void init(SourceType src_type, const YAML::Node& config);
+
+  virtual void init(const YAML::Node& config);
+
+  SourcePacketRos();
 
 private:
 
@@ -72,9 +75,14 @@ private:
   ros::Subscriber pkt_sub_;
 };
 
-void SourcePacketRos::init(SourceType src_type, const YAML::Node& config)
+SourcePacketRos::SourcePacketRos()
+  : SourceDriver(SourceType::MSG_FROM_ROS_PACKET)
 {
-  SourceDriver::init(src_type, config);
+}
+
+void SourcePacketRos::init(const YAML::Node& config)
+{
+  SourceDriver::init(config);
 
   std::string ros_recv_topic;
   yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", 

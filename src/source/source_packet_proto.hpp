@@ -51,9 +51,11 @@ class SourcePacketProto : public SourceDriver
 {
 public:
 
-  virtual void init(SourceType src_type, const YAML::Node& config);
+  virtual void init(const YAML::Node& config);
   virtual void start();
   virtual void stop();
+
+  SourcePacketProto();
 
 private:
 
@@ -66,9 +68,14 @@ private:
   std::thread splice_thread_;
 };
 
-void SourcePacketProto::init(SourceType src_type, const YAML::Node& config)
+SourcePacketProto::SourcePacketProto()
+  : SourceDriver(SourceType::MSG_FROM_PROTO_PACKET)
 {
-  SourceDriver::init(src_type, config);
+}
+
+void SourcePacketProto::init(const YAML::Node& config)
+{
+  SourceDriver::init(config);
 
   uint16_t packet_recv_port;
   yamlReadAbort<uint16_t>(config["proto"], "packet_recv_port", packet_recv_port);

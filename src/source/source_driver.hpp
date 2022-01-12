@@ -45,11 +45,13 @@ class SourceDriver : public Source
 {
 public:
 
-  virtual void init(SourceType src, const YAML::Node& config);
+  virtual void init(const YAML::Node& config);
   virtual void start();
   virtual void stop();
   virtual void regRecvCallback(DestinationPacket::Ptr dst);
   virtual ~SourceDriver();
+
+  SourceDriver(SourceType src_type);
 
 protected:
 
@@ -62,7 +64,12 @@ protected:
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
 };
 
-inline void SourceDriver::init(SourceType src_type, const YAML::Node& config)
+SourceDriver::SourceDriver(SourceType src_type)
+  : Source(src_type)
+{
+}
+
+inline void SourceDriver::init(const YAML::Node& config)
 {
   YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
   lidar::RSDriverParam driver_param;
@@ -103,7 +110,7 @@ inline void SourceDriver::init(SourceType src_type, const YAML::Node& config)
   yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.split_angle, 0);
   yamlRead<uint16_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_blks_split, 0);
 
-  switch (src_type)
+  switch (src_type_)
   {
     case SourceType::MSG_FROM_LIDAR:
       driver_param.input_type = InputType::ONLINE_LIDAR;

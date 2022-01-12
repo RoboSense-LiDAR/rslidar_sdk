@@ -48,10 +48,12 @@ class SourcePointCloudProto : public Source
 {
 public:
 
-  virtual void init(SourceType src_type, const YAML::Node& config);
+  virtual void init(const YAML::Node& config);
   virtual void start();
   virtual void stop();
   virtual ~SourcePointCloudProto();
+
+  SourcePointCloudProto();
 
 private:
 
@@ -65,7 +67,12 @@ private:
   int new_frmnum_;
 };
 
-inline void SourcePointCloudProto::init(SourceType src_type, const YAML::Node& config)
+SourcePointCloudProto::SourcePointCloudProto()
+  : Source(SourceType::MSG_FROM_PROTO_POINTCLOUD)
+{
+}
+
+inline void SourcePointCloudProto::init(const YAML::Node& config)
 {
   uint16_t point_cloud_recv_port;
   yamlReadAbort<uint16_t>(config["proto"], "point_cloud_recv_port", point_cloud_recv_port);

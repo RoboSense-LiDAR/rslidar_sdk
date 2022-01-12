@@ -77,8 +77,8 @@ void NodeManager::init(const YAML::Node& config)
         RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
         RS_INFO << "------------------------------------------------------" << RS_REND;
 
-        source = std::make_shared<SourceDriver>();
-        source->init((SourceType)msg_source, lidar_config[i]);
+        source = std::make_shared<SourceDriver>(SourceType::MSG_FROM_LIDAR);
+        source->init(lidar_config[i]);
         break;
 
       case SourceType::MSG_FROM_ROS_PACKET:  // pkt from ros
@@ -89,7 +89,7 @@ void NodeManager::init(const YAML::Node& config)
         RS_INFO << "------------------------------------------------------" << RS_REND;
 
         source = std::make_shared<SourcePacketRos>();
-        source->init((SourceType)msg_source, lidar_config[i]);
+        source->init(lidar_config[i]);
         break;
 
       case SourceType::MSG_FROM_PCAP:  // pcap
@@ -100,8 +100,8 @@ void NodeManager::init(const YAML::Node& config)
         RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
         RS_INFO << "------------------------------------------------------" << RS_REND;
 
-        source = std::make_shared<SourceDriver>();
-        source->init((SourceType)msg_source, lidar_config[i]);
+        source = std::make_shared<SourceDriver>(SourceType::MSG_FROM_PCAP);
+        source->init(lidar_config[i]);
         break;
 
       case SourceType::MSG_FROM_PROTO_PACKET:  // packets from proto
@@ -113,7 +113,7 @@ void NodeManager::init(const YAML::Node& config)
         RS_INFO << "------------------------------------------------------" << RS_REND;
 
         source = std::make_shared<SourcePacketProto>();
-        source->init((SourceType)msg_source, lidar_config[i]);
+        source->init(lidar_config[i]);
         break;
 
       case SourceType::MSG_FROM_PROTO_POINTCLOUD:  // point cloud from proto
@@ -124,7 +124,7 @@ void NodeManager::init(const YAML::Node& config)
         RS_INFO << "------------------------------------------------------" << RS_REND;
 
         source = std::make_shared<SourcePointCloudProto>();
-        source->init((SourceType)msg_source, lidar_config[i]);
+        source->init(lidar_config[i]);
         break;
 
       default:

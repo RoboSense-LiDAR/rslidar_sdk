@@ -81,21 +81,28 @@ class Source
 public:
   typedef std::shared_ptr<Source> Ptr;
 
-  virtual void init(SourceType src_type, const YAML::Node& config) {}
+  virtual void init(const YAML::Node& config) {}
   virtual void start() {}
   virtual void stop() {}
   virtual void regRecvCallback(DestinationPointCloud::Ptr dst);
   virtual void regRecvCallback(DestinationPacket::Ptr dst);
   virtual ~Source() = default;
+  Source(SourceType src_type);
 
 protected:
 
   void sendPacket(const Packet& msg);
   void sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg);
 
+  SourceType src_type_;
   std::vector<DestinationPointCloud::Ptr> pc_cb_vec_;
   std::vector<DestinationPacket::Ptr> pkt_cb_vec_;
 };
+
+inline Source::Source(SourceType src_type)
+  : src_type_(src_type)
+{
+}
 
 inline void Source::regRecvCallback(DestinationPacket::Ptr dst)
 {
