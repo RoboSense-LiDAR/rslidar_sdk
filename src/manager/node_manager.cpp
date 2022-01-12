@@ -86,8 +86,6 @@ void NodeManager::init(const YAML::Node& config)
         RS_INFO << "------------------------------------------------------" << RS_REND;
         RS_INFO << "Receive Packets From : ROS" << RS_REND;
         RS_INFO << "Msop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << RS_REND;
-        RS_INFO << "Difop Topic: " << lidar_config[i]["ros"]["ros_recv_packet_topic"].as<std::string>() << "_difop"
-                << RS_REND;
         RS_INFO << "------------------------------------------------------" << RS_REND;
 
         source = std::make_shared<SourcePacketRos>();
@@ -139,8 +137,6 @@ void NodeManager::init(const YAML::Node& config)
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
       RS_DEBUG << "Send Packets To : ROS" << RS_REND;
       RS_DEBUG << "Msop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << RS_REND;
-      RS_DEBUG << "Difop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << "_difop"
-               << RS_REND;
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
 
       std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketRos>();

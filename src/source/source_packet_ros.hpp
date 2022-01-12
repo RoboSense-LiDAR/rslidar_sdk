@@ -33,7 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "source/source_driver.hpp"
-#include "msg/ros_msg/lidar_packet_ros.h"
+#include "msg/ros_msg/rslidarPacket.h"
 
 #ifdef ROS_FOUND
 #include <ros/ros.h>
@@ -43,29 +43,30 @@ namespace robosense
 namespace lidar
 {
 
-inline Packet toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg)
+inline Packet toRsMsg(const rslidar_sdk::rslidarPacket& ros_msg)
 {
-  Packet rs_msg(1500);
-  //rs_msg.timestamp = ros_msg.header.stamp.toSec();
-  //rs_msg.seq = ros_msg.header.seq;
-  //rs_msg.type = ros_msg.header.type;
-  //rs_msg.frame_id = ros_msg.header.frame_id;
-  for (size_t i = 0; i < 1500; i++)
+  Packet rs_msg;
+  rs_msg.timestamp = ros_msg.header.stamp.toSec();
+  rs_msg.seq = ros_msg.header.seq;
+  rs_msg.is_difop = ros_msg.is_difop;
+  rs_msg.is_frame_begin = ros_msg.is_frame_begin; 
+
+  for (size_t i = 0; i < ros_msg.data.size(); i++)
   {
-    rs_msg.buf_[i] = ros_msg.data[i];
+    rs_msg.buf_.emplace_back(ros_msg.data[i]);
   }
-  return std::move(rs_msg);
+
+  return rs_msg;
 }
 
 class SourcePacketRos : public SourceDriver
 { 
-public:
-
+public: 
   virtual void init(SourceType src_type, const YAML::Node& config);
 
 private:
 
-  void putPacket(const rslidar_msgs::rslidarPacket& msg);
+  void putPacket(const rslidar_sdk::rslidarPacket& msg);
 
   std::unique_ptr<ros::NodeHandle> nh_;
   ros::Subscriber pkt_sub_;
@@ -81,25 +82,28 @@ void SourcePacketRos::init(SourceType src_type, const YAML::Node& config)
 
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
   pkt_sub_ = nh_->subscribe(ros_recv_topic, 1, &SourcePacketRos::putPacket, this);
-}
-
-void SourcePacketRos::putPacket(const rslidar_msgs::rslidarPacket& msg)
+} 
+void SourcePacketRos::putPacket(const rslidar_sdk::rslidarPacket& msg)
 {
   driver_ptr_->decodePacket(toRsMsg(msg));
 }
 
-inline rslidar_msgs::rslidarPacket toRosMsg(const Packet& rs_msg)
+inline rslidar_sdk::rslidarPacket toRosMsg(const Packet& rs_msg)
 {
-  rslidar_msgs::rslidarPacket ros_msg;
-  //rs_msg.timestamp = ros_msg.header.stamp.toSec();
-  //rs_msg.seq = ros_msg.header.seq;
-  //rs_msg.type = ros_msg.header.type;
-  //rs_msg.frame_id = ros_msg.header.frame_id;
+  rslidar_sdk::rslidarPacket ros_msg;
+  ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
+  ros_msg.header.stamp.nsec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
+  ros_msg.header.seq = rs_msg.seq;
+  ros_msg.header.frame_id = "/rslidar";
+  ros_msg.is_difop = rs_msg.is_difop;
+  ros_msg.is_frame_begin = rs_msg.is_frame_begin;
+
   for (size_t i = 0; i < rs_msg.buf_.size(); i++)
   {
-    ros_msg.data[i] = rs_msg.buf_[i];
+    ros_msg.data.emplace_back(rs_msg.buf_[i]);
   }
-  return std::move(ros_msg);
+
+  return ros_msg;
 }
 
 class DestinationPacketRos : public DestinationPacket
@@ -123,7 +127,7 @@ inline void DestinationPacketRos::init(const YAML::Node& config)
       ros_send_topic, "rslidar_packets");
 
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-  pub_ = nh_->advertise<rslidar_msgs::rslidarPacket>(ros_send_topic, 10);
+  pub_ = nh_->advertise<rslidar_sdk::rslidarPacket>(ros_send_topic, 10);
 }
 
 inline void DestinationPacketRos::sendPacket(const Packet& msg)
