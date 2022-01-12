@@ -64,13 +64,6 @@ protected:
 
 inline void SourceDriver::init(SourceType src_type, const YAML::Node& config)
 {
-  point_cloud_.reset (new LidarPointCloudMsg);
-  driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
-  driver_ptr_->regRecvCallback(std::bind(&SourceDriver::getPointCloud, this), 
-      std::bind(&SourceDriver::putPointCloud, this, std::placeholders::_1));
-  driver_ptr_->regExceptionCallback(
-      std::bind(&SourceDriver::putException, this, std::placeholders::_1));
-
   YAML::Node driver_config = yamlSubNodeAbort(config, "driver");
   lidar::RSDriverParam driver_param;
 
@@ -124,6 +117,14 @@ inline void SourceDriver::init(SourceType src_type, const YAML::Node& config)
   }
 
   driver_param.print();
+
+  point_cloud_.reset(new LidarPointCloudMsg);
+  driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
+  driver_ptr_->regRecvCallback(std::bind(&SourceDriver::getPointCloud, this), 
+      std::bind(&SourceDriver::putPointCloud, this, std::placeholders::_1));
+  driver_ptr_->regExceptionCallback(
+      std::bind(&SourceDriver::putException, this, std::placeholders::_1));
+
   if (!driver_ptr_->init(driver_param))
   {
     RS_ERROR << "Driver Initialize Error...." << RS_REND;

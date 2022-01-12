@@ -197,7 +197,9 @@ void NodeManager::start()
   for (auto& iter : sources_)
   {
     if (iter != nullptr)
+    {
       iter->start();
+    }
   }
 }
 
@@ -206,7 +208,9 @@ void NodeManager::stop()
   for (auto& iter : sources_)
   {
     if (iter != nullptr)
+    {
       iter->stop();
+    }
   }
 }
 
