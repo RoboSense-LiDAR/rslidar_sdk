@@ -23,18 +23,16 @@ lidar:
                                    #False-- Use the system clock as the timestamp
       pcap_path: /mnt/share/pcap/RS32/Rs32.pcap #The path of pcap file
     ros:
-      ros_frame_id: /rslidar                           #Frame id of message
+      ros_frame_id: /rslidar                           #Frame id of packet message and point cloud message
       ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
       ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
       ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS
     proto:
       point_cloud_recv_port: 60021                     #Port number used for receiving point cloud 
       point_cloud_send_port: 60021                     #Port number which the point cloud will be send to
-      msop_recv_port: 60022                            #Port number used for receiving lidar msop packets
-      msop_send_port: 60022                            #Port number which the msop packets will be send to 
-      difop_recv_port: 60023                           #Port number used for receiving lidar difop packets
-      difop_send_port: 60023                           #Port number which the difop packets will be send to 
       point_cloud_send_ip: 127.0.0.1                   #Ip address which the point cloud will be send to 
+      packet_recv_port: 60022                          #Port number used to receiving lidar packets
+      packet_send_port: 60022                          #Port number which the lidar packets will be send to 
       packet_send_ip: 127.0.0.1                        #Ip address which the lidar packets will be send to
 
 

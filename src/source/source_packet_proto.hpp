@@ -36,6 +36,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //#include "utility/protobuf_communicator.hpp"
 #include "rs_driver/utility/sync_queue.hpp"
 
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #ifdef PROTO_FOUND
 
 constexpr size_t PKT_RECEIVE_BUF_SIZE = 2000000;
@@ -59,6 +62,8 @@ public:
 
 private:
 
+  int initSocket(uint16_t port);
+
   void recvPacket();
   void splicePacket();
 
@@ -66,11 +71,55 @@ private:
   //SyncQueue<Packet> pkt_queue_;
   std::thread recv_thread_;
   std::thread splice_thread_;
+  int fd_;
 };
 
 SourcePacketProto::SourcePacketProto()
   : SourceDriver(SourceType::MSG_FROM_PROTO_PACKET)
 {
+}
+
+inline int SourcePacketProto::initSocket(uint16_t port)
+{
+  int fd;
+  int flags;
+  int ret;
+
+  fd = socket(PF_INET, SOCK_DGRAM, 0);
+  if (fd < 0)
+  {
+    std::cerr << "socket: " << std::strerror(errno) << std::endl;
+    goto failSocket;
+  }
+
+  struct sockaddr_in host_addr;
+  memset(&host_addr, 0, sizeof(host_addr));
+  host_addr.sin_family = AF_INET;
+  host_addr.sin_port = htons(port);
+  host_addr.sin_addr.s_addr = INADDR_ANY;
+  ret = bind(fd, (struct sockaddr*)&host_addr, sizeof(host_addr));
+  if (ret < 0)
+  {
+    std::cerr << "bind: " << std::strerror(errno) << std::endl;
+    goto failBind;
+  }
+
+  flags = fcntl(fd, F_GETFL, 0);
+  ret = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+  if (ret < 0)
+  {
+    std::cerr << "setsockopt: " << std::strerror(errno) << std::endl;
+    goto failNonBlock;
+  }
+
+  fd_ = fd;
+  return 0;
+
+failNonBlock:
+failBind:
+  close(fd);
+failSocket:
+  return -1;
 }
 
 void SourcePacketProto::init(const YAML::Node& config)
@@ -151,30 +200,52 @@ public:
 
 private:
 
+  int initSocket(uint16_t dst_port, const std::string& dst_ip);
+
   void internSendPacket();
 
-  //std::unique_ptr<ProtoCommunicator> packet_proto_com_ptr_;
-  //SyncQueue<Packet> pkt_queue_;
+  SyncQueue<Packet> pkt_queue_;
   std::thread send_thread_;
   bool to_exit_;
+  int fd_;
+  struct sockaddr_in dst_addr_;
 };
+
 
 inline void DestinationPacketProto::init(const YAML::Node& config)
 {
+  uint16_t packet_send_port;
+  yamlReadAbort<uint16_t>(config["proto"], "packet_send_port", packet_send_port);
   std::string packet_send_ip;
   yamlReadAbort<std::string>(config["proto"], "packet_send_ip", packet_send_ip);
-  std::string packet_send_port;
-  yamlReadAbort<std::string>(config["proto"], "packet_send_port", packet_send_port);
 
-#if 0
-  packet_proto_com_ptr_.reset(new ProtoCommunicator);
-  int ret = packet_proto_com_ptr_->initSender(packet_send_port, packet_send_ip);
-  if (ret < -1)
+  if (initSocket(packet_send_port, packet_send_ip) < 0)
   {
-    RS_ERROR << "LidarPacketsReceiver: Create UDP Sender Socket failed ! " << RS_REND;
+    RS_ERROR << "DestinationPacketProto: failed to create UDP sender socket." << RS_REND;
     exit(-1);
   }
-#endif
+}
+
+int DestinationPacketProto::initSocket(uint16_t dst_port, const std::string& dst_ip)
+{
+  struct sockaddr_in dst_addr = {0};
+  dst_addr.sin_family = AF_INET;
+  dst_addr.sin_port = htons(dst_port);
+  dst_addr.sin_addr.s_addr = inet_addr(dst_ip.c_str());
+
+  int fd = socket(PF_INET, SOCK_DGRAM, 0);
+  if (fd < 0)
+  {
+    std::cerr << "socket: " << std::strerror(errno) << std::endl;
+    goto failSocket;
+  }
+
+  memcpy (&dst_addr_, &dst_addr, sizeof(dst_addr));
+  fd_ = fd;
+  return 0;
+
+failSocket:
+  return -1;
 }
 
 inline void DestinationPacketProto::start()
@@ -195,7 +266,7 @@ inline DestinationPacketProto::~DestinationPacketProto()
 
 inline void DestinationPacketProto::sendPacket(const Packet& msg)
 {
-  //pkt_queue_.push(msg);
+  pkt_queue_.push(msg);
 }
 
 inline void DestinationPacketProto::internSendPacket()
