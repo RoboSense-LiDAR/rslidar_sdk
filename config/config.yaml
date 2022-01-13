@@ -27,13 +27,13 @@ lidar:
       ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
       ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
       ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS
-    proto:
-      point_cloud_recv_port: 60021                     #Port number used for receiving point cloud 
-      point_cloud_send_port: 60021                     #Port number which the point cloud will be send to
-      point_cloud_send_ip: 127.0.0.1                   #Ip address which the point cloud will be send to 
-      packet_recv_port: 60022                          #Port number used to receiving lidar packets
-      packet_send_port: 60022                          #Port number which the lidar packets will be send to 
-      packet_send_ip: 127.0.0.1                        #Ip address which the lidar packets will be send to
+    #proto:
+    #  point_cloud_recv_port: 60021                     #Port number used for receiving point cloud 
+    #  point_cloud_send_port: 60021                     #Port number which the point cloud will be send to
+    #  point_cloud_send_ip: 127.0.0.1                   #Ip address which the point cloud will be send to 
+    #  packet_recv_port: 60022                          #Port number used to receiving lidar packets
+    #  packet_send_port: 60022                          #Port number which the lidar packets will be send to 
+    #  packet_send_ip: 127.0.0.1                        #Ip address which the lidar packets will be send to
 
 
 

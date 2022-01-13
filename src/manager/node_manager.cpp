@@ -104,6 +104,7 @@ void NodeManager::init(const YAML::Node& config)
         source->init(lidar_config[i]);
         break;
 
+#if 0
       case SourceType::MSG_FROM_PROTO_PACKET:  // packets from proto
 
         RS_INFO << "------------------------------------------------------" << RS_REND;
@@ -126,9 +127,10 @@ void NodeManager::init(const YAML::Node& config)
         source = std::make_shared<SourcePointCloudProto>();
         source->init(lidar_config[i]);
         break;
+#endif
 
       default:
-        RS_ERROR << "Wrong LiDAR message source:" << msg_source << "." << RS_REND;
+        RS_ERROR << "Unsupported LiDAR message source:" << msg_source << "." << RS_REND;
         exit(-1);
     }
 
@@ -140,20 +142,6 @@ void NodeManager::init(const YAML::Node& config)
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
 
       std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketRos>();
-      dst->init(lidar_config[i]);
-      source->regRecvCallback(dst);
-    }
-
-    if (send_packet_proto)
-    {
-      RS_DEBUG << "------------------------------------------------------" << RS_REND;
-      RS_DEBUG << "Send Packets To : Protobuf-UDP" << RS_REND;
-      RS_DEBUG << "Msop Port:  " << lidar_config[i]["proto"]["msop_send_port"].as<uint16_t>() << RS_REND;
-      RS_DEBUG << "Difop Port: " << lidar_config[i]["proto"]["difop_send_port"].as<uint16_t>() << RS_REND;
-      RS_DEBUG << "Target IP: " << lidar_config[i]["proto"]["packet_send_ip"].as<std::string>() << RS_REND;
-      RS_DEBUG << "------------------------------------------------------" << RS_REND;
-
-      std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketProto>();
       dst->init(lidar_config[i]);
       source->regRecvCallback(dst);
     }
@@ -171,6 +159,21 @@ void NodeManager::init(const YAML::Node& config)
       source->regRecvCallback(dst);
     }
 
+#if 0
+    if (send_packet_proto)
+    {
+      RS_DEBUG << "------------------------------------------------------" << RS_REND;
+      RS_DEBUG << "Send Packets To : Protobuf-UDP" << RS_REND;
+      RS_DEBUG << "Msop Port:  " << lidar_config[i]["proto"]["msop_send_port"].as<uint16_t>() << RS_REND;
+      RS_DEBUG << "Difop Port: " << lidar_config[i]["proto"]["difop_send_port"].as<uint16_t>() << RS_REND;
+      RS_DEBUG << "Target IP: " << lidar_config[i]["proto"]["packet_send_ip"].as<std::string>() << RS_REND;
+      RS_DEBUG << "------------------------------------------------------" << RS_REND;
+
+      std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketProto>();
+      dst->init(lidar_config[i]);
+      source->regRecvCallback(dst);
+    }
+
     if (send_point_cloud_proto)
     {
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
@@ -183,6 +186,7 @@ void NodeManager::init(const YAML::Node& config)
       dst->init(lidar_config[i]);
       source->regRecvCallback(dst);
     }
+#endif
 
     sources_.emplace_back(source);
   }
