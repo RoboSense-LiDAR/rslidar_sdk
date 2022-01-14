@@ -34,5 +34,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "rs_driver/msg/pcl_point_cloud_msg.hpp"
 
+#ifdef POINT_TYPE_XYZIRT
+typedef PointCloudT<PointXYZIRT> LidarPointCloudMsg;
+#else
 typedef PointCloudT<PointXYZI> LidarPointCloudMsg;
+#endif
 
