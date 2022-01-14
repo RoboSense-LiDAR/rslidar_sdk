@@ -89,7 +89,7 @@ void SourcePacketRos::init(const YAML::Node& config)
       ros_recv_topic, "rslidar_packets");
 
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-  pkt_sub_ = nh_->subscribe(ros_recv_topic, 1, &SourcePacketRos::putPacket, this);
+  pkt_sub_ = nh_->subscribe(ros_recv_topic, 100, &SourcePacketRos::putPacket, this);
 } 
 void SourcePacketRos::putPacket(const rslidar_sdk::rslidarPacket& msg)
 {
@@ -99,8 +99,7 @@ void SourcePacketRos::putPacket(const rslidar_sdk::rslidarPacket& msg)
 inline rslidar_sdk::rslidarPacket toRosMsg(const Packet& rs_msg, const std::string& frame_id)
 {
   rslidar_sdk::rslidarPacket ros_msg;
-  ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
-  ros_msg.header.stamp.nsec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
+  ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
   ros_msg.header.seq = rs_msg.seq;
   ros_msg.header.frame_id = frame_id;
   ros_msg.is_difop = rs_msg.is_difop;
@@ -152,8 +151,7 @@ inline void DestinationPacketRos::sendPacket(const Packet& msg)
 
 #endif  // ROS_FOUND
 
-#if 0
-//#ifdef ROS2_FOUND
+#ifdef ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
 
 namespace robosense
