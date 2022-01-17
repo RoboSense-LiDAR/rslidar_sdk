@@ -84,8 +84,8 @@ public:
   virtual void init(const YAML::Node& config) {}
   virtual void start() {}
   virtual void stop() {}
-  virtual void regRecvCallback(DestinationPointCloud::Ptr dst);
-  virtual void regRecvCallback(DestinationPacket::Ptr dst);
+  virtual void regPointCloudCallback(DestinationPointCloud::Ptr dst);
+  virtual void regPacketCallback(DestinationPacket::Ptr dst);
   virtual ~Source() = default;
   Source(SourceType src_type);
 
@@ -104,12 +104,12 @@ inline Source::Source(SourceType src_type)
 {
 }
 
-inline void Source::regRecvCallback(DestinationPacket::Ptr dst)
+inline void Source::regPacketCallback(DestinationPacket::Ptr dst)
 {
   pkt_cb_vec_.emplace_back(dst);
 }
 
-inline void Source::regRecvCallback(DestinationPointCloud::Ptr dst)
+inline void Source::regPointCloudCallback(DestinationPointCloud::Ptr dst)
 {
   pc_cb_vec_.emplace_back(dst);
 }

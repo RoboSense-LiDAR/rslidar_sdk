@@ -48,7 +48,7 @@ public:
   virtual void init(const YAML::Node& config);
   virtual void start();
   virtual void stop();
-  virtual void regRecvCallback(DestinationPacket::Ptr dst);
+  virtual void regPacketCallback(DestinationPacket::Ptr dst);
   virtual ~SourceDriver();
 
   SourceDriver(SourceType src_type);
@@ -127,7 +127,7 @@ inline void SourceDriver::init(const YAML::Node& config)
 
   point_cloud_.reset(new LidarPointCloudMsg);
   driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
-  driver_ptr_->regRecvCallback(std::bind(&SourceDriver::getPointCloud, this), 
+  driver_ptr_->regPointCloudCallback(std::bind(&SourceDriver::getPointCloud, this), 
       std::bind(&SourceDriver::putPointCloud, this, std::placeholders::_1));
   driver_ptr_->regExceptionCallback(
       std::bind(&SourceDriver::putException, this, std::placeholders::_1));
@@ -159,13 +159,13 @@ inline std::shared_ptr<LidarPointCloudMsg> SourceDriver::getPointCloud(void)
   return point_cloud_;
 }
 
-inline void SourceDriver::regRecvCallback(DestinationPacket::Ptr dst)
+inline void SourceDriver::regPacketCallback(DestinationPacket::Ptr dst)
 {
-  Source::regRecvCallback(dst);
+  Source::regPacketCallback(dst);
 
   if (pkt_cb_vec_.size() == 1)
   {
-    driver_ptr_->regRecvCallback(
+    driver_ptr_->regPacketCallback(
         std::bind(&SourceDriver::putPacket, this, std::placeholders::_1));
   }
 }

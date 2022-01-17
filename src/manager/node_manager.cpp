@@ -143,7 +143,7 @@ void NodeManager::init(const YAML::Node& config)
 
       std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketRos>();
       dst->init(lidar_config[i]);
-      source->regRecvCallback(dst);
+      source->regPacketCallback(dst);
     }
 
     if (send_point_cloud_ros)
@@ -156,7 +156,7 @@ void NodeManager::init(const YAML::Node& config)
 
       std::shared_ptr<DestinationPointCloud> dst = std::make_shared<DestinationPointCloudRos>();
       dst->init(lidar_config[i]);
-      source->regRecvCallback(dst);
+      source->regPointCloudCallback(dst);
     }
 
 #if 0
@@ -171,7 +171,7 @@ void NodeManager::init(const YAML::Node& config)
 
       std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketProto>();
       dst->init(lidar_config[i]);
-      source->regRecvCallback(dst);
+      source->regPacketCallback(dst);
     }
 
     if (send_point_cloud_proto)
@@ -184,7 +184,7 @@ void NodeManager::init(const YAML::Node& config)
 
       std::shared_ptr<DestinationPointCloud> dst = std::make_shared<DestinationPointCloudProto>();
       dst->init(lidar_config[i]);
-      source->regRecvCallback(dst);
+      source->regPointCloudCallback(dst);
     }
 #endif
 
