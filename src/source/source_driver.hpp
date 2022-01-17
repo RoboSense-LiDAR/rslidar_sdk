@@ -75,10 +75,10 @@ inline void SourceDriver::init(const YAML::Node& config)
   lidar::RSDriverParam driver_param;
 
   // input related
-  yamlRead<std::string>(driver_config, "multi_cast_address", driver_param.input_param.multi_cast_address, "0.0.0.0");
-  yamlRead<std::string>(driver_config, "host_address", driver_param.input_param.host_address, "0.0.0.0");
   yamlRead<uint16_t>(driver_config, "msop_port", driver_param.input_param.msop_port, 6699);
   yamlRead<uint16_t>(driver_config, "difop_port", driver_param.input_param.difop_port, 7788);
+  yamlRead<std::string>(driver_config, "host_address", driver_param.input_param.host_address, "0.0.0.0");
+  yamlRead<std::string>(driver_config, "group_address", driver_param.input_param.group_address, "0.0.0.0");
   yamlRead<bool>(driver_config, "use_vlan", driver_param.input_param.use_vlan, false);
   yamlRead<bool>(driver_config, "use_someip", driver_param.input_param.use_someip, false);
   yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
