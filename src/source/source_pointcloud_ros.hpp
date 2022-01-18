@@ -35,7 +35,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "source/source.hpp"
 
 #include <pcl_conversions/pcl_conversions.h>
-#include <pcl_ros/transforms.h>
+//#include <pcl_ros/transforms.h>
 
 #ifdef ROS_FOUND
 #include <ros/ros.h>
@@ -111,7 +111,7 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   return ros_msg;
 }
 
-class DestinationPointCloudRos : virtual public DestinationPointCloudRos
+class DestinationPointCloudRos : virtual public DestinationPointCloud
 {
 public:
 
