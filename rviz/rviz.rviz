@@ -96,7 +96,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: rslidar
+    Fixed Frame: //rslidar
     Frame Rate: 30
   Name: root
   Tools:
