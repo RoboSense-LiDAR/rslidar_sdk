@@ -35,7 +35,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "source/source_driver.hpp"
 
 #ifdef ROS_FOUND
-#include "msg/ros_msg/rslidarPacket.h"
+#include "msg/ros_msg/rslidar_packet.hpp"
 #include <ros/ros.h>
 
 namespace robosense
@@ -43,7 +43,7 @@ namespace robosense
 namespace lidar
 {
 
-inline Packet toRsMsg(const rslidar_sdk::rslidarPacket& ros_msg)
+inline Packet toRsMsg(const rslidar_msg::RslidarPacket& ros_msg)
 {
   Packet rs_msg;
   rs_msg.timestamp = ros_msg.header.stamp.toSec();
@@ -69,7 +69,7 @@ public:
 
 private:
 
-  void putPacket(const rslidar_sdk::rslidarPacket& msg);
+  void putPacket(const rslidar_msg::RslidarPacket& msg);
 
   std::unique_ptr<ros::NodeHandle> nh_;
   ros::Subscriber pkt_sub_;
@@ -91,14 +91,15 @@ void SourcePacketRos::init(const YAML::Node& config)
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
   pkt_sub_ = nh_->subscribe(ros_recv_topic, 100, &SourcePacketRos::putPacket, this);
 } 
-void SourcePacketRos::putPacket(const rslidar_sdk::rslidarPacket& msg)
+
+void SourcePacketRos::putPacket(const rslidar_msg::RslidarPacket& msg)
 {
   driver_ptr_->decodePacket(toRsMsg(msg));
 }
 
-inline rslidar_sdk::rslidarPacket toRosMsg(const Packet& rs_msg, const std::string& frame_id)
+inline rslidar_msg::RslidarPacket toRosMsg(const Packet& rs_msg, const std::string& frame_id)
 {
-  rslidar_sdk::rslidarPacket ros_msg;
+  rslidar_msg::RslidarPacket ros_msg;
   ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
   ros_msg.header.seq = rs_msg.seq;
   ros_msg.header.frame_id = frame_id;
@@ -138,7 +139,7 @@ inline void DestinationPacketRos::init(const YAML::Node& config)
       ros_send_topic, "rslidar_packets");
 
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-  pkt_pub_ = nh_->advertise<rslidar_sdk::rslidarPacket>(ros_send_topic, 10);
+  pkt_pub_ = nh_->advertise<rslidar_msg::RslidarPacket>(ros_send_topic, 10);
 }
 
 inline void DestinationPacketRos::sendPacket(const Packet& msg)
