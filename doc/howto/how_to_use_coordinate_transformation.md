@@ -1,8 +1,8 @@
 # How to use the coordinate transformation function
 
 ## 1 Introduction
-
- **rslidar_sdk** has the coordinate transformation function built inside and it can output the transformed point cloud directly, which can help users saving time to do transformation for point cloud (e.g. for RS128, it costs about 3~5ms to do transformation for one frame point cloud). This document will show you how to use the transformation function. 
+ 
+This document illustrate how to use the transformation function, and output the transformed point cloud.
 
 ## 2 Dependency
 
@@ -16,7 +16,7 @@
 
 ## 3 Compile
 
-To enable the transformation function, the option ```ENABLE_TRANSFORM``` needs to be set to ```ON``` during the cmake process.
+To enable the transformation function, set the option ```ENABLE_TRANSFORM``` to be ```ON``` during the cmake process.
 
 - Compile directly
 
@@ -39,7 +39,9 @@ To enable the transformation function, the option ```ENABLE_TRANSFORM``` needs t
 
 ## 4 Set up parameters
 
-User needs to set up the hiding parameter```x, y, z, roll, pitch ,yaw ``` in lidar part of the config.yaml. Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
+User needs to set up the hiding parameter```x, y, z, roll, pitch ,yaw ``` in lidar part of the config.yaml. 
+
+Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
 
 ```yaml
 common:
@@ -48,11 +50,9 @@ common:
   send_point_cloud_ros: true                            
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap     
 lidar:
   - driver:
       lidar_type: RS128            
-      frame_id: /rslidar           
       msop_port: 6699              
       difop_port: 7788             
       start_angle: 0               
@@ -60,12 +60,13 @@ lidar:
       min_distance: 0.2            
       max_distance: 200           
       use_lidar_clock: false       
-	  x: 1
-	  y: 0
-	  z: 2.5
-	  roll: 0.1
-	  pitch: 0.2
-	  yaw: 1.57
+      pcap_path: /home/robosense/lidar.pcap     
+      x: 1
+      y: 0
+      z: 2.5
+      roll: 0.1
+      pitch: 0.2
+      yaw: 1.57
 ```
 
 ## 5 Run

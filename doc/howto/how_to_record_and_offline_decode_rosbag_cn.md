@@ -2,15 +2,17 @@
 
 ## 1 简介
 
-本文档将展示如何记录与解码rosbag。 在阅读这本文档之前请先阅读雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
+本文档将展示如何记录与解码rosbag。 
+
+在阅读这本文档之前请先阅读雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
 
 ## 2 录包
 
 ### 2.1 将packet发送至ROS
 
-首先在线连接雷达并将点云发送至ROS。如果对此不太了解, 请先阅读 [在线连接雷达并发送点云到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
+这里假设，已经可以在线连接雷达并将点云发送至ROS。如果对此不太了解, 请先阅读 [在线连接雷达并发送点云到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
 
-现在可以直接录制点云消息，这样在离线播包时不需要再另外运行驱动程序解包。但这种方法会导致录制的包非常大。 因此，通常建议记录雷达packet数据，而不是记录点云数据。
+虽然也可以直接录制点云消息，但录制点云消息的包非常大，所以通常还是建议录制雷达packet数据。
 
 ```yaml
 common:
@@ -19,31 +21,31 @@ common:
   send_point_cloud_ros: true                            
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap    
 ```
 
-​	为了记录雷达packet, 需要设置 ```send_packet_ros = true```。
+​要录制雷达packet, 设置 ```send_packet_ros = true```。
 
 ### 2.2 根据对应话题录包
 
 ```yaml
 ros:
+  ros_frame_id: /rslidar
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
-用户可以通过调整参数文件的 *lidar-ros* 部分中的 ```ros_send_packet_topic``` 来调整发送的话题。 该话题表示msop的话题，而difop的话题为``` msop-topic_difop```。 例： 默认话题设置为 ```rslidar_packets```，因此msop话题为 ```rslidar_packets```，而difop的话题为 ```rslidar_packets_difop```。录包的指令如下所示。
+用户可以通过改变```ros_send_packet_topic``` 来改变发送的话题。这个话题包括MSOP和DIFOP包。
+
+录包的指令如下所示。
 
 ```bash
-rosbag record /rslidar_packets /rslidar_packets_difop -O bag
+rosbag record /rslidar_packets -O bag
 ```
-
-**如果将send_packet_ros设置为true，则两种数据包都将发送到ROS。 录包时必须同时记录这两种数据。**
 
 ## 3 离线解码
 
-假设录制了一个rosbag，其中包含话题为 *rslidar_packets* 的msop数据包和话题为 *rslidar_packets_difop*的difop数据包。
+假设录制了一个rosbag，其中包含话题为 *rslidar_packets* 的msop和DIFOP数据包。
 
 ### 3.1 设置文件的 common部分
 
@@ -54,10 +56,9 @@ common:
   send_point_cloud_ros: true                            
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap   
 ```
 
-由于数据包消息来自ROS，因此设置 ```msg_source = 2``` 。
+数据包消息来自ROS，因此设置 ```msg_source = 2``` 。
 
 将点云发送到ROS，因此设置 ```send_point_cloud_ros = true```。
 
@@ -67,7 +68,6 @@ common:
 lidar:
   - driver:
       lidar_type: RS128            
-      frame_id: /rslidar           
       msop_port: 6699             
       difop_port: 7788           
       start_angle: 0               
@@ -83,12 +83,13 @@ lidar:
 
 ```yaml
 ros:
+  ros_frame_id: /rslidar           
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
   ros_send_point_cloud_topic: /rslidar_points  
 ```
 
-将 ```ros_recv_packet_topic``` 设置为rosbag中的```msop```数据的话题。
+将 ```ros_recv_packet_topic``` 设置为rosbag中的MSOP和DIFOP数据的话题。
 
 ### 3.4 运行
 

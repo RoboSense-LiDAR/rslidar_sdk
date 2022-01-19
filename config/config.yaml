@@ -21,7 +21,7 @@ lidar:
       max_distance: 200            #Maximum distance of point cloud
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp
                                    #False-- Use the system clock as the timestamp
-      pcap_path: /mnt/share/pcap/RS32/Rs32.pcap #The path of pcap file
+      pcap_path: /home/sti/dev/share/pcap/RS32/Rs32.pcap #The path of pcap file
     ros:
       ros_frame_id: /rslidar                           #Frame id of packet message and point cloud message
       ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS

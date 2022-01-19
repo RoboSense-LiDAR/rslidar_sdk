@@ -1,12 +1,12 @@
 # 参数介绍
 
-本工程只有一份参数文件 ```config.yaml```， 储存于```rslidar_sdk/config```文件夹内。 整个参数文件可以被分为两部分，common部分以及lidar部分。 *在多雷达情况下，common部分的参数设置将会被所有雷达共享，而lidar部分需要根据每台雷达实际情况分别进行设置。*
+本工程只有一份参数文件 ```config.yaml```， 储存于```rslidar_sdk/config```文件夹内。 整个参数文件可以被分为两部分，common部分以及lidar部分。 *在多雷达的情况下，common部分的参数设置为所有雷达共享，而lidar部分，则针对每个雷达的实际情况分别设置。*
 
-**参数文件config.yaml对缩进有严格的要求！请确保修改参数之后每行开头的缩进仍保持一致！**
+**参数文件config.yaml遵循yaml格式，该格式对缩进有严格的要求。修改参数之后，请确保每行开头的缩进仍保持一致！**
 
 ## 1 Common
 
-此部分用于设置雷达的消息来源，以及是否将结果发布。
+这部分设置雷达的消息来源，以及将结果发布到哪里。
 
 ```yaml
 common:
@@ -15,18 +15,17 @@ common:
   send_point_cloud_ros: false                           
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap                 
 ```
 
 - msg_source
 
-  - 1 -- 连接在线雷达. 更多使用细节请参考[在线读取雷达数据发送到ROS](../howto/how_to_online_send_point_cloud_ros_cn.md)。
+  - 1 -- 连接在线雷达。更多使用细节请参考[在线读取雷达数据发送到ROS](../howto/how_to_online_send_point_cloud_ros_cn.md)。
 
   - 2 -- 离线解析ROS或ROS2的packet包。更多使用细节请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。
 
   - 3 -- 离线解析pcap包。更多使用细节请参考[离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)。
 
-  - 4 -- 雷达消息来源为Protobuf-UDP的packet消息，更多使用细节请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
+  - 4 -- 雷达消息来源为Protobuf-UDP的Packet消息，更多使用细节请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
 
   - 5 -- 雷达消息来源为Protobuf-UDP的点云消息，更多使用细节请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
 
@@ -52,21 +51,15 @@ common:
 
    *我们建议发送packet消息而不是点云，因为点云消息体积过大，对带宽有较高的要求。.*
 
-- pcap_path
-
-   如果msg_dource = 3, 请确保此参数设置为正确的pcap包的路径。
-
-
 
 ## 2 lidar
 
-本部分需要根据不同的雷达进行设置（多雷达时）。
+本部分根据每个雷达的实际情况进行设置（在多雷达的情况下）。
 
 ```yaml
 lidar:
   - driver:
       lidar_type: RS128           
-      frame_id: /rslidar           
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -74,7 +67,9 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
+      pcap_path: /home/robosense/lidar.pcap                 
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /rslidar_packets    
       ros_send_packet_topic: /rslidar_packets    
       ros_send_point_cloud_topic: /rslidar_points      
@@ -93,10 +88,6 @@ lidar:
 
   目前支持的雷达型号已在README中列出。
 
-- frame_id
-
-  点云消息的frame_id。
-
 - msop_port, difop_port
 
   点云的msop端口号和difop端口号。 *若收不到消息，请优先确认这两个参数是否配置正确。*
@@ -114,6 +105,9 @@ lidar:
   - true -- 使用雷达时间作为消息时间戳。
   - false -- 使用系统时间作为消息时间戳。 
 
+- pcap_path
+
+   pcap包的路径。当 msg_source=3 时有效。
 
 
 ## 3 示例
@@ -127,11 +121,9 @@ common:
   send_point_cloud_ros: true                           
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap 
 lidar:
   - driver:
       lidar_type: RS128           
-      frame_id: /rslidar           
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -139,7 +131,9 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
+      pcap_path: /home/robosense/lidar.pcap 
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /rslidar_packets    
       ros_send_packet_topic: /rslidar_packets    
       ros_send_point_cloud_topic: /rslidar_points      
@@ -165,11 +159,9 @@ common:
   send_point_cloud_ros: true                           
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap 
 lidar:
   - driver:
       lidar_type: RS128           
-      frame_id: /rslidar           
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -177,7 +169,9 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
+      pcap_path: /home/robosense/lidar.pcap 
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /middle/rslidar_packets    
       ros_send_packet_topic: /middle/rslidar_packets    
       ros_send_point_cloud_topic: /middle/rslidar_points      
@@ -192,7 +186,6 @@ lidar:
       packet_send_ip: 127.0.0.1    
   - driver:
       lidar_type: RSBP           
-      frame_id: /rslidar           
       msop_port: 1990             
       difop_port: 1991            
       start_angle: 0              
@@ -200,7 +193,9 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
+      pcap_path: /home/robosense/lidar.pcap 
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /left/rslidar_packets    
       ros_send_packet_topic: /left/rslidar_packets    
       ros_send_point_cloud_topic: /left/rslidar_points      
@@ -215,7 +210,6 @@ lidar:
       packet_send_ip: 127.0.0.1   
   - driver:
       lidar_type: RSBP           
-      frame_id: /rslidar           
       msop_port: 2010             
       difop_port: 2011            
       start_angle: 0              
@@ -223,7 +217,9 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
+      pcap_path: /home/robosense/lidar.pcap 
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /right/rslidar_packets    
       ros_send_packet_topic: /right/rslidar_packets    
       ros_send_point_cloud_topic: /right/rslidar_points      

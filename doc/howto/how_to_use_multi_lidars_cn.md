@@ -2,13 +2,17 @@
 
 ## 1 简介
 
-本文档将展示如何在仅运行一个驱动程序的情况解析并发送多台雷达的点云。理论上，一个驱动可以同时解码无限数量的雷达。为了方便起见，本文档将会使用三个雷达作为示例。在阅读本文档之前， 请确保已经阅读过雷达用户手册和[参数简介](../intro/parameter_intro.md) 。
+本文档将展示，在一个驱动程序实例中，解析并发送多台雷达的点云。这里使用三个雷达作为示例。
+
+在阅读本文档之前， 请确保已经阅读过雷达用户手册和[参数简介](../intro/parameter_intro.md) 。
 
 ## 2 在线解析多雷达
 
 ### 2.1 获取数据端口号
 
-首先将三个雷达与计算机正确连接，此时应已知每个LiDAR的msop端口号 与 difop端口号。  如果不清楚上述内容，请查看雷达用户手册。
+将三个雷达与主机正确连接。
+
+此时应改已经知道每个LiDAR的msop端口号与difop端口号。 如果不知道，请查看雷达用户手册。
 
 ### 2.2 设置参数文件的common部分
 
@@ -19,12 +23,11 @@ common:
   send_point_cloud_ros: true                            
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap     
 ```
 
-由于消息来源于在线雷达，因此请设置```msg_source=1```。
+消息来源于在线雷达，因此请设置```msg_source=1```。
 
-将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。
+将点云发送到ROS，因此设置 ```send_point_cloud_ros = true``` 。
 
 ### 2.3 设置配置文件中的lidar部分
 
@@ -32,7 +35,6 @@ common:
 lidar:
   - driver:
       lidar_type: RS128           
-      frame_id: /rslidar           
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -41,6 +43,7 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /middle/rslidar_packets    
       ros_send_packet_topic: /middle/rslidar_packets    
       ros_send_point_cloud_topic: /middle/rslidar_points      
@@ -55,7 +58,6 @@ lidar:
       packet_send_ip: 127.0.0.1    
   - driver:
       lidar_type: RSBP           
-      frame_id: /rslidar           
       msop_port: 1990             
       difop_port: 1991            
       start_angle: 0              
@@ -64,6 +66,7 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /left/rslidar_packets    
       ros_send_packet_topic: /left/rslidar_packets    
       ros_send_point_cloud_topic: /left/rslidar_points      
@@ -78,7 +81,6 @@ lidar:
       packet_send_ip: 127.0.0.1   
   - driver:
       lidar_type: RSBP           
-      frame_id: /rslidar           
       msop_port: 2010             
       difop_port: 2011            
       start_angle: 0              
@@ -87,6 +89,7 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /right/rslidar_packets    
       ros_send_packet_topic: /right/rslidar_packets    
       ros_send_point_cloud_topic: /right/rslidar_points      
@@ -101,11 +104,11 @@ lidar:
       packet_send_ip: 127.0.0.1    
 ```
 
-为每个雷达类型设置型号```lidar_type```。
+为每个雷达设置雷达类型```lidar_type```。
 
-为每个雷达设置对应的端口号 ```msop_port``` 和```difop_port``` 。
+为每个雷达设置端口号 ```msop_port``` 和```difop_port``` 。
 
-为每个雷达设置点云发送的话题```ros_send_point_cloud_topic```。
+为每个雷达设置发送点云的话题```ros_send_point_cloud_topic```。
 
 ### 2.4 运行
 
@@ -122,10 +125,9 @@ common:
   send_point_cloud_ros: true                            
   send_packet_proto: false                              
   send_point_cloud_proto: false                         
-  pcap_path: /home/robosense/lidar.pcap   
 ```
 
-由于数据包消息来自ROS，因此设置 ```msg_source = 2``` 。
+数据包消息来自ROS，因此设置 ```msg_source = 2``` 。
 
 将点云发送到ROS，因此设置 ```send_point_cloud_ros = true```。
 
@@ -135,7 +137,6 @@ common:
 lidar:
   - driver:
       lidar_type: RS128           
-      frame_id: /rslidar           
       msop_port: 6699             
       difop_port: 7788            
       start_angle: 0              
@@ -144,6 +145,7 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /middle/rslidar_packets    
       ros_send_packet_topic: /middle/rslidar_packets    
       ros_send_point_cloud_topic: /middle/rslidar_points      
@@ -158,7 +160,6 @@ lidar:
       packet_send_ip: 127.0.0.1    
   - driver:
       lidar_type: RSBP           
-      frame_id: /rslidar           
       msop_port: 1990             
       difop_port: 1991            
       start_angle: 0              
@@ -167,6 +168,7 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /left/rslidar_packets    
       ros_send_packet_topic: /left/rslidar_packets    
       ros_send_point_cloud_topic: /left/rslidar_points      
@@ -181,7 +183,6 @@ lidar:
       packet_send_ip: 127.0.0.1   
   - driver:
       lidar_type: RSBP           
-      frame_id: /rslidar           
       msop_port: 2010             
       difop_port: 2011            
       start_angle: 0              
@@ -190,6 +191,7 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
+      ros_frame_id: /rslidar           
       ros_recv_packet_topic: /right/rslidar_packets    
       ros_send_packet_topic: /right/rslidar_packets    
       ros_send_point_cloud_topic: /right/rslidar_points      
@@ -204,11 +206,11 @@ lidar:
       packet_send_ip: 127.0.0.1    
 ```
 
-为每个雷达类型设置型号```lidar_type```。
+为每个雷达设置雷达类型```lidar_type```。
 
-为每个雷达设置接收的packet话题名```ros_recv_packet_topic```。
+为每个雷达设置接收的packet话题```ros_recv_packet_topic```。
 
-为每个雷达设置点云发送的话题```ros_send_point_cloud_topic```。
+为每个雷达设置发送点云的话题```ros_send_point_cloud_topic```。
 
 ### 3.3 运行
 

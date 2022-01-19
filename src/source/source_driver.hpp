@@ -97,7 +97,7 @@ inline void SourceDriver::init(const YAML::Node& config)
   yamlRead<float>(driver_config, "max_distance", driver_param.decoder_param.max_distance, 200);
   yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
   yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
-  yamlRead<bool>(driver_config, "is_dense", driver_param.decoder_param.dense_points, false);
+  yamlRead<bool>(driver_config, "dense_points", driver_param.decoder_param.dense_points, false);
 
   // mechanical decoder
   yamlRead<bool>(driver_config, "config_from_file", driver_param.decoder_param.config_from_file, false);
@@ -107,8 +107,8 @@ inline void SourceDriver::init(const YAML::Node& config)
   yamlRead<uint16_t>(driver_config, "split_frame_mode", split_frame_mode, 1);
   driver_param.decoder_param.split_frame_mode = SplitFrameMode(split_frame_mode);
 
-  yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.split_angle, 0);
-  yamlRead<uint16_t>(driver_config, "num_pkts_split", driver_param.decoder_param.num_blks_split, 0);
+  yamlRead<float>(driver_config, "split_angle", driver_param.decoder_param.split_angle, 0);
+  yamlRead<uint16_t>(driver_config, "num_blks_split", driver_param.decoder_param.num_blks_split, 0);
 
   switch (src_type_)
   {
