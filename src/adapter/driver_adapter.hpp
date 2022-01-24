@@ -115,6 +115,7 @@ inline void DriverAdapter::init(const YAML::Node& config)
   yamlRead<bool>(driver_config, "use_vlan", driver_param.input_param.use_vlan, false);
   yamlRead<bool>(driver_config, "use_someip", driver_param.input_param.use_someip, false);
   yamlRead<uint16_t>(driver_config, "user_layer_bytes", driver_param.input_param.user_layer_bytes, 0);
+  yamlRead<uint16_t>(driver_config, "tail_layer_bytes", driver_param.input_param.tail_layer_bytes, 0);
   yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
   yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
