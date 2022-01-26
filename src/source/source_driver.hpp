@@ -110,6 +110,14 @@ inline void SourceDriver::init(const YAML::Node& config)
   yamlRead<float>(driver_config, "split_angle", driver_param.decoder_param.split_angle, 0);
   yamlRead<uint16_t>(driver_config, "num_blks_split", driver_param.decoder_param.num_blks_split, 0);
 
+  // transform
+  yamlRead<float>(driver_config, "x", driver_param.decoder_param.transform_param.x, 0);
+  yamlRead<float>(driver_config, "y", driver_param.decoder_param.transform_param.y, 0);
+  yamlRead<float>(driver_config, "z", driver_param.decoder_param.transform_param.z, 0);
+  yamlRead<float>(driver_config, "roll", driver_param.decoder_param.transform_param.roll, 0);
+  yamlRead<float>(driver_config, "pitch", driver_param.decoder_param.transform_param.pitch, 0);
+  yamlRead<float>(driver_config, "yaw", driver_param.decoder_param.transform_param.yaw, 0);
+
   switch (src_type_)
   {
     case SourceType::MSG_FROM_LIDAR:
