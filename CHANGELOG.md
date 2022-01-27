@@ -1,10 +1,10 @@
 # Changelog
 
-## unrelease
+## v1.3.1 - 2022-01-27
 
 ### Added
+  - support the Ruby 4.0 Lidar
   - add install command when building using catkin
-  - add use_vlan and use_someip support
   - add use_vlan and use_someip support
   - support customer protocol layer
   - adapt to ros noetic, ros2 foxy/galactic (Thanks to @Tim.Clephas) 
