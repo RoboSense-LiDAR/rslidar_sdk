@@ -35,6 +35,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "source/source.hpp"
 
 #include <rs_driver/api/lidar_driver.hpp>
+#include <rs_driver/utility/sync_queue.hpp>
 
 namespace robosense
 {
@@ -59,9 +60,12 @@ protected:
   void putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg);
   void putPacket(const Packet& msg);
   void putException(const lidar::Error& msg);
+  void processPointCloud();
 
-  std::shared_ptr<LidarPointCloudMsg> point_cloud_;
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
+  SyncQueue<std::shared_ptr<LidarPointCloudMsg>> free_point_cloud_queue_;
+  SyncQueue<std::shared_ptr<LidarPointCloudMsg>> point_cloud_queue_;
+  std::thread point_cloud_handle_thread_;
 };
 
 SourceDriver::SourceDriver(SourceType src_type)
@@ -132,12 +136,12 @@ inline void SourceDriver::init(const YAML::Node& config)
 
   driver_param.print();
 
-  point_cloud_.reset(new LidarPointCloudMsg);
   driver_ptr_.reset(new lidar::LidarDriver<LidarPointCloudMsg>());
   driver_ptr_->regPointCloudCallback(std::bind(&SourceDriver::getPointCloud, this), 
       std::bind(&SourceDriver::putPointCloud, this, std::placeholders::_1));
   driver_ptr_->regExceptionCallback(
       std::bind(&SourceDriver::putException, this, std::placeholders::_1));
+  point_cloud_handle_thread_ = std::thread(std::bind(&SourceDriver::processPointCloud, this));
 
   if (!driver_ptr_->init(driver_param))
   {
@@ -163,7 +167,13 @@ inline void SourceDriver::stop()
 
 inline std::shared_ptr<LidarPointCloudMsg> SourceDriver::getPointCloud(void)
 {
-  return point_cloud_;
+  std::shared_ptr<LidarPointCloudMsg> point_cloud = free_point_cloud_queue_.pop();
+  if (point_cloud.get() != NULL)
+  {
+    return point_cloud;
+  }
+
+  return std::make_shared<LidarPointCloudMsg>();
 }
 
 inline void SourceDriver::regPacketCallback(DestinationPacket::Ptr dst)
@@ -184,7 +194,23 @@ inline void SourceDriver::putPacket(const Packet& msg)
 
 void SourceDriver::putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
 {
-  sendPointCloud(msg);
+  point_cloud_queue_.push(msg);
+}
+
+void SourceDriver::processPointCloud()
+{
+  while (1)
+  {
+    std::shared_ptr<LidarPointCloudMsg> msg = point_cloud_queue_.popWait(1000);
+    if (msg.get() == NULL)
+    {
+      continue;
+    }
+
+    sendPointCloud(msg);
+
+    free_point_cloud_queue_.push(msg);
+  }
 }
 
 inline void SourceDriver::putException(const lidar::Error& msg)

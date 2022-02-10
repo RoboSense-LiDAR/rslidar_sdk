@@ -131,7 +131,7 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
       "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
 
   node_ptr_.reset(new rclcpp::Node("rslidar_points_adapter"));
-  pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 1);
+  pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 100);
 }
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
