@@ -15,6 +15,7 @@
   <depend condition="$ROS_VERSION == 1">pcl_ros</depend>
   <depend condition="$ROS_VERSION == 2">rclcpp</depend>
   <depend condition="$ROS_VERSION == 1">roscpp</depend>
+  <depend>roslib</depend>
   <depend condition="$ROS_VERSION == 2">rslidar_msg</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
