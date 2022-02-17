@@ -136,7 +136,7 @@ cmake .. && make -j4
 set(COMPILE_METHOD CATKIN)
 ```
 
-(2) 将rslidar_sdk工程目录下的*package_ros1.xml*文件重命名为*package.xml*。
+(2) 将rslidar_sdk工程目录下的*package_ros1.xml*文件复制到*package.xml*。
 
 (3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
@@ -159,7 +159,7 @@ roslaunch rslidar_sdk start.launch
 set(COMPILE_METHOD COLCON)
 ```
 
-(2) 将rslidar_sdk工程目录下的*package_ros2.xml*文件重命名为*package.xml*。
+(2) 将rslidar_sdk工程目录下的*package_ros2.xml*文件复制到*package.xml*。
 
 (3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
