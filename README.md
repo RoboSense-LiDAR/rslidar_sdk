@@ -139,7 +139,7 @@ cmake .. && make -j4
 set(COMPILE_METHOD CATKIN)
 ```
 
-(2) Rename the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
+(2) Copy the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
 
 (3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project into the *src* folder.
 
@@ -162,7 +162,7 @@ roslaunch rslidar_sdk start.launch
 set(COMPILE_METHOD COLCON)
 ```
 
-(2) Rename the file *package_ros2.xml*  in the rslidar_sdk to *package.xml*
+(2) Copy the file *package_ros2.xml*  in the rslidar_sdk to *package.xml*
 
 (3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project in the *src* folder.
 
