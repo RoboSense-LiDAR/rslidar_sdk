@@ -80,7 +80,6 @@ inline void SourceDriver::init(const YAML::Node& config)
   yamlRead<std::string>(driver_config, "host_address", driver_param.input_param.host_address, "0.0.0.0");
   yamlRead<std::string>(driver_config, "group_address", driver_param.input_param.group_address, "0.0.0.0");
   yamlRead<bool>(driver_config, "use_vlan", driver_param.input_param.use_vlan, false);
-  yamlRead<bool>(driver_config, "use_someip", driver_param.input_param.use_someip, false);
   yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
   yamlRead<float>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
