@@ -1,6 +1,12 @@
 # Changelog
 
-## unrelease
+## v1.3.2 - 2022-01-27
+
+### Fixed
+- Fix vesion to v1.3.2
+
+
+## v1.3.1 - 2022-01-27
 
 ### Added
   - add install command when building using catkin
