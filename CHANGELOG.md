@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.2 - 2022-03-01
+
+### Fixed
+- Fix vesion to v1.3.2
+
 ## v1.3.1 - 2022-01-27
 
 ### Added
