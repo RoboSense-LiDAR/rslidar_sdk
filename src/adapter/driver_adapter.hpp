@@ -105,9 +105,13 @@ inline void DriverAdapter::init(const YAML::Node& config)
   yamlRead<float>(driver_config, "cut_angle", driver_param.decoder_param.cut_angle, 0);
   yamlRead<std::string>(driver_config, "device_ip", driver_param.input_param.device_ip, "192.168.1.200");
   yamlRead<std::string>(driver_config, "multi_cast_address", driver_param.input_param.multi_cast_address, "0.0.0.0");
+  yamlRead<std::string>(driver_config, "host_address", driver_param.input_param.host_address, "0.0.0.0");
   yamlRead<uint16_t>(driver_config, "msop_port", driver_param.input_param.msop_port, 6699);
   yamlRead<uint16_t>(driver_config, "difop_port", driver_param.input_param.difop_port, 7788);
   yamlRead<bool>(driver_config, "read_pcap", driver_param.input_param.read_pcap, false);
+  yamlRead<bool>(driver_config, "use_vlan", driver_param.input_param.use_vlan, false);
+  yamlRead<bool>(driver_config, "use_someip", driver_param.input_param.use_someip, false);
+  yamlRead<bool>(driver_config, "use_custom_proto", driver_param.input_param.use_custom_proto, false);
   yamlRead<double>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
   yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
@@ -256,11 +260,12 @@ inline LidarPointCloudMsg DriverAdapter::core2SDK(const lidar::PointCloudMsg<Poi
   point_cloud->height = msg.height;
   point_cloud->width = msg.width;
   point_cloud->is_dense = msg.is_dense;
+
   LidarPointCloudMsg point_cloud_msg(point_cloud);
   point_cloud_msg.frame_id = msg.frame_id;
   point_cloud_msg.timestamp = msg.timestamp;
   point_cloud_msg.seq = msg.seq;
-  return std::move(point_cloud_msg);
+  return point_cloud_msg;
 }
 
 }  // namespace lidar

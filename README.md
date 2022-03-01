@@ -8,13 +8,13 @@
 
 ### **1.1 LiDAR Support**
 
-- RS16
-- RS32
-- RSBP
-- RS128
-- RS80
-- RSM1-B3
-- RSHELIOS
+- RS-LiDAR-16
+- RS-LiDAR-32
+- RS-Bpearl
+- RS-Ruby
+- RS-Ruby Lite
+- RS-LiDAR-M1
+- RS-Helios
 
 ### 1.2 Point type support
 
@@ -50,19 +50,29 @@ To run rslidar_sdk in ROS environment, ROS related libraries need to be installe
 
 **Ubuntu 18.04**: ros-melodic-desktop-full
 
+**Ubuntu 20.04**: ros-noetic-desktop-full
+
 **Installation**: please refer to  http://wiki.ros.org
 
-If you install ros-kinetic-desktop-full or ros-melodic-desktop-full， the corresponding PCL and Boost  will be installed at the same time. It will bring you a lot of convenience since you don't need to handle the version confliction. Thus, **it's highly recommanded to install ros-distro-desktop-full**.
+If you install ros-kinetic-desktop-full/ros-melodic-desktop-full/ros-noetic-desktop-full， the corresponding PCL and Boost  will be installed at the same time. It will bring you a lot of convenience since you don't need to handle the version confliction. Thus, **it's highly recommanded to install ros-distro-desktop-full**.
 
 ### 3.2 ROS2
 
 If use rslidar_sdk in ROS2 environment, ROS2 related libraries need to be installed. 
 
-**Ubuntu 16.04**: Not supportted
+**Ubuntu 16.04**: Not supported
 
 **Ubuntu 18.04**: ROS2 eloquent desktop
-
+  
 **Installation**: please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
+
+**Ubuntu 20.04**: ROS2 foxy desktop
+
+**Installation**: please refer to https:https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
+
+**Ubuntu 20.04**: ROS2 galactic desktop
+
+**Installation**: please refer to https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html
 
 **Note! Please avoid installing ROS and ROS2 on the same computer! This may cause conflict! Also you may need to install Yaml manually.**
 
@@ -129,7 +139,7 @@ cmake .. && make -j4
 set(COMPILE_METHOD CATKIN)
 ```
 
-(2) Rename the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
+(2) Copy the file *package_ros1.xml*  in the rslidar_sdk to *package.xml*
 
 (3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project into the *src* folder.
 
@@ -152,7 +162,7 @@ roslaunch rslidar_sdk start.launch
 set(COMPILE_METHOD COLCON)
 ```
 
-(2) Rename the file *package_ros2.xml*  in the rslidar_sdk to *package.xml*
+(2) Copy the file *package_ros2.xml*  in the rslidar_sdk to *package.xml*
 
 (3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project in the *src* folder.
 

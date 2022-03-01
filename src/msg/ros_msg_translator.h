@@ -60,7 +60,7 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
   ros_msg.header.frame_id = rs_msg.frame_id;
   ros_msg.header.seq = rs_msg.seq;
-  return std::move(ros_msg);
+  return ros_msg;
 }
 inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
                          const rslidar_msgs::rslidarPacket& ros_msg)
@@ -87,16 +87,17 @@ inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
   {
     rs_msg.packet[i] = ros_msg.data[i];
   }
-  return std::move(rs_msg);
+  return rs_msg;
 }
 inline rslidar_msgs::rslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
   rslidar_msgs::rslidarPacket ros_msg;
-  for (size_t i = 0; i < rs_msg.packet.size(); i++)
+  size_t pkt_size = rs_msg.packet.size();
+  for (size_t i = 0; i < pkt_size; i++)
   {
     ros_msg.data[i] = rs_msg.packet[i];
   }
-  return std::move(ros_msg);
+  return ros_msg;
 }
 inline ScanMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type, const rslidar_msgs::rslidarScan& ros_msg)
 {
@@ -110,7 +111,7 @@ inline ScanMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type, con
     PacketMsg tmp = toRsMsg(lidar_type, pkt_type, ros_msg.packets[i]);
     rs_msg.packets.emplace_back(std::move(tmp));
   }
-  return std::move(rs_msg);
+  return rs_msg;
 }
 inline rslidar_msgs::rslidarScan toRosMsg(const ScanMsg& rs_msg)
 {
@@ -123,7 +124,7 @@ inline rslidar_msgs::rslidarScan toRosMsg(const ScanMsg& rs_msg)
     rslidar_msgs::rslidarPacket tmp = toRosMsg(rs_msg.packets[i]);
     ros_msg.packets.emplace_back(std::move(tmp));
   }
-  return std::move(ros_msg);
+  return ros_msg;
 }
 inline std_msgs::Time toRosMsg(const CameraTrigger& rs_msg)
 {
@@ -155,7 +156,7 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
   ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
   ros_msg.header.stamp.nanosec = (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
   ros_msg.header.frame_id = rs_msg.frame_id;
-  return std::move(ros_msg);
+  return ros_msg;
 }
 inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
                          const rslidar_msg::msg::RslidarPacket& ros_msg)
@@ -177,12 +178,13 @@ inline PacketMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
       pkt_length = MECH_PKT_LEN;
       break;
   }
+
   PacketMsg rs_msg(pkt_length);
   for (size_t i = 0; i < pkt_length; i++)
   {
     rs_msg.packet[i] = ros_msg.data[i];
   }
-  return std::move(rs_msg);
+  return rs_msg;
 }
 inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
 {
@@ -191,7 +193,7 @@ inline rslidar_msg::msg::RslidarPacket toRosMsg(const PacketMsg& rs_msg)
   {
     ros_msg.data[i] = rs_msg.packet[i];
   }
-  return std::move(ros_msg);
+  return ros_msg;
 }
 inline ScanMsg toRsMsg(const LidarType& lidar_type, const PktType& pkt_type,
                        const rslidar_msg::msg::RslidarScan& ros_msg)

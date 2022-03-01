@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.3.2 - 2022-03-01
+
+### Fixed
+- Fix vesion to v1.3.2
+
+## v1.3.1 - 2022-01-27
+
+### Added
+  - support the Ruby 4.0 Lidar
+  - add install command when building using catkin
+  - add use_vlan and use_someip support
+  - support customer protocol layer
+  - adapt to ros noetic, ros2 foxy/galactic (Thanks to @Tim.Clephas) 
+  - get config file path from param (Thanks to @mtlazaro, @Tim.Clephas)
+  - copy package.xml instead of renaming it manually (Thanks to @VictorLee)
+  - add missing dependencies in build files. (Thanks to @Tim.Clephas, @Baltashov.Ilia)
+  
 ## v1.3.0 - 2020-11-10
 
 ### Added

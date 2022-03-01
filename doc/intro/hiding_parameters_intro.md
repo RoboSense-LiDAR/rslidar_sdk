@@ -3,7 +3,6 @@
 In order to make the config file as simple as possible, we selectively hide some of the parameters and give them a default value in the program. If not added to  ```config.yaml```, the default values will be used. This document explains the meanings of these these hidden parameters. 
 
 
-
 ## 1 common
 
 ```yaml
@@ -63,5 +62,6 @@ lidar:
 - ```wait_for_difop``` -- If set to false, the driver will not wait for difop packet and send out the point cloud immediately. The default value is ```true```.
 - ```saved_by_rows``` --  The default point cloud is stored in **column major order**, which means if there is  a point msg.point_cloud_ptr->at(i) , the next point on the same ring should be msg.point_cloud_ptr->at(i+msg.height). If this parameter is set to  ```true``` , the point cloud will be stored in **row major order**.
 - ```multi_cast_address``` -- If use multi-cast function, this parameter need to be set correctly. For more details, please refer to  [Multi-Cast](../howto/how_to_use_multi_cast_function.md) 
-
 - ```x, y, z, roll, pitch, yaw ``` -- The parameters to do cooridiante transformation. If the coordinate transformation function is enabled in driver core,  the output point cloud will be transformed based on these parameters. For more details, please refer to [Coordinate Transformation](../howto/how_to_use_coordinate_transformation.md) 
+- ```use_vlan``` -- Whether to use vlan. The default value is false. Generally, after the VLAN NIC is configured, the VLAN fields in the data packets are automatically filtered out after the data passes through the VLAN NIC. This does not need to be set to true in this case. Set this parameter to true only when the recevied data contains the VLAN field. For example, pcap data that is not recorded by the VLAN NIC.
+- ```use_someip``` -- Whether to use someip, default is false. Set this parameter to true if the packet contains the SOME/IP field.
