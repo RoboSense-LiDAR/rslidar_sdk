@@ -1,12 +1,16 @@
 # 参数介绍
 
-本工程只有一份参数文件 ```config.yaml```， 储存于```rslidar_sdk/config```文件夹内。 整个参数文件可以被分为两部分，common部分以及lidar部分。 *在多雷达的情况下，common部分的参数设置为所有雷达共享，而lidar部分，则针对每个雷达的实际情况分别设置。*
+rslidar_sdk读取配置文件 ```config.yaml```，得到所有的参数。```config.yaml```在```rslidar_sdk/config```文件夹中。 
 
-**参数文件config.yaml遵循yaml格式，该格式对缩进有严格的要求。修改参数之后，请确保每行开头的缩进仍保持一致！**
+**config.yaml遵循YAML格式。该格式对缩进有严格要求。修改config.yaml之后，请确保每行开头的缩进仍保持一致！**
 
-## 1 Common
+config.yaml包括两部分：common部分 和 lidar部分。 
 
-这部分设置雷达的消息来源，以及将结果发布到哪里。
+rslidar_sdk支持多个雷达。common部分为所有雷达共享。lidar部分，每一个子节点对应一个雷达，针对这个雷达的实际情况分别设置。
+
+## 1 common部分
+
+common部分设置雷达消息的源（Packet或点云从哪来）和目标（Packet或点云发布到哪去）。
 
 ```yaml
 common:
@@ -19,27 +23,27 @@ common:
 
 - msg_source
 
-  - 1 -- 连接在线雷达。更多使用细节请参考[在线读取雷达数据发送到ROS](../howto/how_to_online_send_point_cloud_ros_cn.md)。
+  - 1 -- 连接在线雷达。更多使用细节，请参考[在线读取雷达数据发送到ROS](../howto/how_to_online_send_point_cloud_ros_cn.md)。
 
-  - 2 -- 离线解析ROS或ROS2的packet包。更多使用细节请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。
+  - 2 -- 离线解析ROS/ROS2的Packet包。更多使用细节，请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。
 
-  - 3 -- 离线解析pcap包。更多使用细节请参考[离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)。
+  - 3 -- 离线解析PCAP包。更多使用细节，请参考[离线解析PCAP包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)。
 
-  - 4 -- 雷达消息来源为Protobuf-UDP的Packet消息，更多使用细节请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
+  - 4 -- 雷达消息来源为Protobuf-UDP的Packet消息，更多使用细节，请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
 
-  - 5 -- 雷达消息来源为Protobuf-UDP的点云消息，更多使用细节请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
+  - 5 -- 雷达消息来源为Protobuf-UDP的点云消息，更多使用细节，请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
 
 - send_packet_ros
 
-   - true -- 雷达packet消息将通过ROS或ROS2发出 
+   - true -- 雷达Packet消息将通过ROS/ROS2发出 
 
-     *由于雷达ROS packet消息为速腾聚创自定义ROS消息，因此用户无法直接echo话题查看消息具体内容。实际上packet主要用于录制离线ROS包，因为packet的体积小于点云。*
+     *雷达ROS packet消息为速腾聚创自定义ROS消息，用户使用ROS/ROS2 echo命令不能查看消息的具体内容。这个功能用于录制ROS/ROS2的Packet包，更多使用细节，请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。*
    
 - send_point_cloud_ros
 
-   - true -- 雷达点云消息将通过ROS或ROS2发出 
+   - true -- 雷达点云消息将通过ROS/ROS2发出 
 
-   *点云消息类型为ROS官方定义的点云类型sensor_msgs/PointCloud2, 因此用户可以直接使用Rviz查看点云。同时，用户也可以选择录包时直接录制点云，但这样做包的体积会非常大，因此我们建议离线录制ROS包时录制packet消息。*
+   *点云消息的类型为ROS官方定义的点云类型sensor_msgs/PointCloud2, 用户可以使用Rviz直接查看点云。用户可以录制ROS/ROS2的点云包，但点云包的体积非常大，所以不建议这么做。更好的方式是录制Packet包，请参考send_packet_ros=true的情况。*
 
 - send_packet_proto
 
@@ -49,12 +53,12 @@ common:
 
    - true -- 雷达点云消息将通过Protobuf-UDP发出
 
-   *我们建议发送packet消息而不是点云，因为点云消息体积过大，对带宽有较高的要求。.*
+   *点云消息过大，对带宽有较高的要求，所以不建议这么做。更好的方式是发送Packet消息，请参考send_packet_proto=true的情况。*
 
 
-## 2 lidar
+## 2 lidar部分
 
-本部分根据每个雷达的实际情况进行设置（在多雷达的情况下）。
+lidar部分根据每个雷达的实际情况进行设置。
 
 ```yaml
 lidar:
@@ -86,33 +90,34 @@ lidar:
 
 - lidar_type
 
-  目前支持的雷达型号已在README中列出。
+  支持的雷达型号在rslidar_sdk的README文件中列出。
 
 - msop_port, difop_port
 
-  点云的msop端口号和difop端口号。 *若收不到消息，请优先确认这两个参数是否配置正确。*
+  接收MSOP/DIFOP Packet的msop端口号和difop端口号。 *若收不到消息，请优先确认这两个参数是否配置正确。*
 
 - start_angle, end_angle
 
-  点云消息的起始角度和结束角度，此处设置为软件屏蔽，无法减小每帧点云的体积，只会将区域外的点设置为NAN点。 起始角和结束角的范围应在0~360°之间。(**起始角可以大于结束角**).
+  点云消息的起始角度和结束角度。这个设置是软件屏蔽，将区域外的点设置为NAN点，不会减小每帧点云的体积。 start_angle和end_angle的范围是0~360°，**起始角可以大于结束角**.
 
 - min_distance, max_distance
 
-  点云的最小距离和最大距离，此处设置为软件屏蔽，无法减小每帧点云的体积，只会将区域外的点设置为NAN点。
+  点云的最小距离和最大距离。这个设置是软件屏蔽，会将区域外的点设置为NAN点，不会减小每帧点云的体积。
 
 - use_lidar_clock
 
   - true -- 使用雷达时间作为消息时间戳。
-  - false -- 使用系统时间作为消息时间戳。 
+  - false -- 使用电脑主机时间作为消息时间戳。 
 
 - pcap_path
 
    pcap包的路径。当 msg_source=3 时有效。
 
-
 ## 3 示例
 
-在线连接一台雷达，并发送点云到ROS。
+### 3.1 单台雷达
+
+在线连接1台RS128雷达，并发送点云到ROS。
 
 ```yaml
 common:
@@ -131,7 +136,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /rslidar_packets    
@@ -148,7 +152,9 @@ lidar:
       packet_send_ip: 127.0.0.1                
 ```
 
-在线连接3台雷达，并发送点云到ROS。
+### 3.2 单台雷达
+
+在线连接1台RS128雷达和2台RSBP雷达，发送点云到ROS。
 
 *注意lidar部分参数的缩进*
 
@@ -169,7 +175,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /middle/rslidar_packets    
@@ -193,7 +198,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /left/rslidar_packets    
@@ -217,7 +221,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /right/rslidar_packets    

@@ -1,16 +1,16 @@
-# Parameters Introduction
+# Introduction to Parameters 
 
-There is only one configuration file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  The ```config.yaml``` can be divided into two parts, the common part and the lidar part. 
+rslidar_sdk reads parameters from the configuration file ```config.yaml```, which is stored in ```rslidar_sdk/config```.  
 
-*In multi-LiDARs case, the parameters in common part will be shared by all LiDARs, while the parameters in lidar part need to be adjusted for each LiDAR.*
+`config.yaml` contains two parts, the `common` part and the `lidar` part. 
 
-**config.yaml is indentation sensitive! Please make sure the indentation is not changed when adjusting the parameters!**
+rslidar_sdk supports multi-LiDARs case. The `common` part is shared by all LiDARs, while in the `lidar` part, each child node is for an individual Lidar.
 
-
+**config.yaml is indentation sensitive! Please make sure the indentation is not changed after adjusting the parameters!**
 
 ## 1 Common
 
-This part specifies the source of LiDAR packets, and where to publish point clouds and packets.
+The `common` part specifies the source of LiDAR packets, and where to publish point clouds and packets.
 
 ```yaml
 common:
@@ -23,46 +23,44 @@ common:
 
 - msg_source
 
-  - 0 -- Unused. Basically you will never set this parameter to 0.
+  - 0 -- Unused. Never set this parameter to 0.
 
-  - 1 -- The lidar packets come from online lidars. For more details, please refer to [Online connect lidar and send point cloud through ROS](../howto/how_to_online_send_point_cloud_ros.md)
+  - 1 -- LiDAR packets come from on-line LiDARs. For more details, please refer to [Online connect LiDAR and send point cloud through ROS](../howto/how_to_online_send_point_cloud_ros.md)
 
-  - 2 -- The lidar packets come from ROS or ROS2. This will be used to decode from an offline rosbag.  For more details, please refer to [Record rosbag & Offline decode rosbag](../howto/how_to_record_and_offline_decode_rosbag.md)
+  - 2 -- LiDAR packets come from ROS/ROS2. It is used to decode from an off-line rosbag. For more details, please refer to [Record rosbag & Offline decode rosbag](../howto/how_to_record_and_offline_decode_rosbag.md)
 
-  - 3 -- The lidar packets come from offline a pcap bag. For more details, please refer to  [Decode pcap bag and send point cloud through ROS](../howto/how_to_offline_decode_pcap.md)
+  - 3 -- LiDAR packets come from a PCAP bag. For more details, please refer to  [Decode PCAP bag and send point cloud through ROS](../howto/how_to_offline_decode_pcap.md)
 
-  - 4 -- The lidar packets come from Protobuf-UDP. For more details, please refer to [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
+  - 4 -- LiDAR packets come from Protobuf-UDP. For more details, please refer to [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
 
-  - 5 -- The lidar point cloud come from Protobuf-UDP. For more details, please refer to  [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
+  - 5 -- LiDAR point cloud come from Protobuf-UDP. For more details, please refer to  [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
 
 - send_packet_ros
 
-   - true -- The lidar packets will be sent to ROS or ROS2. 
+   - true -- LiDAR packets will be sent to ROS/ROS2. 
 
-   
-*Since the ROS packet message is of a customized message type, you can't directly echo the topic through ROS. Mostly the packets are only used to record offline rosbag because the size is much smaller than point cloud.*
+*The ROS Packet message is of a customized message type, so you can't print its content via the ROS `echo` command. This option is used to record off-line Packet rosbags. For more details, please refer to the case of msg_source=2.*
 
 - send_point_cloud_ros
 
-   - true -- The lidar point cloud will be sent to ROS or ROS2. 
+   - true -- The LiDAR point cloud will be sent to ROS/ROS2. 
    
-   *The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, which means the point cloud can be visualized on ROS-Rviz directly. Also you can record the point cloud to rosbag but its size may be very large, that's why we suggest to  record packets.*
+   *The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, so it can be visualized on the ROS  `rviz` tool directly. It is not suggested to record the point cloud to rosbag, because its size may be very large. Please record Packets instead. Refer to the case of msg_source=2.*
    
 - send_packet_proto
 
-   - true -- The lidar packets will be sent out as protobuf message through ethernet by UDP protocal.
+   - true -- The Lidar packets will be sent out as Protobuf message by the UDP protocol.
    
 - send_point_cloud_proto
 
-   - true -- The lidar point cloud will be sent out as protobuf message through ethernet by UDP protocal. 
+   - true -- The Lidar point cloud will be sent out as Protobuf message by the UDP protocol. 
    
 
-*We suggest sending packets rather than point clouds through ethernet by protobuf  because point cloud size is too large which may take up a lot of bandwidth.*
-
+*The point cloud is too large, so it is suggested to send packets rather than point clouds. Please refer to the case of send_packet_proto=true.*
 
 ## 2 lidar
 
-This part needs to be adjusted for every LiDAR seperately (in multi-LiDARs case). 
+The `lidar` part needs to be adjusted for every LiDAR seperately. 
 
 ```yaml
 lidar:
@@ -94,15 +92,15 @@ lidar:
 
 - lidar_type
 
-  Supported types of LiDAR are listed in README.
+  Supported LiDAR types are listed in the README file.
 
 - msop_port, difop_port
 
-  The msop port and difop_port of LiDAR. *Please check these parameters first is no data received.*
+  The MSOP port and DIFOP port to receive LiDAR packets. *If no data is received, please check these parameters first.*
 
 - start_angle, end_angle
 
-  The start angle and end angle of the point cloud, which should be set in range of 0~360°. (*start_angle **can** be larger than end_angle*).
+  The start angle and end angle of the point cloud, which should be in the range of 0~360°. *`start_angle` can be larger than `end_angle`*.
 
 - min_distance, max_distance
 
@@ -110,18 +108,18 @@ lidar:
 
 - use_lidar_clock
 
-  - true -- Use the lidar internal clock as the message timestamp
-  - false -- Use the system clock as the message timestamp
+  - true -- Use the Lidar clock as the message timestamp
+  - false -- Use the host machine clock as the message timestamp
 
 - pcap_path
 
-   The absolute path of the pcap file. Valid if msg_source = 3.
+   The full path of the PCAP file. Valid if msg_source = 3.
 
 ## 3 Example
 
-Here are two examples. The first configuration file is for single LiDAR, and the second is for 3 LiDARs. Please adjust the specific parameters according to your own case.
+### 3.1 Single Lidar Case
 
-- Connect to one online LiDAR, Send point cloud to ROS
+Connect to 1 LiDAR of RS128, and send point cloud to ROS.
 
 ```yaml
 common:
@@ -140,7 +138,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /rslidar_packets    
@@ -157,9 +154,11 @@ lidar:
       packet_send_ip: 127.0.0.1                
 ```
 
-- Connect to three online LiDARs, Send point cloud to ROS
+### 3.2 Multi Lidar Case
 
-*Pay attention to the indentation of lidar part*
+Connect to 1 LiDAR of RS128, and 2 LiDARs of RSBP, and send point cloud to ROS.
+
+*Pay attention to the indentation of the `lidar` part*
 
 ```yaml
 common:
@@ -178,7 +177,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /middle/rslidar_packets    
@@ -202,7 +200,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /left/rslidar_packets    
@@ -226,7 +223,6 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
-      pcap_path: /home/robosense/lidar.pcap 
     ros:
       ros_frame_id: /rslidar           
       ros_recv_packet_topic: /right/rslidar_packets    
