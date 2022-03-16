@@ -1,8 +1,8 @@
-# How to online connect lidar and send point cloud to ROS
+# How to decode on-line LiDAR
 
 ## 1 Introduction
 
-This document illustrates how to connect to an online LiDAR and send point cloud to ROS. 
+This document illustrates how to connect to an on-line LiDAR, and send point cloud to ROS. 
 
 Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
 
@@ -10,13 +10,13 @@ Please make sure you have read the LiDAR user-guide and [Intro to parameters](..
 
 ### 2.1 Get the LiDAR port number
 
-Please follow the instructions in LiDAR user-guide, to connect to the LiDAR and set up your computer's ip address. 
+Please follow the instructions in LiDAR user-guide, to connect the LiDAR, and set up your computer's ip address. 
 
-At this time, you should have already known your LiDAR's msop port number and difop port number. The default is ```msop-6699, difop-7788```. 
+Please check the LiDAR user-guide, or use the 3rd-party tool(such as WireShark), to get your LiDAR's MSOP port number and DIFOP port number. The default values are ```msop-6699, difop-7788```. 
 
-If you have no idea about what it is, please check the LiDAR user-guide.
+### 2.2 Set up the configuration file
 
-### 2.2 Set up the common part of the config file
+#### 2.2.1 common part
 
 ```yaml
 common:
@@ -27,11 +27,11 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-Since the message come from the LiDAR, set ```msg_source = 1```. 
+The message come from the LiDAR, so set ```msg_source = 1```. 
 
-Send point cloud to ROS so set ```send_point_cloud_ros = true```.
+Send point cloud to ROS, so set ```send_point_cloud_ros = true```.
 
-### 2.3 Set up the lidar-driver part of the config file
+#### 2.2.2 lidar-driver part
 
 ```yaml
 lidar:
@@ -50,7 +50,7 @@ Set the ```lidar_type```  to your LiDAR type.
 
 Set the ```msop_port``` and ```difop_port```  to your LiDAR's port number. 
 
-### 2.4 Set up the lidar-ros part of the config file
+#### 2.2.3 lidar-ros part
 
 ```yaml
 ros:
@@ -60,10 +60,9 @@ ros:
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
-Set the ```ros_send_point_cloud_topic```  to the topic you want to send. 
+Set the ```ros_send_point_cloud_topic```  to the topic you want to send to. 
 
-### 2.5 Run
+### 2.3 Run
 
 Run the program. 
-
 

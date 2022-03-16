@@ -10,8 +10,6 @@ Please make sure you have read the LiDAR user-guide and [Intro to parameters](do
 
 ### 2.1 Get the LiDAR port number
 
-Please follow the instructions in LiDAR user-guide to connect the LiDAR, and set up your computer's ip address. 
-
 Please check the LiDAR user-guide, or use the 3rd-party tool(such as WireShark), to get your LiDAR's MSOP port number and DIFOP port number. The default values are ```msop-6699, difop-7788```. 
 
 ### 2.2 Set up the configuration file
