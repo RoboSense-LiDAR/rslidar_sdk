@@ -1,18 +1,19 @@
-# How to record and decode rosbag
+# How to record and replay Packet rosbag
 
 ## 1 Introduction
 
-This document illustrates how to record and decode rosbag. 
+This document illustrates how to record and replay MSOP/DIFOP Packet rosbag. 
 
-Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
+It is possible to record the point cloud message into a rosbag and replay it, but the point cloud rosbag is very large. rslidar_sdk provides a better way -  record packet rosbag and replay it. 
+
+Please be sure you have read the LiDAR user-guide and [Online connect lidar and send point cloud through ROS](how_to_online_send_point_cloud_ros.md).
 
 ## 2 Record
 
 ### 2.1 Send packet to ROS
 
-Suppose that you have finished to sent out the point cloud to ROS.  If you have no idea about this, please read [Online connect lidar and send point cloud through ROS](how_to_online_send_point_cloud_ros.md) first.
+Here suppose that you have connected to an on-line LiDAR, and have sent the point cloud to ROS.
 
-Though we can record the point cloud message into a bag and play it, the bag will be very large. So it is recommended to record packets rather than point cloud message. 
 
 ```yaml
 common:
@@ -23,9 +24,11 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-In order to record packets, set ```send_packet_ros = true```. 
+To record packets, set ```send_packet_ros = true```. 
 
-### 2.2 Record according to the topic
+### 2.2 Record the topic of packet
+
+To change the topic of packet, change ```ros_send_packet_topic```. This topic sends out both MSOP and DIFOP packets. 
 
 ```yaml
 ros:
@@ -35,21 +38,19 @@ ros:
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
-User may change the packets topic by changing the ```ros_send_packet_topic```. 
-
-This topic represent the topic of the msop and difop. 
-
-Below is the command to record bag. 
+Record rosbag as below.
 
 ```sh
 rosbag record /rslidar_packets -O bag
 ```
 
-## 3 Offline Decode
+## 3 Replay
 
-Suppose you have recorded a rosbag which contains msop and difop packets with the topic ```rslidar_packets```. 
+Suppose you have recorded a rosbag, which contains MSOP/DIFOP packets with the topic ```/rslidar_packets```. 
 
-### 3.1 Set up the common part of the config file
+### 3.1 Set Packet Source
+
+In `config.yaml`, set the `common` part.
 
 ```yaml
 common:
@@ -60,11 +61,13 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-Since the packets come from the ROS, set ```msg_source = 2```. 
+Packet is from the ROS, so set ```msg_source = 2```. 
 
 To send point cloud to ROS, set ```send_point_cloud_ros = true```.
 
-### 3.2 Set up the lidar-driver part of the config file
+### 3.2 Set parameters of Lidar
+
+In `config.yaml`, set the `lidar-driver` part.
 
 ```yaml
 lidar:
@@ -81,7 +84,9 @@ lidar:
 
 Set the ```lidar_type```  to your LiDAR type.
 
-### 3.3 Set the lidar-ros part of the config file
+### 3.3 Set Topic of packet.
+
+In `config.yaml`, set the `lidar-ros` part.
 
 ```yaml
 ros:
@@ -91,10 +96,10 @@ ros:
   ros_send_point_cloud_topic: /rslidar_points  
 ```
 
-Set up the ```ros_recv_packet_topic```  to the msop and difop topic in the rosbag.
+To receive MSOP/DIFOP packest, set ```ros_recv_packet_topic```  to the topic in the rosbag.
 
 ### 3.4 Run
 
-Run the demo & play rosbag.
+Run the demo, and replay rosbag.
 
  

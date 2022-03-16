@@ -1,18 +1,18 @@
-# 如何录制与解码rosbag
+# 如何录制与回放 Packet rosbag
 
 ## 1 简介
 
-本文档将展示如何记录与解码rosbag。 
+本文档展示如何记录与回放MSOP/DIFOP rosbag。 
 
-在阅读这本文档之前请先阅读雷达用户手册与[参数简介](../intro/parameter_intro.md) 。
+使用ROS可以录制点云rosbag消息并回放，但点云包非常大，所以rslidar_sdk提供更好的选择，也就是录制Packet rosbag并回放。
 
-## 2 录包
+在阅读本文档之前, 请先阅读雷达用户手册和 [在线连接雷达并发送点云到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
 
-### 2.1 将packet发送至ROS
+## 2 录制
 
-这里假设，已经可以在线连接雷达并将点云发送至ROS。如果对此不太了解, 请先阅读 [在线连接雷达并发送点云到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
+### 2.1 将MSOP/DIFOP Packet发送至ROS
 
-虽然也可以直接录制点云消息，但录制点云消息的包非常大，所以通常还是建议录制雷达packet数据。
+这里假设已经连接在线雷达，并能发送点云到ROS。
 
 ```yaml
 common:
@@ -23,9 +23,11 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-​要录制雷达packet, 设置 ```send_packet_ros = true```。
+要录制Packet, 设置 ```send_packet_ros = true```。
 
-### 2.2 根据对应话题录包
+### 2.2 根据话题录制rosbag
+
+修改```ros_send_packet_topic```, 来改变发送的话题。这个话题包括MSOP Packet和DIFOP Packet。
 
 ```yaml
 ros:
@@ -35,19 +37,19 @@ ros:
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
-用户可以通过改变```ros_send_packet_topic``` 来改变发送的话题。这个话题包括MSOP和DIFOP包。
-
-录包的指令如下所示。
+ROS录制rosbag的指令如下。
 
 ```bash
 rosbag record /rslidar_packets -O bag
 ```
 
-## 3 离线解码
+## 3 回放
 
-假设录制了一个rosbag，其中包含话题为 *rslidar_packets* 的msop和DIFOP数据包。
+假设录制了一个rosbag，其中包含话题为 `/rslidar_packets` 的MSOP/DIFOP Packet。
 
-### 3.1 设置文件的 common部分
+### 3.1 设置Packet源
+
+配置`config.yaml`的`common`部分。
 
 ```yaml
 common:
@@ -58,11 +60,13 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-数据包消息来自ROS，因此设置 ```msg_source = 2``` 。
+MSOP/DIFOP Packet来自ROS rosbag，因此设置 ```msg_source = 2``` 。
 
 将点云发送到ROS，因此设置 ```send_point_cloud_ros = true```。
 
-### 3.2 设置配置文件的lidar-driver部分
+### 3.2 设置雷达参数
+
+配置`config.yaml`的`lidar-driver`部分。
 
 ```yaml
 lidar:
@@ -79,21 +83,23 @@ lidar:
 
 将 ```lidar_type``` 设置为LiDAR类型 。
 
-### 3.3 设置配置文件的lidar-ros部分
+### 3.3 设置接收Packet的主题
+
+设置`config.yaml`的`lidar-ros`部分。
 
 ```yaml
 ros:
-  ros_frame_id: /rslidar           
+  ros_frame_id: /rslidar
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
   ros_send_point_cloud_topic: /rslidar_points  
 ```
 
-将 ```ros_recv_packet_topic``` 设置为rosbag中的MSOP和DIFOP数据的话题。
+将 ```ros_recv_packet_topic``` 设置为rosbag中MSOP/DIFOP Packet的话题。
 
 ### 3.4 运行
 
-运行程序并播放rosbag。
+运行程序，回放rosbag。
 
 
 
