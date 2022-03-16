@@ -2,29 +2,26 @@
 
 ## 1 简介
 
-本文档将展示如何使用rslidar_sdk的内置坐标变换功能， 输出经过变换后的点云。 
+rslidar_sdk支持对点云进行坐标变换，本文档展示如何作这种变换。 
 
-## 2 依赖介绍
+在阅读本文档之前，请确保已阅读雷达用户手册和[隐藏参数介绍](../intro/hiding_parameters_intro.md)。
 
-要启用坐标变换功能，需要安装以下依赖。
+## 2 安装依赖库
 
-- Eigen3 
+rslidar_sdk的坐标变换基于libeigen库，所以要先安装它。
 
-  安装方式：
-
-  ```bash
-  sudo apt-get install libeigen3-dev
-  ```
+```bash
+sudo apt-get install libeigen3-dev
+```
 
 ## 3 编译
 
-要启用坐标变换的功能，编译程序时需要将```ENABLE_TRANSFORM```选项设置为```ON```.
+要启用坐标变换，编译rslidar_sdk时，需要将```ENABLE_TRANSFORM```选项设置为```ON```.
 
 - 直接编译
 
   ```bash
   cmake -DENABLE_TRANSFORM=ON ..
-  make -j4
   ```
 
 - ROS
@@ -39,11 +36,9 @@
   colcon build --cmake-args '-DENABLE_TRANSFORM=ON'
   ```
 
-## 4 参数设置
+## 4 设置雷达参数
 
-用户需要设置lidar部分的隐藏参数```x, y, z, roll, pitch ,yaw ``` 。
-
-更多的细节可以参考[隐藏参数介绍](../intro/hiding_parameters_intro.md)。此处为参数文件的一个示例，用户可根据实际情况配置。
+在`config.yaml`中，设置`lidar-lidar`部分的参数`x`、, `y`、 `z`、 `roll`、 `pitch` 、`yaw`。
 
 ```yaml
 common:
