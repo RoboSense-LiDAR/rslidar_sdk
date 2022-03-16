@@ -1,8 +1,8 @@
-# How to decode pcap bag and send point cloud to ROS
+# How to decode PCAP file
 
 ## 1 Introduction
 
-This document illustrates how to decode pcap bag and send point cloud to ROS. 
+This document illustrates how to decode PCAP file, and send point cloud to ROS. 
 
 Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
 
@@ -12,11 +12,13 @@ Please make sure you have read the LiDAR user-guide and [Intro to parameters](do
 
 Please follow the instructions in LiDAR user-guide to connect the LiDAR, and set up your computer's ip address. 
 
-At this time, you should have already known your LiDAR's msop port number and difop port number. The default is ```msop-6699, difop-7788```. 
+Please check the LiDAR user-guide, or use the 3rd-party tool(such as WireShark), to get your LiDAR's MSOP port number and DIFOP port number. The default values are ```msop-6699, difop-7788```. 
 
-If you have no idea about what it is, please check the LiDAR user-guide.
+### 2.2 Set up the configuration file
 
-### 2.2 Set up the common part of the config file
+Set up the configuration file `config.yaml`.
+
+#### 2.2.1 common part
 
 ```yaml
 common:
@@ -27,11 +29,11 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-The messages come from the pcap bag, so set ```msg_source = 3```. 
+The messages come from the PCAP bag, so set ```msg_source = 3```. 
 
 Send point cloud to ROS, so set ```send_point_cloud_ros = true```. 
 
-### 2.3 Set up the lidar-driver part of the config file
+#### 2.2.2 lidar-driver part
 
 ```yaml
 lidar:
@@ -47,13 +49,13 @@ lidar:
       pcap_path: /home/robosense/lidar.pcap               
 ```
 
-Set the ```pcap_path``` to the absolute path of the pcap file.
+Set the ```pcap_path``` to the absolute path of the PCAP file.
 
 Set the ```lidar_type```  to your LiDAR type.
 
-Set the ```msop_port``` and ```difop_port```  to the port number of your LiDAR. 
+Set the ```msop_port``` and ```difop_port```  to the port numbers of your LiDAR. 
 
-### 2.4 Set up the lidar-ros part of the config file
+#### 2.2.3 lidar-ros part
 
 ```yaml
 ros:
@@ -63,12 +65,11 @@ ros:
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
-Set the ```ros_send_point_cloud_topic```  to the topic you want to send. 
+Set the ```ros_send_point_cloud_topic```  to the topic you want to send to.
 
-### 2.5 Run
+### 2.3 Run
 
 Run the program. 
-
 
 
 

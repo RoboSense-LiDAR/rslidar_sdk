@@ -1,20 +1,22 @@
-# 如何解码pcap包并发送点云数据到ROS
+# 如何解码PCAP包并发送点云数据到ROS
 
 ## 1 简介
 
-本文档将展示如何解码pcap包, 并发送点云数据到ROS。 
+本文档展示如何解码PCAP包, 并发送点云数据到ROS。 
 
 在阅读本文档之前，请确保已阅读雷达用户手册和 [参数简介](../intro/parameter_intro.md) 。
 
 ## 2 步骤
 
-### 2.1 获取数据端口号
+### 2.1 获取数据的端口号
 
-根据雷达用户手册连接雷达, 并设置好您的电脑的IP地址。
+根据雷达用户手册，连接雷达, 并设置好您的电脑的IP地址。
 
-此时应该已知雷达的msop端口号和difop端口号，默认值为```msop-6699, difop-7788```。 如果不清楚上述内容，请查看雷达用户手册。
+请参考雷达用户手册，或者使用第三方工具（WireShark等）抓包，得到雷达的目标MSOP端口和目标DIFOP端口。端口的默认值分别为`6699`和`7788`。
 
-### 2.2 设置参数文件的common部分
+### 2.2 设置参数文件
+
+#### 2.2.1 common部分
 
 ```yaml
 common:
@@ -25,11 +27,11 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-由于消息来自pcap包，因此请设置 ```msg_source = 3``` 。
+消息来自PCAP包，所以设置 ```msg_source = 3``` 。
 
-将点云发送到ROS以查看，因此设置 ```send_point_cloud_ros = true``` 。 
+将点云发送到ROS以便查看，所以设置 ```send_point_cloud_ros = true``` 。 
 
-### 2.3 设置参数文件的 lidar-driver部分
+#### 2.2.2 lidar-driver部分
 
 ```yaml
 lidar:
@@ -45,13 +47,13 @@ lidar:
       pcap_path: /home/robosense/lidar.pcap        
 ```
 
-将```pcap_path``` 设置为pcap文件的路径。
+将```pcap_path``` 设置为PCAP文件的全路径。
 
-将 ```lidar_type``` 设置为LiDAR类型 。
+将 ```lidar_type``` 设置为LiDAR类型。
 
-设置 ```msop_port``` 和 ```difop_port``` 为雷达数据端口号。
+设置 ```msop_port``` 和 ```difop_port``` 为雷达数据的目标端口号，这里分别是6699和7788。
 
-### 2.4设置配置文件的lidar-ros部分
+#### 2.2.3 lidar-ros部分
 
 ```yaml
 ros:
@@ -61,8 +63,8 @@ ros:
   ros_send_point_cloud_topic: /rslidar_points     
 ```
 
-将 ```ros_send_point_cloud_topic``` 设置为发送点云的话题。 
+将 ```ros_send_point_cloud_topic``` 设置为发送点云的话题，这里是/rslidar_points。 
 
-#### 2.5 运行
+### 2.3 运行
 
 运行程序。
