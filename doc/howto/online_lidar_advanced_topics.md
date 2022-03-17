@@ -2,7 +2,12 @@
 
 ## 1 Introduction
 
-The RoboSense Lidar may work in unicast/multicast/broadcast mode, with VLAN layer and with user layers. Also rslidar_sdk supports multi-LiDARs.
+The RoboSense Lidar may work 
+
++ in unicast/multicast/broadcast mode, 
++ with VLAN layer 
++ with user layers. 
++ Also rslidar_sdk supports multi-LiDARs.
 
 This document illustrates how to configure rslidar_sdk in each case.
 
@@ -32,7 +37,12 @@ lidar:
       lidar_type: RS32           
       msop_port: 6699             
       difop_port: 7788            
+    ros:
+      ros_frame_id: /rslidar           
+      ros_send_point_cloud_topic: /rslidar_points     
 ```
+
+The `common` part and the `lidar-ros` part is listed here. They will be ommited in the following examples, since they are not changed.
 
 ### 2.2 Unicast mode
 

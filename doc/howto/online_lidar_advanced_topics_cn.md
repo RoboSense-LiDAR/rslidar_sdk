@@ -38,7 +38,12 @@ lidar:
       lidar_type: RS32           
       msop_port: 6699             
       difop_port: 7788            
+    ros:
+      ros_frame_id: /rslidar           
+      ros_send_point_cloud_topic: /rslidar_points     
 ```
+
+这里列出了`common`部分和`lidar-ros`部分的设置。这两部分设置将在本文中后面的例子沿用，不再列出。
 
 ### 2.2 单播
 
