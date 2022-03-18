@@ -12,7 +12,7 @@ common:
   pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
 lidar:
   - driver:
-      lidar_type: RSM1            #LiDAR type - RS16, RS32, RSBP, RS128, RS80, RSM1, RSHELIOS
+      lidar_type: RSM1            #LiDAR type - RS16, RS32, RSBP, RS128, RS128_40, RS80, RSM1, RSHELIOS
       frame_id: /rslidar           #Frame id of message
       msop_port: 6699              #Msop port of lidar
       difop_port: 7788             #Difop port of lidar
