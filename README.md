@@ -130,9 +130,7 @@ cmake .. && make -j4
 
 ### 4.2 Compile with ROS catkin tools
 
-(1) Open the *CMakeLists.txt* in the project，modify the line  on top of the file **set(COMPILE_METHOD ORIGINAL)** to **set(COMPILE_METHOD CATKIN)**.
-
-(2) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
+(1) Run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
 
 ```sh
 catkin_make
@@ -142,16 +140,7 @@ roslaunch rslidar_sdk start.launch
 
 ### 4.3 Compile with ROS2-colcon
 
-(1) Open the *CMakeLists.txt* in the project，modify the line  on top of the file **set(COMPILE_METHOD ORIGINAL)** to **set(COMPILE_METHOD COLCON)**.
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD COLCON)
-```
-
-(3) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
+(1) Run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
 
 ```sh
 colcon build

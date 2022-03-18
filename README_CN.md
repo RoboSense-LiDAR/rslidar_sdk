@@ -127,9 +127,7 @@ cmake .. && make -j4
 
 ### 4.2 依赖于ROS-catkin编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD CATKIN)**。
-
-(2) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
+(1) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
 
 ```sh
 catkin_make
@@ -139,16 +137,7 @@ roslaunch rslidar_sdk start.launch
 
 ### 4.3 依赖于ROS2-colcon编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD COLCON)**。
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD COLCON)
-```
-
-(3) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)。
+(1) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)。
 
 ```sh
 colcon build
