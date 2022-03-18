@@ -38,9 +38,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef ROS_FOUND
 #include <ros/ros.h>
 #include <ros/package.h>
-#endif
-
-#ifdef ROS2_FOUND
+#elif ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
 #endif
 
@@ -57,7 +55,7 @@ static void sigHandler(int sig)
 
 #ifdef ROS_FOUND
   ros::shutdown();
-#else // ROS2_FOUND
+#elif ROS2_FOUND
   g_cv.notify_all();
 #endif
 }
@@ -76,7 +74,7 @@ int main(int argc, char** argv)
 
 #ifdef ROS_FOUND
   ros::init(argc, argv, "rslidar_sdk_node", ros::init_options::NoSigintHandler);
-#else // ROS2_FOUND
+#elif ROS2_FOUND
   rclcpp::init(argc, argv);
 #endif
 
@@ -92,7 +90,6 @@ int main(int argc, char** argv)
 
 #ifdef ROS_FOUND
   ros::NodeHandle priv_hh("~");
-
   std::string path;
   priv_hh.param("config_path", path, std::string(""));
   if (!path.empty())
@@ -121,7 +118,7 @@ int main(int argc, char** argv)
 
 #ifdef ROS_FOUND
   ros::spin();
-#else // ROS2_FOUND
+#elif ROS2_FOUND
   std::unique_lock<std::mutex> lck(g_mtx);
   g_cv.wait(lck);
 #endif

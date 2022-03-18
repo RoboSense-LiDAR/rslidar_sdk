@@ -92,7 +92,7 @@ void SourcePacketRos::init(const YAML::Node& config)
   pkt_sub_ = nh_->subscribe(ros_recv_topic, 100, &SourcePacketRos::putPacket, this);
 } 
 
-void SourcePacketRos::putPacket(const rslidar_msg::rslidarPacket& msg)
+void SourcePacketRos::putPacket(const rslidar_msg::RslidarPacket& msg)
 {
   driver_ptr_->decodePacket(toRsMsg(msg));
 }

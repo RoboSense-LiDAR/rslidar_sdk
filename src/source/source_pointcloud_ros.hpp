@@ -35,7 +35,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "source/source.hpp"
 
 #include <pcl_conversions/pcl_conversions.h>
-//#include <pcl_ros/transforms.h>
 
 #ifdef ROS_FOUND
 #include <ros/ros.h>

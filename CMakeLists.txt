@@ -19,6 +19,7 @@ set(POINT_TYPE XYZI)
 # Project details / setup
 #========================
 set(PROJECT_NAME rslidar_sdk)
+
 add_definitions(-DPROJECT_PATH="${PROJECT_SOURCE_DIR}")
 
 set(CMAKE_BUILD_TYPE RELEASE)
@@ -31,11 +32,12 @@ add_compile_options(-Wall)
 #========================
 #ROS#
 find_package(roscpp 1.12 QUIET)
-
 if(roscpp_FOUND)
+
   message(=============================================================)
-  message("-- ROS Found, Ros Support is turned On!")
+  message("-- ROS Found. ROS Support is turned On!")
   message(=============================================================)
+
   add_definitions(-DROS_FOUND)
 
   find_package(roslib QUIET)
@@ -50,11 +52,12 @@ endif(roscpp_FOUND)
 
 #ROS2#
 find_package(rclcpp QUIET)
-
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
+
   message(=============================================================)
-  message("-- ROS2 Found, Ros2 Support is turned On!")
+  message("-- ROS2 Found. ROS2 Support is turned On!")
   message(=============================================================)
+
   add_definitions(-DROS2_FOUND)
   include_directories(${rclcpp_INCLUDE_DIRS})
   set(CMAKE_CXX_STANDARD 14)
@@ -66,18 +69,20 @@ if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
 else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   message(=============================================================)
-  message("-- ROS2 Not Found, Ros2 Support is turned Off!")
+  message("-- ROS2 Not Found. Ros2 Support is turned Off!")
   message(=============================================================)
+
 endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
 #Protobuf#
 find_package(Protobuf QUIET)
-
 find_program(PROTOC protoc)
 if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+
   message(=============================================================)
-  message("-- Protobuf Found, Protobuf Support is turned On!")
+  message("-- Protobuf Found. Protobuf Support is turned On!")
   message(=============================================================)
+
   add_definitions(-DPROTO_FOUND)
   include_directories(${PROTOBUF_INCLUDE_DIRS})
 
@@ -94,9 +99,11 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
   endforeach()
 
 else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+
   message(=============================================================)
-  message("-- Protobuf Not Found, Protobuf Support is turned Off!")
+  message("-- Protobuf Not Found. Protobuf Support is turned Off!")
   message(=============================================================)
+
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
 #Others#
@@ -109,15 +116,18 @@ add_definitions(${PCL_DEFINITIONS})
 
 #Catkin#
 if(${COMPILE_METHOD} STREQUAL "CATKIN")
+
   add_definitions(-DRUN_IN_ROS_WORKSPACE)
+
   find_package(catkin REQUIRED COMPONENTS
           roscpp
           sensor_msgs
-          roslib
-          )
-  catkin_package(
-          CATKIN_DEPENDS sensor_msgs roslib
-  )
+          roslib)
+
+  catkin_package(CATKIN_DEPENDS 
+    sensor_msgs 
+    roslib)
+
 endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 
 #Include directory#
@@ -166,19 +176,19 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
-              src/manager/adapter_manager.cpp
-              )
+              src/manager/adapter_manager.cpp)
   target_link_libraries(rslidar_sdk_node                   
                       ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
-                      ${rs_driver_LIBRARIES}
-                      )
+                      ${rs_driver_LIBRARIES})
 
 endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
 #Ros#
 if(roscpp_FOUND)
+
   target_link_libraries(rslidar_sdk_node ${ROS_LIBS})
+
   if(${COMPILE_METHOD} STREQUAL "CATKIN")
     install(TARGETS rslidar_sdk_node
             RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -194,20 +204,28 @@ if(roscpp_FOUND)
             DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rviz
             PATTERN ".svn" EXCLUDE)
   endif()
+
 endif(roscpp_FOUND)
 
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
-  ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)
+
+  ament_target_dependencies(rslidar_sdk_node 
+    rclcpp 
+    sensor_msgs 
+    std_msgs 
+    rslidar_msg)
+
   install(TARGETS
     rslidar_sdk_node
-    DESTINATION lib/${PROJECT_NAME}
-  )
+    DESTINATION lib/${PROJECT_NAME})
+
   install(DIRECTORY
     launch
     rviz
-    DESTINATION share/${PROJECT_NAME}
-  )
+    DESTINATION share/${PROJECT_NAME})
+
   ament_package()
+
 endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
