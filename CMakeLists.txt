@@ -17,6 +17,11 @@ if(${ENABLE_PCAP_PARSE})
   add_definitions("-DENABLE_PCAP_PARSE")
 endif(${ENABLE_PCAP_PARSE})
 
+option(ENABLE_PUBLISH_RAW_MSG "Enable Publish Raw Message" ON) 
+if(${ENABLE_PUBLISH_RAW_MSG})
+add_definitions(-D ENABLE_PUBLISH_RAW_MSG)
+endif(${ENABLE_PUBLISH_RAW_MSG})
+
 #========================
 # Project details / setup
 #========================
@@ -112,7 +117,6 @@ endif(${COMPILE_METHOD} STREQUAL "CATKIN")
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
 #Driver core#
-#add_definitions(-DENABLE_PUBLISH_RAW_MSG)
 add_subdirectory(src/rs_driver)
 find_package(rs_driver REQUIRED)
 include_directories(${rs_driver_INCLUDE_DIRS})
