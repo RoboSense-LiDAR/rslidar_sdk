@@ -7,7 +7,7 @@ common:
   send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
 lidar:
   - driver:
-      lidar_type: RS32            #LiDAR type - RS16, RS32, RSBP, RSHELIOS, RS80, RS128, RSM1
+      lidar_type: RS32            #LiDAR type - RS16, RS32, RSBP, RSHELIOS, RS128, RS80, RSRUBY_PLUS, RSM1
       msop_port: 6699              #Msop port of lidar
       difop_port: 7788             #Difop port of lidar
       start_angle: 0               #Start angle of point cloud
