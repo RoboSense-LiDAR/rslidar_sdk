@@ -9,10 +9,10 @@ common:
   send_point_cloud_ros: true                            #true: Send point cloud through ROS or ROS2
   send_packet_proto: false                              #true: Send packets through Protobuf-UDP
   send_point_cloud_proto: false                         #true: Send point cloud through Protobuf-UDP
-  pcap_path: /home/robosense/lidar.pcap                 #The path of pcap file
+  pcap_path: /home/sti/dev/share/pcap/M2/M2.pcap        #The path of pcap file
 lidar:
   - driver:
-      lidar_type: RSM1            #LiDAR type - RS16, RS32, RSBP, RS128, RS80, RSM1, RSHELIOS
+      lidar_type: RSM2            #LiDAR type - RS16, RS32, RSBP, RS128, RS80, RSM1, RSM2, RSHELIOS
       frame_id: /rslidar           #Frame id of message
       msop_port: 6699              #Msop port of lidar
       difop_port: 7788             #Difop port of lidar
