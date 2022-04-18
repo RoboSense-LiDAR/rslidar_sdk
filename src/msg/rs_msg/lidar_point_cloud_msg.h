@@ -43,8 +43,8 @@ struct RsPointXYZIRT
   double timestamp = 0;
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
-POINT_CLOUD_REGISTER_POINT_STRUCT(RsPointXYZIRT, (float, x, x)(float, y, y)(float, z, z)(uint8_t, intensity, intensity)(
-                                                     uint16_t, ring, ring)(double, timestamp, timestamp))
+POINT_CLOUD_REGISTER_POINT_STRUCT(RsPointXYZIRT, (float, x, x)(float, y, y)(float, z, z)(std::uint8_t, intensity, intensity)(
+                                                     std::uint16_t, ring, ring)(double, timestamp, timestamp))
 #ifdef POINT_TYPE_XYZI
 typedef pcl::PointXYZI PointT;
 #elif POINT_TYPE_XYZIRT
