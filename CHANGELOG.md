@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.6
+
+### Added
+  - support user_layer_bytes and tail_layer_bytes
+  - support M2
+
 ## v1.4.0
 
 ### Updated

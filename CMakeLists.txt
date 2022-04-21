@@ -15,6 +15,21 @@ set(COMPILE_METHOD CATKIN)
 #=======================================
 set(POINT_TYPE XYZI)
 
+option(ENABLE_PCAP_PARSE "Enable PCAP file parse" ON) 
+if(${ENABLE_PCAP_PARSE})
+  add_definitions("-DENABLE_PCAP_PARSE")
+endif(${ENABLE_PCAP_PARSE})
+
+option(ENABLE_PUBLISH_RAW_MSG "Enable Publish Raw Message" OFF) 
+if(${ENABLE_PUBLISH_RAW_MSG})
+add_definitions(-D ENABLE_PUBLISH_RAW_MSG)
+endif(${ENABLE_PUBLISH_RAW_MSG})
+
+option(ENABLE_RECVMMSG "Enable recvmmsg() to receive MSOP message" ON)
+if(${ENABLE_RECVMMSG})
+  add_definitions("-DENABLE_RECVMMSG")
+endif(${ENABLE_RECVMMSG})
+
 #========================
 # Project details / setup
 #========================
