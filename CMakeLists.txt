@@ -25,7 +25,7 @@ if(${ENABLE_PUBLISH_RAW_MSG})
 add_definitions(-D ENABLE_PUBLISH_RAW_MSG)
 endif(${ENABLE_PUBLISH_RAW_MSG})
 
-option(ENABLE_RECVMMSG "Enable recvmmsg() to receive MSOP message" ON)
+option(ENABLE_RECVMMSG "Enable recvmmsg() to receive MSOP message" OFF)
 if(${ENABLE_RECVMMSG})
   add_definitions("-DENABLE_RECVMMSG")
 endif(${ENABLE_RECVMMSG})
