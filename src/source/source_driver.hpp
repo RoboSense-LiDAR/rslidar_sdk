@@ -87,6 +87,8 @@ inline void SourceDriver::init(const YAML::Node& config)
   yamlRead<std::string>(driver_config, "pcap_path", driver_param.input_param.pcap_path, "");
   yamlRead<float>(driver_config, "pcap_rate", driver_param.input_param.pcap_rate, 1);
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, false);
+  yamlRead<uint16_t>(driver_config, "user_layer_bytes", driver_param.input_param.user_layer_bytes, 0);
+  yamlRead<uint16_t>(driver_config, "tail_layer_bytes", driver_param.input_param.tail_layer_bytes, 0);
 
   // decoder related
   std::string lidar_type;
