@@ -71,7 +71,7 @@ private:
 inline void DestinationPointCloudRos::init(const YAML::Node& config)
 {
   yamlRead<std::string>(config["ros"], 
-      "ros_frame_id", frame_id_, "/rslidar");
+      "ros_frame_id", frame_id_, "rslidar");
 
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], 
@@ -127,7 +127,7 @@ private:
 inline void DestinationPointCloudRos::init(const YAML::Node& config)
 {
   yamlRead<std::string>(config["ros"], 
-      "ros_frame_id", frame_id_, "/rslidar");
+      "ros_frame_id", frame_id_, "rslidar");
 
   std::string ros_send_topic;
   yamlRead<std::string>(config["ros"], 

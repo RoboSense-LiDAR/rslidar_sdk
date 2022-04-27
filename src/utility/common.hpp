@@ -32,8 +32,4 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include "rs_driver/common/common_header.hpp"
-//#include "utility/time.hpp"
-//#include "utility/thread_pool.hpp"
-//#include "lock_queue.hpp"
-
+#include "rs_driver/common/rs_log.hpp"
