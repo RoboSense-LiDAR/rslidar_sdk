@@ -1,4 +1,4 @@
-# rslidar_sdk 源代码解析
+# rslidar_sdk v1.5.1 源代码解析
 
 rslidar_sdk是基于ROS的雷达驱动。rslidar_sdk依赖rs_driver接收和解析MSOP/DIFOP Packet。
 
@@ -68,7 +68,7 @@ DestinationPointCloudRos在ROS主题`/rslidar_points`发布点云。
 
 init()初始化DestinationPointCloudRos实例。
 + 从YAML文件读入用户配置参数。
-  + 读入`frame_id`，保存在成员`frame_id_`，默认值是`/rslidar`。
+  + 读入`frame_id`，保存在成员`frame_id_`，默认值是`rslidar`。
   + 读入ROS主题，保存在本地变量`ros_send_topic_`，默认值是`/rslidar_points`。
 + 创建ROS主题发布器，保存在成员`pkt_sub_`.
 
@@ -89,7 +89,7 @@ DestinationPacketRos在ROS主题`/rslidar_packets`发布MSOP/DIFOP Packet。
 
 init()初始化DestinationPacketRos实例。
 + 从YAML文件读入用户配置参数。
-  + 读入`frame_id`，保存在成员`frame_id_`，默认值是`/rslidar`
+  + 读入`frame_id`，保存在成员`frame_id_`，默认值是`rslidar`
   + 读入ROS主题，保存在本地变量`ros_send_topic_`，默认值是`/rslidar_packets`。
 + 创建ROS主题发布器，保存在成员`pkt_sub_`.
 
@@ -171,7 +171,7 @@ putPacket()接收Packet，送到`driver_ptr_`解析。
 
 ## 9 NodeManager
 
-NodeManager管理Source实例，包括创建、初始化、启动、停止Source。它多个源，但是这些源的类型必须相同。
+NodeManager管理Source实例，包括创建、初始化、启动、停止Source。它支持多个源，但是这些源的类型必须相同。
 + 成员`sources_[]`是一个Source实例的数组。
 
 ![node_manager](./img/class_node_manager.png)
