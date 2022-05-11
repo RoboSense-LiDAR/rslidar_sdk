@@ -74,7 +74,6 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
   ros_msg.row_step = ros_msg.width * ros_msg.point_step;
   ros_msg.is_dense = rs_msg.is_dense;
 
-
   ros_msg.data.resize(ros_msg.point_step * ros_msg.width * ros_msg.height);
 
   sensor_msgs::PointCloud2Iterator<float> iter_x_(ros_msg, "x");
@@ -192,7 +191,6 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, 
   ros_msg.height = rs_msg.width;
   ros_msg.row_step = ros_msg.width * ros_msg.point_step;
   ros_msg.is_dense = rs_msg.is_dense;
-
 
   ros_msg.data.resize(ros_msg.point_step * ros_msg.width * ros_msg.height);
 
