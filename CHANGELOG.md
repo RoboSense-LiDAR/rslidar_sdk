@@ -1,22 +1,36 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+## v1.5.1
+
+### Changed
+- merge refactory code from v1.5.0
+
+## v1.5.1
+
+### Changed
+- refactory the project
+
 ## v1.4.6
 
 ### Added
-  - support user_layer_bytes and tail_layer_bytes
-  - support M2
+- support user_layer_bytes and tail_layer_bytes
+- support M2
 
 ## v1.4.0
 
-### Updated
-  - replace point with point cloud, as rs_driver's template parameter
-  - handle point cloud in rs_driver's thread
+### Changed
+- replace point with point cloud, as rs_driver's template parameter
+- handle point cloud in rs_driver's thread
 
 ## v1.3.1
 
 ### Added
-  - add install command when building using catkin
-  - add use_vlan and use_someip support
+- add install command when building using catkin
+- add use_vlan and use_someip support
 
 
 ## v1.3.0 - 2020-11-10
