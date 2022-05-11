@@ -119,11 +119,6 @@ endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 #Others#
 find_package(yaml-cpp REQUIRED)
 
-find_package(PCL QUIET REQUIRED)
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-
 #Catkin#
 if(${COMPILE_METHOD} STREQUAL "CATKIN")
 
@@ -176,7 +171,6 @@ if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
               ${PROTO_FILE_PATH}/point_cloud.pb.cc
               )
   target_link_libraries(rslidar_sdk_node                   
-                      ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
                       ${PROTOBUF_LIBRARY}
                       ${rs_driver_LIBRARIES}
@@ -188,7 +182,6 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
               node/rslidar_sdk_node.cpp
               src/manager/adapter_manager.cpp)
   target_link_libraries(rslidar_sdk_node                   
-                      ${PCL_LIBRARIES}
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES})
 
