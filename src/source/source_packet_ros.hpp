@@ -155,6 +155,7 @@ inline void DestinationPacketRos::sendPacket(const Packet& msg)
 #ifdef ROS2_FOUND
 #include "rslidar_msg/msg/rslidar_packet.hpp"
 #include <rclcpp/rclcpp.hpp>
+#include <sstream>
 
 namespace robosense
 {
@@ -206,7 +207,11 @@ void SourcePacketRos::init(const YAML::Node& config)
   yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", 
       ros_recv_topic, "rslidar_packets");
 
-  node_ptr_.reset(new rclcpp::Node("rslidar_packets_adapter"));
+  static int node_index = 0;
+  std::stringstream node_name;
+  node_name << "rslidar_packets_source_" << node_index++;
+
+  node_ptr_.reset(new rclcpp::Node(node_name.str()));
   pkt_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(ros_recv_topic, 10, 
       std::bind(&SourcePacketRos::putPacket, this, std::placeholders::_1));
 } 
@@ -257,7 +262,11 @@ inline void DestinationPacketRos::init(const YAML::Node& config)
   yamlRead<std::string>(config["ros"], "ros_send_packet_topic", 
       ros_send_topic, "rslidar_packets");
 
-  node_ptr_.reset(new rclcpp::Node("rslidar_packets_adapter"));
+  static int node_index = 0;
+  std::stringstream node_name;
+  node_name << "rslidar_packets_destination_" << node_index++;
+
+  node_ptr_.reset(new rclcpp::Node(node_name.str()));
   pkt_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic, 10);
 }
 
