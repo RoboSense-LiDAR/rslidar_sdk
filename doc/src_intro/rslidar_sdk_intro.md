@@ -1,4 +1,4 @@
-# rslidar_sdk v1.5.1 源代码解析
+# rslidar_sdk v1.5.2 源代码解析
 
 rslidar_sdk是基于ROS的雷达驱动。rslidar_sdk依赖rs_driver接收和解析MSOP/DIFOP Packet。
 
@@ -179,7 +179,7 @@ NodeManager管理Source实例，包括创建、初始化、启动、停止Source
 ### 9.1 NodeManager::init()
 
 init()初始化NodeManger实例。
-+ 从.yaml文件得到用户配置参数
++ 从config.yaml文件得到用户配置参数
   + 本地变量`msg_source`，数据源类型
   + 本地变量`send_point_cloud_ros`， 是否在ROS主题发送点云。
   + 本地变量`send_packet_ros`，是否在ROS主题发送MSOP/DIFOP packet，
