@@ -8,7 +8,7 @@ project(rslidar_sdk)
 #=======================================
 # Compile setup (ORIGINAL, CATKIN, COLCON)
 #=======================================
-set(COMPILE_METHOD CATKIN)
+set(COMPILE_METHOD COLCON)
 
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
@@ -19,6 +19,11 @@ option(ENABLE_PCAP_PARSE "Enable PCAP file parse" ON)
 if(${ENABLE_PCAP_PARSE})
   add_definitions("-DENABLE_PCAP_PARSE")
 endif(${ENABLE_PCAP_PARSE})
+
+option(ENABLE_EPOLL_RECEIVE "Receive packets with epoll() instead of select()" OFF)
+if(${ENABLE_EPOLL_RECEIVE})
+  add_definitions("-DENABLE_EPOLL_RECEIVE")
+endif(${ENABLE_EPOLL_RECEIVE})
 
 option(ENABLE_RECVMMSG "Enable recvmmsg() to receive MSOP message" OFF)
 if(${ENABLE_RECVMMSG})
