@@ -20,6 +20,14 @@ if(${ENABLE_PCAP_PARSE})
   add_definitions("-DENABLE_PCAP_PARSE")
 endif(${ENABLE_PCAP_PARSE})
 
+option(ENABLE_TRANSFORM "Enable transform functions" OFF)
+if(${ENABLE_TRANSFORM})
+  add_definitions("-DENABLE_TRANSFORM")
+
+  find_package(Eigen3 REQUIRED)
+  include_directories(${EIGEN3_INCLUDE_DIR})
+endif(${ENABLE_TRANSFORM})
+
 option(ENABLE_EPOLL_RECEIVE "Receive packets with epoll() instead of select()" OFF)
 if(${ENABLE_EPOLL_RECEIVE})
   add_definitions("-DENABLE_EPOLL_RECEIVE")
