@@ -8,7 +8,7 @@ project(rslidar_sdk)
 #=======================================
 # Compile setup (ORIGINAL, CATKIN, COLCON)
 #=======================================
-set(COMPILE_METHOD COLCON)
+set(COMPILE_METHOD CATKIN)
 
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
