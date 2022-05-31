@@ -193,7 +193,7 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
-              src/manager/adapter_manager.cpp)
+              src/manager/node_manager.cpp)
   target_link_libraries(rslidar_sdk_node                   
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES})
