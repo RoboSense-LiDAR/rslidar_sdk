@@ -2,11 +2,17 @@
 
 ## Unreleased
 
-### Changed
+## v1.5.3
+
+### Added
+- Support Jumbo Mode
+
+### Fixed
+- Fix compiling error when protobuf is unavailable
 
 ## v1.5.2
 
-### Changed
+### Added
 - sync to rs_driver
 
 ## v1.5.1
