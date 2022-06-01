@@ -20,6 +20,19 @@ if(${ENABLE_PCAP_PARSE})
   add_definitions("-DENABLE_PCAP_PARSE")
 endif(${ENABLE_PCAP_PARSE})
 
+option(ENABLE_TRANSFORM "Enable transform functions" OFF)
+if(${ENABLE_TRANSFORM})
+  add_definitions("-DENABLE_TRANSFORM")
+
+  find_package(Eigen3 REQUIRED)
+  include_directories(${EIGEN3_INCLUDE_DIR})
+endif(${ENABLE_TRANSFORM})
+
+option(ENABLE_EPOLL_RECEIVE "Receive packets with epoll() instead of select()" OFF)
+if(${ENABLE_EPOLL_RECEIVE})
+  add_definitions("-DENABLE_EPOLL_RECEIVE")
+endif(${ENABLE_EPOLL_RECEIVE})
+
 option(ENABLE_RECVMMSG "Enable recvmmsg() to receive MSOP message" OFF)
 if(${ENABLE_RECVMMSG})
   add_definitions("-DENABLE_RECVMMSG")
@@ -180,7 +193,7 @@ else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
   add_executable(rslidar_sdk_node
               node/rslidar_sdk_node.cpp
-              src/manager/adapter_manager.cpp)
+              src/manager/node_manager.cpp)
   target_link_libraries(rslidar_sdk_node                   
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES})
