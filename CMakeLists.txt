@@ -15,11 +15,6 @@ set(COMPILE_METHOD CATKIN)
 #=======================================
 set(POINT_TYPE XYZI)
 
-option(ENABLE_PCAP_PARSE "Enable PCAP file parse" ON) 
-if(${ENABLE_PCAP_PARSE})
-  add_definitions("-DENABLE_PCAP_PARSE")
-endif(${ENABLE_PCAP_PARSE})
-
 option(ENABLE_TRANSFORM "Enable transform functions" OFF)
 if(${ENABLE_TRANSFORM})
   add_definitions("-DENABLE_TRANSFORM")
