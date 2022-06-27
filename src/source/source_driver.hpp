@@ -103,6 +103,7 @@ inline void SourceDriver::init(const YAML::Node& config)
   yamlRead<float>(driver_config, "start_angle", driver_param.decoder_param.start_angle, 0);
   yamlRead<float>(driver_config, "end_angle", driver_param.decoder_param.end_angle, 360);
   yamlRead<bool>(driver_config, "dense_points", driver_param.decoder_param.dense_points, false);
+  yamlRead<bool>(driver_config, "ts_first_point", driver_param.decoder_param.ts_first_point, false);
 
   // mechanical decoder
   yamlRead<bool>(driver_config, "config_from_file", driver_param.decoder_param.config_from_file, false);
