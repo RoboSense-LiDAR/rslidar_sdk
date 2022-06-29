@@ -92,38 +92,6 @@ else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
 endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
-#Protobuf#
-find_package(Protobuf QUIET)
-find_program(PROTOC protoc)
-if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
-
-  message(=============================================================)
-  message("-- Protobuf Found. Protobuf Support is turned On!")
-  message(=============================================================)
-
-  add_definitions(-DPROTO_FOUND)
-  include_directories(${PROTOBUF_INCLUDE_DIRS})
-
-  SET(PROTO_FILE_PATH ${PROJECT_SOURCE_DIR}/src/msg/proto_msg)
-
-  file(GLOB PROTOBUF_FILELIST ${PROTO_FILE_PATH}/*.proto)
-  foreach(proto_file ${PROTOBUF_FILELIST})
-    message(STATUS "COMPILING ${proto_file} USING ${PROTOBUF_PROTOC_EXECUTABLE}")
-
-    execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
-                    --proto_path=${PROTO_FILE_PATH}
-                    --cpp_out=${PROTO_FILE_PATH}
-                    ${proto_file})
-  endforeach()
-
-else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
-
-  message(=============================================================)
-  message("-- Protobuf Not Found. Protobuf Support is turned Off!")
-  message(=============================================================)
-
-endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
-
 #Others#
 find_package(yaml-cpp REQUIRED)
 
@@ -168,32 +136,13 @@ message(=============================================================)
 # Build Setup
 #========================
 
-#Protobuf#
-if(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
+add_executable(rslidar_sdk_node
+               node/rslidar_sdk_node.cpp
+               src/manager/node_manager.cpp)
 
-  add_executable(rslidar_sdk_node
-              node/rslidar_sdk_node.cpp
-              src/manager/node_manager.cpp
-              ${PROTO_FILE_PATH}/packet.pb.cc
-              ${PROTO_FILE_PATH}/scan.pb.cc
-              ${PROTO_FILE_PATH}/point_cloud.pb.cc
-              )
-  target_link_libraries(rslidar_sdk_node                   
-                      ${YAML_CPP_LIBRARIES}
-                      ${PROTOBUF_LIBRARY}
-                      ${rs_driver_LIBRARIES}
-                      )
-
-else(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
-
-  add_executable(rslidar_sdk_node
-              node/rslidar_sdk_node.cpp
-              src/manager/node_manager.cpp)
-  target_link_libraries(rslidar_sdk_node                   
+target_link_libraries(rslidar_sdk_node                   
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES})
-
-endif(NOT PROTOC MATCHES "NOTFOUND" AND Protobuf_FOUND)
 
 #Ros#
 if(roscpp_FOUND)
