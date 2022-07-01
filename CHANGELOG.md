@@ -2,7 +2,15 @@
 
 ## Unreleased
 
-## v1.5.3
+## v1.5.4 - 2022-07-01
+
+### Added
+- Support the option to stamp the point cloud with the first point
+
+### Changed
+- Remove the dependency on the protobuf library
+
+## v1.5.3 - 2022-06-01
 
 ### Added
 - Support Jumbo Mode
