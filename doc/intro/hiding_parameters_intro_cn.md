@@ -33,7 +33,8 @@ lidar:
       use_lidar_clock: false       
       config_from_file: false   
       angle_path: /home/robosense/angle.csv   
-      dense_points: true
+      dense_points: false
+      ts_first_point: false
       split_frame_mode: 1	      
       split_angle: 0   
       num_blks_split: 1 	                    
@@ -55,6 +56,7 @@ lidar:
 - ```config_from_file``` -- 默认值为false, 是否从外参文件读入雷达配置信息，仅用于调试，可忽略。
 - ```angle_path``` -- angle.csv外参文件的路径，仅用于调试，可忽略。
 - ```dense_points``` -- 默认值为false。输出的点云中是否剔除NAN points。```true```为剔除，```false```为不剔除。
+- ```ts_first_point``` -- 默认值为false。点云的时间戳是否第一个点的时间。```true```为第一个点的时间，```false```为最后一个点的时间。
 - ```split_frame_mode``` -- 分帧模式设置，默认值为```1```。
   - 1 -- 角度分帧
   - 2 -- 固定block数分帧
@@ -64,7 +66,6 @@ lidar:
 - ```wait_for_difop``` -- 若设置为false， 驱动将不会等待DIFOP包（包含配置数据，尤其是角度信息），而是立即解析MSOP包并发出点云。 默认值为```true```，也就是必须要有DIFOP包才会进行点云解析。
 - ```group_address``` -- 如果雷达为组播模式，此参数需要被设置为组播的地址。具体使用方式可以参考 [组播模式](../howto/how_to_use_multi_cast_function_cn.md) 。
 - ```host_address``` -- 有两种情况需要这个选项。如果主机上通过多个IP地址接收多个雷达的数据，则可以将此参数指定为雷达的目标IP；如果设置了group_address，那也需要设置host_address，以便将这个IP地址的网卡加入组播组。
-
 - ```x, y, z, roll, pitch, yaw ``` -- 坐标变换参数，若启用了内核的坐标变换功能，将会使用此参数输出经过变换后的点云。x, y, z, 单位为```米```, roll, pitch, yaw, 单位为```弧度```。具体使用方式可以参考 [坐标变换功能](../howto/how_to_use_coordinate_transformation_cn.md) 。
 - ```use_vlan``` -- 默认为false，指定是否使用vlan。如果pcap文件中的packet带vlan层，则需要设置这个选项为true。其他情况下不需要。在线雷达的情况下，协议层到达驱动时，已经剥离vlan层，所以不需要设置这个选项。
 - ```use_someip``` -- 是否使用SOME/IP，默认为false。当数据包中有SOME/IP层，需要设置为true。

@@ -34,6 +34,7 @@ lidar:
       config_from_file: false										
       angle_path: /home/robosense/angle.csv   
       dense_points: false
+      ts_first_point: false
       split_frame_mode: 1	      
       split_angle: 0   
       num_blks_split: 1 	                    
@@ -55,6 +56,7 @@ lidar:
 - ```config_from_file``` -- Whether to read Lidar configuration from file. Only used for debug purpose, and can be ignored.
 - ```angle_path``` -- The path of the angle.csv. Only used for debug purpose and can be ignored.
 - ```dense_points``` -- Whether to discard NAN points. Discard if ```true```, reserve if ```false```. The default value is ```false```.
+- ```ts_first_point``` --  Stamp the point cloud with the first point or the last one. Stamp with the first point if ```true```, else stamp with the last point if ```false```. The default value is ```false```. 
 - ```split_frame_mode``` -- The way to split the LiDAR frames. Default value is ```1```.
   - 1 -- Split frame depending on the split_angle
   - 2 -- Split frame depending on a fixed number of blocks
