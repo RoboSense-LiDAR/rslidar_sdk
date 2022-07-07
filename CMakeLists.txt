@@ -33,6 +33,16 @@ if(${ENABLE_RECVMMSG})
   add_definitions("-DENABLE_RECVMMSG")
 endif(${ENABLE_RECVMMSG})
 
+option(ENABLE_PCL_POINTCLOUD "Enable PCL Point Cloud" OFF)
+if(${ENABLE_PCL_POINTCLOUD})
+  add_definitions("-DENABLE_PCL_POINTCLOUD")
+
+  find_package(PCL REQUIRED)
+  include_directories(${PCL_INCLUDE_DIRS})
+  link_directories(${PCL_LIBRARY_DIRS})
+  add_definitions(${PCL_DEFINITIONS})
+endif(${ENABLE_PCL_POINTCLOUD})
+
 #========================
 # Project details / setup
 #========================

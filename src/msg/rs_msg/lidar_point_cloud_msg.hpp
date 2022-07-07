@@ -32,11 +32,16 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#ifdef ENABLE_PCL_POINTCLOUD
+#include <rs_driver/msg/pcl_point_cloud_msg.hpp>
+#else
 #include "rs_driver/msg/point_cloud_msg.hpp"
+#endif
 
 #ifdef POINT_TYPE_XYZIRT
 typedef PointCloudT<PointXYZIRT> LidarPointCloudMsg;
 #else
 typedef PointCloudT<PointXYZI> LidarPointCloudMsg;
 #endif
+
 
