@@ -34,10 +34,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "source/source.hpp"
 
-#ifdef ENABLE_PCL_POINTCLOUD
-#include <pcl_conversions/pcl_conversions.h>
-#endif
-
 #ifdef ROS_FOUND
 #include <ros/ros.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
@@ -184,11 +180,11 @@ namespace lidar
 
 #ifdef ENABLE_PCL_POINTCLOUD
 
-inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id)
+inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
 {
   sensor_msgs::msg::PointCloud2 ros_msg;
   pcl::toROSMsg(rs_msg, ros_msg);
-  ros_msg.header.frame_id = frame_id;
+  ros_msg.header.frame_id = rs_msg.frame_id;
   ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
   ros_msg.header.stamp.nanosec = 
     (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
