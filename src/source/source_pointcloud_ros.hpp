@@ -43,20 +43,6 @@ namespace robosense
 namespace lidar
 {
 
-#ifdef ENABLE_PCL_POINTCLOUD
-
-inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id)
-{
-  sensor_msgs::PointCloud2 ros_msg;
-  pcl::toROSMsg(rs_msg, ros_msg);
-  ros_msg.header.stamp = ros_msg.header.stamp.fromSec(rs_msg.timestamp);
-  ros_msg.header.seq = rs_msg.seq;
-  ros_msg.header.frame_id = frame_id;
-  return ros_msg;
-}
-
-#else
-
 inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id)
 {
   sensor_msgs::PointCloud2 ros_msg;
@@ -129,8 +115,6 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
   return ros_msg;
 }
 
-#endif
-
 class DestinationPointCloudRos : public DestinationPointCloud
 {
 public:
@@ -177,21 +161,6 @@ namespace robosense
 {
 namespace lidar
 {
-
-#ifdef ENABLE_PCL_POINTCLOUD
-
-inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg)
-{
-  sensor_msgs::msg::PointCloud2 ros_msg;
-  pcl::toROSMsg(rs_msg, ros_msg);
-  ros_msg.header.frame_id = rs_msg.frame_id;
-  ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
-  ros_msg.header.stamp.nanosec = 
-    (uint32_t)round((rs_msg.timestamp - ros_msg.header.stamp.sec) * 1e9);
-  return ros_msg;
-}
-
-#else
 
 inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id)
 {
@@ -264,8 +233,6 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, 
 
   return ros_msg;
 }
-
-#endif
 
 class DestinationPointCloudRos : virtual public DestinationPointCloud
 {
