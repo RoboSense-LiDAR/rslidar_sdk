@@ -111,7 +111,18 @@ sudo apt-get install -y libprotobuf-dev protobuf-compiler
 
 ### 4.1 直接编译
 
-在ROS1（不适用于ROS2）中，可以直接编译、运行程序。 请先启动**roscore**，再运行**rslidar_sdk_node**，最后运行**rviz**查看点云。
+(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的变量**COMPILE_METHOD**改为**ORIGINAL**.
+
+```cmake
+#=======================================
+# Compile setup (ORIGINAL,CATKIN,COLCON)
+#=======================================
+set(COMPILE_METHOD ORIGINAL)
+```
+
+(2) 在ROS1（不适用于ROS2）中，直接编译、运行程序。 
+
+请先启动**roscore**，再运行**rslidar_sdk_node**，最后运行**rviz**查看点云。
 
 ```sh
 cd rslidar_sdk
@@ -122,7 +133,8 @@ cmake .. && make -j4
 
 ### 4.2 依赖于ROS-catkin编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD CATKIN)**。
+(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的变量**COMPILE_METHOD**改为**CATKIN**.
+
 
 ```cmake
 #=======================================
@@ -145,7 +157,7 @@ roslaunch rslidar_sdk start.launch
 
 ### 4.3 依赖于ROS2-colcon编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的**set(COMPILE_METHOD ORIGINAL)**改为**set(COMPILE_METHOD COLCON)**。
+(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的变量**COMPILE_METHOD**改为**COLCON**.
 
 ```cmake
 #=======================================

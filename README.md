@@ -115,7 +115,18 @@ Please compile and run the driver in three ways.
 
 ### 4.1 Compile directly
 
-In ROS (unfortunately not ROS2), user can compile it directly. please laucn ROS master node ```roscore``` in advance, and use ```rviz``` to visualize point cloud.
+(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **ORIGINAL**.
+
+```cmake
+#=======================================
+# Compile setup (ORIGINAL,CATKIN,COLCON)
+#=======================================
+set(COMPILE_METHOD ORIGINAL)
+```
+
+(2) In ROS (unfortunately not ROS2), user can compile it directly. 
+
+Please laucn ROS master node ```roscore``` in advance, and use ```rviz``` to visualize point cloud.
 
 ```sh
 cd rslidar_sdk
@@ -126,7 +137,7 @@ cmake .. && make -j4
 
 ### 4.2 Compile with ROS catkin tools
 
-(1) On top of the file *CMakeLists.txt*，change the line **set(COMPILE_METHOD ORIGINAL)** to **set(COMPILE_METHOD CATKIN)**.
+(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **CATKIN**.
 
 ```cmake
 #=======================================
@@ -149,7 +160,7 @@ roslaunch rslidar_sdk start.launch
 
 ### 4.3 Compile with ROS2 colcon
 
-(1) On top of the file *CMakeLists.txt*, change the line **set(COMPILE_METHOD ORIGINAL)** to **set(COMPILE_METHOD COLCON)**.
+(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **COLCON**.
 
 ```cmake
 #=======================================
