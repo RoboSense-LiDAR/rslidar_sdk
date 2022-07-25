@@ -188,7 +188,7 @@ public:
 
 private:
 
-  void putPacket(const rslidar_msg::msg::RslidarPacket& msg);
+  void putPacket(const rslidar_msg::msg::RslidarPacket::SharedPtr msg) const;
 
   std::shared_ptr<rclcpp::Node> node_ptr_;
   rclcpp::Subscription<rslidar_msg::msg::RslidarPacket>::SharedPtr pkt_sub_;
@@ -215,9 +215,10 @@ void SourcePacketRos::init(const YAML::Node& config)
   pkt_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(ros_recv_topic, 10, 
       std::bind(&SourcePacketRos::putPacket, this, std::placeholders::_1));
 } 
-void SourcePacketRos::putPacket(const rslidar_msg::msg::RslidarPacket& msg)
+
+void SourcePacketRos::putPacket(const rslidar_msg::msg::RslidarPacket::SharedPtr msg) const
 {
-  driver_ptr_->decodePacket(toRsMsg(msg));
+  driver_ptr_->decodePacket(toRsMsg(*msg));
 }
 
 inline rslidar_msg::msg::RslidarPacket toRosMsg(const Packet& rs_msg, const std::string& frame_id)
