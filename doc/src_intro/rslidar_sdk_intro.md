@@ -1,6 +1,6 @@
-# rslidar_sdk v1.5.2 源代码解析
+# rslidar_sdk v1.5.5 源代码解析
 
-rslidar_sdk是基于ROS的雷达驱动。rslidar_sdk依赖rs_driver接收和解析MSOP/DIFOP Packet。
+rslidar_sdk是基于ROS/ROS2的雷达驱动。rslidar_sdk依赖rs_driver接收和解析MSOP/DIFOP Packet。
 
 rslidar_sdk的基本功能如下：
 + 从在线雷达或PCAP文件得到点云，通过ROS主题`/rslidar_points`发布。使用者可以订阅这个主题，在rviz中看到点云。
