@@ -1,6 +1,15 @@
-# Changelog
+# ChangeLog
 
 ## Unreleased
+
+## v1.5.5 - 2022-08-01
+
+### Changed
+- Output intensity in point cloud as float32
+
+### Fixed
+- Fix compiling and runtime error on ROS2 Elequent
+- Fix frame_id in help docs
 
 ## v1.5.4 - 2022-07-01
 
@@ -18,39 +27,16 @@
 ### Fixed
 - Fix compiling error when protobuf is unavailable
 
-## v1.5.2
-
-### Added
-- sync to rs_driver
-
-## v1.5.1
-
-### Changed
-- merge refactory code from v1.5.0
-
 ## v1.5.0
 
 ### Changed
 - refactory the project
 
-## v1.4.6
-
 ### Added
 - support user_layer_bytes and tail_layer_bytes
 - support M2
-
-## v1.4.0
-
-### Changed
 - replace point with point cloud, as rs_driver's template parameter
 - handle point cloud in rs_driver's thread
-
-## v1.3.1
-
-### Added
-- add install command when building using catkin
-- add use_vlan and use_someip support
-
 
 ## v1.3.0 - 2020-11-10
 
