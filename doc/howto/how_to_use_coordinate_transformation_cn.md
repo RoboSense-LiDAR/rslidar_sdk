@@ -6,7 +6,7 @@ rslidar_sdk支持对点云进行坐标变换，本文档展示如何作这种变
 
 在阅读本文档之前，请确保已阅读雷达用户手册和[隐藏参数介绍](../intro/hiding_parameters_intro.md)。
 
-## 2 安装依赖库
+## 2 依赖库
 
 rslidar_sdk的坐标变换基于libeigen库，所以要先安装它。
 

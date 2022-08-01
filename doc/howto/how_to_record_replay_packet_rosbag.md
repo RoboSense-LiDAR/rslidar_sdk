@@ -32,7 +32,7 @@ To change the topic of packet, change ```ros_send_packet_topic```. This topic se
 
 ```yaml
 ros:
-  ros_frame_id: /rslidar           
+  ros_frame_id: rslidar           
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
   ros_send_point_cloud_topic: /rslidar_points      
@@ -90,7 +90,7 @@ In `config.yaml`, set the `lidar-ros` part.
 
 ```yaml
 ros:
-  ros_frame_id: /rslidar           
+  ros_frame_id: rslidar           
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
   ros_send_point_cloud_topic: /rslidar_points  

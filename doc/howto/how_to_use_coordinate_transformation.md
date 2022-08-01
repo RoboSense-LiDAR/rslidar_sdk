@@ -1,12 +1,12 @@
 # How to use coordinate transformation
 
 ## 1 Introduction
- 
+
 rslidar_sdk can transform the coordinate of point cloud. This document illustrate how to do so.
 
 Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
 
-## 2 Dependency
+## 2 Dependencies
 
 rslidar_sdk depends on the libeigen library to do coordinate transformation. Please install it first.
 

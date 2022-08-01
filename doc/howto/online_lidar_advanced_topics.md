@@ -38,7 +38,7 @@ lidar:
       msop_port: 6699             
       difop_port: 7788            
     ros:
-      ros_frame_id: /rslidar           
+      ros_frame_id: rslidar           
       ros_send_point_cloud_topic: /rslidar_points     
 ```
 

@@ -57,7 +57,7 @@ Set the ```msop_port``` and ```difop_port```  to the port numbers of your LiDAR.
 
 ```yaml
 ros:
-  ros_frame_id: /rslidar           
+  ros_frame_id: rslidar           
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
   ros_send_point_cloud_topic: /rslidar_points      
