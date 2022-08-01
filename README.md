@@ -9,7 +9,6 @@
 + The lidar driver core [rs_driver](https://github.com/RoboSense-LiDAR/rs_driver),
 + The ROS support, 
 + The ROS2 support,
-+ The Protobuf-UDP communication functions. 
 
 To get point cloud through ROS/ROS2,  please just use this SDK. 
 
@@ -21,8 +20,13 @@ To integrate the Lidar driver into your own projects, please use the rs_driver.
 - RS-LiDAR-32
 - RS-Bpearl
 - RS-Helios
-- RS-Ruby
-- RS-Ruby Lite
+- RS-Helios-16P
+- RS-Ruby-128
+- RS-Ruby-80
+- RS-Ruby-48
+- RS-Ruby-Plus-128
+- RS-Ruby-Plus-80
+- RS-Ruby-Plus-48
 - RS-LiDAR-M1
 
 ### 1.2 Point Type Supported
@@ -57,8 +61,9 @@ Please download the **rslidar_sdk.tar.gz** archive instead of Source code. The S
 ### 3.1 ROS
 
 To run rslidar_sdk in the ROS environment, please install below libraries. 
-+ Ubuntu 16.04 - ros-kinetic-desktop-full
-+ Ubuntu 18.04 - ros-melodic-desktop-full
++ Ubuntu 16.04 - ROS Kinetic desktop
++ Ubuntu 18.04 - ROS Melodic desktop
++ Ubuntu 20.04 - ROS Noetic desktop
 
 For installation, please refer to http://wiki.ros.org.
 
@@ -70,7 +75,8 @@ This brings a lot of convenience, since you don't have to handle version conflic
 
 To use rslidar_sdk in the ROS2 environment, please install below libraries.
 + Ubuntu 16.04 - Not supported
-+ Ubuntu 18.04 - ROS2 eloquent desktop
++ Ubuntu 18.04 - ROS2 Eloquent desktop
++ Ubuntu 20.04 - ROS2 Galactic desktop
 
 For installation, please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
@@ -97,16 +103,6 @@ Installation:
 
 ```sh
 sudo apt-get install -y  libpcap-dev
-```
-
-### 3.5 Protobuf (Optional)
-
-version: >= v2.6.1
-
-Installation:
-
-```sh
-sudo apt-get install -y libprotobuf-dev protobuf-compiler
 ```
 
 ## 4 Compile & Run
@@ -183,6 +179,8 @@ source install/setup.bash
 ros2 launch rslidar_sdk start.py
 ```
 
+Another version of start.py may be used, since it is different on different versios of ROS2. For example, elequent_start.py is used instead for ROS2 elequent.
+
 ## 5 Introduction to parameters
 
 To change behaviors of rslidar_sdk, change its parameters. please read the following links for detail information.
@@ -210,6 +208,4 @@ Below are some quick guides to use rslidar_sdk.
 [Multi-LiDARs](doc/howto/how_to_use_multi_lidars.md)
 
 [Coordinate Transformation](doc/howto/how_to_use_coordinate_transformation.md) 
-
-[Send & Receive via Protobuf](doc/howto/how_to_use_protobuf_function.md)
 

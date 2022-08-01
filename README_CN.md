@@ -7,8 +7,7 @@
  **rslidar_sdk** 是速腾聚创在Ubuntu环境下的雷达驱动软件包。它包括：
  + 雷达驱动内核[rs_driver](https://github.com/RoboSense-LiDAR/rs_driver)， 
  + ROS拓展功能，
- + ROS2拓展功能，
- + Protobuf-UDP通信拓展功能。
+ + ROS2拓展功能
 
 如果希望基于ROS/ROS2进行二次开发，可以使用本软件包。配合ROS/ROS2自带的可视化工具rviz，可以查看点云。 
 
@@ -20,8 +19,13 @@
 - RS-LiDAR-32
 - RS-Bpearl
 - RS-Helios
-- RS-Ruby
-- RS-Ruby Lite
+- RS-Helios-16P
+- RS-Ruby-128
+- RS-Ruby-80
+- RS-Ruby-48
+- RS-Ruby-Plus-128
+- RS-Ruby-Plus-80
+- RS-Ruby-Plus-48
 - RS-LiDAR-M1
 
 ### 1.2 支持的点类型
@@ -54,19 +58,21 @@ git submodule update
 
 ### 3.1 ROS 
 
-在ROS环境下使用雷达驱动，需安装ROS相关依赖库。
-+ Ubuntu 16.04 - ROS kinetic desktop-full
-+ Ubuntu 18.04 - ROS melodic desktop-full
+在ROS环境下使用雷达驱动，需要安装ROS相关依赖库。
++ Ubuntu 16.04 - ROS Kinetic desktop
++ Ubuntu 18.04 - ROS Melodic desktop
++ Ubuntu 20.04 - ROS Noetic desktop
 
 安装方法请参考 http://wiki.ros.org。
 
-**强烈建议安装ROS kinetic desktop-full版或ROS melodic desktop-full版。这个过程会自动安装一些兼容版本的依赖库，如PCL库等。这样可以避免花大量时间，去逐个安装和配置它们**。
+**强烈建议安装ROS desktop-full版。这个过程会自动安装一些兼容版本的依赖库，如PCL库等。这样可以避免花大量时间，去逐个安装和配置它们**。
 
 ### 3.2 ROS2
 
-在ROS2环境下使用雷达驱动，需安装ROS2相关依赖库。
+在ROS2环境下使用雷达驱动，需要安装ROS2相关依赖库。
 + Ubuntu 16.04 - 不支持
 + Ubuntu 18.04 - ROS2 Eloquent desktop
++ Ubuntu 20.04 - ROS2 Galactic desktop
 
 安装方法请参考 https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
@@ -95,17 +101,7 @@ sudo apt-get install -y libyaml-cpp-dev
 sudo apt-get install -y  libpcap-dev
 ```
 
-### 3.5 Protobuf (可选)
-
-版本号： >= v2.6.1
-
-安装方法如下：
-
-```sh
-sudo apt-get install -y libprotobuf-dev protobuf-compiler
-```
-
-## 4 编译 & 运行
+## 4 编译、运行
 
 可以使用三种方式编译、运行rslidar_sdk。
 
@@ -180,6 +176,8 @@ source install/setup.bash
 ros2 launch rslidar_sdk start.py
 ```
 
+不同ROS2版本start.py的格式可能不同，请使用对应版本的start.py。如ROS2 Elequent，请使用elequent_start.py。
+
 ## 5 参数介绍
 
 rslidar_sdk的功能通过配置参数文件来实现，请仔细阅读。 
@@ -207,6 +205,4 @@ rslidar_sdk的功能通过配置参数文件来实现，请仔细阅读。
 [多雷达](doc/howto/how_to_use_multi_lidars_cn.md)
 
 [坐标变换功能](doc/howto/how_to_use_coordinate_transformation_cn.md) 
-
-[使用Protobuf发送&接收](doc/howto/how_to_use_protobuf_function_cn.md)
 
