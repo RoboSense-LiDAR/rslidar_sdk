@@ -65,11 +65,12 @@ protected:
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
   SyncQueue<std::shared_ptr<LidarPointCloudMsg>> free_point_cloud_queue_;
   SyncQueue<std::shared_ptr<LidarPointCloudMsg>> point_cloud_queue_;
-  std::thread point_cloud_handle_thread_;
+  std::thread point_cloud_process_thread_;
+  bool to_exit_process_;
 };
 
 SourceDriver::SourceDriver(SourceType src_type)
-  : Source(src_type)
+  : Source(src_type), to_exit_process_(false)
 {
 }
 
@@ -144,7 +145,7 @@ inline void SourceDriver::init(const YAML::Node& config)
       std::bind(&SourceDriver::putPointCloud, this, std::placeholders::_1));
   driver_ptr_->regExceptionCallback(
       std::bind(&SourceDriver::putException, this, std::placeholders::_1));
-  point_cloud_handle_thread_ = std::thread(std::bind(&SourceDriver::processPointCloud, this));
+  point_cloud_process_thread_ = std::thread(std::bind(&SourceDriver::processPointCloud, this));
 
   if (!driver_ptr_->init(driver_param))
   {
@@ -166,6 +167,9 @@ inline SourceDriver::~SourceDriver()
 inline void SourceDriver::stop()
 {
   driver_ptr_->stop();
+
+  to_exit_process_ = true;
+  point_cloud_process_thread_.join();
 }
 
 inline std::shared_ptr<LidarPointCloudMsg> SourceDriver::getPointCloud(void)
@@ -202,7 +206,7 @@ void SourceDriver::putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
 
 void SourceDriver::processPointCloud()
 {
-  while (1)
+  while (!to_exit_process_)
   {
     std::shared_ptr<LidarPointCloudMsg> msg = point_cloud_queue_.popWait(1000);
     if (msg.get() == NULL)
