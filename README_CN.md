@@ -190,19 +190,17 @@ rslidar_sdk的功能通过配置参数文件来实现，请仔细阅读。
 
 以下是一些常用功能的使用指南。
 
-[在线读取雷达数据发送到ROS](doc/howto/how_to_online_send_point_cloud_ros_cn.md)
+[在线读取雷达数据发送到ROS](doc/howto/how_to_decode_online_lidar_cn.md)
 
-[离线解析Pcap包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)
+[离线解析PCAP包发送到ROS](doc/howto/how_to_decode_pcap_file_cn.md)
 
-[录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)
+[录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_replay_packet_rosbag_cn.md)
 
 ## 7 使用进阶
 
-[切换点的类型](doc/howto/how_to_switch_point_type_cn.md) 
+[切换点的类型](doc/howto/how_to_change_point_type_cn.md) 
 
-[组播模式](doc/howto/how_to_use_multi_cast_function_cn.md) 
-
-[多雷达](doc/howto/how_to_use_multi_lidars_cn.md)
+[网络配置的高级主题](doc/howto/online_lidar_advanced_topics_cn.md) 
 
 [坐标变换功能](doc/howto/how_to_use_coordinate_transformation_cn.md) 
 
