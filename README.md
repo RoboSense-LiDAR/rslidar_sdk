@@ -54,7 +54,7 @@ Instead of using Git, user can also access [rslidar_sdk_release](https://github.
 
 Please download the **rslidar_sdk.tar.gz** archive instead of Source code. The Source code zip file does not contain the submodule rs_driver, so it has to be downloaded manaully.
 
-![](doc/img/download_page.png)
+![](./img/download_page.png)
 
 ## 3 Dependencies
 

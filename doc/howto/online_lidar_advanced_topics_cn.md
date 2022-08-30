@@ -24,7 +24,7 @@
 雷达发送 MSOP/DIFOP Packet到电脑主机。为简单起见，如下的图没有显示DIFOP端口。
 + 雷达发送Packet到 `255.255.255.255` : `6699`, rslidar_sdk绑定到主机的端口 `6699`.
 
-![](../img/12_broadcast.png)
+![](./img/12_broadcast.png)
 
 如下是配置`config.yaml`的方式。
 
@@ -50,7 +50,7 @@ lidar:
 为了减少网络负载，建议雷达使用单播模式。
 + 雷达发送Packet到 `192.168.1.102` : `6699`, rslidar_sdk绑定端口 `6699`。
 
-![](../img/12_unicast.png)
+![](./img/12_unicast.png)
 
 如下是配置`config.yaml`的方式。这实际上与广播的方式一样。
 
@@ -68,7 +68,7 @@ lidar:
 + 雷达发送Packet到 `224.1.1.1`:`6699` 
 + rslidar_sdk绑定到端口 `6699`。同时它将IP地址为`192.168.1.102`的本地网络接口加入组播组`224.1.1.1`。
 
-![](../img/12_multicast.png)
+![](./img/12_multicast.png)
 
 如下是配置`config.yaml`的方式。
 
@@ -90,7 +90,7 @@ lidar:
 + 第一个雷达发送Packet到 `192.168.1.102`:`6699`, 给rslidar_sdk配置的第一个driver节点绑定到`6699`。
 + 第二个雷达发送Packet到 `192.168.1.102`:`5599`, 给rslidar_sdk配置的第二个driver节点绑定到`5599`。
 
-![](../img/12_multi_lidars_port.png)
+![](./img/12_multi_lidars_port.png)
 
 如下是配置`config.yaml`的方式。
 
@@ -113,7 +113,7 @@ lidar:
 + 第一个雷达发送Packet到 `192.168.1.102`:`6699`, 给rslidar_sdk配置的第一个driver节点绑定到`192.168.1.102:6699`。
 + 第二个雷达发送Packet到 `192.168.1.103`:`6699`, 给rslidar_sdk配置的第二个driver节点绑定到`192.168.1.103:6699`。
 
-![](../img/12_multi_lidars_ip.png)
+![](./img/12_multi_lidars_ip.png)
 
 如下是配置`config.yaml`的方式。
 
@@ -135,7 +135,7 @@ lidar:
 
 在某些场景下，雷达工作在VLAN层之上。MSOP/DIFOP Packet有VLAN层，如下图。
 
-![](../img/12_vlan_layer.png)
+![](./img/12_vlan_layer.png)
 
 rslidar_sdk不能解析VLAN层。
 
@@ -171,7 +171,7 @@ lidar:
 在某些场景下，用户可能在MSOP/DIFOP数据前后加入自己的层。
 + 在前面的是USER_LAYER，在后面的是TAIL_LAYER。
 
-![](../img/12_user_layer.png)
+![](./img/12_user_layer.png)
 
 这两个层是UDP数据的一部分，所以rslidar_sdk可以自己剥除它们。只需要指出这两个层的长度就可以了。
 

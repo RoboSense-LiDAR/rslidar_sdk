@@ -52,7 +52,7 @@ git submodule update
 
 请下载 **rslidar_sdk.tar.gz** 压缩包，不要下载Source code。因为Source code压缩包内不包含子模块rs_driver的代码， 用户还需自行下载rs_driver的代码放入其中才行。
 
-![](doc/img/download_page.png)
+![](./img/download_page.png)
 
 ## 3 依赖介绍
 
