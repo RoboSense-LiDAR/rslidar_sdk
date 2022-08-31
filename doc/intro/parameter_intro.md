@@ -25,15 +25,11 @@ common:
 
   - 0 -- Unused. Never set this parameter to 0.
 
-  - 1 -- LiDAR packets come from on-line LiDARs. For more details, please refer to [Online connect LiDAR and send point cloud through ROS](../howto/how_to_online_send_point_cloud_ros.md)
+  - 1 -- LiDAR packets come from on-line LiDARs. For more details, please refer to [Connect to online LiDAR and send point cloud through ROS](../howto/how_to_decode_online_lidar.md)
 
-  - 2 -- LiDAR packets come from ROS/ROS2. It is used to decode from an off-line rosbag. For more details, please refer to [Record rosbag & Offline decode rosbag](../howto/how_to_record_and_offline_decode_rosbag.md)
+  - 2 -- LiDAR packets come from ROS/ROS2. It is used to decode from an off-line rosbag. For more details, please refer to [Record rosbag & Replay it](../howto/how_to_record_replay_packet_rosbag.md)
 
-  - 3 -- LiDAR packets come from a PCAP bag. For more details, please refer to  [Decode PCAP bag and send point cloud through ROS](../howto/how_to_offline_decode_pcap.md)
-
-  - 4 -- LiDAR packets come from Protobuf-UDP. For more details, please refer to [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
-
-  - 5 -- LiDAR point cloud come from Protobuf-UDP. For more details, please refer to  [Use protobuf send & receive](../howto/how_to_use_protobuf_function.md)
+  - 3 -- LiDAR packets come from a PCAP bag. For more details, please refer to  [Decode PCAP file and send point cloud through ROS](../howto/how_to_decode_pcap_file.md)
 
 - send_packet_ros
 

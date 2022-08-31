@@ -23,21 +23,17 @@ common:
 
 - msg_source
 
-  - 1 -- 连接在线雷达。更多使用细节，请参考[在线读取雷达数据发送到ROS](../howto/how_to_online_send_point_cloud_ros_cn.md)。
+  - 1 -- 连接在线雷达。更多使用细节，请参考[连接在线雷达并发送点云到ROS](../howto/how_to_decode_online_lidar_CN.md)。
 
-  - 2 -- 离线解析ROS/ROS2的Packet包。更多使用细节，请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。
+  - 2 -- 离线解析ROS/ROS2的Packet包。更多使用细节，请参考 [录制ROS数据包然后播放它](../howto/how_to_record_replay_packet_rosbag_CN.md)。
 
-  - 3 -- 离线解析PCAP包。更多使用细节，请参考[离线解析PCAP包发送到ROS](doc/howto/how_to_offline_decode_pcap_cn.md)。
-
-  - 4 -- 雷达消息来源为Protobuf-UDP的Packet消息，更多使用细节，请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
-
-  - 5 -- 雷达消息来源为Protobuf-UDP的点云消息，更多使用细节，请参考 [使用Protobuf发送&接收](../howto/how_to_use_protobuf_function_cn.md)。
+  - 3 -- 离线解析PCAP包。更多使用细节，请参考[离线解析PCAP包并发送点云到ROS](../howto/how_to_decode_pcap_file_CN.md)。
 
 - send_packet_ros
 
    - true -- 雷达Packet消息将通过ROS/ROS2发出 
 
-     *雷达ROS packet消息为速腾聚创自定义ROS消息，用户使用ROS/ROS2 echo命令不能查看消息的具体内容。这个功能用于录制ROS/ROS2的Packet包，更多使用细节，请参考 [录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_and_offline_decode_rosbag_cn.md)。*
+     *雷达ROS packet消息为速腾聚创自定义ROS消息，用户使用ROS/ROS2 echo命令不能查看消息的具体内容。这个功能用于录制ROS/ROS2的Packet包，更多使用细节，请参考msg_source=2的情况。
    
 - send_point_cloud_ros
 
