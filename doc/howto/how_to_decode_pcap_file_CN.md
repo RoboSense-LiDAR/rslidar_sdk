@@ -4,7 +4,7 @@
 
 本文档展示如何解码PCAP文件, 并发送点云数据到ROS。 
 
-在阅读本文档之前，请确保已阅读雷达用户手册和 [参数简介](../intro/parameter_intro.md) 。
+在阅读本文档之前，请确保已阅读雷达用户手册和 [参数简介](../intro/parameter_intro_CN.md) 。
 
 ## 2 步骤
 

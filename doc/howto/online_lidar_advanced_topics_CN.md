@@ -13,8 +13,8 @@ RoboSense雷达可以工作在如下的场景。
 
 在阅读本文档之前， 请确保已经阅读过：
 + 雷达用户手册 
-+ [参数介绍](../intro/parameter_intro_cn.md) 
-+ [连接在线雷达](./how_to_decode_online_lidar_cn.md)
++ [参数介绍](../intro/parameter_intro_CN.md) 
++ [连接在线雷达](./how_to_decode_online_lidar_CN.md)
 
 ## 2 单播、组播、广播
 

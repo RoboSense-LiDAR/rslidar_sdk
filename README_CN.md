@@ -182,25 +182,27 @@ ros2 launch rslidar_sdk start.py
 
 rslidar_sdk的功能通过配置参数文件来实现，请仔细阅读。 
 
-[参数介绍](doc/intro/parameter_intro_cn.md)
+[参数介绍](doc/intro/parameter_intro_CN.md)
 
-[隐藏参数介绍](doc/intro/hiding_parameters_intro_cn.md)
+[隐藏参数介绍](doc/intro/hiding_parameters_intro_CN.md)
 
 ## 6 快速上手
 
 以下是一些常用功能的使用指南。
 
-[在线读取雷达数据发送到ROS](doc/howto/how_to_decode_online_lidar_cn.md)
+[连接在线雷达数据并发送点云到ROS](doc/howto/how_to_decode_online_lidar_CN.md)
 
-[离线解析PCAP包发送到ROS](doc/howto/how_to_decode_pcap_file_cn.md)
+[解析PCAP包并发送点云到ROS](doc/howto/how_to_decode_pcap_file_CN.md)
 
-[录制ROS数据包&离线解析ROS数据包](doc/howto/how_to_record_replay_packet_rosbag_cn.md)
+[切换点类型](doc/howto/how_to_change_point_type_CN.md) 
 
 ## 7 使用进阶
 
-[切换点的类型](doc/howto/how_to_change_point_type_cn.md) 
+[在线雷达-高级主题](doc/howto/online_lidar_advanced_topics_CN.md) 
 
-[网络配置的高级主题](doc/howto/online_lidar_advanced_topics_cn.md) 
+[PCAP文件-高级主题](doc/howto/pcap_file_advanced_topics_CN.md) 
 
-[坐标变换功能](doc/howto/how_to_use_coordinate_transformation_cn.md) 
+[点云坐标变换](doc/howto/how_to_use_coordinate_transformation_CN.md) 
+
+[录制ROS数据包然后播放它](doc/howto/how_to_record_replay_packet_rosbag_CN.md)
 

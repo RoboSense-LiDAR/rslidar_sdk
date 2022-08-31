@@ -12,8 +12,8 @@ RoboSense雷达可以工作在如下场景。
 
 在阅读本文之前，请先阅读：
 + 雷达用户使用手册
-+ [参数介绍](../intro/parameter_intro.md) 
-+ [在线雷达-高级主题](./online_lidar_advanced_topics_cn.md)
++ [参数介绍](../intro/parameter_intro_CN.md) 
++ [在线雷达-高级主题](./online_lidar_advanced_topics_CN.md)
 
 ## 2 一般场景
 

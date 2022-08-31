@@ -4,7 +4,7 @@
 
 This document illustrates how to decode PCAP file, and send point cloud to ROS. 
 
-Please make sure you have read the LiDAR user-guide and [Intro to parameters](doc/intro/parameter_intro.md) before reading this document.
+Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
 
 ## 2 Steps
 

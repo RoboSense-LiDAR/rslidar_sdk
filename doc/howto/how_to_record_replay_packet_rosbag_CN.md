@@ -6,7 +6,7 @@
 
 使用ROS可以录制点云rosbag消息并回放，但点云包非常大，所以rslidar_sdk提供更好的选择，也就是录制Packet rosbag并回放。
 
-在阅读本文档之前, 请先阅读雷达用户手册和 [在线连接雷达并发送点云到ROS](how_to_online_send_point_cloud_ros_cn.md) 。
+在阅读本文档之前, 请先阅读雷达用户手册和 [连接在线雷达并发送点云到ROS](./how_to_decode_online_lidar_CN.md) 。
 
 ## 2 录制
 

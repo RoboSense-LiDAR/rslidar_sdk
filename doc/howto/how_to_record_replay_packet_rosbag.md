@@ -6,7 +6,7 @@ This document illustrates how to record and replay MSOP/DIFOP Packet rosbag.
 
 It is possible to record the point cloud message into a rosbag and replay it, but the point cloud rosbag is very large. rslidar_sdk provides a better way -  record packet rosbag and replay it. 
 
-Please be sure you have read the LiDAR user-guide and [Online connect lidar and send point cloud through ROS](how_to_online_send_point_cloud_ros.md).
+Please be sure you have read the LiDAR user-guide and [Connect to online LiDAR and send point cloud through ROS](how_to_decode_online_lidar.md).
 
 ## 2 Record
 

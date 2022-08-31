@@ -12,7 +12,7 @@
 
 ## 2 通过Protobuf-UDP发送和接收 packets
 
-​请阅读[参数简介](.. / intro / parameter_intro.md)，了解基本的参数配置。 
+请阅读[参数简介](../intro/parameter_intro_CN.md)，了解基本的参数配置。 
 
 ### 2.1 PC-A(发送端)
 

@@ -1,4 +1,4 @@
-# Online LiDAR - Advanced Topics
+# PCAP File - Advanced Topics
 
 ## 1 Introduction
 
@@ -13,7 +13,7 @@ This document illustrates how to configure rslidar_sdk in each case.
 Before reading this document, please be sure that you have read:
 + LiDAR user-guide 
 + [Intro to parameters](../intro/parameter_intro.md) 
-+ [Online LiDAR - Advanced Topics](./online_lidar_advanced_topics_cn.md)
++ [Online LiDAR - Advanced Topics](./online_lidar_advanced_topics.md)
 
 ## 2 General Case
 

@@ -193,17 +193,21 @@ To change behaviors of rslidar_sdk, change its parameters. please read the follo
 
 Below are some quick guides to use rslidar_sdk. 
 
-[Online connect lidar and send point cloud through ROS](doc/howto/how_to_decode_online_lidar.md)
+[Connect to online LiDAR and send point cloud through ROS](doc/howto/how_to_decode_online_lidar.md)
 
-[Decode pcap bag and send point cloud through ROS](doc/howto/how_to_decode_pcap_file.md)
+[Decode PCAP file and send point cloud through ROS](doc/howto/how_to_decode_pcap_file.md)
 
-[Record rosbag & Offline decode rosbag](doc/howto/how_to_record_replay_packet_rosbag.md)
+[Change Point Type](doc/howto/how_to_change_point_type.md) 
 
 ## 7 Advanced Topics
 
-[Switch Point Type](doc/howto/how_to_change_point_type.md) 
+[Online Lidar - advanced topics](doc/howto/online_lidar_advanced_topics.md) 
 
-[Network configuration advanced topics](doc/howto/online_lidar_advanced_topics.md) 
+[PCAP file - advanced topics](doc/howto/pcap_file_advanced_topics.md) 
 
 [Coordinate Transformation](doc/howto/how_to_use_coordinate_transformation.md) 
+
+[Record rosbag & Replay it](doc/howto/how_to_record_replay_packet_rosbag.md)
+
+## 
 
