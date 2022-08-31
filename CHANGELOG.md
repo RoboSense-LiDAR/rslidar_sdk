@@ -1,6 +1,12 @@
-# ChangeLog
+# CHANGELOG
 
 ## Unreleased
+
+## v1.5.6 - 2022-09-01
+
+### Added
++ Add a few build options according to rs_driver
++ Update help documents
 
 ## v1.5.5 - 2022-08-01
 
@@ -47,7 +53,6 @@
 - Add different point types( XYZI & XYZIRT)
 
 ### Changed
-
 - Update driver core, please refer to CHANGELOG in rs_driver for details
 - Update some documents
 - Change angle_path argument to hiding parameter
@@ -57,14 +62,10 @@
 - Remove RSAUTO for lidar type
 - Remove device_ip argument
 
-
-
 ## v1.2.1 - 2020-09-04
 
 ### Fixed
-
 - Fix bug in driver core, please refer to changelog in rs_driver for details.
-
 
 ## v1.2.0 - 2020-09-01
 
@@ -75,11 +76,9 @@
 - Update driver core, please refer to changelog in rs_driver for details
 - Update the compiler version from C++11 to C++14
 
-
 ## v1.1.0 - 2020-07-01
 
 ### Added
-
 - Add ROS2 support
 
 ### Changed
@@ -93,9 +92,7 @@
 ## v1.0.0 - 2020-06-01
 
 ### Added
-
 - New program structure
-
 - Support ROS & Protobuf-UDP functions
 
   
