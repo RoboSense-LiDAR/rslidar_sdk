@@ -1,8 +1,8 @@
-# Online Lidar - Advanced Topics
+# Online LiDAR - Advanced Topics
 
 ## 1 Introduction
 
-The RoboSense Lidar may work 
+The RoboSense LiDAR may work 
 
 + in unicast/multicast/broadcast mode, 
 + with VLAN layer 
@@ -13,8 +13,8 @@ This document illustrates how to configure rslidar_sdk in each case.
 
 Before reading this document, please be sure that you have read:
 + LiDAR user-guide 
-+ [Intro to parameters](../intro/parameter_intro.md) before reading this document
-+ [Decode online Lidar](./how_to_decode_online_lidar.md)
++ [Intro to parameters](../intro/parameter_intro.md) 
++ [Decode online LiDAR](./how_to_decode_online_lidar.md)
 
 ## 2 Unicast, Multicast and Broadcast
 
@@ -81,7 +81,7 @@ lidar:
       host_address: 192.168.1.102
 ```
 
-## 3 Multiple Lidars
+## 3 Multiple LiDARs
 
 ### 3.1 Different remote ports
 

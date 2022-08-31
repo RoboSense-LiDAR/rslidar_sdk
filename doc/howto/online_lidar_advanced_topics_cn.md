@@ -2,19 +2,18 @@
 
 ## 1 简介
 
-+ RoboSense雷达可以工作在单播/组播/广播模式。
+RoboSense雷达可以工作在如下的场景。
 
-+  可以运行在VLAN协议上。
++ 单播/组播/广播模式。
++ 运行在VLAN协议上。
++ 向Packet加入用户自己的层。
++ 接入多个雷达。
 
-+ 某些场景下，用户可以向Packet加入自己的层。
-
-+ rslidar_sdk支持多个雷达。
-
-本文描述在以上的场景下，如何配置rslidar_sdk。
+本文描述在这些场景下如何配置rslidar_sdk。
 
 在阅读本文档之前， 请确保已经阅读过：
 + 雷达用户手册 
-+ [参数介绍](../intro/parameter_intro_cn.md) before reading this document
++ [参数介绍](../intro/parameter_intro_cn.md) 
 + [连接在线雷达](./how_to_decode_online_lidar_cn.md)
 
 ## 2 单播、组播、广播
