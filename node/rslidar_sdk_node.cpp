@@ -107,6 +107,10 @@ int main(int argc, char** argv)
   try
   {
     config = YAML::LoadFile(config_path);
+    RS_INFO << "--------------------------------------------------------" << RS_REND;
+    RS_INFO << "Config loaded from PATH:" << RS_REND;
+    RS_INFO << config_path << RS_REND;
+    RS_INFO << "--------------------------------------------------------" << RS_REND;
   }
   catch (...)
   {
