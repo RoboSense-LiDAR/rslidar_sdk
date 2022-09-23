@@ -34,8 +34,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "source/source_driver.hpp"
 #include "source/source_pointcloud_ros.hpp"
 #include "source/source_packet_ros.hpp"
-#include "source/source_packet_proto.hpp"
-#include "source/source_pointcloud_proto.hpp"
 
 namespace robosense
 {
