@@ -1,19 +1,16 @@
-
 cmake_minimum_required(VERSION 3.5)
-
 cmake_policy(SET CMP0048 NEW)
-
 project(rslidar_sdk)
-
-#=======================================
-# Compile setup (ORIGINAL, CATKIN, COLCON)
-#=======================================
-set(COMPILE_METHOD CATKIN)
 
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
 #=======================================
 set(POINT_TYPE XYZI)
+
+#=======================================
+# Compile setup (ORIGINAL, CATKIN, COLCON)
+#=======================================
+set(COMPILE_METHOD CATKIN)
 
 option(ENABLE_TRANSFORM "Enable transform functions" OFF)
 if(${ENABLE_TRANSFORM})
@@ -50,16 +47,34 @@ set(PROJECT_NAME rslidar_sdk)
 
 add_definitions(-DPROJECT_PATH="${PROJECT_SOURCE_DIR}")
 
-set(CMAKE_BUILD_TYPE RELEASE)
-add_definitions(-O3)
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  set(CMAKE_BUILD_TYPE Release)
+  add_definitions(-O3)
+endif()
+
 add_definitions(-std=c++14)
 add_compile_options(-Wall)
 
 #========================
+# Point Type Definition
+#========================
+if(${POINT_TYPE} STREQUAL "XYZI")
+  add_definitions(-DPOINT_TYPE_XYZI)
+elseif(${POINT_TYPE} STREQUAL "XYZIRT")
+  add_definitions(-DPOINT_TYPE_XYZIRT)
+endif()
+
+message(=============================================================)
+message("-- POINT_TYPE is ${POINT_TYPE}")
+message(=============================================================)
+
+#========================
 # Dependencies Setup
 #========================
+
 #ROS#
 find_package(roscpp 1.12 QUIET)
+
 if(roscpp_FOUND)
 
   message(=============================================================)
@@ -72,14 +87,33 @@ if(roscpp_FOUND)
   include_directories(${roscpp_INCLUDE_DIRS} ${roslib_INCLUDE_DIRS})
   set(ROS_LIBS ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
 
+  #Catkin#
+  if(${COMPILE_METHOD} STREQUAL "CATKIN")
+
+    add_definitions(-DRUN_IN_ROS_WORKSPACE)
+
+    find_package(catkin REQUIRED COMPONENTS
+      roscpp
+      sensor_msgs
+      roslib)
+
+    catkin_package(CATKIN_DEPENDS 
+      sensor_msgs 
+      roslib)
+
+  endif(${COMPILE_METHOD} STREQUAL "CATKIN")
+
 else(roscpp_FOUND)
+
   message(=============================================================)
   message("-- ROS Not Found, Ros Support is turned Off!")
   message(=============================================================)
+
 endif(roscpp_FOUND)
 
 #ROS2#
 find_package(rclcpp QUIET)
+
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
   message(=============================================================)
@@ -96,6 +130,7 @@ if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   find_package(std_msgs REQUIRED)                      
 
 else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
+
   message(=============================================================)
   message("-- ROS2 Not Found. Ros2 Support is turned Off!")
   message(=============================================================)
@@ -105,22 +140,6 @@ endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 #Others#
 find_package(yaml-cpp REQUIRED)
 
-#Catkin#
-if(${COMPILE_METHOD} STREQUAL "CATKIN")
-
-  add_definitions(-DRUN_IN_ROS_WORKSPACE)
-
-  find_package(catkin REQUIRED COMPONENTS
-          roscpp
-          sensor_msgs
-          roslib)
-
-  catkin_package(CATKIN_DEPENDS 
-    sensor_msgs 
-    roslib)
-
-endif(${COMPILE_METHOD} STREQUAL "CATKIN")
-
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
@@ -128,19 +147,6 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(src/rs_driver)
 find_package(rs_driver REQUIRED)
 include_directories(${rs_driver_INCLUDE_DIRS})
-
-#========================
-# Point Type Definition
-#========================
-if(${POINT_TYPE} STREQUAL "XYZI")
-add_definitions(-DPOINT_TYPE_XYZI)
-elseif(${POINT_TYPE} STREQUAL "XYZIRT")
-add_definitions(-DPOINT_TYPE_XYZIRT)
-endif()
-
-message(=============================================================)
-message("-- POINT_TYPE is ${POINT_TYPE}")
-message(=============================================================)
 
 #========================
 # Build Setup
@@ -157,22 +163,16 @@ target_link_libraries(rslidar_sdk_node
 #Ros#
 if(roscpp_FOUND)
 
-  target_link_libraries(rslidar_sdk_node ${ROS_LIBS})
+  target_link_libraries(rslidar_sdk_node 
+    ${ROS_LIBS})
 
   if(${COMPILE_METHOD} STREQUAL "CATKIN")
+
     install(TARGETS rslidar_sdk_node
             RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
             LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
             ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
-    install(DIRECTORY launch/
-            DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-            PATTERN ".svn" EXCLUDE)
-    install(DIRECTORY config/
-            DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
-            PATTERN ".svn" EXCLUDE)
-    install(DIRECTORY rviz/
-            DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/rviz
-            PATTERN ".svn" EXCLUDE)
+
   endif()
 
 endif(roscpp_FOUND)
@@ -182,8 +182,8 @@ if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
   ament_target_dependencies(rslidar_sdk_node 
     rclcpp 
-    sensor_msgs 
     std_msgs 
+    sensor_msgs 
     rslidar_msg)
 
   install(TARGETS
