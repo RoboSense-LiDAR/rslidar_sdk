@@ -78,7 +78,7 @@ find_package(roscpp 1.12 QUIET)
 if(roscpp_FOUND)
 
   message(=============================================================)
-  message("-- ROS Found. ROS Support is turned On!")
+  message("-- ROS Found. ROS Support is turned On.")
   message(=============================================================)
 
   add_definitions(-DROS_FOUND)
@@ -106,7 +106,7 @@ if(roscpp_FOUND)
 else(roscpp_FOUND)
 
   message(=============================================================)
-  message("-- ROS Not Found, Ros Support is turned Off!")
+  message("-- ROS Not Found. ROS Support is turned Off.")
   message(=============================================================)
 
 endif(roscpp_FOUND)
@@ -117,7 +117,7 @@ find_package(rclcpp QUIET)
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
   message(=============================================================)
-  message("-- ROS2 Found. ROS2 Support is turned On!")
+  message("-- ROS2 Found. ROS2 Support is turned On.")
   message(=============================================================)
 
   add_definitions(-DROS2_FOUND)
@@ -132,7 +132,7 @@ if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
 
   message(=============================================================)
-  message("-- ROS2 Not Found. Ros2 Support is turned Off!")
+  message("-- ROS2 Not Found. ROS2 Support is turned Off.")
   message(=============================================================)
 
 endif(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
