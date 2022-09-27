@@ -40,6 +40,11 @@ if(${ENABLE_STAMP_WITH_LOCAL})
   add_definitions("-DENABLE_STAMP_WITH_LOCAL")
 endif(${ENABLE_STAMP_WITH_LOCAL})
 
+option(ENABLE_SOURCE_PACKET_LEGACY "Enable ROS Source of MSOP/DIFOP Packet v1.3.x" OFF)
+if(${ENABLE_SOURCE_PACKET_LEGACY})
+  add_definitions("-DENABLE_SOURCE_PACKET_LEGACY")
+endif(${ENABLE_SOURCE_PACKET_LEGACY})
+
 #========================
 # Project details / setup
 #========================

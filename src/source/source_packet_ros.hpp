@@ -35,6 +35,12 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "source/source_driver.hpp"
 
 #ifdef ROS_FOUND
+
+#ifdef ENABLE_SOURCE_PACKET_LEGACY
+#include "msg/ros_msg/rslidar_packet_legacy.hpp"
+#include "msg/ros_msg/rslidar_scan_legacy.hpp"
+#endif
+
 #include "msg/ros_msg/rslidar_packet.hpp"
 #include <ros/ros.h>
 
@@ -69,10 +75,18 @@ public:
 
 private:
 
+#ifdef ENABLE_SOURCE_PACKET_LEGACY
+  void putPacketLegacy(const rslidar_msgs::rslidarScan& msg);
+  void putPacketDifopLegacy(const rslidar_msgs::rslidarPacket& msg);
+  ros::Subscriber pkt_sub_legacy_;
+  ros::Subscriber pkt_sub_difop_legacy_;
+  LidarType lidar_type_;
+#endif
+
   void putPacket(const rslidar_msg::RslidarPacket& msg);
+  ros::Subscriber pkt_sub_;
 
   std::unique_ptr<ros::NodeHandle> nh_;
-  ros::Subscriber pkt_sub_;
 };
 
 SourcePacketRos::SourcePacketRos()
@@ -84,13 +98,61 @@ void SourcePacketRos::init(const YAML::Node& config)
 {
   SourceDriver::init(config);
 
+  nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
+
+#ifdef ENABLE_SOURCE_PACKET_LEGACY
+  std::string lidar_type;
+  yamlReadAbort<std::string>(config["driver"], "lidar_type", lidar_type);
+  lidar_type_ = strToLidarType(lidar_type);
+
+  std::string ros_recv_topic_legacy;
+  yamlRead<std::string>(config["ros"], "ros_recv_packet_legacy_topic", 
+      ros_recv_topic_legacy, "rslidar_packets");
+
+  pkt_sub_legacy_ = nh_->subscribe(ros_recv_topic_legacy, 1, &SourcePacketRos::putPacketLegacy, this);
+  pkt_sub_difop_legacy_ = nh_->subscribe(ros_recv_topic_legacy + "_difop", 1, &SourcePacketRos::putPacketDifopLegacy, this);
+#endif
+
   std::string ros_recv_topic;
   yamlRead<std::string>(config["ros"], "ros_recv_packet_topic", 
       ros_recv_topic, "rslidar_packets");
 
-  nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
   pkt_sub_ = nh_->subscribe(ros_recv_topic, 100, &SourcePacketRos::putPacket, this);
+
 } 
+
+#ifdef ENABLE_SOURCE_PACKET_LEGACY
+inline Packet toRsMsg(const rslidar_msgs::rslidarPacket& ros_msg, LidarType lidar_type, bool isDifop)
+{
+  size_t pkt_len = 1248;
+  if (lidar_type == LidarType::RSM1)
+  {
+    pkt_len = isDifop ? 256 : 1210;
+  }
+
+  Packet rs_msg;
+  for (size_t i = 0; i < pkt_len; i++)
+  {
+    rs_msg.buf_.emplace_back(ros_msg.data[i]);
+  }
+
+  return rs_msg;
+}
+
+void SourcePacketRos::putPacketLegacy(const rslidar_msgs::rslidarScan& msg)
+{
+  for (uint32_t i = 0; i < msg.packets.size(); i++)
+  {
+    const rslidar_msgs::rslidarPacket& packet = msg.packets[i];
+    driver_ptr_->decodePacket(toRsMsg(packet, lidar_type_, false));
+  }
+}
+
+void SourcePacketRos::putPacketDifopLegacy(const rslidar_msgs::rslidarPacket& msg)
+{
+  driver_ptr_->decodePacket(toRsMsg(msg, lidar_type_, true));
+}
+#endif
 
 void SourcePacketRos::putPacket(const rslidar_msg::RslidarPacket& msg)
 {
