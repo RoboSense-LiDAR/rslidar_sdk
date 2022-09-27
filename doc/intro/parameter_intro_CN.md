@@ -54,8 +54,10 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
+      dense_points: false        
       pcap_path: /home/robosense/lidar.pcap                 
     ros:
+      ros_send_by_rows: false
       ros_frame_id: rslidar           
       ros_recv_packet_topic: /rslidar_packets    
       ros_send_packet_topic: /rslidar_packets    
@@ -83,9 +85,22 @@ lidar:
   - true -- 使用雷达时间作为消息时间戳。
   - false -- 使用电脑主机时间作为消息时间戳。 
 
+- dense_points 
+
+  输出的点云中是否剔除NAN points。默认值为false。
+  - true 为剔除，
+  - false为不剔除。
+
 - pcap_path
 
    pcap包的路径。当 msg_source=3 时有效。
+
+- ros_send_by_rows
+  
+  只对机械式雷达有意义，且只有当dense_points = false时才有效。
+  - true -- 发送点云时，按照一行一行的顺序排列点
+  - false -- 发送点云时，按照一列一列的顺序排列点
+
 
 ## 3 示例
 

@@ -52,7 +52,6 @@ lidar:
 - ```pcap_rate``` -- 默认值为1，点云频率约为10hz。 用户可调节此参数来控制pcap播放速度，设置的值越大，pcap播放速度越快。
 - ```config_from_file``` -- 默认值为false, 是否从外参文件读入雷达配置信息，仅用于调试，可忽略。
 - ```angle_path``` -- angle.csv外参文件的路径，仅用于调试，可忽略。
-- ```dense_points``` -- 默认值为false。输出的点云中是否剔除NAN points。```true```为剔除，```false```为不剔除。
 - ```ts_first_point``` -- 默认值为false。点云的时间戳是否第一个点的时间。```true```为第一个点的时间，```false```为最后一个点的时间。
 - ```split_frame_mode``` -- 分帧模式设置，默认值为```1```。
   - 1 -- 角度分帧

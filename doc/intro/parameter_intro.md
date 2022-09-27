@@ -56,6 +56,7 @@ lidar:
       min_distance: 0.2            
       max_distance: 200            
       use_lidar_clock: false        
+      dense_points: false        
       pcap_path: /home/robosense/lidar.pcap                 
     ros:
       ros_frame_id: rslidar           
@@ -85,9 +86,21 @@ lidar:
   - true -- Use the Lidar clock as the message timestamp
   - false -- Use the host machine clock as the message timestamp
 
+- dense_points
+
+  Whether to discard NAN points. The default value is ```false```.
+  - Discard if ```true``` 
+  - reserve if ```false```. 
+
 - pcap_path
 
    The full path of the PCAP file. Valid if msg_source = 3.
+
+- ros_send_by_rows
+  
+  Meaningful only for Mechanical Lidars, and valid if dense_points = false。
+  - true -- send point cloud row by row
+  - false -- send point cloud clolumn by column
 
 ## 3 Example
 
