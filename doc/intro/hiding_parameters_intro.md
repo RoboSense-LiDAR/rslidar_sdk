@@ -48,7 +48,6 @@ lidar:
       pitch: 0
       yaw: 0
       use_vlan: false
-      use_someip: false
 ```
 
 - ```pcap_repeat``` -- The default value is ```true```. Set it to ```false``` to prevent play pcap repeatedly.
@@ -69,4 +68,4 @@ lidar:
 - ```host_address``` -- Needed in two conditions. If the host receives packets from multiple Lidars via different IP addresses, use this parameter to specify destination IPs of the Lidars; If group_address is set, it should be set, so it will be joined into the multicast group.
 - ```x, y, z, roll, pitch, yaw ``` -- The parameters to do coordinate transformation. If the coordinate transformation function is enabled in driver core,  the output point cloud will be transformed based on these parameters. For more details, please refer to [Coordinate Transformation](../howto/how_to_use_coordinate_transformation.md) 
 - ```use_vlan``` -- Whether to use VLAN. The default value is ```false```. This parameter is only needed for pcap file. If it contains packets with VLAN layer, ```use_vlan``` should set to true. In the case of online Lidar, the VLAN layer is stripped by the protocol layer, so use_vlan can be ignored. 
-- ```use_someip``` -- Whether to use SOME/IP. The default value is ```false```. Set this parameter to ```true``` if the packet contains the SOME/IP field.
+

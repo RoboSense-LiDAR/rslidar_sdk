@@ -17,8 +17,6 @@ common:
   msg_source: 1                                         
   send_packet_ros: false                               
   send_point_cloud_ros: false                           
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
 ```
 
 - msg_source
@@ -42,17 +40,6 @@ common:
    - true -- The LiDAR point cloud will be sent to ROS/ROS2. 
    
    *The ROS point cloud type is the ROS official defined type -- sensor_msgs/PointCloud2, so it can be visualized on the ROS  `rviz` tool directly. It is not suggested to record the point cloud to rosbag, because its size may be very large. Please record Packets instead. Refer to the case of msg_source=2.*
-   
-- send_packet_proto
-
-   - true -- The Lidar packets will be sent out as Protobuf message by the UDP protocol.
-   
-- send_point_cloud_proto
-
-   - true -- The Lidar point cloud will be sent out as Protobuf message by the UDP protocol. 
-   
-
-*The point cloud is too large, so it is suggested to send packets rather than point clouds. Please refer to the case of send_packet_proto=true.*
 
 ## 2 lidar
 
@@ -71,19 +58,10 @@ lidar:
       use_lidar_clock: false        
       pcap_path: /home/robosense/lidar.pcap                 
     ros:
-      ros_frame_id: /rslidar           
+      ros_frame_id: rslidar           
       ros_recv_packet_topic: /rslidar_packets    
       ros_send_packet_topic: /rslidar_packets    
       ros_send_point_cloud_topic: /rslidar_points      
-    proto:
-      point_cloud_recv_port: 60021                     
-      point_cloud_send_port: 60021                     
-      msop_recv_port: 60022                       
-      msop_send_port: 60022                       
-      difop_recv_port: 60023                      
-      difop_send_port: 60023       
-      point_cloud_send_ip: 127.0.0.1                   
-      packet_send_ip: 127.0.0.1                   
 ```
 
 - lidar_type
@@ -122,8 +100,6 @@ common:
   msg_source: 1                                         
   send_packet_ros: false                               
   send_point_cloud_ros: true                           
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
 lidar:
   - driver:
       lidar_type: RS128           
@@ -135,19 +111,10 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
-      ros_frame_id: /rslidar           
+      ros_frame_id: rslidar           
       ros_recv_packet_topic: /rslidar_packets    
       ros_send_packet_topic: /rslidar_packets    
       ros_send_point_cloud_topic: /rslidar_points      
-    proto:
-      point_cloud_recv_port: 60021                     
-      point_cloud_send_port: 60021                     
-      msop_recv_port: 60022                       
-      msop_send_port: 60022                       
-      difop_recv_port: 60023                      
-      difop_send_port: 60023       
-      point_cloud_send_ip: 127.0.0.1                   
-      packet_send_ip: 127.0.0.1                
 ```
 
 ### 3.2 Multi Lidar Case
@@ -161,8 +128,6 @@ common:
   msg_source: 1                                         
   send_packet_ros: false                               
   send_point_cloud_ros: true                           
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
 lidar:
   - driver:
       lidar_type: RS128           
@@ -174,19 +139,10 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
-      ros_frame_id: /rslidar           
+      ros_frame_id: rslidar           
       ros_recv_packet_topic: /middle/rslidar_packets    
       ros_send_packet_topic: /middle/rslidar_packets    
       ros_send_point_cloud_topic: /middle/rslidar_points      
-    proto:
-      point_cloud_recv_port: 60021                     
-      point_cloud_send_port: 60021                     
-      msop_recv_port: 60022                       
-      msop_send_port: 60022                       
-      difop_recv_port: 60023                      
-      difop_send_port: 60023       
-      point_cloud_send_ip: 127.0.0.1                   
-      packet_send_ip: 127.0.0.1    
   - driver:
       lidar_type: RSBP           
       msop_port: 1990             
@@ -197,19 +153,10 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
-      ros_frame_id: /rslidar           
+      ros_frame_id: rslidar           
       ros_recv_packet_topic: /left/rslidar_packets    
       ros_send_packet_topic: /left/rslidar_packets    
       ros_send_point_cloud_topic: /left/rslidar_points      
-    proto:
-      point_cloud_recv_port: 60024                     
-      point_cloud_send_port: 60024                     
-      msop_recv_port: 60025                       
-      msop_send_port: 60025                       
-      difop_recv_port: 60026                      
-      difop_send_port: 60026       
-      point_cloud_send_ip: 127.0.0.1                   
-      packet_send_ip: 127.0.0.1   
   - driver:
       lidar_type: RSBP           
       msop_port: 2010             
@@ -220,18 +167,9 @@ lidar:
       max_distance: 200            
       use_lidar_clock: false        
     ros:
-      ros_frame_id: /rslidar           
+      ros_frame_id: rslidar           
       ros_recv_packet_topic: /right/rslidar_packets    
       ros_send_packet_topic: /right/rslidar_packets    
       ros_send_point_cloud_topic: /right/rslidar_points      
-    proto:
-      point_cloud_recv_port: 60027                     
-      point_cloud_send_port: 60027                     
-      msop_recv_port: 60028                       
-      msop_send_port: 60028                       
-      difop_recv_port: 60029                      
-      difop_send_port: 60029       
-      point_cloud_send_ip: 127.0.0.1                   
-      packet_send_ip: 127.0.0.1    
 ```
 

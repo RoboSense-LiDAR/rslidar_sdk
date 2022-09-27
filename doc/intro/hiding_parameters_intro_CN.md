@@ -11,8 +11,6 @@ common:
   msg_source: 1                                         
   send_packet_ros: false                                
   send_point_cloud_ros: false                           
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
 ```
 
 ## 2 lidar
@@ -48,7 +46,6 @@ lidar:
       pitch: 0
       yaw: 0
       use_vlan: false
-      use_someip: false
 ```
 
 - ```pcap_repeat``` -- 默认值为true， 用户可将其设置为false来禁用pcap循环播放功能。
@@ -68,4 +65,3 @@ lidar:
 - ```host_address``` -- 有两种情况需要这个选项。如果主机上通过多个IP地址接收多个雷达的数据，则可以将此参数指定为雷达的目标IP；如果设置了group_address，那也需要设置host_address，以便将这个IP地址的网卡加入组播组。
 - ```x, y, z, roll, pitch, yaw ``` -- 坐标变换参数，若启用了内核的坐标变换功能，将会使用此参数输出经过变换后的点云。x, y, z, 单位为```米```, roll, pitch, yaw, 单位为```弧度```。具体使用方式可以参考 [坐标变换功能](../howto/how_to_use_coordinate_transformation_CN.md) 。
 - ```use_vlan``` -- 默认为false，指定是否使用vlan。如果pcap文件中的packet带vlan层，则需要设置这个选项为true。其他情况下不需要。在线雷达的情况下，协议层到达驱动时，已经剥离vlan层，所以不需要设置这个选项。
-- ```use_someip``` -- 是否使用SOME/IP，默认为false。当数据包中有SOME/IP层，需要设置为true。
