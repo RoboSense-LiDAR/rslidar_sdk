@@ -43,7 +43,7 @@ namespace robosense
 namespace lidar
 {
 
-inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id)
+inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id, bool send_by_rows)
 {
   sensor_msgs::PointCloud2 ros_msg;
 
@@ -85,27 +85,58 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
   sensor_msgs::PointCloud2Iterator<double> iter_timestamp_(ros_msg, "timestamp");
 #endif
 
-  for (size_t i = 0; i < rs_msg.points.size(); i++)
+  if (send_by_rows)
   {
-    const LidarPointCloudMsg::PointT& point = rs_msg.points[i];
+    for (size_t i = 0; i < rs_msg.height; i++)
+    {
+      for (size_t j = 0; j < rs_msg.width; j++)
+      {
+        const LidarPointCloudMsg::PointT& point = rs_msg.points[i + j * rs_msg.height];
 
-    *iter_x_ = point.x;
-    *iter_y_ = point.y;
-    *iter_z_ = point.z;
-    *iter_intensity_ = point.intensity;
+        *iter_x_ = point.x;
+        *iter_y_ = point.y;
+        *iter_z_ = point.z;
+        *iter_intensity_ = point.intensity;
 
-    iter_x_ = iter_x_ + 1;
-    iter_y_ = iter_y_ + 1;
-    iter_z_ = iter_z_ + 1;
-    iter_intensity_ = iter_intensity_ + 1;
+        iter_x_ = iter_x_ + 1;
+        iter_y_ = iter_y_ + 1;
+        iter_z_ = iter_z_ + 1;
+        iter_intensity_ = iter_intensity_ + 1;
 
 #ifdef POINT_TYPE_XYZIRT
-    *iter_ring_ = point.ring;
-    *iter_timestamp_ = point.timestamp;
+        *iter_ring_ = point.ring;
+        *iter_timestamp_ = point.timestamp;
 
-    iter_ring_ = iter_ring_ + 1;
-    iter_timestamp_ = iter_timestamp_ + 1;
+        iter_ring_ = iter_ring_ + 1;
+        iter_timestamp_ = iter_timestamp_ + 1;
 #endif
+      }
+    }
+  }
+  else
+  {
+    for (size_t i = 0; i < rs_msg.points.size(); i++)
+    {
+      const LidarPointCloudMsg::PointT& point = rs_msg.points[i];
+
+      *iter_x_ = point.x;
+      *iter_y_ = point.y;
+      *iter_z_ = point.z;
+      *iter_intensity_ = point.intensity;
+
+      iter_x_ = iter_x_ + 1;
+      iter_y_ = iter_y_ + 1;
+      iter_z_ = iter_z_ + 1;
+      iter_intensity_ = iter_intensity_ + 1;
+
+#ifdef POINT_TYPE_XYZIRT
+      *iter_ring_ = point.ring;
+      *iter_timestamp_ = point.timestamp;
+
+      iter_ring_ = iter_ring_ + 1;
+      iter_timestamp_ = iter_timestamp_ + 1;
+#endif
+    }
   }
 
   ros_msg.header.seq = rs_msg.seq;
@@ -127,10 +158,19 @@ private:
   std::shared_ptr<ros::NodeHandle> nh_;
   ros::Publisher pub_;
   std::string frame_id_;
+  bool send_by_rows_;
 };
 
 inline void DestinationPointCloudRos::init(const YAML::Node& config)
 {
+  yamlRead<bool>(config["ros"], 
+      "ros_send_by_rows", send_by_rows_, false);
+
+  bool dense_points;
+  yamlRead<bool>(config["driver"], "dense_points", dense_points, false);
+  if (dense_points)
+    send_by_rows_ = false;
+
   yamlRead<std::string>(config["ros"], 
       "ros_frame_id", frame_id_, "rslidar");
 
@@ -144,7 +184,7 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  pub_.publish(toRosMsg(msg, frame_id_));
+  pub_.publish(toRosMsg(msg, frame_id_, send_by_rows_));
 }
 
 }  // namespace lidar
@@ -162,7 +202,7 @@ namespace robosense
 namespace lidar
 {
 
-inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id)
+inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const std::string& frame_id, bool send_by_rows)
 {
   sensor_msgs::msg::PointCloud2 ros_msg;
 
@@ -204,27 +244,59 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, 
   sensor_msgs::PointCloud2Iterator<double> iter_timestamp_(ros_msg, "timestamp");
 #endif
 
-  for (size_t i = 0; i < rs_msg.points.size(); i++)
+
+  if (send_by_rows)
   {
-    const LidarPointCloudMsg::PointT& point = rs_msg.points[i];
+    for (size_t i = 0; i < rs_msg.height; i++)
+    {
+      for (size_t j = 0; j < rs_msg.width; j++)
+      {
+        const LidarPointCloudMsg::PointT& point = rs_msg.points[i + j * rs_msg.height];
 
-    *iter_x_ = point.x;
-    *iter_y_ = point.y;
-    *iter_z_ = point.z;
-    *iter_intensity_ = point.intensity;
+        *iter_x_ = point.x;
+        *iter_y_ = point.y;
+        *iter_z_ = point.z;
+        *iter_intensity_ = point.intensity;
 
-    iter_x_ = iter_x_ + 1;
-    iter_y_ = iter_y_ + 1;
-    iter_z_ = iter_z_ + 1;
-    iter_intensity_ = iter_intensity_ + 1;
+        iter_x_ = iter_x_ + 1;
+        iter_y_ = iter_y_ + 1;
+        iter_z_ = iter_z_ + 1;
+        iter_intensity_ = iter_intensity_ + 1;
 
 #ifdef POINT_TYPE_XYZIRT
-    *iter_ring_ = point.ring;
-    *iter_timestamp_ = point.timestamp;
+        *iter_ring_ = point.ring;
+        *iter_timestamp_ = point.timestamp;
 
-    iter_ring_ = iter_ring_ + 1;
-    iter_timestamp_ = iter_timestamp_ + 1;
+        iter_ring_ = iter_ring_ + 1;
+        iter_timestamp_ = iter_timestamp_ + 1;
 #endif
+      }
+    }
+  }
+  else
+  {
+    for (size_t i = 0; i < rs_msg.points.size(); i++)
+    {
+      const LidarPointCloudMsg::PointT& point = rs_msg.points[i];
+
+      *iter_x_ = point.x;
+      *iter_y_ = point.y;
+      *iter_z_ = point.z;
+      *iter_intensity_ = point.intensity;
+
+      iter_x_ = iter_x_ + 1;
+      iter_y_ = iter_y_ + 1;
+      iter_z_ = iter_z_ + 1;
+      iter_intensity_ = iter_intensity_ + 1;
+
+#ifdef POINT_TYPE_XYZIRT
+      *iter_ring_ = point.ring;
+      *iter_timestamp_ = point.timestamp;
+
+      iter_ring_ = iter_ring_ + 1;
+      iter_timestamp_ = iter_timestamp_ + 1;
+#endif
+    }
   }
 
   ros_msg.header.stamp.sec = (uint32_t)floor(rs_msg.timestamp);
@@ -246,10 +318,19 @@ private:
   std::shared_ptr<rclcpp::Node> node_ptr_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_;
   std::string frame_id_;
+  bool send_by_rows_;
 };
 
 inline void DestinationPointCloudRos::init(const YAML::Node& config)
 {
+  yamlRead<bool>(config["ros"], 
+      "ros_send_by_rows", send_by_rows_, false);
+
+  bool dense_points;
+  yamlRead<bool>(config["driver"], "dense_points", dense_points, false);
+  if (dense_points)
+    send_by_rows_ = false;
+
   yamlRead<std::string>(config["ros"], 
       "ros_frame_id", frame_id_, "rslidar");
 
@@ -267,7 +348,7 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  pub_->publish(toRosMsg(msg, frame_id_));
+  pub_->publish(toRosMsg(msg, frame_id_, send_by_rows_));
 }
 
 }  // namespace lidar
