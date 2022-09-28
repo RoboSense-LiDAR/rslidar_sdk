@@ -86,7 +86,7 @@ lidar:
 option(ENABLE_SOURCE_PACKET_LEGACY "Enable ROS Source of MSOP/DIFOP Packet v1.3.x" ON)
 ```
 
-+ 在`config.yaml`中，增加一个配置项`ros_recv_packet_topic_legacy`: `/rslidar_packets`。这样`rslidar_sdk_node`将同时订阅两个主题。
++ 在`config.yaml`中，增加一个配置项`ros_recv_packet_legacy_topic`: `/rslidar_packets`。这样`rslidar_sdk_node`将同时订阅两个主题。
   + 订阅`/rslidar_packets`和`/rslidar_packets_difop`，读入`v1.3.x`的消息
   + 订阅`/rslidar_packets_v2`，读入`v1.5.x`的消息
 
@@ -104,7 +104,7 @@ lidar:
       msop_port: 6699                                   #Msop port of lidar
       difop_port: 7788                                  #Difop port of lidar
     ros:
-      ros_recv_packet_topic_legacy: /rslidar_packets    #Topic used to receive lidar packets from ROS
+      ros_recv_packet_legacy_topic: /rslidar_packets    #Topic used to receive lidar packets from ROS
       ros_recv_packet_topic: /rslidar_packets_v2        #Topic used to receive lidar packets from ROS
       ros_send_point_cloud_topic: /rslidar_points       #Topic used to send point cloud through ROS
 ```
