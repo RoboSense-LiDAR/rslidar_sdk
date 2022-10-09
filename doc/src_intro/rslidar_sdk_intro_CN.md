@@ -1,4 +1,6 @@
-# rslidar_sdk v1.5.5 源代码解析
+# rslidar_sdk v1.5.7 源代码解析
+
+## 1 简介
 
 rslidar_sdk是基于ROS/ROS2的雷达驱动。rslidar_sdk依赖rs_driver接收和解析MSOP/DIFOP Packet。
 
@@ -8,7 +10,7 @@ rslidar_sdk的基本功能如下：
 + 从ROS主题`/rslidar_packets`得到MSOP/DIFOP Packet，解析得到点云，再发布到主题`/rslidar_points`。
   + 这里的主题`/rslidar_packets`，由使用者通过回放Packet rosbag文件发布。
 
-## 1 Source 与 Destination
+## 2 Source 与 Destination
 
 如前面所说，rslidar_sdk从在线雷达、PCAP文件、ROS主题这三种源得到MSOP/DIFOP Packet，将Packet发布到ROS主题/rslidar_packets`/rslidar_packets`，将点云发布到目标 - ROS主题`/rslidar_points`。
 + Source定义源接口
@@ -17,21 +19,21 @@ rslidar_sdk的基本功能如下：
 
 ![source](./img/class_source_destination.png)
 
-## 2 DestinationPointCloud
+### 2.1 DestinationPointCloud
 
 DestinationPointCloud定义发送点云的接口。
 + 虚拟成员函数init()对DestinationPointCloud实例初始化
 + 虚拟成员函数start()启动实例
 + 虚拟成员函数sendPointCloud()发送PointCloud消息
 
-## 3 DestinationPacket
+### 2.2 DestinationPacket
 
 DestinationPacket定义发送MSOP/DIFOP Packet的接口。
 + 虚拟成员函数init()对DestinationPacket实例初始化
 + 虚拟成员函数start()启动实例
 + 虚拟成员函数sendPacket()启动发送Packet消息
 
-## 4 Source
+### 2.3 Source
 
 Source是定义源的接口。
 
@@ -56,7 +58,7 @@ Source是定义源的接口。
 + 虚拟成员函数regPointCloudCallback()将PointCloudDestination实例注册到`point_cb_vec_[]`。
 + 虚拟成员函数regPacketCallback()将PacketDestination实例注册到`packet_cb_vec_[]`。
 
-## 5 DestinationPointCloudRos
+### 2.4 DestinationPointCloudRos
 
 DestinationPointCloudRos在ROS主题`/rslidar_points`发布点云。
 + 成员`pkt_pub_`是ROS主题发布器。
@@ -64,7 +66,7 @@ DestinationPointCloudRos在ROS主题`/rslidar_points`发布点云。
 
 ![destination pointcloud ros](./img/class_destination_pointcloud.png)
 
-### 5.1 DestinationPointCloudRos::init()
+#### 2.4.1 DestinationPointCloudRos::init()
 
 init()初始化DestinationPointCloudRos实例。
 + 从YAML文件读入用户配置参数。
@@ -72,12 +74,12 @@ init()初始化DestinationPointCloudRos实例。
   + 读入ROS主题，保存在本地变量`ros_send_topic_`，默认值是`/rslidar_points`。
 + 创建ROS主题发布器，保存在成员`pkt_sub_`.
 
-### 5.2 DestinationPointCloudRos::sendPointCloud()
+#### 2.4.2 DestinationPointCloudRos::sendPointCloud()
 
 sendPacket()在ROS主题`/rslidar_points`发布点云。
 + 调用Publisher::publish()发布ROS格式的点云消息。
 
-## 6 DestinationPacketRos
+### 2.5 DestinationPacketRos
 
 DestinationPacketRos在ROS主题`/rslidar_packets`发布MSOP/DIFOP Packet。
 + 成员`pkt_sub_`是ROS主题发布器。
@@ -85,7 +87,7 @@ DestinationPacketRos在ROS主题`/rslidar_packets`发布MSOP/DIFOP Packet。
 
 ![destination packet ros](./img/class_destination_packet.png)
 
-### 6.1 DestinationPacketRos::init()
+#### 2.5.1 DestinationPacketRos::init()
 
 init()初始化DestinationPacketRos实例。
 + 从YAML文件读入用户配置参数。
@@ -93,12 +95,12 @@ init()初始化DestinationPacketRos实例。
   + 读入ROS主题，保存在本地变量`ros_send_topic_`，默认值是`/rslidar_packets`。
 + 创建ROS主题发布器，保存在成员`pkt_sub_`.
 
-### 6.2 DestinationPacketRos::sendPacket()
+#### 2.5.2 DestinationPacketRos::sendPacket()
 
 sendPacket()在ROS主题`/rslidar_packets`发布MOSP/DIFOP packet。
 + 调用Publisher::publish()发布ROS格式的Packet消息。
 
-## 7 SourceDriver
+### 2.6 SourceDriver
 
 SourceDriver从在线雷达和PCAP文件得到MSOP/DIFOP Packet，并解析得到点云。
 + 成员`driver_ptr_`是rs_driver驱动的实例，也就是LidarDriver。
@@ -107,7 +109,7 @@ SourceDriver从在线雷达和PCAP文件得到MSOP/DIFOP Packet，并解析得�
 
 ![source driver](./img/class_source_driver.png)
 
-### 7.1 SourceDriver::init()
+#### 2.6.1 SourceDriver::init()
 
 init()初始化SourceDriver实例。
 + 读取YAML配置文件，得到雷达的用户配置参数。
@@ -118,35 +120,35 @@ init()初始化SourceDriver实例。
 + 调用LidarDriver::init()，初始化`driver_ptr_`。
 + 创建、启动点云处理线程`point_cloud_handle_thread_`， 线程函数是processPointCloud()。
 
-### 7.2 SourceDriver::getPointCloud()
+#### 2.6.2 SourceDriver::getPointCloud()
 
 getPointCloud()给成员`driver_ptr_`提供空闲的点云。
 + 优先从成员`free_point_cloud_queue_`得到点云。
 + 如果得不到，分配新的点云。
 
-### 7.3 SourceDriver::putPointCloud()
+#### 2.6.3 SourceDriver::putPointCloud()
 
 putPointCloud()给从成员`driver_ptr_`得到填充好的点云。
 + 将得到的点云推送到成员`point_cloud_queue_`，等待处理。
 
-### 7.4 SourceDriver::processPointCloud()
+#### 2.6.4 SourceDriver::processPointCloud()
 
 processPointCloud()处理点云。在while循环中，
 + 从待处理点云的队列`point_cloud_queue_`，得到点云，
 + 调用sendPointCloud()，其中调用成员`pc_cb_vec_[]`中的DestinationPointCloud实例，发送点云。
 + 回收点云，放入空闲点云的队列`free_cloud_queue_`，待下次使用。
 
-### 7.5 SourceDriver::regPacketCallback()
+#### 2.6.5 SourceDriver::regPacketCallback()
 
 regPacketCallback()用来注册DestinationPacket。
 + 调用Source::regPacketCallback()，将DestinationPacket实例，加入成员`pkt_cb_vec_[]`。
 + 如果这是首次要求Packet(`pkt_cb_vec_[]`的第1个实例)，调用LidarDriver::regPacketCallback()，向`driver_ptr_`注册Packet回调函数，开始接收Packet。回调函数是putPacket()。
   
-### 7.6 SourceDriver::putPacket()
+#### 2.6.6 SourceDriver::putPacket()
 
 putPacket()调用sendPacket()，其中调用成员`pkt_cb_vec_[]`中的所有实例，发送MSOP/DIFOP Packet。
 
-## 8 SourcePacketRos
+### 2.7 SourcePacketRos
 
 SourcePacketRos在ROS主题`/rslidar_packets`得到MSOP/DIFOP Packet，解析后得到点云。
 + SourcePacketRos从SourceDriver派生，而不是直接从Source派生，是因为它用SourceDriver解析Packet得到点云。
@@ -154,7 +156,7 @@ SourcePacketRos在ROS主题`/rslidar_packets`得到MSOP/DIFOP Packet，解析后
 
 ![source](./img/class_source_packet_ros.png)
 
-### 8.1 SourcePacketRos::init()
+#### 2.7.1 SourcePacketRos::init()
 
 init()初始化SourcePacketRos实例。
 + 调用SourceDriver::init()初始化成员`driver_ptr_`。
@@ -163,20 +165,20 @@ init()初始化SourcePacketRos实例。
   + 得到接收Packet的主题，默认值为`/rslidar_packets`。
 + 创建Packet主题的订阅器，也就是成员`pkt_sub_`，接收函数是putPacket()。
 
-### 8.2 SourcePacketRos::putPacket()
+#### 2.7.2 SourcePacketRos::putPacket()
 
 putPacket()接收Packet，送到`driver_ptr_`解析。
 + 调用LidarDriver::decodePacket()，将Packet喂给`driver_ptr_`。
 + 点云的接收，使用SourceDriver的已有实现。
 
-## 9 NodeManager
+## 3 NodeManager
 
 NodeManager管理Source实例，包括创建、初始化、启动、停止Source。它支持多个源，但是这些源的类型必须相同。
 + 成员`sources_[]`是一个Source实例的数组。
 
 ![node_manager](./img/class_node_manager.png)
 
-### 9.1 NodeManager::init()
+### 3.1 NodeManager::init()
 
 init()初始化NodeManger实例。
 + 从config.yaml文件得到用户配置参数
@@ -193,7 +195,7 @@ init()初始化NodeManger实例。
   + 如果在ROS主题发送Packet(`send_packet_ros` = `true`)，则创建DestinationPacketRos实例、初始化，调用Source::regPacketCallback()将它加入Source的`pkt_cb_vec_[]`。
   + 将Source实例，加入成员`sources_[]`。
   
-### 9.2 NodeManager::start()
+### 3.2 NodeManager::start()
 
 start()启动成员`sources_[]`中的所有实例。
 
