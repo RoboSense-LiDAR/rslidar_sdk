@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v1.5.7 - 2022-10-09
+
+### Added
+- Seperate RSBPV4 from RSBP
+- Support to receive MSOP/DIFOP packet from rosbag v1.3.x
+- Support option ros_send_by_rows
+
 ## v1.5.6 - 2022-09-01
 
 ### Added
