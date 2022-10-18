@@ -5,7 +5,7 @@ project(rslidar_sdk)
 #=======================================
 # Compile setup (ORIGINAL, CATKIN, COLCON)
 #=======================================
-set(COMPILE_METHOD CATKIN)
+set(COMPILE_METHOD COLCON)
 
 #=======================================
 # Custom Point Type (XYZI, XYZIRT)
@@ -19,7 +19,7 @@ set(PROJECT_NAME rslidar_sdk)
 add_definitions(-DPROJECT_PATH="${PROJECT_SOURCE_DIR}")
 set(CMAKE_BUILD_TYPE RELEASE)
 add_definitions(-O3)
-add_definitions(-std=c++14)
+add_definitions(-std=c++17)
 add_compile_options(-Wall)
 
 #========================
@@ -46,7 +46,7 @@ else(roscpp_FOUND)
 endif(roscpp_FOUND)
 
 #ROS2#
-find_package(rclcpp QUIET)
+find_package(rclcpp REQUIRED)
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   message(=============================================================)
   message("-- ROS2 Found, Ros2 Support is turned On!")
@@ -54,15 +54,20 @@ if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/package_ros2.xml ${CMAKE_CURRENT_SOURCE_DIR}/package.xml COPYONLY)
   add_definitions(-DROS2_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/package_ros2.xml ${CMAKE_CURRENT_SOURCE_DIR}/package.xml COPYONLY)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 
   find_package(ament_cmake REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(sensor_msgs REQUIRED)
   find_package(rslidar_msg REQUIRED)
   find_package(pcl_conversions REQUIRED)
+  find_package(pcl_ros REQUIRED)
+  find_package(Boost COMPONENTS system date_time regex REQUIRED)
   include_directories(${rclcpp_INCLUDE_DIRS})
 
+  include_directories(${Boost_INCLUDE_DIRS})
+  include_directories(${PCL_INCLUDE_DIRS})
+  
 else(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   message(=============================================================)
   message("-- ROS2 Not Found, Ros2 Support is turned Off!")
@@ -195,6 +200,13 @@ endif(roscpp_FOUND)
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
   ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)
+  ament_target_dependencies(rslidar_sdk_node 
+			                      rclcpp 
+                            sensor_msgs 
+                            std_msgs 
+                            rslidar_msg 
+                            pcl_ros
+                            pcl_conversions)
   install(TARGETS
     rslidar_sdk_node
     DESTINATION lib/${PROJECT_NAME}
