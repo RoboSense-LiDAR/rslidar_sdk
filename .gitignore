@@ -13,3 +13,7 @@ version.h
 *.pb.cc
 *.pb.h
 package.xml
+
+install/
+
+log/
