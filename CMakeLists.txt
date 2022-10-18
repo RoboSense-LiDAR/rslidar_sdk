@@ -26,7 +26,7 @@ add_compile_options(-Wall)
 # Dependencies Setup
 #========================
 #ROS#
-find_package(roscpp 1.12 QUIET)
+# find_package(roscpp 1.12 QUIET)
 if(roscpp_FOUND)
   message(=============================================================)
   message("-- ROS Found, Ros Support is turned On!")
