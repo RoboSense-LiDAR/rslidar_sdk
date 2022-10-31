@@ -77,6 +77,7 @@ To use rslidar_sdk in the ROS2 environment, please install below libraries.
 + Ubuntu 16.04 - Not supported
 + Ubuntu 18.04 - ROS2 Eloquent desktop
 + Ubuntu 20.04 - ROS2 Galactic desktop
++ Ubuntu 22.04 - ROS2 Humble desktop
 
 For installation, please refer to https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/
 
@@ -163,6 +164,12 @@ roslaunch rslidar_sdk start.launch
 # Compile setup (ORIGINAL,CATKIN,COLCON)
 #=======================================
 set(COMPILE_METHOD COLCON)
+```
+
+If compile on The ROS2 Humble, set **-std** to **c++17** in *CMakeLists.txt*. This is because the Humble depends on C++17.
+
+```cmake
+add_definitions(-std=c++17)
 ```
 
 (2) Copy the file *package_ros2.xml* to *package.xml* in the rslidar_sdk. 
