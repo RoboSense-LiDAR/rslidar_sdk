@@ -1,24 +1,24 @@
-# How to use coordinate transformation
+# 如何使用坐标变换功能
 
-## 1 Introduction
+## 1 简介
 
-rslidar_sdk can transform the coordinate of point cloud. This document illustrate how to do so.
+rslidar_sdk支持对点云进行坐标变换，本文档展示如何作这种变换。 
 
-Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
+在阅读本文档之前，请确保已阅读雷达用户手册和[隐藏参数介绍](../intro/hiding_parameters_intro_CN.md)。
 
-## 2 Dependencies
+## 2 依赖库
 
-rslidar_sdk depends on the libeigen library to do coordinate transformation. Please install it first.
+rslidar_sdk的坐标变换基于libeigen库，所以要先安装它。
 
 ```bash
 sudo apt-get install libeigen3-dev
 ```
 
-## 3 Compile
+## 3 编译
 
-To enable transformation, set the CMake option ```ENABLE_TRANSFORM```to be ```ON```.
+要启用坐标变换，编译rslidar_sdk时，需要将```ENABLE_TRANSFORM```选项设置为```ON```.
 
-- Compile directly
+- 直接编译
 
   ```bash
   cmake -DENABLE_TRANSFORM=ON ..
@@ -36,9 +36,9 @@ To enable transformation, set the CMake option ```ENABLE_TRANSFORM```to be ```ON
   colcon build --cmake-args '-DENABLE_TRANSFORM=ON'
   ```
 
-## 4 Set LiDAR parameters
+## 4 设置雷达参数
 
-In the `lidar-driver` part of `config.yaml`, set the hiding parameter`x`, `y`, `z`, `roll`, `pitch` ,`yaw`. 
+在`config.yaml`中，设置`lidar-lidar`部分的参数`x`、, `y`、 `z`、 `roll`、 `pitch` 、`yaw`。
 
 ```yaml
 common:
@@ -66,6 +66,6 @@ lidar:
       yaw: 1.57
 ```
 
-## 5 Run
+## 5 运行
 
-Run the program.
+运行程序。

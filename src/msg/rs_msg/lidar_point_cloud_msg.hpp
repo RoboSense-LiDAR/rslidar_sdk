@@ -32,55 +32,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include <yaml-cpp/yaml.h>
+#include "rs_driver/msg/point_cloud_msg.hpp"
 
-#include "utility/common.hpp"
+#ifdef POINT_TYPE_XYZIRT
+typedef PointCloudT<PointXYZIRT> LidarPointCloudMsg;
+#else
+typedef PointCloudT<PointXYZI> LidarPointCloudMsg;
+#endif
 
-namespace robosense
-{
-namespace lidar
-{
-
-template <typename T>
-inline void yamlReadAbort(const YAML::Node& yaml, const std::string& key, T& out_val)
-{
-  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
-  {
-    RS_ERROR << " : Not set " << key;
-    RS_ERROR << " value, Aborting!!!" << RS_REND;
-    exit(-1);
-  }
-  else
-  {
-    out_val = yaml[key].as<T>();
-  }
-}
-
-template <typename T>
-inline bool yamlRead(const YAML::Node& yaml, const std::string& key, T& out_val, const T& default_val)
-{
-  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
-  {
-    out_val = default_val;
-    return false;
-  }
-  else
-  {
-    out_val = yaml[key].as<T>();
-    return true;
-  }
-}
-
-inline YAML::Node yamlSubNodeAbort(const YAML::Node& yaml, const std::string& node)
-{
-  YAML::Node ret = yaml[node.c_str()];
-  if (!ret)
-  {
-    RS_ERROR << " : Cannot find subnode " << node << ". Aborting!!!" << RS_REND;
-    exit(-1);
-  }
-  return ret;
-}
-
-}  // namespace lidar
-}  // namespace robosense
