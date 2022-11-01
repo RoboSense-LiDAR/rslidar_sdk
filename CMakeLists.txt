@@ -194,7 +194,7 @@ endif(roscpp_FOUND)
 
 #Ros2#
 if(rclcpp_FOUND AND ${COMPILE_METHOD} STREQUAL "COLCON")
-  ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg)
+  ament_target_dependencies(rslidar_sdk_node rclcpp sensor_msgs std_msgs rslidar_msg pcl_conversions)
   install(TARGETS
     rslidar_sdk_node
     DESTINATION lib/${PROJECT_NAME}
