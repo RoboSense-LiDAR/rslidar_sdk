@@ -57,7 +57,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
   add_definitions(-O3)
 endif()
 
-add_definitions(-std=c++14)
+add_definitions(-std=c++17)
 add_compile_options(-Wall)
 
 #========================

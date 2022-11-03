@@ -1,5 +1,5 @@
 common:
-  msg_source: 3                                         #0: not use Lidar
+  msg_source: 1                                         #0: not use Lidar
                                                         #1: packet message comes from online Lidar
                                                         #2: packet message comes from ROS or ROS2
                                                         #3: packet message comes from Pcap file
