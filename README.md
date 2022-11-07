@@ -168,12 +168,6 @@ roslaunch rslidar_sdk start.launch
 set(COMPILE_METHOD COLCON)
 ```
 
-If compile on The ROS2 Humble, set **-std** to **c++17** in *CMakeLists.txt*. This is because the Humble depends on C++17.
-
-```cmake
-add_definitions(-std=c++17)
-```
-
 (2) Copy the file *package_ros2.xml* to *package.xml* in the rslidar_sdk. 
 
 (3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project in the *src* folder.
