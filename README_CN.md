@@ -165,12 +165,6 @@ roslaunch rslidar_sdk start.launch
 set(COMPILE_METHOD COLCON)
 ```
 
-如果是在ROS2 Humble编译，需要修改*CMakeLists.txt*中的如下行，将**-std**改为**c++17**。这是因为Humble的依赖库本身是基于C++17的。
-
-```cmake
-add_definitions(-std=c++17)
-```
-
 (2) 将rslidar_sdk工程目录下的*package_ros2.xml*文件重命名为*package.xml*。
 
 (3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
