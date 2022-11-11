@@ -29,7 +29,7 @@ To integrate the Lidar driver into your own projects, please use the rs_driver.
 - RS-Ruby-Plus-48
 - RS-LiDAR-M1
 - RS-LiDAR-M2
-- RS-LiDAR-EOS
+- RS-LiDAR-E1
 
 ### 1.2 Point Type Supported
 
