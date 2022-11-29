@@ -54,6 +54,17 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
   ros_msg.fields.clear();
   ros_msg.fields.reserve(fields);
 
+  if (send_by_rows)
+  {
+    ros_msg.width = rs_msg.width; 
+    ros_msg.height = rs_msg.height; 
+  }
+  else
+  {
+    ros_msg.width = rs_msg.height; // exchange width and height to be compatible with pcl::PointCloud<>
+    ros_msg.height = rs_msg.width; 
+  }
+
   int offset = 0;
   offset = addPointField(ros_msg, "x", 1, sensor_msgs::PointField::FLOAT32, offset);
   offset = addPointField(ros_msg, "y", 1, sensor_msgs::PointField::FLOAT32, offset);
@@ -69,11 +80,8 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
 #endif
 
   ros_msg.point_step = offset;
-  ros_msg.width = rs_msg.height;
-  ros_msg.height = rs_msg.width;
   ros_msg.row_step = ros_msg.width * ros_msg.point_step;
   ros_msg.is_dense = rs_msg.is_dense;
-
   ros_msg.data.resize(ros_msg.point_step * ros_msg.width * ros_msg.height);
 
   sensor_msgs::PointCloud2Iterator<float> iter_x_(ros_msg, "x");
@@ -213,6 +221,17 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, 
   ros_msg.fields.clear();
   ros_msg.fields.reserve(fields);
 
+  if (send_by_rows)
+  {
+    ros_msg.width = rs_msg.width; 
+    ros_msg.height = rs_msg.height; 
+  }
+  else
+  {
+    ros_msg.width = rs_msg.height; // exchange width and height to be compatible with pcl::PointCloud<>
+    ros_msg.height = rs_msg.width; 
+  }
+
   int offset = 0;
   offset = addPointField(ros_msg, "x", 1, sensor_msgs::msg::PointField::FLOAT32, offset);
   offset = addPointField(ros_msg, "y", 1, sensor_msgs::msg::PointField::FLOAT32, offset);
@@ -228,11 +247,8 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, 
 #endif
 
   ros_msg.point_step = offset;
-  ros_msg.width = rs_msg.height;
-  ros_msg.height = rs_msg.width;
   ros_msg.row_step = ros_msg.width * ros_msg.point_step;
   ros_msg.is_dense = rs_msg.is_dense;
-
   ros_msg.data.resize(ros_msg.point_step * ros_msg.width * ros_msg.height);
 
   sensor_msgs::PointCloud2Iterator<float> iter_x_(ros_msg, "x");
@@ -243,7 +259,6 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, 
   sensor_msgs::PointCloud2Iterator<uint16_t> iter_ring_(ros_msg, "ring");
   sensor_msgs::PointCloud2Iterator<double> iter_timestamp_(ros_msg, "timestamp");
 #endif
-
 
   if (send_by_rows)
   {
