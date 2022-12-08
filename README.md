@@ -1,6 +1,8 @@
-# **rslidar_sdk**
+# 1 **rslidar_sdk**
 
  [中文介绍](README_CN.md) 
+
+
 
 ## 1 Introduction
 
@@ -36,6 +38,8 @@ To integrate the Lidar driver into your own projects, please use the rs_driver.
 - XYZI - x, y, z, intensity
 - XYZIRT - x, y, z, intensity, ring, timestamp
 
+
+
 ## 2 Download
 
 ### 2.1 Download via Git 
@@ -55,8 +59,9 @@ git submodule update
 Instead of using Git, user can also access [rslidar_sdk_release](https://github.com/RoboSense-LiDAR/rslidar_sdk/releases) to download the latest version of rslidar_sdk. 
 
 Please download the **rslidar_sdk.tar.gz** archive instead of Source code. The Source code zip file does not contain the submodule rs_driver, so it has to be downloaded manaully.
+![](./img/01_01_download_page.png)
 
-![](./img/download_page.png)
+
 
 ## 3 Dependencies
 
@@ -107,6 +112,8 @@ Installation:
 ```sh
 sudo apt-get install -y  libpcap-dev
 ```
+
+
 
 ## 4 Compile & Run
 
@@ -184,33 +191,39 @@ ros2 launch rslidar_sdk start.py
 
 Another version of start.py may be used, since it is different on different versios of ROS2. For example, elequent_start.py is used instead for ROS2 elequent.
 
+
+
 ## 5 Introduction to parameters
 
 To change behaviors of rslidar_sdk, change its parameters. please read the following links for detail information.
 
-[Intro to parameters](doc/intro/parameter_intro.md)
+[Intro to parameters](doc/intro/02_parameter_intro.md)
 
-[Intro to hidden parameters](doc/intro/hiding_parameters_intro.md)
+[Intro to hidden parameters](doc/intro/03_hiding_parameters_intro.md)
+
+
 
 ## 6 Quick start
 
 Below are some quick guides to use rslidar_sdk. 
 
-[Connect to online LiDAR and send point cloud through ROS](doc/howto/how_to_decode_online_lidar.md)
+[Connect to online LiDAR and send point cloud through ROS](doc/howto/06_how_to_decode_online_lidar.md)
 
-[Decode PCAP file and send point cloud through ROS](doc/howto/how_to_decode_pcap_file.md)
+[Decode PCAP file and send point cloud through ROS](doc/howto/08_how_to_decode_pcap_file.md)
 
-[Change Point Type](doc/howto/how_to_change_point_type.md) 
+[Change Point Type](doc/howto/05_how_to_change_point_type.md) 
+
+
 
 ## 7 Advanced Topics
 
-[Online Lidar - advanced topics](doc/howto/online_lidar_advanced_topics.md) 
+[Online Lidar - Advanced topics](doc/howto/07_online_lidar_advanced_topics.md) 
 
-[PCAP file - advanced topics](doc/howto/pcap_file_advanced_topics.md) 
+[PCAP file - Advanced topics](doc/howto/09_pcap_file_advanced_topics.md) 
 
-[Coordinate Transformation](doc/howto/how_to_use_coordinate_transformation.md) 
+[Coordinate Transformation](doc/howto/10_how_to_use_coordinate_transformation.md) 
 
-[Record rosbag & Replay it](doc/howto/how_to_record_replay_packet_rosbag.md)
+[Record rosbag & Replay it](doc/howto/11_how_to_record_replay_packet_rosbag.md)
 
-## 
+
 

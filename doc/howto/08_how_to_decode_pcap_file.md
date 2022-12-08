@@ -1,22 +1,26 @@
-# How to decode PCAP file
+# 8 How to decode PCAP file
 
-## 1 Introduction
+
+
+## 8.1 Introduction
 
 This document illustrates how to decode PCAP file, and send point cloud to ROS. 
 
-Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
+Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/02_parameter_intro.md) before reading this document.
 
-## 2 Steps
 
-### 2.1 Get the LiDAR port number
+
+## 8.2 Steps
+
+### 8.2.1 Get the LiDAR port number
 
 Please check the LiDAR user-guide, or use the 3rd-party tool(such as WireShark), to get your LiDAR's MSOP port number and DIFOP port number. The default values are ```msop-6699, difop-7788```. 
 
-### 2.2 Set up the configuration file
+### 8.2.2 Set up the configuration file
 
 Set up the configuration file `config.yaml`.
 
-#### 2.2.1 common part
+#### 8.2.2.1 common part
 
 ```yaml
 common:
@@ -31,7 +35,7 @@ The messages come from the PCAP bag, so set ```msg_source = 3```.
 
 Send point cloud to ROS, so set ```send_point_cloud_ros = true```. 
 
-#### 2.2.2 lidar-driver part
+#### 8.2.2.2 lidar-driver part
 
 ```yaml
 lidar:
@@ -53,7 +57,7 @@ Set the ```lidar_type```  to your LiDAR type.
 
 Set the ```msop_port``` and ```difop_port```  to the port numbers of your LiDAR. 
 
-#### 2.2.3 lidar-ros part
+#### 8.2.2.3 lidar-ros part
 
 ```yaml
 ros:
@@ -65,7 +69,7 @@ ros:
 
 Set the ```ros_send_point_cloud_topic```  to the topic you want to send to.
 
-### 2.3 Run
+### 8.2.3 Run
 
 Run the program. 
 

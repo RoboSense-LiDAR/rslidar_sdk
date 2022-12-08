@@ -1,12 +1,16 @@
-# How to use coordinate transformation
+# 10 How to use coordinate transformation
 
-## 1 Introduction
+
+
+## 10.1 Introduction
 
 rslidar_sdk can transform the coordinate of point cloud. This document illustrate how to do so.
 
-Please check the  [Intro to hiding parameters](../intro/hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
+Please check the  [Intro to hiding parameters](../intro/03_hiding_parameters_intro.md) for more details. Here is an example of the config.yaml.
 
-## 2 Dependencies
+
+
+## 10.2 Dependencies
 
 rslidar_sdk depends on the libeigen library to do coordinate transformation. Please install it first.
 
@@ -14,7 +18,9 @@ rslidar_sdk depends on the libeigen library to do coordinate transformation. Ple
 sudo apt-get install libeigen3-dev
 ```
 
-## 3 Compile
+
+
+## 10.3 Compile
 
 To enable transformation, set the CMake option ```ENABLE_TRANSFORM```to be ```ON```.
 
@@ -36,7 +42,9 @@ To enable transformation, set the CMake option ```ENABLE_TRANSFORM```to be ```ON
   colcon build --cmake-args '-DENABLE_TRANSFORM=ON'
   ```
 
-## 4 Set LiDAR parameters
+
+
+## 10.4 Set LiDAR parameters
 
 In the `lidar-driver` part of `config.yaml`, set the hiding parameter`x`, `y`, `z`, `roll`, `pitch` ,`yaw`. 
 
@@ -66,6 +74,8 @@ lidar:
       yaw: 1.57
 ```
 
-## 5 Run
+
+
+## 10.5 Run
 
 Run the program.

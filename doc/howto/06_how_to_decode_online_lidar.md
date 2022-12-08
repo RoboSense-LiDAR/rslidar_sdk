@@ -1,22 +1,24 @@
-# How to decode on-line LiDAR
+# 6 How to decode on-line LiDAR
 
-## 1 Introduction
+## 6.1 Introduction
 
 This document illustrates how to connect to an on-line LiDAR, and send point cloud to ROS. 
 
-Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/parameter_intro.md) before reading this document.
+Please make sure you have read the LiDAR user-guide and [Intro to parameters](../intro/02_parameter_intro.md) before reading this document.
 
-## 2 Steps
 
-### 2.1 Get the LiDAR port number
+
+## 6.2 Steps
+
+### 6.2.1 Get the LiDAR port number
 
 Please follow the instructions in LiDAR user-guide, to connect the LiDAR, and set up your computer's ip address. 
 
 Please check the LiDAR user-guide, or use the 3rd-party tool(such as WireShark), to get your LiDAR's MSOP port number and DIFOP port number. The default values are ```msop-6699, difop-7788```. 
 
-### 2.2 Set up the configuration file
+### 6.2.2 Set up the configuration file
 
-#### 2.2.1 common part
+#### 6.2.2.1 common part
 
 ```yaml
 common:
@@ -31,7 +33,7 @@ The message come from the LiDAR, so set ```msg_source = 1```.
 
 Send point cloud to ROS, so set ```send_point_cloud_ros = true```.
 
-#### 2.2.2 lidar-driver part
+#### 6.2.2.2 lidar-driver part
 
 ```yaml
 lidar:
@@ -50,7 +52,7 @@ Set the ```lidar_type```  to your LiDAR type.
 
 Set the ```msop_port``` and ```difop_port```  to your LiDAR's port number. 
 
-#### 2.2.3 lidar-ros part
+#### 6.2.2.3 lidar-ros part
 
 ```yaml
 ros:
@@ -62,7 +64,7 @@ ros:
 
 Set the ```ros_send_point_cloud_topic```  to the topic you want to send to. 
 
-### 2.3 Run
+### 6.2.3 Run
 
 Run the program. 
 

@@ -1,4 +1,6 @@
-# rslidar_sdk v1.5.7 源代码解析
+# rslidar_sdk v1.5.8 源代码解析
+
+
 
 ## 1 简介
 
@@ -9,6 +11,8 @@ rslidar_sdk的基本功能如下：
 + 从在线雷达得到原始的MSOP/DIFOP Packet，通过ROS主题`/rslidar_packets`发布。使用者可以订阅这个主题，将Packet记录到rosbag文件。
 + 从ROS主题`/rslidar_packets`得到MSOP/DIFOP Packet，解析得到点云，再发布到主题`/rslidar_points`。
   + 这里的主题`/rslidar_packets`，由使用者通过回放Packet rosbag文件发布。
+
+
 
 ## 2 Source 与 Destination
 
@@ -170,6 +174,8 @@ init()初始化SourcePacketRos实例。
 putPacket()接收Packet，送到`driver_ptr_`解析。
 + 调用LidarDriver::decodePacket()，将Packet喂给`driver_ptr_`。
 + 点云的接收，使用SourceDriver的已有实现。
+
+
 
 ## 3 NodeManager
 

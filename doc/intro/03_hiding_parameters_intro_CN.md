@@ -1,10 +1,12 @@
-# 隐藏参数介绍
+# 3 隐藏参数介绍
 
 为了使配置文件config.yaml尽可能简洁，我们隐藏了部分不常用的参数，在代码中使用默认值。
 
 本文档将详细介绍这些隐藏参数。用户可根据需要，将它们加入参数文件，重新设置。
 
-## 1 common
+
+
+## 3.1 common
 
 ```yaml
 common:
@@ -13,7 +15,9 @@ common:
   send_point_cloud_ros: false                           
 ```
 
-## 2 lidar
+
+
+## 3.2 lidar
 
 ```yaml
 lidar:
@@ -60,7 +64,7 @@ lidar:
 - ```split_angle``` --  用于分帧的角度(单位为度)， 在```split_frame_mode = 1``` 时才生效，默认值为```0```。
 - ```num_blks_split``` -- 用于分帧的包数，在 ```split_frame_mode = 3```时才生效，默认值为1。
 - ```wait_for_difop``` -- 若设置为false， 驱动将不会等待DIFOP包（包含配置数据，尤其是角度信息），而是立即解析MSOP包并发出点云。 默认值为```true```，也就是必须要有DIFOP包才会进行点云解析。
-- ```group_address``` -- 如果雷达为组播模式，此参数需要被设置为组播的地址。具体使用方式可以参考[在线雷达 - 高级主题](../howto/online_lidar_advanced_topics_CN.md) 。
+- ```group_address``` -- 如果雷达为组播模式，此参数需要被设置为组播的地址。具体使用方式可以参考[在线雷达 - 高级主题](../howto/07_online_lidar_advanced_topics_CN.md) 。
 - ```host_address``` -- 有两种情况需要这个选项。如果主机上通过多个IP地址接收多个雷达的数据，则可以将此参数指定为雷达的目标IP；如果设置了group_address，那也需要设置host_address，以便将这个IP地址的网卡加入组播组。
-- ```x, y, z, roll, pitch, yaw ``` -- 坐标变换参数，若启用了内核的坐标变换功能，将会使用此参数输出经过变换后的点云。x, y, z, 单位为```米```, roll, pitch, yaw, 单位为```弧度```。具体使用方式可以参考 [坐标变换功能](../howto/how_to_use_coordinate_transformation_CN.md) 。
+- ```x, y, z, roll, pitch, yaw ``` -- 坐标变换参数，若启用了内核的坐标变换功能，将会使用此参数输出经过变换后的点云。x, y, z, 单位为```米```, roll, pitch, yaw, 单位为```弧度```。具体使用方式可以参考 [坐标变换功能](../howto/10_how_to_use_coordinate_transformation_CN.md) 。
 - ```use_vlan``` -- 默认为false，指定是否使用vlan。如果pcap文件中的packet带vlan层，则需要设置这个选项为true。其他情况下不需要。在线雷达的情况下，协议层到达驱动时，已经剥离vlan层，所以不需要设置这个选项。

@@ -1,6 +1,8 @@
-# How to change point type
+# 5 How to change point type
 
-## 1 Introduction
+
+
+## 5.1 Introduction
 
 This document illustrates how to change the point type. 
 
@@ -13,7 +15,9 @@ In ```CMakeLists.txt``` of the project, change the variable `POINT_TYPE`. Rememb
 set(POINT_TYPE XYZI)
 ```
 
-## 2 XYZI
+
+
+## 5.2 XYZI
 
 If `POINT_TYPE` is `XYZI`, rslidar_sdk uses the RoboSense defined type as below. 
 
@@ -45,7 +49,9 @@ rslidar_sdk transforms point cloud of `PointXYZI` to ROS message of `PointCloud2
 
 Here `intensity` of `PointCloud2` is `float` type, not `uint8_t`. This is because most ROS based applications require `intensity` of `float` type.  
 
-## 3 XYZIRT
+
+
+## 5.3 XYZIRT
 
 If `POINT_TYPE` is `XYZIRT`, rslidar_sdk uses the RoboSense defined type as below.
 

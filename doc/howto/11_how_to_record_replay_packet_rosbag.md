@@ -1,16 +1,20 @@
-# How to record and replay Packet rosbag
+# 11 How to record and replay Packet rosbag
 
-## 1 Introduction
+
+
+## 11.1 Introduction
 
 This document illustrates how to record and replay MSOP/DIFOP Packet rosbag. 
 
 It is possible to record the point cloud message into a rosbag and replay it, but the point cloud rosbag is very large. rslidar_sdk provides a better way -  record packet rosbag and replay it. 
 
-Please be sure you have read the LiDAR user-guide and [Connect to online LiDAR and send point cloud through ROS](how_to_decode_online_lidar.md).
+Please be sure you have read the LiDAR user-guide and [Connect to online LiDAR and send point cloud through ROS](./06_how_to_decode_online_lidar.md).
 
-## 2 Record
 
-### 2.1 Send packet to ROS
+
+## 11.2 Record
+
+### 11.2.1 Send packet to ROS
 
 Here suppose that you have connected to an on-line LiDAR, and have sent the point cloud to ROS.
 
@@ -26,7 +30,7 @@ common:
 
 To record packets, set ```send_packet_ros = true```. 
 
-### 2.2 Record the topic of packet
+### 11.2.2 Record the topic of packet
 
 To change the topic of packet, change ```ros_send_packet_topic```. This topic sends out both MSOP and DIFOP packets. 
 
@@ -44,11 +48,13 @@ Record rosbag as below.
 rosbag record /rslidar_packets -O bag
 ```
 
-## 3 Replay
+
+
+## 11.3 Replay
 
 Suppose you have recorded a rosbag, which contains MSOP/DIFOP packets with the topic ```/rslidar_packets```. 
 
-### 3.1 Set Packet Source
+### 11.3.1 Set Packet Source
 
 In `config.yaml`, set the `common` part.
 
@@ -65,7 +71,7 @@ Packet is from the ROS, so set ```msg_source = 2```.
 
 To send point cloud to ROS, set ```send_point_cloud_ros = true```.
 
-### 3.2 Set parameters of Lidar
+### 11.3.2 Set parameters of Lidar
 
 In `config.yaml`, set the `lidar-driver` part.
 
@@ -84,7 +90,7 @@ lidar:
 
 Set the ```lidar_type```  to your LiDAR type.
 
-### 3.3 Set Topic of packet.
+### 11.3.3 Set Topic of packet.
 
 In `config.yaml`, set the `lidar-ros` part.
 
@@ -98,7 +104,7 @@ ros:
 
 To receive MSOP/DIFOP packest, set ```ros_recv_packet_topic```  to the topic in the rosbag.
 
-### 3.4 Run
+### 11.3.4 Run
 
 Run the demo, and replay rosbag.
 

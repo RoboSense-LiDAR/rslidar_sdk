@@ -1,10 +1,12 @@
-# Introduction to hidden parameters
+# 3 Introduction to hidden parameters
 
 In order to make the configuration file as simple as possible, we hide some parameters and use default values for them. 
 
 This document explains the meanings of these hidden parameters. 
 
-## 1 common
+
+
+## 3.1 common
 
 ```yaml
 common:
@@ -15,7 +17,9 @@ common:
   send_point_cloud_proto: false                         
 ```
 
-## 2 lidar
+
+
+## 3.2 lidar
 
 ```yaml
 lidar:
@@ -63,8 +67,8 @@ lidar:
 - ```split_angle``` --  The angle(in degree) to split frames. Only be used when ```split_frame_mode = 1```. The default value is ```0```.
 - ```num_blks_split``` -- The number of blocks in one frame. Only be used when ```split_frame_mode = 3```.
 - ```wait_for_difop``` -- If ```false```, the driver will not wait for difop packet(including lidar configuration data, especially angle data to calculate x, y, z), and send out the point cloud immediately. The default value is ```true```.
-- ```group_address``` -- If use multi-cast function, this parameter needs to be set correctly. For more details, please refer to  [Online LiDAR - Advanced Topics](../howto/online_lidar_advanced_topics.md) 
+- ```group_address``` -- If use multi-cast function, this parameter needs to be set correctly. For more details, please refer to  [Online LiDAR - Advanced Topics](../howto/07_online_lidar_advanced_topics.md) 
 - ```host_address``` -- Needed in two conditions. If the host receives packets from multiple Lidars via different IP addresses, use this parameter to specify destination IPs of the Lidars; If group_address is set, it should be set, so it will be joined into the multicast group.
-- ```x, y, z, roll, pitch, yaw ``` -- The parameters to do coordinate transformation. If the coordinate transformation function is enabled in driver core,  the output point cloud will be transformed based on these parameters. For more details, please refer to [Coordinate Transformation](../howto/how_to_use_coordinate_transformation.md) 
+- ```x, y, z, roll, pitch, yaw ``` -- The parameters to do coordinate transformation. If the coordinate transformation function is enabled in driver core,  the output point cloud will be transformed based on these parameters. For more details, please refer to [Coordinate Transformation](../howto/10_how_to_use_coordinate_transformation.md) 
 - ```use_vlan``` -- Whether to use VLAN. The default value is ```false```. This parameter is only needed for pcap file. If it contains packets with VLAN layer, ```use_vlan``` should set to true. In the case of online Lidar, the VLAN layer is stripped by the protocol layer, so use_vlan can be ignored. 
 

@@ -1,6 +1,8 @@
-# 如何改变点类型的定义
+# 5 如何改变点类型的定义
 
-## 1 简介
+
+
+## 5.1 简介
 
 本文档介绍如何改变点类型的定义。
 
@@ -13,7 +15,9 @@
 set(POINT_TYPE XYZI)
 ```
 
-## 2 XYZI
+
+
+## 5.2 XYZI
 
 `POINT_TYPE`为`XYZI`时，rslidar_sdk使用RoboSense自定义的点类型```PointXYZI```. 
 
@@ -44,7 +48,9 @@ rslidar_sdk将基于`PointXYZI`的点云，转换为ROS的`PointCloud2`消息，
 
 这里`PointCloud2`中的`intensity`是`float`类型，而不是`uint8_t`类型。这是因为大多数基于ROS的程序都希望`float`类型的`intensity`。
 
-## 3 XYZIRT
+
+
+## 5.3 XYZIRT
 
 `POINT_TYPE`为`XYZIRT`时，rslidar_sdk使用RoboSense自定义的点类型```PointXYZRT```。
 

@@ -1,6 +1,8 @@
-# 如何与rslidar_sdk_node v1.3.x共存？
+# 4 如何与rslidar_sdk_node v1.3.x共存？
 
-## 1 问题描述
+
+
+## 4.1 问题描述
 
 `rslidar_sdk_node` `v1.3.x`和`v1.5.x`的配置方式不同。除了如下两个可能有交互的场景外， 两者各自运行，没有关系。
 
@@ -14,18 +16,20 @@
 
 本文说明如何配置`rslidar_sdk` `v1.5.x`，让它在第二种场景下可以同时播放`v1.3.x`和`v1.5.x`的packet rosbag。
 
-## 2 场景说明
+
+
+## 4.2 场景说明
 
 场景说明如下。
 + 2个雷达，`Lidar1`是运行`v1.3.x`的雷达，`Lidar2`是运行`v1.5.x`的雷达。
 + 1台主机，用于分析`Lidar1`和`Lidar2`的数据。
 
-![](./img/20_packet_rosbag.png)
+![](./img/04_01_packet_rosbag.png)
 
-## 3 步骤
+## 4.3 步骤
 
 
-### 3.1 配置 v1.3.x 雷达
+### 4.3.1 配置 v1.3.x 雷达
 
 使用`v1.3.x` `rslidar_sdk_node`录制pacekt rosbag。
 
@@ -51,7 +55,7 @@ lidar:
       ros_send_point_cloud_topic: /rslidar_points       #Topic used to send point cloud through ROS
 ```
 
-### 3.2 配置 v1.5.x 雷达
+### 4.3.2 配置 v1.5.x 雷达
 
 使用`v1.5.6` `rslidar_sdk_node`录制packet rosbag。
 
@@ -76,7 +80,7 @@ lidar:
 ```
 
 
-### 3.3 配置 v1.5.x 主机
+### 4.3.3 配置 v1.5.x 主机
 
 + 打开CMake编译选项`ENABLE_SOURCE_PACKET_LEGACY=ON`，编译`rslidar_sdk`。
 
