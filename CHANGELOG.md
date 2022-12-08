@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## v1.5.8 - 2022-12-09
+
+### Added
+- Support ROS2/Humble Hawksbill
+- rename RSEOS as RSE1
+
+### Fixed
+- Fix wrong widthxheight while ros_send_by_rows=true
+
+
 ## v1.5.7 - 2022-10-09
 
 ### Added
