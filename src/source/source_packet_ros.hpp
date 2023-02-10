@@ -201,7 +201,7 @@ inline void DestinationPacketRos::init(const YAML::Node& config)
       ros_send_topic, "rslidar_packets");
 
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
-  pkt_pub_ = nh_->advertise<rslidar_msg::RslidarPacket>(ros_send_topic, 10);
+  pkt_pub_ = nh_->advertise<rslidar_msg::RslidarPacket>(ros_send_topic, 100);
 }
 
 inline void DestinationPacketRos::sendPacket(const Packet& msg)
@@ -274,7 +274,7 @@ void SourcePacketRos::init(const YAML::Node& config)
   node_name << "rslidar_packets_source_" << node_index++;
 
   node_ptr_.reset(new rclcpp::Node(node_name.str()));
-  pkt_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(ros_recv_topic, 10, 
+  pkt_sub_ = node_ptr_->create_subscription<rslidar_msg::msg::RslidarPacket>(ros_recv_topic, 100, 
       std::bind(&SourcePacketRos::putPacket, this, std::placeholders::_1));
 } 
 
@@ -330,7 +330,7 @@ inline void DestinationPacketRos::init(const YAML::Node& config)
   node_name << "rslidar_packets_destination_" << node_index++;
 
   node_ptr_.reset(new rclcpp::Node(node_name.str()));
-  pkt_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic, 10);
+  pkt_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic, 100);
 }
 
 inline void DestinationPacketRos::sendPacket(const Packet& msg)
