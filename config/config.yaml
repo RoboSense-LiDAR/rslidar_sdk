@@ -15,7 +15,7 @@ lidar:
       end_angle: 360               #End angle of point cloud 
       wait_for_difop: true
       min_distance: 0.2            #Minimum distance of point cloud
-      max_distance: 200            #Maximum distance of point cloud
+      max_distance: 25            #Maximum distance of point cloud
       use_lidar_clock: false       #True--Use the lidar clock as the message timestamp
                                    #False-- Use the system clock as the timestamp
       pcap_path: /mnt/shared/pcap/M1/m1_1990_1991.pcap #The path of pcap file
