@@ -1,6 +1,12 @@
 # CHANGELOG 
 ## Unreleased
 
+## v1.5.10 - 2023-02-17
+
+### Changed
+- Merge RSBPV4 into RSBP
+
+
 ## v1.5.9 - 2023-02-17
 
 ### Changed
