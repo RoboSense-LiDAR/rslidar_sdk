@@ -66,9 +66,8 @@ int main(int argc, char** argv)
 
   RS_TITLE << "********************************************************" << RS_REND;
   RS_TITLE << "**********                                    **********" << RS_REND;
-  RS_TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR 
-    << "." << RSLIDAR_VERSION_MINOR 
-    << "." << RSLIDAR_VERSION_PATCH << "     **********" << RS_REND;
+  RS_TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR << "." << RSLIDAR_VERSION_MINOR << "."
+           << RSLIDAR_VERSION_PATCH << "     **********" << RS_REND;
   RS_TITLE << "**********                                    **********" << RS_REND;
   RS_TITLE << "********************************************************" << RS_REND;
 
@@ -81,17 +80,23 @@ int main(int argc, char** argv)
   std::string config_path;
 
 #ifdef RUN_IN_ROS_WORKSPACE
-   config_path = ros::package::getPath("rslidar_sdk");
+  config_path = ros::package::getPath("rslidar_sdk");
 #else
-   config_path = (std::string)PROJECT_PATH;
+  config_path = (std::string)PROJECT_PATH;
 #endif
 
-   config_path += "/config/config.yaml";
+  config_path += "/config/config.yaml";
 
 #ifdef ROS_FOUND
   ros::NodeHandle priv_hh("~");
   std::string path;
   priv_hh.param("config_path", path, std::string(""));
+#elif ROS2_FOUND
+  std::shared_ptr<rclcpp::Node> nd = rclcpp::Node::make_shared("param_handle");
+  std::string path = nd->declare_parameter<std::string>("config_path", "");
+#endif
+
+#if defined(ROS_FOUND) || defined(ROS2_FOUND)
   if (!path.empty())
   {
     config_path = path;
@@ -102,11 +107,14 @@ int main(int argc, char** argv)
   try
   {
     config = YAML::LoadFile(config_path);
+    RS_INFO << "--------------------------------------------------------" << RS_REND;
+    RS_INFO << "Config loaded from PATH:" << RS_REND;
+    RS_INFO << config_path << RS_REND;
+    RS_INFO << "--------------------------------------------------------" << RS_REND;
   }
   catch (...)
   {
-    RS_ERROR << "The format of config file " << config_path 
-      << " is wrong. Please check (e.g. indentation)." << RS_REND;
+    RS_ERROR << "The format of config file " << config_path << " is wrong. Please check (e.g. indentation)." << RS_REND;
     return -1;
   }
 
