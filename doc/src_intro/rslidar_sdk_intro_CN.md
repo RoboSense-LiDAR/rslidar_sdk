@@ -16,7 +16,7 @@ rslidar_sdk的基本功能如下：
 
 ## 2 Source 与 Destination
 
-如前面所说，rslidar_sdk从在线雷达、PCAP文件、ROS主题这三种源得到MSOP/DIFOP Packet，将Packet发布到ROS主题/rslidar_packets`/rslidar_packets`，将点云发布到目标 - ROS主题`/rslidar_points`。
+如前面所说，rslidar_sdk从在线雷达、PCAP文件、ROS主题这三种源得到MSOP/DIFOP Packet，将Packet发布到ROS主题`/rslidar_packets`，将点云发布到目标 - ROS主题`/rslidar_points`。
 + Source定义源接口
 + DestinationPointCloud定义发送点云的目标接口。
 + DestinationPacket定义发送MSOP/DIFOP Packet的目标接口。
