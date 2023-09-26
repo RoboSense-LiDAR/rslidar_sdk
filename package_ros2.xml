@@ -14,6 +14,8 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <depend>rslidar_msg</depend>
+  <depend>yaml-cpp</depend>
+  <depend>libpcap</depend>
   <export>
      <build_type>ament_cmake</build_type>
   </export>
