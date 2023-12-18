@@ -90,7 +90,7 @@ inline void SourceDriver::init(const YAML::Node& config)
   yamlRead<bool>(driver_config, "pcap_repeat", driver_param.input_param.pcap_repeat, true);
   yamlRead<uint16_t>(driver_config, "user_layer_bytes", driver_param.input_param.user_layer_bytes, 0);
   yamlRead<uint16_t>(driver_config, "tail_layer_bytes", driver_param.input_param.tail_layer_bytes, 0);
-
+  yamlRead<uint32_t>(driver_config, "socket_recv_buf", driver_param.input_param.socket_recv_buf, 106496);
   // decoder related
   std::string lidar_type;
   yamlReadAbort<std::string>(driver_config, "lidar_type", lidar_type);
@@ -213,7 +213,6 @@ void SourceDriver::processPointCloud()
     {
       continue;
     }
-
     sendPointCloud(msg);
 
     free_point_cloud_queue_.push(msg);
