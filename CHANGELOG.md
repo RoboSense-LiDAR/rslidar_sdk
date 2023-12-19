@@ -1,6 +1,11 @@
 # CHANGELOG 
 ## Unreleased
 
+## v1.5.11 2023-12-18
+
+### Changed
+- Enable modify socket buffer size.
+
 ## v1.5.10 - 2023-02-17
 
 ### Changed
