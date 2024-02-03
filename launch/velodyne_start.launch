@@ -1,0 +1,9 @@
+<launch>
+  <node pkg="rslidar_sdk" name="rslidar_sdk_node" type="rslidar_sdk_node" output="screen">
+    <param name="config_path" value=""/>
+  </node>
+  <!-- rviz -->
+  <node pkg="rviz" name="rviz" type="rviz" args="-d $(find rslidar_sdk)/rviz/rviz.rviz" />
+  
+  <node pkg="rslidar_sdk" name="velodyne_transformer" type="velodyne_transformer.py" output="screen"/>
+</launch>
