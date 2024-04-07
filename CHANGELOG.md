@@ -1,12 +1,18 @@
 # CHANGELOG 
 ## Unreleased
 
+## Unreleased
+## v1.5.12 2023-12-28
+### Fixed
+- Fix bug in getting device info and status.
+- Fix bug in getting device temperature.
+
 ## v1.5.11 2023-12-18
 
 ### Changed
 - Enable modify socket buffer size.
 
-## v1.5.10 - 2023-02-17
+## v1.5.10 - 2023-04-11
 
 ### Changed
 - Merge RSBPV4 into RSBP
