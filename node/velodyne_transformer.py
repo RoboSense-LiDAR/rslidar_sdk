@@ -9,31 +9,41 @@ import math
 
 def handle_callback(pCloud: PointCloud2):
     raw_data = ros_numpy.point_cloud2.pointcloud2_to_array(pCloud)
+        
+    data = np.concatenate(raw_data)
+    
+    data = np.stack([data['x'], data['y'], data['z'], data['intensity'], data['ring'], data['timestamp']], axis=-1)
+    
+    data[:,5] = data[:,5]-data[0,5]
+    
+    
     if(roll!=0 or pitch !=0 or yaw!=0):
-
-        data = np.concatenate(raw_data)
-        data = np.stack([data['x'], data['y'], data['z'], data['intensity'], data['ring'], data['timestamp']], axis=-1)
-        
         data = data@M
-        
-        data = data[data[:,3]>=0]
-        data = np.array(list(map(tuple,data)),dtype=raw_data.dtype)
+   
 
-        cloud = ros_numpy.point_cloud2.array_to_pointcloud2(data,frame_id='velodyne')
-        cloud.header.stamp = pCloud.header.stamp
-        pub.publish(cloud)
+    data = data[~np.isnan(data).any(axis=1)]
+    
 
-    else:
-        data = np.concatenate(raw_data)
-        cloud = ros_numpy.point_cloud2.array_to_pointcloud2(data,frame_id='velodyne')
-        cloud.header.stamp = pCloud.header.stamp
-        pub.publish(cloud)
+
+    data = np.array(list(map(tuple,data)),dtype=[('x', '<f4'), ('y', '<f4'), ('z', '<f4'), ('intensity', '<f4'), ('ring', '<u2'), ('time', '<f4')])
+    # rospy.loginfo(data[-1])
+    
+    
+    cloud = ros_numpy.point_cloud2.array_to_pointcloud2(data,frame_id='velodyne')
+    cloud.header.stamp = pCloud.header.stamp
+    
+    # cloud.is_dense=True
+    pub.publish(cloud)
 
 if __name__ == '__main__':
 
-    roll=(-2)*np.pi/180
-    pitch=(-3)*np.pi/180
-    yaw=(-25)*np.pi/180
+    roll=-1.2
+    pitch=-2.52
+    yaw=0
+
+    roll=roll*np.pi/180
+    pitch=pitch*np.pi/180
+    yaw=yaw*np.pi/180
 
     # Mr = np.array([[1,0,0],[0,np.cos(roll),-np.sin(roll)],[0,np.sin(roll),np.cos(roll)]])
     # Mp = np.array([[np.cos(pitch),0,np.sin(pitch)],[0,1,0],[-np.sin(pitch),0,np.cos(pitch)]])
