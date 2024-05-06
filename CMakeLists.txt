@@ -25,20 +25,26 @@ if(${ENABLE_EPOLL_RECEIVE})
   add_definitions("-DENABLE_EPOLL_RECEIVE")
 endif(${ENABLE_EPOLL_RECEIVE})
 
-option(ENABLE_DOUBLE_RCVBUF "Enable double size of RCVBUF" OFF)
-if(${ENABLE_DOUBLE_RCVBUF})
-  add_definitions("-DENABLE_DOUBLE_RCVBUF")
-endif(${ENABLE_DOUBLE_RCVBUF})
+option(ENABLE_MODIFY_RECVBUF "Enable modify size of RECVBUF" ON)
+if(${ENABLE_MODIFY_RECVBUF})
+  add_definitions("-DENABLE_MODIFY_RECVBUF")
+endif(${ENABLE_MODIFY_RECVBUF})
 
 option(ENABLE_WAIT_IF_QUEUE_EMPTY "Enable waiting for a while in handle thread if the queue is empty" OFF)
 if(${ENABLE_WAIT_IF_QUEUE_EMPTY})
   add_definitions("-DENABLE_WAIT_IF_QUEUE_EMPTY")
 endif(${ENABLE_WAIT_IF_QUEUE_EMPTY})
 
+option(ENABLE_DIFOP_PARSE "Enable parsing DIFOP Packet" ON)
+if(${ENABLE_DIFOP_PARSE})
+  add_definitions("-DENABLE_DIFOP_PARSE")
+endif(${ENABLE_DIFOP_PARSE})
+
 option(ENABLE_STAMP_WITH_LOCAL "Enable stamp point cloud with local time" OFF)
 if(${ENABLE_STAMP_WITH_LOCAL})
   add_definitions("-DENABLE_STAMP_WITH_LOCAL")
 endif(${ENABLE_STAMP_WITH_LOCAL})
+
 
 option(ENABLE_SOURCE_PACKET_LEGACY "Enable ROS Source of MSOP/DIFOP Packet v1.3.x" OFF)
 if(${ENABLE_SOURCE_PACKET_LEGACY})
