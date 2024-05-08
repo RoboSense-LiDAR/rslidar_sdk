@@ -2,7 +2,8 @@
 
  [中文介绍](README_CN.md) 
 
-
+## 0 ARUS
+Si da error de que no reconoce np.float, cambiar np.float por float en /opt/ros/noetic/lib/python3/dist-packages/ros_numpy/point_cloud2.py
 
 ## 1 Introduction
 
