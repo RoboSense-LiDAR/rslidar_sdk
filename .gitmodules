@@ -1,4 +1,4 @@
 [submodule "src/rs_driver"]
 	path = src/rs_driver
-	url = https://github.com/RoboSense-LiDAR/rs_driver.git
-	branch = main
+	url = http://gitlab.robosense.cn/rs_share/rslidar/rs_driver.git
+	branch = dev_opt
