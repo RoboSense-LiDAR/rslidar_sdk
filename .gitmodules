@@ -1,4 +1,4 @@
 [submodule "src/rs_driver"]
 	path = src/rs_driver
-	url = http://gitlab.robosense.cn/rs_share/rslidar/rs_driver.git
+	url = git@gitlab.robosense.cn:rs_share/rslidar/rs_driver.git
 	branch = dev_opt
