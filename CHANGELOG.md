@@ -1,5 +1,5 @@
 # CHANGELOG 
-## Unreleased
+
 ## v1.5.13 2024-05-10
 ### Added
 - Support RSMX.
@@ -8,7 +8,7 @@
 - Update firing_tss of Helios/Helios16P/RubyPlus.
 - Fix Compilation bug of unit test.
 - Remove duplicate text "/rslidar_packets" by @luhuadong.
-## Unreleased
+
 ## v1.5.12 2023-12-28
 ### Fixed
 - Fix bug in getting device info and status.
