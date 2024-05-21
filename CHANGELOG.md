@@ -6,7 +6,7 @@
 ### Fixed
 - Update timestamp parsing unit and the number of packets per frame in decoder_RSE1.
 - Update firing_tss of Helios/Helios16P/RubyPlus.
-- Fix Compilation bug of unit test.
+- Fix compilation bug of unit test.
 - Remove duplicate text "/rslidar_packets" by @luhuadong.
 
 ## v1.5.12 2023-12-28
