@@ -63,8 +63,8 @@ def handle_callback(data: Imu):
 
 if __name__ == '__main__':
     
-    roll=2.23
-    pitch=5
+    roll=1.68
+    pitch=1.89
     yaw=0
 
     roll=roll*np.pi/180
