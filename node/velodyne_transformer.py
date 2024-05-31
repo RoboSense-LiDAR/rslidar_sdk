@@ -5,9 +5,11 @@ import sensor_msgs.point_cloud2 as pcl2
 import ros_numpy
 import numpy as np
 import math
+import time
 
 
 def handle_callback(pCloud: PointCloud2):
+    start = time.time()
     raw_data = ros_numpy.point_cloud2.pointcloud2_to_array(pCloud)
         
     data = np.concatenate(raw_data)
@@ -34,6 +36,7 @@ def handle_callback(pCloud: PointCloud2):
     
     # cloud.is_dense=True
     pub.publish(cloud)
+    rospy.logwarn(time.time()-start)
 
 if __name__ == '__main__':
 
