@@ -192,7 +192,11 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  pub_.publish(toRosMsg(msg, frame_id_, send_by_rows_));
+  sensor_msg::PointCloud cloud = toRosMsg(msg, frame_id_, send_by_rows_)
+  cloud.is_dense = true;
+  cloud.fields[5].name="time";
+  cloud.fields[5].datatype=7;
+  pub_.publish(cloud);
 }
 
 }  // namespace lidar
@@ -363,7 +367,11 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  pub_->publish(toRosMsg(msg, frame_id_, send_by_rows_));
+  sensor_msg::PointCloud cloud = toRosMsg(msg, frame_id_, send_by_rows_)
+  cloud.is_dense = true;
+  cloud.fields[5].name="time";
+  cloud.fields[5].datatype=7;
+  pub_->publish(cloud);
 }
 
 }  // namespace lidar
