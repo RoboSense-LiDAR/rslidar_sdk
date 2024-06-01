@@ -192,7 +192,11 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  sensor_msg::PointCloud cloud = toRosMsg(msg, frame_id_, send_by_rows_)
+  double ini = msg.points[0].timestamp;
+  for (auto point : msg.points){
+    point.timestamp = static_cast<float>(point.timestamp-ini);
+  }
+  sensor_msgs::PointCloud2 cloud = toRosMsg(msg, frame_id_, send_by_rows_);
   cloud.is_dense = true;
   cloud.fields[5].name="time";
   cloud.fields[5].datatype=7;
@@ -367,11 +371,7 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  sensor_msg::PointCloud cloud = toRosMsg(msg, frame_id_, send_by_rows_)
-  cloud.is_dense = true;
-  cloud.fields[5].name="time";
-  cloud.fields[5].datatype=7;
-  pub_->publish(cloud);
+  pub_->publish(toRosMsg(msg, frame_id_, send_by_rows_));
 }
 
 }  // namespace lidar
