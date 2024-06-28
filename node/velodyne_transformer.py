@@ -14,29 +14,29 @@ def handle_callback(pCloud: PointCloud2):
         
     data = np.concatenate(raw_data)
     
-    data = np.stack([data['x'], data['y'], data['z'], data['intensity'], data['ring'], data['timestamp']], axis=-1)
+    data = np.stack([data['x'], data['y'], data['z'], data['intensity'], data['ring'], data['time']], axis=-1)
+    rospy.loginfo(data[:,5])
+    # data[:,5] = data[:,5]-data[0,5]
     
-    data[:,5] = data[:,5]-data[0,5]
     
-    
-    if(roll!=0 or pitch !=0 or yaw!=0):
-        data = data@M
+    # if(roll!=0 or pitch !=0 or yaw!=0):
+    #     data = data@M
    
 
-    data = data[~np.isnan(data).any(axis=1)]
+    # data = data[~np.isnan(data).any(axis=1)]
     
 
 
     data = np.array(list(map(tuple,data)),dtype=[('x', '<f4'), ('y', '<f4'), ('z', '<f4'), ('intensity', '<f4'), ('ring', '<u2'), ('time', '<f4')])
-    # rospy.loginfo(data[-1])
+    # # rospy.loginfo(data[-1])
     
     
     cloud = ros_numpy.point_cloud2.array_to_pointcloud2(data,frame_id='velodyne')
     cloud.header.stamp = pCloud.header.stamp
     
-    # cloud.is_dense=True
+    cloud.is_dense=True
     pub.publish(cloud)
-    rospy.logwarn(time.time()-start)
+    # rospy.logwarn(time.time()-start)
 
 if __name__ == '__main__':
 

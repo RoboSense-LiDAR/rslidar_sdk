@@ -63,7 +63,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.10000000149011612
       Style: Points
-      Topic: /velodyne_points
+      Topic: /rslidar_points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -99,7 +99,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: velodyne
+    Fixed Frame: rslidar
     Frame Rate: 30
   Name: root
   Tools:
@@ -123,7 +123,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.895444869995117
+      Distance: 9.410611152648926
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -131,17 +131,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.46544894576072693
-        Y: 0.20905955135822296
-        Z: -1.4625669717788696
+        X: 1.1251444816589355
+        Y: -0.46852508187294006
+        Z: -0.2554076313972473
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.05479685217142105
+      Pitch: 0.6297971606254578
       Target Frame: <Fixed Frame>
-      Yaw: 6.2699971199035645
+      Yaw: 3.136812448501587
     Saved: ~
 Window Geometry:
   Displays:

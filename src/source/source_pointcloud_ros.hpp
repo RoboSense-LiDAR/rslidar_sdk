@@ -56,13 +56,17 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
 
   if (send_by_rows)
   {
-    ros_msg.width = rs_msg.width; 
-    ros_msg.height = rs_msg.height; 
+    // ros_msg.width = rs_msg.width; 
+    // ros_msg.height = rs_msg.height; 
+    ros_msg.width = rs_msg.width*rs_msg.height; 
+    ros_msg.height = 1; 
   }
   else
   {
-    ros_msg.width = rs_msg.height; // exchange width and height to be compatible with pcl::PointCloud<>
-    ros_msg.height = rs_msg.width; 
+    // ros_msg.width = rs_msg.height; // exchange width and height to be compatible with pcl::PointCloud<>
+    // ros_msg.height = rs_msg.width; 
+    ros_msg.width = rs_msg.width*rs_msg.height; 
+    ros_msg.height = 1; 
   }
 
   int offset = 0;
@@ -72,7 +76,7 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
   offset = addPointField(ros_msg, "intensity", 1, sensor_msgs::PointField::FLOAT32, offset);
 #ifdef POINT_TYPE_XYZIRT
   offset = addPointField(ros_msg, "ring", 1, sensor_msgs::PointField::UINT16, offset);
-  offset = addPointField(ros_msg, "timestamp", 1, sensor_msgs::PointField::FLOAT64, offset);
+  offset = addPointField(ros_msg, "timestamp", 1, sensor_msgs::PointField::FLOAT32, offset);
 #endif
 
 #if 0
@@ -90,7 +94,7 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
   sensor_msgs::PointCloud2Iterator<float> iter_intensity_(ros_msg, "intensity");
 #ifdef POINT_TYPE_XYZIRT
   sensor_msgs::PointCloud2Iterator<uint16_t> iter_ring_(ros_msg, "ring");
-  sensor_msgs::PointCloud2Iterator<double> iter_timestamp_(ros_msg, "timestamp");
+  sensor_msgs::PointCloud2Iterator<float> iter_timestamp_(ros_msg, "timestamp");
 #endif
 
   if (send_by_rows)
@@ -139,7 +143,7 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
 
 #ifdef POINT_TYPE_XYZIRT
       *iter_ring_ = point.ring;
-      *iter_timestamp_ = point.timestamp;
+      *iter_timestamp_ = point.timestamp-rs_msg.points[0].timestamp;
 
       ++iter_ring_;
       ++iter_timestamp_;
@@ -192,7 +196,10 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
 {
-  pub_.publish(toRosMsg(msg, frame_id_, send_by_rows_));
+  sensor_msgs::PointCloud2 cloud = toRosMsg(msg, frame_id_, send_by_rows_);
+  cloud.is_dense = true;
+  cloud.fields[5].name="time";
+  pub_.publish(cloud);
 }
 
 }  // namespace lidar
