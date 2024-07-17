@@ -73,7 +73,7 @@ rslidar_sdk将基于`PointXYZIRT`的点云，转换为ROS的PointCloud2消息，
  addPointField(ros_msg, "x", 1, sensor_msgs::PointField::FLOAT32, offset);
  addPointField(ros_msg, "y", 1, sensor_msgs::PointField::FLOAT32, offset);
  addPointField(ros_msg, "z", 1, sensor_msgs::PointField::FLOAT32, offset);
- addPointField(ros_msg, "intensity", 1, sensor_msgs::PointField::FLOAT32, offset);
+ addPointField(ros_msg, "intensity", 1, sensor_msgs::PointField::UINT8, offset);
 #ifdef POINT_TYPE_XYZIRT
  sensor_msgs::PointCloud2Iterator<uint16_t> iter_ring_(ros_msg, "ring");
  sensor_msgs::PointCloud2Iterator<double> iter_timestamp_(ros_msg, "timestamp");
