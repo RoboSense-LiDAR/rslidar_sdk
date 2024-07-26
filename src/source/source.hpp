@@ -32,55 +32,104 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include <yaml-cpp/yaml.h>
+#include "msg/rs_msg/lidar_point_cloud_msg.hpp"
 
-#include "utility/common.hpp"
+#include "utility/yaml_reader.hpp"
+
+#include <rs_driver/msg/packet.hpp>
 
 namespace robosense
 {
 namespace lidar
 {
 
-template <typename T>
-inline void yamlReadAbort(const YAML::Node& yaml, const std::string& key, T& out_val)
+class DestinationPointCloud
 {
-  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
+public:
+  typedef std::shared_ptr<DestinationPointCloud> Ptr;
+
+  virtual void init(const YAML::Node& config){}
+  virtual void start() {}
+  virtual void stop() {}
+  virtual void sendPointCloud(const LidarPointCloudMsg& msg) = 0;
+  virtual ~DestinationPointCloud() = default;
+};
+
+class DestinationPacket
+{
+public:
+  typedef std::shared_ptr<DestinationPacket> Ptr;
+
+  virtual void init(const YAML::Node& config){}
+  virtual void start() {}
+  virtual void stop() {}
+  virtual void sendPacket(const Packet& msg) = 0;
+  virtual ~DestinationPacket() = default;
+};
+
+enum SourceType
+{
+  MSG_FROM_LIDAR = 1,
+  MSG_FROM_ROS_PACKET = 2,
+  MSG_FROM_PCAP = 3,
+  MSG_FROM_PROTO_PACKET = 4,
+  MSG_FROM_PROTO_POINTCLOUD = 5
+};
+
+class Source
+{
+public:
+  typedef std::shared_ptr<Source> Ptr;
+
+  virtual void init(const YAML::Node& config) {}
+  virtual void start() {}
+  virtual void stop() {}
+  virtual void regPointCloudCallback(DestinationPointCloud::Ptr dst);
+  virtual void regPacketCallback(DestinationPacket::Ptr dst);
+  virtual ~Source() = default;
+  Source(SourceType src_type);
+
+protected:
+
+  void sendPacket(const Packet& msg);
+  void sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg);
+
+  SourceType src_type_;
+  std::vector<DestinationPointCloud::Ptr> pc_cb_vec_;
+  std::vector<DestinationPacket::Ptr> pkt_cb_vec_;
+};
+
+inline Source::Source(SourceType src_type)
+  : src_type_(src_type)
+{
+}
+
+inline void Source::regPacketCallback(DestinationPacket::Ptr dst)
+{
+  pkt_cb_vec_.emplace_back(dst);
+}
+
+inline void Source::regPointCloudCallback(DestinationPointCloud::Ptr dst)
+{
+  pc_cb_vec_.emplace_back(dst);
+}
+
+inline void Source::sendPacket(const Packet& msg)
+{
+  for (auto iter : pkt_cb_vec_)
   {
-    RS_ERROR << " : Not set " << key;
-    RS_ERROR << " value, Aborting!!!" << RS_REND;
-    exit(-1);
-  }
-  else
-  {
-    out_val = yaml[key].as<T>();
+    iter->sendPacket(msg);
   }
 }
 
-template <typename T>
-inline bool yamlRead(const YAML::Node& yaml, const std::string& key, T& out_val, const T& default_val)
+inline void Source::sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
 {
-  if (!yaml[key] || yaml[key].Type() == YAML::NodeType::Null)
+  for (auto iter : pc_cb_vec_)
   {
-    out_val = default_val;
-    return false;
-  }
-  else
-  {
-    out_val = yaml[key].as<T>();
-    return true;
+    iter->sendPointCloud(*msg);
   }
 }
 
-inline YAML::Node yamlSubNodeAbort(const YAML::Node& yaml, const std::string& node)
-{
-  YAML::Node ret = yaml[node.c_str()];
-  if (!ret)
-  {
-    RS_ERROR << " : Cannot find subnode " << node << ". Aborting!!!" << RS_REND;
-    exit(-1);
-  }
-  return ret;
-}
 
 }  // namespace lidar
 }  // namespace robosense
