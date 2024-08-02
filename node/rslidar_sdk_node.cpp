@@ -88,6 +88,15 @@ int main(int argc, char** argv)
 
    config_path += "/config/config.yaml";
 
+// Pick up --config-path argument from command line
+for (int i = 1; i < argc; i++) {
+  std::string arg = argv[i];
+  if (arg == "--config-path" && i + 1 < argc) {
+    config_path = argv[i + 1];
+    break;
+  }
+}
+
 #ifdef ROS_FOUND
   ros::NodeHandle priv_hh("~");
   std::string path;
