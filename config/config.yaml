@@ -8,7 +8,7 @@ common:
 lidar:
   - driver:
       lidar_type: RSM1             #LiDAR type - RS16, RS32, RSBP, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
-                                   #             RSM1, RSM1_JUMBO, RSM2, RSE1, RSMX.
+                                   #             RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
       msop_port: 6699              #Msop port of lidar
       difop_port: 7788             #Difop port of lidar
       start_angle: 0               #Start angle of point cloud
