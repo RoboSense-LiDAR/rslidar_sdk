@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>rslidar_sdk</name>
-  <version>1.5.14</version>
+  <version>1.5.15</version>
   <description>The rslidar_sdk package</description>
   <maintainer email="ron.zheng@robosense.cn">robosense</maintainer>
   <license>BSD</license>
