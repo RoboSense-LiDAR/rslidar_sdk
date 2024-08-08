@@ -66,8 +66,9 @@ int main(int argc, char** argv)
 
   RS_TITLE << "********************************************************" << RS_REND;
   RS_TITLE << "**********                                    **********" << RS_REND;
-  RS_TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR << "." << RSLIDAR_VERSION_MINOR << "."
-           << RSLIDAR_VERSION_PATCH << "     **********" << RS_REND;
+  RS_TITLE << "**********    RSLidar_SDK Version: v" << RSLIDAR_VERSION_MAJOR 
+    << "." << RSLIDAR_VERSION_MINOR 
+    << "." << RSLIDAR_VERSION_PATCH << "     **********" << RS_REND;
   RS_TITLE << "**********                                    **********" << RS_REND;
   RS_TITLE << "********************************************************" << RS_REND;
 
@@ -80,12 +81,12 @@ int main(int argc, char** argv)
   std::string config_path;
 
 #ifdef RUN_IN_ROS_WORKSPACE
-  config_path = ros::package::getPath("rslidar_sdk");
+   config_path = ros::package::getPath("rslidar_sdk");
 #else
-  config_path = (std::string)PROJECT_PATH;
+   config_path = (std::string)PROJECT_PATH;
 #endif
 
-  config_path += "/config/config.yaml";
+   config_path += "/config/config.yaml";
 
 #ifdef ROS_FOUND
   ros::NodeHandle priv_hh("~");

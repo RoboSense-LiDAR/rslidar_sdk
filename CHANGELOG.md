@@ -1,5 +1,9 @@
 # CHANGELOG 
 
+## v1.5.15 2024-08-07
+### Added
+- Support RSM3.
+
 ## v1.5.14 2024-07-15
 ### Added
 - Support multiple lidars with different multicast addresses and the same port.
