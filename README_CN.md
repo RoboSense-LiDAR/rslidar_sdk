@@ -30,7 +30,9 @@
 - RS-Ruby-Plus-48
 - RS-LiDAR-M1
 - RS-LiDAR-M2
+- RS-LiDAR-M3
 - RS-LiDAR-E1
+- RS-LiDAR-MX
 
 ### 1.1.2 支持的点类型
 
