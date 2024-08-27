@@ -145,20 +145,7 @@ cmake .. && make -j4
 
 ### 4.2 Compile with ROS catkin tools
 
-(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **CATKIN**.
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD CATKIN)
-```
-
-(2) Copy the file *package_ros1.xml*  to *package.xml* in the rslidar_sdk .
-
-(3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project into the *src* folder.
-
-(4) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
+(1) Run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
 
 ```sh
 catkin_make
@@ -168,22 +155,7 @@ roslaunch rslidar_sdk start.launch
 
 ### 4.3 Compile with ROS2 colcon
 
-(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **COLCON**.
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD COLCON)
-```
-
-(2) Copy the file *package_ros2.xml* to *package.xml* in the rslidar_sdk. 
-
-(3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project in the *src* folder.
-
-(4) Download the packet definition project in ROS2 through [link](https://github.com/RoboSense-LiDAR/rslidar_msg), then put the project rslidar_msg in the *src* folder you just created.
-
-(5) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
+(1) Run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
 
 ```sh
 colcon build
