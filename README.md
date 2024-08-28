@@ -119,31 +119,8 @@ sudo apt-get install -y  libpcap-dev
 
 ## 4 Compile & Run
 
-Please compile and run the driver in three ways.
 
-### 4.1 Compile directly
-
-(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **ORIGINAL**.
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD ORIGINAL)
-```
-
-(2) In ROS (unfortunately not ROS2), user can compile it directly. 
-
-Please laucn ROS master node ```roscore``` in advance, and use ```rviz``` to visualize point cloud.
-
-```sh
-cd rslidar_sdk
-mkdir build && cd build
-cmake .. && make -j4
-./rslidar_sdk_node
-```
-
-### 4.2 Compile with ROS catkin tools
+### 4.1 Compile with ROS catkin tools
 
 (1) Run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
 
@@ -153,7 +130,7 @@ source devel/setup.bash
 roslaunch rslidar_sdk start.launch
 ```
 
-### 4.3 Compile with ROS2 colcon
+### 4.2 Compile with ROS2 colcon
 
 (1) Run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
 

@@ -115,31 +115,7 @@ sudo apt-get install -y  libpcap-dev
 
 ## 1.4 编译、运行
 
-可以使用三种方式编译、运行rslidar_sdk。
-
-### 1.4.1 直接编译
-
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的变量**COMPILE_METHOD**改为**ORIGINAL**.
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD ORIGINAL)
-```
-
-(2) 在ROS1（不适用于ROS2）中，直接编译、运行程序。 
-
-请先启动**roscore**，再运行**rslidar_sdk_node**，最后运行**rviz**查看点云。
-
-```sh
-cd rslidar_sdk
-mkdir build && cd build
-cmake .. && make -j4
-./rslidar_sdk_node
-```
-
-### 1.4.2 依赖于ROS-catkin编译
+### 1.4.1 依赖于ROS-catkin编译
 
 (1) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
 
@@ -149,7 +125,7 @@ source devel/setup.bash
 roslaunch rslidar_sdk start.launch
 ```
 
-### 1.4.3 依赖于ROS2-colcon编译
+### 1.4.2 依赖于ROS2-colcon编译
 
 (1) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)。
 
