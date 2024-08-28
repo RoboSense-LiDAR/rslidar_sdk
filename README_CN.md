@@ -117,7 +117,9 @@ sudo apt-get install -y  libpcap-dev
 
 ### 1.4.1 依赖于ROS-catkin编译
 
-(1) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
+(1) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
+
+(2) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
 
 ```sh
 catkin_make
@@ -127,7 +129,11 @@ roslaunch rslidar_sdk start.launch
 
 ### 1.4.2 依赖于ROS2-colcon编译
 
-(1) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source install/setup.zsh*)。
+(1) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
+
+(2) 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)，下载ROS2环境下的雷达packet消息定义，将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列。
+
+(3) 返回工作空间目录，执行以下命令即可编译、运行。如果使用.zsh，将第二行替换为*source install/setup.zsh*。
 
 ```sh
 colcon build
