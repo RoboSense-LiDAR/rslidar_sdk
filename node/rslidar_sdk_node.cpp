@@ -92,6 +92,12 @@ int main(int argc, char** argv)
   ros::NodeHandle priv_hh("~");
   std::string path;
   priv_hh.param("config_path", path, std::string(""));
+#elif ROS2_FOUND
+  std::shared_ptr<rclcpp::Node> nd = rclcpp::Node::make_shared("param_handle");
+  std::string path = nd->declare_parameter<std::string>("config_path", "");
+#endif
+
+#if defined(ROS_FOUND) || defined(ROS2_FOUND)
   if (!path.empty())
   {
     config_path = path;
@@ -102,11 +108,14 @@ int main(int argc, char** argv)
   try
   {
     config = YAML::LoadFile(config_path);
+    RS_INFO << "--------------------------------------------------------" << RS_REND;
+    RS_INFO << "Config loaded from PATH:" << RS_REND;
+    RS_INFO << config_path << RS_REND;
+    RS_INFO << "--------------------------------------------------------" << RS_REND;
   }
   catch (...)
   {
-    RS_ERROR << "The format of config file " << config_path 
-      << " is wrong. Please check (e.g. indentation)." << RS_REND;
+    RS_ERROR << "The format of config file " << config_path << " is wrong. Please check (e.g. indentation)." << RS_REND;
     return -1;
   }
 
