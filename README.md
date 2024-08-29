@@ -31,7 +31,9 @@ To integrate the Lidar driver into your own projects, please use the rs_driver.
 - RS-Ruby-Plus-48
 - RS-LiDAR-M1
 - RS-LiDAR-M2
+- RS-LiDAR-M3
 - RS-LiDAR-E1
+- RS-LiDAR-MX
 
 ### 1.2 Point Type Supported
 
@@ -117,46 +119,12 @@ sudo apt-get install -y  libpcap-dev
 
 ## 4 Compile & Run
 
-Please compile and run the driver in three ways.
 
-### 4.1 Compile directly
+### 4.1 Compile with ROS catkin tools
 
-(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **ORIGINAL**.
+(1) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project into the *src* folder.
 
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD ORIGINAL)
-```
-
-(2) In ROS (unfortunately not ROS2), user can compile it directly. 
-
-Please laucn ROS master node ```roscore``` in advance, and use ```rviz``` to visualize point cloud.
-
-```sh
-cd rslidar_sdk
-mkdir build && cd build
-cmake .. && make -j4
-./rslidar_sdk_node
-```
-
-### 4.2 Compile with ROS catkin tools
-
-(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **CATKIN**.
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD CATKIN)
-```
-
-(2) Copy the file *package_ros1.xml*  to *package.xml* in the rslidar_sdk .
-
-(3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project into the *src* folder.
-
-(4) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
+(2) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source devel/setup.zsh*).
 
 ```sh
 catkin_make
@@ -164,25 +132,13 @@ source devel/setup.bash
 roslaunch rslidar_sdk start.launch
 ```
 
-### 4.3 Compile with ROS2 colcon
+### 4.2 Compile with ROS2 colcon
 
-(1) On top of the file *CMakeLists.txt*，set the variable **COMPILE_METHOD** to **COLCON**.
+(1) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project in the *src* folder.
 
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD COLCON)
-```
+(2) Download the packet definition project in ROS2 through [link](https://github.com/RoboSense-LiDAR/rslidar_msg), then put the project rslidar_msg in the *src* folder you just created.
 
-(2) Copy the file *package_ros2.xml* to *package.xml* in the rslidar_sdk. 
-
-(3) Create a new workspace folder, and create a *src* folder in it. Then put the rslidar_sdk project in the *src* folder.
-
-(4) Download the packet definition project in ROS2 through [link](https://github.com/RoboSense-LiDAR/rslidar_msg), then put the project rslidar_msg in the *src* folder you just created.
-
-(5) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
-
+(3) Go back to the root of workspace, run the following commands to compile and run. (if using zsh, replace the 2nd command with *source install/setup.zsh*).
 ```sh
 colcon build
 source install/setup.bash

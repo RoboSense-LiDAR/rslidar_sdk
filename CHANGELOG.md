@@ -1,5 +1,14 @@
 # CHANGELOG 
 
+## v1.5.16 2024-08-27
+### Added
+- Load config path frome ros2 param.
+### Changed
+- Remove the original compilation method.
+### Fixed
+- Use single package.xml file for both ROS1 and ROS2 @Timple.
+- Update msop protocol of RSMX.
+
 ## v1.5.15 2024-08-07
 ### Added
 - Support RSM3.
