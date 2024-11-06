@@ -16,8 +16,15 @@ lidar:
       wait_for_difop: true
       min_distance: 0.2            #Minimum distance of point cloud
       max_distance: 200            #Maximum distance of point cloud
-      use_lidar_clock: false       #True--Use the lidar clock as the message timestamp
-                                   #False-- Use the system clock as the timestamp                        
+      use_lidar_clock: false       #true--Use the lidar clock as the message timestamp
+                                   #false-- Use the system clock as the timestamp
+      dense_points: false          #true: discard NAN points; false: reserve NAN points
+      ts_first_point: false        #true: time-stamp point cloud with the first point; false: with the last point;   
+      user_layer_bytes: 0          #Bytes of user layer. thers is no user layer if it is 0         
+      pcap_repeat: true            #true: The pcap bag will repeat play   
+
+      host_address: "0.0.0.0"      #Address of host
+      group_address: "0.0.0.0"     # Address of multicast group        
       pcap_path: /home/robosense/lidar.pcap #The path of pcap file
     ros:
       ros_frame_id: rslidar                           #Frame id of packet message and point cloud message
