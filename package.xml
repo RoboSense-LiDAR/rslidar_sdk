@@ -1,17 +1,25 @@
 <?xml version="1.0"?>
-<package>
+<package format="3">
   <name>rslidar_sdk</name>
-  <version>1.5.0</version>
+  <version>1.5.16</version>
   <description>The rslidar_sdk package</description>
-  <maintainer email="ron.zheng@robosense.cn">robosense</maintainer>
+  <maintainer email="felix.huang@robosense.cn">robosense</maintainer>
   <license>BSD</license>
-  <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>roslib</build_depend>
+  <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
+  <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
 
-  <run_depend>roscpp</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>roslib</run_depend>
+  <depend>libpcap</depend>
+  <depend condition="$ROS_VERSION == 1">pcl_ros</depend>
+  <depend condition="$ROS_VERSION == 2">rclcpp</depend>
+  <depend condition="$ROS_VERSION == 1">roscpp</depend>
+  <depend condition="$ROS_VERSION == 1">roslib</depend>
+  <depend condition="$ROS_VERSION == 2">rslidar_msg</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>yaml-cpp</depend>
+
+  <export>
+     <build_type condition="$ROS_VERSION == 2">ament_cmake</build_type>
+  </export>
 </package>

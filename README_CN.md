@@ -30,7 +30,9 @@
 - RS-Ruby-Plus-48
 - RS-LiDAR-M1
 - RS-LiDAR-M2
+- RS-LiDAR-M3
 - RS-LiDAR-E1
+- RS-LiDAR-MX
 
 ### 1.1.2 支持的点类型
 
@@ -113,47 +115,11 @@ sudo apt-get install -y  libpcap-dev
 
 ## 1.4 编译、运行
 
-可以使用三种方式编译、运行rslidar_sdk。
+### 1.4.1 依赖于ROS-catkin编译
 
-### 1.4.1 直接编译
+(1) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的变量**COMPILE_METHOD**改为**ORIGINAL**.
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD ORIGINAL)
-```
-
-(2) 在ROS1（不适用于ROS2）中，直接编译、运行程序。 
-
-请先启动**roscore**，再运行**rslidar_sdk_node**，最后运行**rviz**查看点云。
-
-```sh
-cd rslidar_sdk
-mkdir build && cd build
-cmake .. && make -j4
-./rslidar_sdk_node
-```
-
-### 1.4.2 依赖于ROS-catkin编译
-
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的变量**COMPILE_METHOD**改为**CATKIN**.
-
-
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD CATKIN)
-```
-
-(2) 将rslidar_sdk工程目录下的*package_ros1.xml*文件复制到*package.xml*。
-
-(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
-
-(4) 返回工作空间目录，执行以下命令即可编译、运行。如果使用.zsh，将第二行替换成 *source devel/setup.zsh*。
+(2) 返回工作空间目录，执行以下命令即可编译&运行(若使用.zsh,将第二句指令替换为 *source devel/setup.zsh*)。
 
 ```sh
 catkin_make
@@ -161,24 +127,13 @@ source devel/setup.bash
 roslaunch rslidar_sdk start.launch
 ```
 
-### 1.4.3 依赖于ROS2-colcon编译
+### 1.4.2 依赖于ROS2-colcon编译
 
-(1) 打开工程内的*CMakeLists.txt*文件，将文件顶部的变量**COMPILE_METHOD**改为**COLCON**.
+(1) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
 
-```cmake
-#=======================================
-# Compile setup (ORIGINAL,CATKIN,COLCON)
-#=======================================
-set(COMPILE_METHOD COLCON)
-```
+(2) 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)，下载ROS2环境下的雷达packet消息定义，将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列。
 
-(2) 将rslidar_sdk工程目录下的*package_ros2.xml*文件重命名为*package.xml*。
-
-(3) 新建一个文件夹作为工作空间，然后再新建一个名为*src*的文件夹, 将rslidar_sdk工程放入*src*文件夹内。
-
-(4) 通过[链接](https://github.com/RoboSense-LiDAR/rslidar_msg)，下载ROS2环境下的雷达packet消息定义，将rslidar_msg工程也放在刚刚新建的*src*文件夹内，与rslidar_sdk并列。
-
-(5) 返回工作空间目录，执行以下命令即可编译、运行。如果使用.zsh，将第二行替换为*source install/setup.zsh*。
+(3) 返回工作空间目录，执行以下命令即可编译、运行。如果使用.zsh，将第二行替换为*source install/setup.zsh*。
 
 ```sh
 colcon build
