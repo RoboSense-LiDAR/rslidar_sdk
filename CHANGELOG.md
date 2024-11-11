@@ -1,5 +1,13 @@
 # CHANGELOG 
 
+## v1.5.xx 2024-xx-xx
+### Added
+- xx.
+### Changed
+- xx.
+### Fixed
+- Fix the issue of packets subscription failure under ros2.
+
 ## v1.5.16 2024-08-27
 ### Added
 - Load config path frome ros2 param.
