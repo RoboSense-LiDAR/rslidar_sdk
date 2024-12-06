@@ -4,7 +4,7 @@
 ### Added
 - xx.
 ### Changed
-- xx.
+- Update the config file.
 ### Fixed
 - Fix the issue of packets subscription failure under ros2.
 
