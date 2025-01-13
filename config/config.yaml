@@ -24,3 +24,4 @@ lidar:
       ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
       ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
       ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS
+      ros_queue_length: 100                            #Topic QoS history depth
