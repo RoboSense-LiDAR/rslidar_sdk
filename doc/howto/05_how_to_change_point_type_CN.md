@@ -34,11 +34,12 @@ struct PointXYZI
 rslidar_sdk将基于`PointXYZI`的点云，转换为ROS的`PointCloud2`消息，再发布出去。
 
 ```c++
- sensor_msgs::PointCloud2 ros_msg;
- addPointField(ros_msg, "x", 1, sensor_msgs::PointField::FLOAT32, offset);
- addPointField(ros_msg, "y", 1, sensor_msgs::PointField::FLOAT32, offset);
- addPointField(ros_msg, "z", 1, sensor_msgs::PointField::FLOAT32, offset);
- addPointField(ros_msg, "intensity", 1, sensor_msgs::PointField::FLOAT32, offset);
+  sensor_msgs::PointCloud2 ros_msg;
+  int offset = 0;
+  offset = addPointField(ros_msg, "x", 1, sensor_msgs::PointField::FLOAT32, offset);
+  offset = addPointField(ros_msg, "y", 1, sensor_msgs::PointField::FLOAT32, offset);
+  offset = addPointField(ros_msg, "z", 1, sensor_msgs::PointField::FLOAT32, offset);
+  offset = addPointField(ros_msg, "intensity", 1, sensor_msgs::PointField::FLOAT32, offset);
 
  // 
  // copy points from point cloud of `PointXYZI` to `PointCloud2`
@@ -69,14 +70,15 @@ struct PointXYZIRT
 rslidar_sdk将基于`PointXYZIRT`的点云，转换为ROS的PointCloud2消息，再发布出去。
 
 ```c++
- sensor_msgs::PointCloud2 ros_msg;
- addPointField(ros_msg, "x", 1, sensor_msgs::PointField::FLOAT32, offset);
- addPointField(ros_msg, "y", 1, sensor_msgs::PointField::FLOAT32, offset);
- addPointField(ros_msg, "z", 1, sensor_msgs::PointField::FLOAT32, offset);
- addPointField(ros_msg, "intensity", 1, sensor_msgs::PointField::FLOAT32, offset);
-#ifdef POINT_TYPE_XYZIRT
- sensor_msgs::PointCloud2Iterator<uint16_t> iter_ring_(ros_msg, "ring");
- sensor_msgs::PointCloud2Iterator<double> iter_timestamp_(ros_msg, "timestamp");
+  sensor_msgs::PointCloud2 ros_msg;
+  int offset = 0;
+  offset = addPointField(ros_msg, "x", 1, sensor_msgs::PointField::FLOAT32, offset);
+  offset = addPointField(ros_msg, "y", 1, sensor_msgs::PointField::FLOAT32, offset);
+  offset = addPointField(ros_msg, "z", 1, sensor_msgs::PointField::FLOAT32, offset);
+  offset = addPointField(ros_msg, "intensity", 1, sensor_msgs::PointField::FLOAT32, offset);
+#if defined(POINT_TYPE_XYZIRT) || defined(POINT_TYPE_XYZIRTF)
+  offset = addPointField(ros_msg, "ring", 1, sensor_msgs::PointField::UINT16, offset);
+  offset = addPointField(ros_msg, "timestamp", 1, sensor_msgs::PointField::FLOAT64, offset);
 #endif
 
  // 

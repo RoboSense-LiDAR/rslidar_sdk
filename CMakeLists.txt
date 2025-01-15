@@ -46,6 +46,17 @@ if(${ENABLE_SOURCE_PACKET_LEGACY})
   add_definitions("-DENABLE_SOURCE_PACKET_LEGACY")
 endif(${ENABLE_SOURCE_PACKET_LEGACY})
 
+option(ENABLE_IMU_DATA_PARSE           "Enable imu data parse" OFF)
+if(${ENABLE_IMU_DATA_PARSE})
+
+  message(=============================================================)
+  message("-- Enable imu data parse")
+  message(=============================================================)
+
+  add_definitions("-DENABLE_IMU_DATA_PARSE")
+
+endif(${ENABLE_IMU_DATA_PARSE})
+
 #========================
 # Project details / setup
 #========================

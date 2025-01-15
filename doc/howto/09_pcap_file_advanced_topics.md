@@ -32,10 +32,11 @@ common:
 
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY
       pcap_path: /home/robosense/lidar.pcap
       msop_port: 6699
       difop_port: 7788
+      imu_port: 6688  
     ros:
       ros_frame_id: rslidar           
       ros_send_point_cloud_topic: /rslidar_points     
@@ -57,10 +58,11 @@ To strip the VLAN layer, just set `use_vlan: true`.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       pcap_path: /home/robosense/lidar.pcap
       msop_port: 6699             
       difop_port: 7788
+      imu_port: 6688  
       use_vlan: true            
 ```
 
@@ -81,10 +83,11 @@ In the following example, USER_LAYER is 8 bytes, and TAIL_LAYER is 4 bytes.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       pcap_path: /home/robosense/lidar.pcap
       msop_port: 6699             
       difop_port: 7788
+      imu_port: 6688  
       user_layer_bytes: 8
       tail_layer_bytes: 4      
 ```
