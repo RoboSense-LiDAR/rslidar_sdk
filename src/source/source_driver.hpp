@@ -258,7 +258,7 @@ void SourceDriver::processPointCloud()
       continue;
     }
     sendPointCloud(msg);
-    RS_MSG << "msg: " << msg->seq << " point cloud size: " << msg->points.size() << RS_REND;
+    
     free_point_cloud_queue_.push(msg);
   }
 }
