@@ -3,14 +3,13 @@ cmake_policy(SET CMP0048 NEW)
 project(rslidar_sdk)
 
 #=======================================
-# Custom Point Type (XYZI, XYZIRT)
+# Custom Point Type (XYZI,XYZIRT, XYZIF, XYZIRTF)
 #=======================================
-set(POINT_TYPE XYZI)
+set(POINT_TYPE XYZIRTF)
 
 option(ENABLE_TRANSFORM "Enable transform functions" OFF)
 if(${ENABLE_TRANSFORM})
   add_definitions("-DENABLE_TRANSFORM")
-
   find_package(Eigen3 REQUIRED)
   include_directories(${EIGEN3_INCLUDE_DIR})
 endif(${ENABLE_TRANSFORM})
@@ -79,6 +78,10 @@ if(${POINT_TYPE} STREQUAL "XYZI")
   add_definitions(-DPOINT_TYPE_XYZI)
 elseif(${POINT_TYPE} STREQUAL "XYZIRT")
   add_definitions(-DPOINT_TYPE_XYZIRT)
+elseif(${POINT_TYPE} STREQUAL "XYZIF")
+  add_definitions(-DPOINT_TYPE_XYZIF)
+elseif(${POINT_TYPE} STREQUAL "XYZIRTF")
+  add_definitions(-DPOINT_TYPE_XYZIRTF)
 endif()
 
 message(=============================================================)

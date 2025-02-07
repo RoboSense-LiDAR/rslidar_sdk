@@ -34,10 +34,14 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "rs_driver/msg/point_cloud_msg.hpp"
 
-#ifdef POINT_TYPE_XYZIRT
-typedef PointCloudT<PointXYZIRT> LidarPointCloudMsg;
-#else
-typedef PointCloudT<PointXYZI> LidarPointCloudMsg;
+#ifdef POINT_TYPE_XYZI
+    typedef PointCloudT<PointXYZI> LidarPointCloudMsg;
+#elif defined(POINT_TYPE_XYZIF)
+    typedef PointCloudT<PointXYZIF> LidarPointCloudMsg;
+#elif defined(POINT_TYPE_XYZIRT)
+    typedef PointCloudT<PointXYZIRT> LidarPointCloudMsg;
+#elif defined(POINT_TYPE_XYZIRTF)
+    typedef PointCloudT<PointXYZIRTF> LidarPointCloudMsg;
 #endif
 
 
