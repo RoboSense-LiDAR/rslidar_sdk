@@ -9,7 +9,7 @@
 
 ### Changed
 - Add feature attribute to point type.
-- Update the config file.
+- Updated config file.
 - Update help document.
 
 ### Fixed

@@ -419,7 +419,6 @@ sensor_msgs::msg::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::
   imu_msg.linear_acceleration.x = data->linear_acceleration_x;
   imu_msg.linear_acceleration.y = data->linear_acceleration_y;
   imu_msg.linear_acceleration.z = data->linear_acceleration_z;
-  // RS_DEBUG << "imu data: ts:"<< std::dec<< data->timestamp << " , linear_a_x" << data->linear_acceleration_x << " , linear_a_y " << data->linear_acceleration_y << "  , linear_a_z" << data->linear_acceleration_z << " , angular_v_x " << data->angular_velocity_x << " , angular_v_y" << data->angular_velocity_y << " , angular_v_z" <<data->angular_velocity_z << RS_REND;
   return imu_msg;
 }
 #endif

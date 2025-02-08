@@ -1,5 +1,5 @@
 common:
-  msg_source: 3                         # 0: not use Lidar
+  msg_source: 1                         # 0: not use Lidar
                                         # 1: packet message comes from online Lidar
                                         # 2: packet message comes from ROS or ROS2
                                         # 3: packet message comes from Pcap file
@@ -33,7 +33,7 @@ lidar:
                                    #  When msg_source is 3, the following parameters will be used
       pcap_repeat: true            #  true: The pcap bag will repeat play   
       pcap_rate: 1.0               #  Rate to read the pcap file
-      pcap_path: /home/sti/PCAP/test_pcap/0350/airy_1120.pcap #The path of pcap file
+      pcap_path: /home/robosense/lidar.pcap #The path of pcap file
 
     ros:
       ros_frame_id: rslidar                           #Frame id of packet message and point cloud message
