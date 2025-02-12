@@ -1,11 +1,11 @@
 # CHANGELOG 
 
-## v1.5.7 2025-02-14
+## v1.5.17 2025-02-14
 
 ### Added
 - Support RSAIRY.
 - Support parsing IMU data for RSAIRY and RSE1.
-- Support parsing IMU Extrinsics parameters frome difop for RSAIRY.
+- Support parsing IMU extrinsics parameters frome difop for RSAIRY.
 
 ### Changed
 - Add feature attribute to point type.
