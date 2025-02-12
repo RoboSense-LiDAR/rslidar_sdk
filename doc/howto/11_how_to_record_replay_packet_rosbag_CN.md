@@ -22,9 +22,7 @@
 common:
   msg_source: 1                                       
   send_packet_ros: true                                
-  send_point_cloud_ros: true                            
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
+  send_point_cloud_ros: true                                                  
 ```
 
 要录制Packet, 设置 ```send_packet_ros = true```。
@@ -38,6 +36,7 @@ ros:
   ros_frame_id: rslidar
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
+  ros_send_imu_data_topic: /rslidar_imu_data
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
@@ -61,9 +60,7 @@ rosbag record /rslidar_packets -O bag
 common:
   msg_source: 2                                       
   send_packet_ros: false                                
-  send_point_cloud_ros: true                            
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
+  send_point_cloud_ros: true                                                 
 ```
 
 MSOP/DIFOP Packet来自ROS rosbag，因此设置 ```msg_source = 2``` 。
@@ -77,14 +74,15 @@ MSOP/DIFOP Packet来自ROS rosbag，因此设置 ```msg_source = 2``` 。
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            
+      lidar_type: RSAIRY            
       msop_port: 6699             
-      difop_port: 7788           
+      difop_port: 7788     
+      imu_port: 6688         
       start_angle: 0               
       end_angle: 360              
       min_distance: 0.2            
       max_distance: 200           
-      use_lidar_clock: false    
+      use_lidar_clock: true    
 ```
 
 将 ```lidar_type``` 设置为LiDAR类型 。
@@ -98,6 +96,7 @@ ros:
   ros_frame_id: rslidar
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
+  ros_send_imu_data_topic: /rslidar_imu_data
   ros_send_point_cloud_topic: /rslidar_points  
 ```
 
