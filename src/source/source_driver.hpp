@@ -61,7 +61,6 @@ protected:
   void putPacket(const Packet& msg);
   void putException(const lidar::Error& msg);
   void processPointCloud();
-  void processImuData();
 
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
   SyncQueue<std::shared_ptr<LidarPointCloudMsg>> free_point_cloud_queue_;
@@ -69,11 +68,12 @@ protected:
 #ifdef ENABLE_IMU_DATA_PARSE
   std::shared_ptr<ImuData> getImuData(void);
   void putImuData(const std::shared_ptr<ImuData>& msg);
+  void processImuData();
   SyncQueue<std::shared_ptr<ImuData>> free_imu_data_queue_;
   SyncQueue<std::shared_ptr<ImuData>> imu_data_queue_;
+  std::thread imu_data_process_thread_;
 #endif
   std::thread point_cloud_process_thread_;
-  std::thread imu_data_process_thread_;
   bool to_exit_process_;
 };
 
