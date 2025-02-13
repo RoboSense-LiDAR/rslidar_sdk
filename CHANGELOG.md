@@ -11,6 +11,7 @@
 - Add feature attribute to point type.
 - Updated config file.
 - Update help document.
+- Update block_time_offset as us for RSE1
 
 ### Fixed
 - Fix the issue of packets subscription failure under ros2.

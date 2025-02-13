@@ -23,11 +23,13 @@ common:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RSAIRY           #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
+                                   
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar
-      imu_port: 6688               #  Imu port of lidar
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+                                   #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       group_address: 0.0.0.0
       host_address: 0.0.0.0
       user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         

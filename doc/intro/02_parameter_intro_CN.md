@@ -52,12 +52,13 @@ lidar部分根据每个雷达的实际情况进行设置。
 ```yaml
 lidar:
   - driver:
-      lidar_type: RSAIRY           #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
+                                   
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar
-      imu_port: 6688               #  Imu port of lidar
-
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+                                   #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
       tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
 
@@ -84,7 +85,7 @@ lidar:
       ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
       ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
       ros_send_imu_data_topic: /rslidar_imu_data         #Topic used to send imu data through ROS
-      ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS   
+      ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS 
 ```
 
 - lidar_type
@@ -142,7 +143,7 @@ lidar:
 
 ### 2.3.1 单台雷达
 
-在线连接1台RSAIRY雷达，并发送点云和imu数据到ROS。
+在线连接1台RSM1雷达，并发送点云和imu数据到ROS。
 
 ```yaml
 common:
@@ -154,12 +155,13 @@ common:
   send_point_cloud_ros: true            # true: Send point cloud through ROS or ROS2
 lidar:
   - driver:
-      lidar_type: RSAIRY           #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
+                                   
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar
-      imu_port: 6688               #  Imu port of lidar
-
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+                                   #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
       tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
 
@@ -191,7 +193,7 @@ lidar:
 
 ### 2.3.2 多台雷达
 
-在线连接1台RSAIRY雷达和1台RSE1雷达，发送点云和imu数据到ROS。
+在线连接1台RSM1雷达和1台RSE1雷达，发送点云和imu数据到ROS。
 
 *注意lidar部分参数的缩进*
 
@@ -202,12 +204,13 @@ common:
   send_point_cloud_ros: true                           
 lidar:
   - driver:
-      lidar_type: RSAIRY           #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
+                                   
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar
-      imu_port: 6688               #  Imu port of lidar
-
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+                                   #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
       tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
 
@@ -231,10 +234,10 @@ lidar:
 
     ros:
       ros_frame_id: rslidar                           #Frame id of packet message and point cloud message
-      ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
-      ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
-      ros_send_imu_data_topic: /rslidar_imu_data         #Topic used to send imu data through ROS
-      ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS 
+      ros_recv_packet_topic: /left/rslidar_packets          #Topic used to receive lidar packets from ROS
+      ros_send_packet_topic: /left/rslidar_packets          #Topic used to send lidar packets through ROS
+      ros_send_imu_data_topic: /left/rslidar_imu_data         #Topic used to send imu data through ROS
+      ros_send_point_cloud_topic: /left/rslidar_points      #Topic used to send point cloud through ROS 
 
   - driver:
       lidar_type: RSE1           #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
@@ -265,9 +268,9 @@ lidar:
 
     ros:
       ros_frame_id: rslidar                           #Frame id of packet message and point cloud message
-      ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
-      ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
-      ros_send_imu_data_topic: /rslidar_imu_data         #Topic used to send imu data through ROS
-      ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS      
+      ros_recv_packet_topic: /right/rslidar_packets          #Topic used to receive lidar packets from ROS
+      ros_send_packet_topic: /right/rslidar_packets          #Topic used to send lidar packets through ROS
+      ros_send_imu_data_topic: /right/rslidar_imu_data         #Topic used to send imu data through ROS
+      ros_send_point_cloud_topic: /right/rslidar_points      #Topic used to send point cloud through ROS      
 ```
 

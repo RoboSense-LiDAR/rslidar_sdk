@@ -37,7 +37,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef ROS_FOUND
 #include <ros/ros.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
-#include "sensor_msgs/Imu.h"
+#ifdef ENABLE_IMU_DATA_PARSE
+  #include "sensor_msgs/Imu.h"
+#endif
 namespace robosense
 {
 namespace lidar
@@ -262,7 +264,9 @@ inline void DestinationPointCloudRos::sendImuData(const std::shared_ptr<ImuData>
 #ifdef ROS2_FOUND
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
-#include <sensor_msgs/msg/imu.hpp>
+#ifdef ENABLE_IMU_DATA_PARSE
+  #include <sensor_msgs/msg/imu.hpp>
+#endif
 #include <sstream>
 
 namespace robosense
