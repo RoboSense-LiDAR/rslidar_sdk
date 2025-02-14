@@ -1,5 +1,22 @@
 # CHANGELOG 
 
+## v1.5.17 2025-02-14
+
+### Added
+- Support RSAIRY.
+- Support parsing IMU data for RSAIRY and RSE1.
+- Support parsing IMU extrinsics parameters frome difop for RSAIRY.
+
+### Changed
+- Add feature attribute to point type.
+- Updated config file.
+- Update help document.
+- Update block_time_offset as us for RSE1
+
+### Fixed
+- Fix the issue of packets subscription failure under ros2.
+
+
 ## v1.5.16 2024-08-27
 ### Added
 - Load config path frome ros2 param.

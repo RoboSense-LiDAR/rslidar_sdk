@@ -3,14 +3,13 @@ cmake_policy(SET CMP0048 NEW)
 project(rslidar_sdk)
 
 #=======================================
-# Custom Point Type (XYZI, XYZIRT)
+# Custom Point Type (XYZI,XYZIRT, XYZIF, XYZIRTF)
 #=======================================
 set(POINT_TYPE XYZI)
 
 option(ENABLE_TRANSFORM "Enable transform functions" OFF)
 if(${ENABLE_TRANSFORM})
   add_definitions("-DENABLE_TRANSFORM")
-
   find_package(Eigen3 REQUIRED)
   include_directories(${EIGEN3_INCLUDE_DIR})
 endif(${ENABLE_TRANSFORM})
@@ -46,6 +45,17 @@ if(${ENABLE_SOURCE_PACKET_LEGACY})
   add_definitions("-DENABLE_SOURCE_PACKET_LEGACY")
 endif(${ENABLE_SOURCE_PACKET_LEGACY})
 
+option(ENABLE_IMU_DATA_PARSE           "Enable imu data parse" OFF)
+if(${ENABLE_IMU_DATA_PARSE})
+
+  message(=============================================================)
+  message("-- Enable imu data parse")
+  message(=============================================================)
+
+  add_definitions("-DENABLE_IMU_DATA_PARSE")
+
+endif(${ENABLE_IMU_DATA_PARSE})
+
 #========================
 # Project details / setup
 #========================
@@ -68,6 +78,10 @@ if(${POINT_TYPE} STREQUAL "XYZI")
   add_definitions(-DPOINT_TYPE_XYZI)
 elseif(${POINT_TYPE} STREQUAL "XYZIRT")
   add_definitions(-DPOINT_TYPE_XYZIRT)
+elseif(${POINT_TYPE} STREQUAL "XYZIF")
+  add_definitions(-DPOINT_TYPE_XYZIF)
+elseif(${POINT_TYPE} STREQUAL "XYZIRTF")
+  add_definitions(-DPOINT_TYPE_XYZIRTF)
 endif()
 
 message(=============================================================)
