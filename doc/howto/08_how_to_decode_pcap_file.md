@@ -26,9 +26,7 @@ Set up the configuration file `config.yaml`.
 common:
   msg_source: 3                                       
   send_packet_ros: false                                
-  send_point_cloud_ros: true                            
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
+  send_point_cloud_ros: true                                                   
 ```
 
 The messages come from the PCAP bag, so set ```msg_source = 3```. 
@@ -40,14 +38,15 @@ Send point cloud to ROS, so set ```send_point_cloud_ros = true```.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            
+      lidar_type: RSAIRY            
       msop_port: 6699             
-      difop_port: 7788           
+      difop_port: 7788 
+      imu_port: 6688             
       start_angle: 0               
       end_angle: 360              
       min_distance: 0.2            
       max_distance: 200           
-      use_lidar_clock: false      
+      use_lidar_clock: true   
       pcap_path: /home/robosense/lidar.pcap               
 ```
 
@@ -55,7 +54,7 @@ Set the ```pcap_path``` to the absolute path of the PCAP file.
 
 Set the ```lidar_type```  to your LiDAR type.
 
-Set the ```msop_port``` and ```difop_port```  to the port numbers of your LiDAR. 
+Set the ```msop_port```,```difop_port``` and ```difop_port```  to your LiDAR's port number. 
 
 #### 8.2.2.3 lidar-ros part
 
@@ -64,10 +63,11 @@ ros:
   ros_frame_id: rslidar           
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
+  ros_send_imu_data_topic: /rslidar_imu_data   
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
-Set the ```ros_send_point_cloud_topic```  to the topic you want to send to.
+Set the   ```rslidar_imu_data```  and ```ros_send_point_cloud_topic```  to the topic you want to send to. 
 
 ### 8.2.3 Run
 

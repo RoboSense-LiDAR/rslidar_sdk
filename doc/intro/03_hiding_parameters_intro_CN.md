@@ -22,41 +22,54 @@ common:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS128            
-      msop_port: 6699              
-      difop_port: 7788             
-      pcap_path: /home/robosense/lidar.pcap                 
-      pcap_repeat: true									    
-      pcap_rate: 1  											
-      start_angle: 0               
-      end_angle: 360             
-      min_distance: 0.2            
-      max_distance: 200           
-      use_lidar_clock: false       
-      config_from_file: false   
-      angle_path: /home/robosense/angle.csv   
-      dense_points: false
-      ts_first_point: false
-      split_frame_mode: 1	      
-      split_angle: 0   
-      num_blks_split: 1 	                    
-      wait_for_difop: true         
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+                                   #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
+                                   
+      msop_port: 6699              #  Msop port of lidar
+      difop_port: 7788             #  Difop port of lidar
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+                                   #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       group_address: 0.0.0.0
       host_address: 0.0.0.0
+      user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
+      tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
+
+
+      min_distance: 0.2            #  Minimum distance of point cloud
+      max_distance: 200            #  Maximum distance of point cloud
+      use_lidar_clock: true        #  true--Use the lidar clock as the message timestamp
+                                   #  false-- Use the system clock as the timestamp
+      dense_points: false          #  true: discard NAN points; false: reserve NAN points
+      
+      ts_first_point: true         #  true: time-stamp point cloud with the first point; false: with the last point;   
+                                   #  these parameters are used from mechanical lidar
+
+      start_angle: 0               #  Start angle of point cloud
+      end_angle: 360               #  End angle of point cloud
+      ros_send_by_rows: 
+                                   #  When msg_source is 3, the following parameters will be used
+      pcap_repeat: true            #  true: The pcap bag will repeat play   
+      pcap_rate: 1.0               #  Rate to read the pcap file
+      pcap_path: /home/robosense/lidar.pcap   #The path of pcap file
+      use_vlan: false
+
       x: 0
       y: 0
       z: 0
       roll: 0
       pitch: 0
       yaw: 0
-      use_vlan: false
+    ros:
+      ros_frame_id: rslidar                           #Frame id of packet message and point cloud message
+      ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
+      ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
+      ros_send_imu_data_topic: /rslidar_imu_data         #Topic used to send imu data through ROS
+      ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS
+      ros_send_by_rows: false
 ```
 
-- ```pcap_repeat``` -- 默认值为true， 用户可将其设置为false来禁用pcap循环播放功能。
-- ```pcap_rate``` -- 默认值为1，点云频率约为10hz。 用户可调节此参数来控制pcap播放速度，设置的值越大，pcap播放速度越快。
 - ```config_from_file``` -- 默认值为false, 是否从外参文件读入雷达配置信息，仅用于调试，可忽略。
 - ```angle_path``` -- angle.csv外参文件的路径，仅用于调试，可忽略。
-- ```ts_first_point``` -- 默认值为false。点云的时间戳是否第一个点的时间。```true```为第一个点的时间，```false```为最后一个点的时间。
 - ```split_frame_mode``` -- 分帧模式设置，默认值为```1```。
   - 1 -- 角度分帧
   - 2 -- 固定block数分帧
@@ -68,3 +81,6 @@ lidar:
 - ```host_address``` -- 有两种情况需要这个选项。如果主机上通过多个IP地址接收多个雷达的数据，则可以将此参数指定为雷达的目标IP；如果设置了group_address，那也需要设置host_address，以便将这个IP地址的网卡加入组播组。
 - ```x, y, z, roll, pitch, yaw ``` -- 坐标变换参数，若启用了内核的坐标变换功能，将会使用此参数输出经过变换后的点云。x, y, z, 单位为```米```, roll, pitch, yaw, 单位为```弧度```。具体使用方式可以参考 [坐标变换功能](../howto/10_how_to_use_coordinate_transformation_CN.md) 。
 - ```use_vlan``` -- 默认为false，指定是否使用vlan。如果pcap文件中的packet带vlan层，则需要设置这个选项为true。其他情况下不需要。在线雷达的情况下，协议层到达驱动时，已经剥离vlan层，所以不需要设置这个选项。
+- ```ros_send_by_rows```只对机械式雷达有意义，且只有当dense_points = false时才有效。
+  - true -- 发送点云时，按照一行一行的顺序排列点
+  - false -- 发送点云时，按照一列一列的顺序排列点

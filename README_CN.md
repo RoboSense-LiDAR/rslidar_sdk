@@ -33,6 +33,7 @@
 - RS-LiDAR-M3
 - RS-LiDAR-E1
 - RS-LiDAR-MX
+- RS-LiDAR-AIRY
 
 ### 1.1.2 支持的点类型
 
