@@ -32,10 +32,11 @@ common:
 
 lidar:
   - driver:
-      lidar_type: RS32
+      lidar_type: RSAIRY
       pcap_path: /home/robosense/lidar.pcap
       msop_port: 6699
       difop_port: 7788
+      imu_port: 6688  
     ros:
       ros_frame_id: rslidar           
       ros_send_point_cloud_topic: /rslidar_points     
@@ -57,10 +58,11 @@ rs_driver使用libpcap库解析PCAP文件，可以得到完整的、包括VLAN�
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       pcap_path: /home/robosense/lidar.pcap
       msop_port: 6699             
       difop_port: 7788
+      imu_port: 6688  
       use_vlan: true
 ```
 
@@ -79,10 +81,11 @@ lidar:
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       pcap_path: /home/robosense/lidar.pcap
       msop_port: 6699             
       difop_port: 7788
+      imu_port: 6688  
       user_layer_bytes: 8
       tail_layer_bytes: 4      
 ```
