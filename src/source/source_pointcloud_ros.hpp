@@ -464,13 +464,16 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
   yamlRead<std::string>(config["ros"], 
       "ros_send_point_cloud_topic", ros_send_topic, "rslidar_points");
 
+  size_t ros_queue_length;
+  yamlRead<size_t>(config["ros"], "ros_queue_length", ros_queue_length, 100);
 
   static int node_index = 0;
   std::stringstream node_name;
   node_name << "rslidar_points_destination_" << node_index++;
 
   node_ptr_.reset(new rclcpp::Node(node_name.str()));
-  pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, 100);
+
+  pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, ros_queue_length);
 
 #ifdef ENABLE_IMU_DATA_PARSE
   std::string ros_send_imu_data_topic;
@@ -478,6 +481,7 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
       "ros_send_imu_data_topic", ros_send_imu_data_topic, "rslidar_imu_data");
   imu_pub_ = node_ptr_->create_publisher<sensor_msgs::msg::Imu>(ros_send_imu_data_topic, 1000);
 #endif
+
 }
 
 inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& msg)
