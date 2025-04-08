@@ -34,6 +34,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "source/source.hpp"
 
+#define GRAVITY 9.81
+
 #ifdef ROS_FOUND
 #include <ros/ros.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
@@ -191,9 +193,9 @@ sensor_msgs::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::strin
   imu_msg.angular_velocity.y = data->angular_velocity_y;
   imu_msg.angular_velocity.z = data->angular_velocity_z;
 
-  imu_msg.linear_acceleration.x = data->linear_acceleration_x;
-  imu_msg.linear_acceleration.y = data->linear_acceleration_y;
-  imu_msg.linear_acceleration.z = data->linear_acceleration_z;
+  imu_msg.linear_acceleration.x = data->linear_acceleration_x * GRAVITY;
+  imu_msg.linear_acceleration.y = data->linear_acceleration_y * GRAVITY;
+  imu_msg.linear_acceleration.z = data->linear_acceleration_z * GRAVITY;
   return imu_msg;
 }
 #endif
@@ -420,9 +422,9 @@ sensor_msgs::msg::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::
   imu_msg.angular_velocity.y = data->angular_velocity_y;
   imu_msg.angular_velocity.z = data->angular_velocity_z;
 
-  imu_msg.linear_acceleration.x = data->linear_acceleration_x;
-  imu_msg.linear_acceleration.y = data->linear_acceleration_y;
-  imu_msg.linear_acceleration.z = data->linear_acceleration_z;
+  imu_msg.linear_acceleration.x = data->linear_acceleration_x * GRAVITY;
+  imu_msg.linear_acceleration.y = data->linear_acceleration_y * GRAVITY;
+  imu_msg.linear_acceleration.z = data->linear_acceleration_z * GRAVITY;
   return imu_msg;
 }
 #endif
