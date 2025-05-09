@@ -142,6 +142,7 @@ if(rclcpp_FOUND)
   find_package(sensor_msgs REQUIRED)
   find_package(rslidar_msg REQUIRED)
   find_package(std_msgs REQUIRED)                      
+  find_package(rclcpp_components REQUIRED)
 
 else(rclcpp_FOUND)
   message(=============================================================)
@@ -187,6 +188,20 @@ endif(roscpp_FOUND)
 
 #Ros2#
 if(rclcpp_FOUND)
+  add_library(rslidar_sdk_component SHARED
+              node/rslidar_sdk_node_component.cpp
+              src/manager/node_manager.cpp)
+
+  target_link_libraries(rslidar_sdk_component
+                       ${YAML_CPP_LIBRARIES}
+                       ${rs_driver_LIBRARIES})
+  # Component dependencies
+  ament_target_dependencies(rslidar_sdk_component
+    rclcpp
+    rclcpp_components
+    std_msgs
+    sensor_msgs
+    rslidar_msg)
 
   ament_target_dependencies(rslidar_sdk_node 
     rclcpp 
@@ -196,7 +211,12 @@ if(rclcpp_FOUND)
 
   install(TARGETS
     rslidar_sdk_node
-    DESTINATION lib/${PROJECT_NAME})
+    rslidar_sdk_component
+    RUNTIME DESTINATION lib/${PROJECT_NAME}
+    LIBRARY DESTINATION lib)
+
+  # Register component with ament index
+  rclcpp_components_register_nodes(rslidar_sdk_component "robosense::lidar::RSLidarSDKComponent")
 
   install(DIRECTORY
     launch
