@@ -6,13 +6,25 @@
 
 This document illustrates how to change the point type. 
 
-In ```CMakeLists.txt``` of the project, change the variable `POINT_TYPE`. Remember to **rebuild** the project after changing it.
+In `CMakeLists.txt` of the project, the point type is defined using the `POINT_TYPE` variable.
 
 ```cmake
 #=======================================
 # Custom Point Type (XYZI,XYZIRT, XYZIF, XYZIRTF)
 #=======================================
-set(POINT_TYPE XYZI)
+if(NOT POINT_TYPE)
+  set(POINT_TYPE XYZI)
+endif()
+```
+
+You can edit this file to replace the default value `XYZI` by the desired one.
+Remember to **rebuild** the project after changing it.
+
+It is also possible to specify it from the command line by specifying it as a cmake option.
+For example, in ROS2, to use `XYZIRTF`, the colcon command is:
+
+```
+colcon build --packages-select rslidar_sdk --cmake-args -DPOINT_TYPE=XYZIRTF
 ```
 
 
