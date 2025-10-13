@@ -9,7 +9,7 @@
 // CUDA runtime API
 #include <cuda_runtime.h>
 
-using namespace robosense::rslidar;
+using namespace robosense::lidar;
 
 // Custom deleter for unique_ptr to manage CUDA device memory
 struct CudaFreeDeleter
