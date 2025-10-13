@@ -18,6 +18,7 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>tf2_ros</depend>
+  <depend>tf2_eigen</depend>
   <depend>yaml-cpp</depend>
 
   <export>

@@ -155,6 +155,7 @@ if(rclcpp_FOUND)
   find_package(PCL REQUIRED)
   find_package(pcl_conversions REQUIRED)
   find_package(tf2_ros REQUIRED)
+  find_package(tf2_eigen REQUIRED)
   find_package(CUDA REQUIRED)
 
   include_directories(
@@ -238,7 +239,8 @@ if(rclcpp_FOUND)
     sensor_msgs
     rslidar_msg
     pcl_conversions
-    tf2_ros)
+    tf2_ros
+    tf2_eigen)
 
   if(WITH_NITROS)
     ament_target_dependencies(multi_lidar_node
