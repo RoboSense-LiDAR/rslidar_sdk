@@ -1,9 +1,7 @@
-
 #include "cuda_roi_filter.cuh"
 #include <thrust/device_vector.h>
 #include <thrust/copy.h>
 #include <thrust/execution_policy.h>
-#include <iterator>
 
 // Predicate for thrust::copy_if for ROI filtering
 struct RoiFilterPredicate
@@ -73,18 +71,26 @@ cudaError_t roiFilterGPU(
 
     // Use thrust::copy_if to filter points
     thrust::device_ptr<CudaPointXYZI> d_input_ptr(d_input_cloud);
-    thrust::device_vector<CudaPointXYZI> d_output_vec;
+    
+    // Pre-allocate output vector with the maximum possible size (same as input)
+    thrust::device_vector<CudaPointXYZI> d_output_vec(num_input_points);
 
-    thrust::copy_if(thrust::device, d_input_ptr, d_input_ptr + num_input_points,
-                    cuda::std::back_inserter(d_output_vec), predicate);
+    // Perform the copy_if. The return value is an iterator to the end of the output range.
+    auto new_end = thrust::copy_if(thrust::device, d_input_ptr, d_input_ptr + num_input_points,
+                                   d_output_vec.begin(), predicate);
 
     // Get output size and copy result to output pointer
-    *num_output_points = d_output_vec.size();
+    *num_output_points = new_end - d_output_vec.begin();
     if (*num_output_points > 0)
     {
+        // Resize the vector to the actual number of elements copied
+        d_output_vec.resize(*num_output_points);
+
         err = cudaMalloc((void**)d_output_cloud, *num_output_points * sizeof(CudaPointXYZI));
         if (err != cudaSuccess) { cudaFree(d_filter_configs); return err; }
-        err = cudaMemcpy(*d_output_cloud, d_output_vec.data().get(), *num_output_points * sizeof(CudaPointXYZI), cudaMemcpyDeviceToHost);
+        
+        // Copy the valid data from the resized vector to the final output pointer
+        err = cudaMemcpy(*d_output_cloud, thrust::raw_pointer_cast(d_output_vec.data()), *num_output_points * sizeof(CudaPointXYZI), cudaMemcpyDeviceToDevice);
         if (err != cudaSuccess) { cudaFree(d_filter_configs); cudaFree(*d_output_cloud); return err; }
     }
     else
