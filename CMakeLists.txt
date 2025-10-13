@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0048 NEW)
-project(rslidar_sdk)
+project(rslidar_sdk LANGUAGES CXX CUDA)
 
 message(STATUS "C++ compiler is: ${CMAKE_CXX_COMPILER}")
 
