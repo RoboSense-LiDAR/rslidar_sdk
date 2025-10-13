@@ -21,7 +21,7 @@ multi_lidar_node:
     publish_flatscan: true
     flatscan_topic_name: "/flatscan"
     flatscan_min_height: 0.1
-    flatscan_max_height: 0.1
+    flatscan_max_height: 1.0
     flatscan_angle_min: -3.14159
     flatscan_angle_max: 3.14159
     flatscan_angle_increment: 0.0087
@@ -31,7 +31,7 @@ multi_lidar_node:
     # List of lidars to be configured
     lidars:
       # Lidar 1
-      - name: "lidar_F"
+      - name: "lidar_1"
         enabled: true
         driver:
           lidar_type: "RSAIRY"
@@ -50,7 +50,7 @@ multi_lidar_node:
           yaw: 0.0
 
       # Lidar 2
-      - name: "lidar_RR"
+      - name: "lidar_2"
         enabled: true
         driver:
           lidar_type: "RSAIRY"

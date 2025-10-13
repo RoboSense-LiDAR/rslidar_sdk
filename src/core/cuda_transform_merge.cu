@@ -80,7 +80,7 @@ cudaError_t transformAndMergeGPU(
 
     // Launch kernel
     int min_grid_size;
-    int block_size;
+    int block_size = 256;
     cudaOccupancyMaxPotentialBlockSize(&min_grid_size, &block_size, transformAndMergeKernel, 0, 0);
     const int BLOCK_SIZE = block_size;
     int num_blocks = (total_output_points + BLOCK_SIZE - 1) / BLOCK_SIZE;

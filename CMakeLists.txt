@@ -262,9 +262,10 @@ if(rclcpp_FOUND)
     multi_lidar_node
     DESTINATION lib/${PROJECT_NAME})
 
-  install(DIRECTORY
-    launch
-    rviz
+  install(DIRECTORY launch/
+    DESTINATION share/${PROJECT_NAME})
+
+  install(DIRECTORY rviz/
     DESTINATION share/${PROJECT_NAME})
 
   ament_package()
