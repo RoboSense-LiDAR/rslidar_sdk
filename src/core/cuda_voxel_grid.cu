@@ -1,9 +1,9 @@
-
 #include "cuda_voxel_grid.cuh"
 #include <cuda_runtime.h>
 #include <thrust/device_vector.h>
 #include <thrust/sort.h>
 #include <thrust/unique.h>
+#include <thrust/transform.h>
 #include <thrust/execution_policy.h>
 
 // Struct to hold point and its voxel ID
@@ -16,6 +16,26 @@ struct VoxelPoint
     bool operator<(const VoxelPoint& other) const
     {
         return voxel_id < other.voxel_id;
+    }
+};
+
+// Functor for thrust::unique to compare VoxelPoints by voxel_id
+struct VoxelIdComparator
+{
+    __host__ __device__
+    bool operator()(const VoxelPoint& a, const VoxelPoint& b) const
+    {
+        return a.voxel_id == b.voxel_id;
+    }
+};
+
+// Functor for thrust::transform to extract the point from a VoxelPoint
+struct VoxelPointExtractor
+{
+    __host__ __device__
+    CudaPointXYZI operator()(const VoxelPoint& vp) const
+    {
+        return vp.point;
     }
 };
 
@@ -35,9 +55,6 @@ __global__ void computeVoxelIDsKernel(
     long long vy = static_cast<long long>(floor(p.y * inv_leaf_size));
     long long vz = static_cast<long long>(floor(p.z * inv_leaf_size));
 
-    // Combine 3D voxel coordinates into a single 64-bit ID
-    // This assumes coordinates fit within 21 bits each (approx +/- 1 million units with 0.01 leaf size)
-    // Adjust bit shifts if larger coordinates or smaller leaf sizes are expected
     d_voxel_points[idx].voxel_id = (vx & 0x1FFFFF) | ((vy & 0x1FFFFF) << 21) | ((vz & 0x1FFFFF) << 42);
     d_voxel_points[idx].point = p;
 }
@@ -62,7 +79,7 @@ cudaError_t voxelGridDownsampleGPU(
     int min_grid_size;
     int block_size;
     cudaOccupancyMaxPotentialBlockSize(&min_grid_size, &block_size, computeVoxelIDsKernel, 0, 0);
-    const int BLOCK_SIZE = block_size;
+    const int BLOCK_SIZE = block_size > 0 ? block_size : 256;
 
     int num_blocks = (num_input_points + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
@@ -80,7 +97,7 @@ cudaError_t voxelGridDownsampleGPU(
     // 3. Unique by Voxel ID (select first point in each voxel)
     auto new_end = thrust::unique(
         thrust::device, d_voxel_points.begin(), d_voxel_points.end(),
-        [](const VoxelPoint& a, const VoxelPoint& b) __device__ { return a.voxel_id == b.voxel_id; });
+        VoxelIdComparator());
 
     size_t unique_voxels = thrust::distance(d_voxel_points.begin(), new_end);
     *num_output_points = unique_voxels;
@@ -93,7 +110,7 @@ cudaError_t voxelGridDownsampleGPU(
 
         thrust::transform(thrust::device, d_voxel_points.begin(), d_voxel_points.begin() + unique_voxels,
                           thrust::raw_pointer_cast(*d_output_cloud),
-                          [](const VoxelPoint& vp) __device__ { return vp.point; });
+                          VoxelPointExtractor());
     }
     else
     {
