@@ -3,7 +3,7 @@
 #include <thrust/device_vector.h>
 #include <thrust/copy.h>
 #include <thrust/execution_policy.h>
-// #include <iterator>
+#include <iterator>
 
 // Predicate for thrust::copy_if for ROI filtering
 struct RoiFilterPredicate
@@ -76,7 +76,7 @@ cudaError_t roiFilterGPU(
     thrust::device_vector<CudaPointXYZI> d_output_vec;
 
     thrust::copy_if(thrust::device, d_input_ptr, d_input_ptr + num_input_points,
-                    thrust::back_inserter(d_output_vec), predicate);
+                    cuda::std::back_inserter(d_output_vec), predicate);
 
     // Get output size and copy result to output pointer
     *num_output_points = d_output_vec.size();
