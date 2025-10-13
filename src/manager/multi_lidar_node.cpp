@@ -13,7 +13,7 @@
 #include "../core/cuda_roi_filter.cuh"
 #include "../core/cuda_voxel_grid.cuh"
 #include "../core/cuda_flatscan.cuh"
-#include <tf2_eigen/tf2_eigen.h>
+#include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2/exceptions.h>
 
 
