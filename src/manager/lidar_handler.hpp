@@ -17,9 +17,16 @@ public:
   LidarHandler(const RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
     : transform_(transform)
   {
-    driver_.regPointCloudCallback(std::bind(&LidarHandler::pointCloudCallback, this, std::placeholders::_1));
+    driver_.regPointCloudCallback(
+        std::bind(&LidarHandler::getPointCloudForDriver, this),
+        std::bind(&LidarHandler::pointCloudCallback, this, std::placeholders::_1));
     driver_.init(driver_param);
     driver_.start();
+  }
+
+  std::shared_ptr<PointCloudMsg> getPointCloudForDriver()
+  {
+      return std::make_shared<PointCloudMsg>();
   }
 
   std::shared_ptr<const PointCloudMsg> getPointCloud()
@@ -41,14 +48,14 @@ public:
   }
 
 private:
-  void pointCloudCallback(const std::shared_ptr<const PointCloudMsg>& pointcloud_msg)
+  void pointCloudCallback(std::shared_ptr<PointCloudMsg> pointcloud_msg)
   {
     std::lock_guard<std::mutex> lock(pointcloud_mutex_);
     pointcloud_ = pointcloud_msg;
   }
 
   RSDriver driver_;
-  std::shared_ptr<const PointCloudMsg> pointcloud_;
+  std::shared_ptr<PointCloudMsg> pointcloud_;
   Eigen::Matrix4f transform_;
   mutable std::mutex pointcloud_mutex_;
   mutable std::mutex transform_mutex_;

@@ -34,7 +34,9 @@ public:
   GPULidarHandler(const RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
     : transform_(transform)
   {
-    driver_.regPointCloudCallback(std::bind(&GPULidarHandler::pointCloudCallback, this, std::placeholders::_1));
+    driver_.regPointCloudCallback(
+        std::bind(&GPULidarHandler::getPointCloud, this),
+        std::bind(&GPULidarHandler::pointCloudCallback, this, std::placeholders::_1));
     driver_.init(driver_param);
     driver_.start();
   }
@@ -42,6 +44,11 @@ public:
   ~GPULidarHandler()
   {
     // cudaFree is handled by CudaFreeDeleter in unique_ptr
+  }
+
+  std::shared_ptr<PointCloudMsg> getPointCloud()
+  {
+      return std::make_shared<PointCloudMsg>();
   }
 
   // Returns a shared_ptr to a struct containing device pointer and count
@@ -70,7 +77,7 @@ public:
   }
 
 private:
-  void pointCloudCallback(const std::shared_ptr<const PointCloudMsg>& pointcloud_msg)
+  void pointCloudCallback(std::shared_ptr<PointCloudMsg> pointcloud_msg)
   {
     if (!pointcloud_msg || pointcloud_msg->points.empty())
     {
