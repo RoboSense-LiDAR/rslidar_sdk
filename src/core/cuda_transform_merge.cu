@@ -1,7 +1,7 @@
 #include "cuda_transform_merge.cuh"
 #include <cuda_runtime.h>
 #include <thrust/device_vector.h>
-#include <thrust/upper_bound.h>
+#include <thrust/binary_search.h>
 #include <thrust/execution_policy.h>
 
 // CUDA kernel to transform and merge points

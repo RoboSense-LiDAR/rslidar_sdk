@@ -40,16 +40,16 @@ __global__ void generateFlatScanKernelInt(
 
             if (bin_idx >= 0 && bin_idx < params.num_beams)
             {
-                // Convert range to integer centimeters
-                int range_cm = static_cast<int>(range_m * 1000.0f);
+                // Convert range to integer millimeters
+                int range_mm = static_cast<int>(range_m * 1000.0f);
                 // Use native integer atomicMin
-                atomicMin(&d_ranges_mm[bin_idx], range_cm);
+                atomicMin(&d_ranges_mm[bin_idx], range_mm);
             }
         }
     }
 }
 
-// Kernel to convert integer ranges (cm) back to float (m)
+// Kernel to convert integer ranges (mm) back to float (m)
 __global__ void convertRangesToFloatKernel(int* d_ranges_mm, float* d_ranges_m, size_t num_beams)
 {
     size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -76,7 +76,7 @@ cudaError_t generateFlatScanGPU(
 {
     cudaError_t err;
 
-    // 1. Allocate intermediate integer GPU memory for ranges in cm
+    // 1. Allocate intermediate integer GPU memory for ranges in mm
     int* d_ranges_mm;
     err = cudaMalloc((void**)&d_ranges_mm, params.num_beams * sizeof(int));
     if (err != cudaSuccess) return err;
@@ -108,7 +108,7 @@ cudaError_t generateFlatScanGPU(
     err = cudaGetLastError();
     if (err != cudaSuccess) { cudaFree(d_ranges_mm); cudaFree(d_ranges_m); return err; }
 
-    // 5. Launch kernel to convert integer (cm) ranges to float (m) ranges
+    // 5. Launch kernel to convert integer (mm) ranges to float (m) ranges
     int num_blocks_convert = (params.num_beams + BLOCK_SIZE - 1) / BLOCK_SIZE;
     convertRangesToFloatKernel<<<num_blocks_convert, BLOCK_SIZE>>>(d_ranges_mm, d_ranges_m, params.num_beams);
     err = cudaGetLastError();
