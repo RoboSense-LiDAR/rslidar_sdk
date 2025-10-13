@@ -11,6 +11,8 @@
 // CUDA runtime API
 #include <cuda_runtime.h>
 
+using namespace robosense::lidar;
+
 using PointCloudMsg = PointCloudT<PointXYZI>;
 using RSDriver = LidarDriver<PointCloudMsg>;
 
@@ -29,7 +31,7 @@ struct CudaFreeDeleter
 class GPULidarHandler
 {
 public:
-  GPULidarHandler(const robosense::lidar::RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
+  GPULidarHandler(const RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
     : transform_(transform)
   {
     driver_.regPointCloudCallback(std::bind(&GPULidarHandler::pointCloudCallback, this, std::placeholders::_1));
@@ -108,7 +110,7 @@ private:
 
     std::lock_guard<std::mutex> lock(gpu_cloud_mutex_);
     gpu_pointcloud_data_ = std::make_shared<GPUPointCloudData>();
-    gpu_pointcloud_data_->d_points_ptr.reset(d_points, CudaFreeDeleter());
+    gpu_pointcloud_data_->d_points_ptr.reset(d_points);
     gpu_pointcloud_data_->num_points = num_points;
   }
 
@@ -118,3 +120,6 @@ private:
   mutable std::mutex gpu_cloud_mutex_;
   mutable std::mutex transform_mutex_;
 };
+
+} // namespace lidar
+} // namespace robosense

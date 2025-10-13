@@ -203,7 +203,6 @@ add_executable(multi_lidar_node
 
 target_include_directories(multi_lidar_node PRIVATE ${PROJECT_SOURCE_DIR}/src/rs_driver/src)
 
-
 target_link_libraries(rslidar_sdk_node                   
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES})

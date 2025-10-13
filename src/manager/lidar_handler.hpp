@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <rs_driver/api/lidar_driver.hpp>
@@ -15,7 +14,7 @@ using RSDriver = LidarDriver<PointCloudMsg>;
 class LidarHandler
 {
 public:
-  LidarHandler(const RsDriverParam& driver_param, const Eigen::Matrix4f& transform)
+  LidarHandler(const RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
     : transform_(transform)
   {
     driver_.regPointCloudCallback(std::bind(&LidarHandler::pointCloudCallback, this, std::placeholders::_1));
