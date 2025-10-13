@@ -7,7 +7,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('rslidar_sdk')
-    default_config_path = os.path.join(pkg_share, 'config', 'multi_lidar_config.yaml')
+    default_config_path = os.path.join(pkg_share, 'config', 'two_lidars_config.yaml')
 
     return LaunchDescription([
         DeclareLaunchArgument(

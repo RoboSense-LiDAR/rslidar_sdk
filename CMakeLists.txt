@@ -189,10 +189,6 @@ include_directories(${rs_driver_INCLUDE_DIRS})
 # Build Setup
 #========================
 
-add_executable(rslidar_sdk_node
-               node/rslidar_sdk_node.cpp
-               src/manager/node_manager.cpp)
-
 # New executable for multi-lidar processing
 add_executable(multi_lidar_node
                 node/multi_lidar_node.cpp
@@ -207,10 +203,6 @@ target_include_directories(multi_lidar_node PRIVATE
     ${CUDA_INCLUDE_DIRS}
 )
 
-target_link_libraries(rslidar_sdk_node                   
-                      ${YAML_CPP_LIBRARIES}
-                      ${rs_driver_LIBRARIES})
-
 target_link_libraries(multi_lidar_node
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES}
@@ -221,25 +213,11 @@ target_link_libraries(multi_lidar_node
 
 #Ros#
 if(roscpp_FOUND)
-
-  target_link_libraries(rslidar_sdk_node 
-    ${ROS_LIBS})
-
-  install(TARGETS rslidar_sdk_node
-          RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-          LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-          ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
-
+  # rslidar_sdk_node related install rules were here
 endif(roscpp_FOUND)
 
 #Ros2#
 if(rclcpp_FOUND)
-
-  ament_target_dependencies(rslidar_sdk_node 
-    rclcpp 
-    std_msgs 
-    sensor_msgs 
-    rslidar_msg)
 
   ament_target_dependencies(multi_lidar_node
     rclcpp
@@ -258,7 +236,6 @@ if(rclcpp_FOUND)
 
 
   install(TARGETS
-    rslidar_sdk_node
     multi_lidar_node
     DESTINATION lib/${PROJECT_NAME})
 
