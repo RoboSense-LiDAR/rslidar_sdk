@@ -9,7 +9,6 @@
 #include <chrono>
 #include <thread>
 #include <algorithm>
-#include <set>
 #include "../core/cuda_transform_merge.cuh"
 #include "../core/cuda_roi_filter.cuh"
 #include "../core/cuda_voxel_grid.cuh"
@@ -64,24 +63,10 @@ void MultiLidarNode::loadParameters()
   }
 #endif
 
-  // This is a more robust way to get list-like parameters in ROS2
-  auto param_list_result = this->list_parameters({"lidars"}, 1);
-  std::set<std::string> lidar_indices;
-  for (const auto &name : param_list_result.names) 
+  auto lidar_params = this->declare_parameter<std::vector<std::string>>("lidars", std::vector<std::string>());
+  for (size_t i = 0; i < lidar_params.size(); ++i) 
   {
-      // The name is like "lidars.0.name", we need to extract the index "0"
-      auto first_dot = name.find('.');
-      if (first_dot != std::string::npos) {
-          auto second_dot = name.find('.', first_dot + 1);
-          if (second_dot != std::string::npos) {
-              lidar_indices.insert(name.substr(first_dot + 1, second_dot - (first_dot + 1)));
-          }
-      }
-  }
-
-  for (const auto &index_str : lidar_indices) 
-  {
-      std::string lidar_prefix = "lidars." + index_str + ".";
+      std::string lidar_prefix = "lidars." + std::to_string(i) + ".";
       bool enabled = this->declare_parameter(lidar_prefix + "enabled", false);
       if (!enabled) continue;
 
