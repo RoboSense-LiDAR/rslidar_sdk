@@ -80,7 +80,7 @@ cudaError_t voxelGridDownsampleGPU(
     // 3. Unique by Voxel ID (select first point in each voxel)
     auto new_end = thrust::unique(
         thrust::device, d_voxel_points.begin(), d_voxel_points.end(),
-        [](const VoxelPoint& a, const VoxelPoint& b) { return a.voxel_id == b.voxel_id; });
+        [](const VoxelPoint& a, const VoxelPoint& b) __device__ { return a.voxel_id == b.voxel_id; });
 
     size_t unique_voxels = thrust::distance(d_voxel_points.begin(), new_end);
     *num_output_points = unique_voxels;
@@ -93,7 +93,7 @@ cudaError_t voxelGridDownsampleGPU(
 
         thrust::transform(thrust::device, d_voxel_points.begin(), d_voxel_points.begin() + unique_voxels,
                           thrust::raw_pointer_cast(*d_output_cloud),
-                          [](const VoxelPoint& vp) { return vp.point; });
+                          [](const VoxelPoint& vp) __device__ { return vp.point; });
     }
     else
     {
