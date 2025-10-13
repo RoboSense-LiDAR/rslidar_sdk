@@ -176,6 +176,7 @@ find_package(yaml-cpp REQUIRED)
 
 #Include directory#
 include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/src/rs_driver/src)
 
 #Driver core#
 add_subdirectory(src/rs_driver)
