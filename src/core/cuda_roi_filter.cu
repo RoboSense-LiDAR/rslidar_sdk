@@ -2,8 +2,8 @@
 #include "cuda_roi_filter.cuh"
 #include <thrust/device_vector.h>
 #include <thrust/copy.h>
-#include <thrust/iterator.h>
 #include <thrust/execution_policy.h>
+// #include <iterator>
 
 // Predicate for thrust::copy_if for ROI filtering
 struct RoiFilterPredicate
