@@ -40,8 +40,21 @@ __global__ void generateFlatScanKernel(
 
             if (bin_idx >= 0 && bin_idx < params.num_beams)
             {
-                // Update with the closest point (minimum range) using atomicMin
-                atomicMin(&d_ranges[bin_idx], range);
+                // Atomically update the minimum range for this bin using a CAS loop
+                float* address = &d_ranges[bin_idx];
+                float old_val = *address;
+                while (range < old_val)
+                {
+                    unsigned int* address_as_uint = (unsigned int*)address;
+                    unsigned int old_int = __float_as_uint(old_val);
+                    unsigned int new_int = __float_as_uint(range);
+                    unsigned int returned_int = atomicCAS(address_as_uint, old_int, new_int);
+                    if (returned_int == old_int)
+                    {
+                        break; // Success
+                    }
+                    old_val = __uint_as_float(returned_int); // Update and retry
+                }
             }
         }
     }
