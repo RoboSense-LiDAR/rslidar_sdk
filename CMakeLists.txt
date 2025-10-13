@@ -202,7 +202,10 @@ add_executable(multi_lidar_node
                 src/core/cuda_voxel_grid.cu
                 src/core/cuda_flatscan.cu)
 
-target_include_directories(multi_lidar_node PRIVATE ${PROJECT_SOURCE_DIR}/src/rs_driver/src)
+target_include_directories(multi_lidar_node PRIVATE 
+    ${PROJECT_SOURCE_DIR}/src/rs_driver/src
+    ${CUDA_INCLUDE_DIRS}
+)
 
 target_link_libraries(rslidar_sdk_node                   
                       ${YAML_CPP_LIBRARIES}
