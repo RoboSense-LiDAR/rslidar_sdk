@@ -6,7 +6,7 @@
 #include <Eigen/Dense>
 #include <mutex>
 #include <memory>
-#include "../core/cuda_point_types.cuh"
+#include <core/cuda_point_types.cuh>
 
 // CUDA runtime API
 #include <cuda_runtime.h>
