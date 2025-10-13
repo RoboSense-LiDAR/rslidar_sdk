@@ -10,8 +10,6 @@ set(POINT_TYPE XYZI)
 option(ENABLE_TRANSFORM "Enable transform functions" OFF)
 if(${ENABLE_TRANSFORM})
   add_definitions("-DENABLE_TRANSFORM")
-  find_package(Eigen3 REQUIRED)
-  include_directories(${EIGEN3_INCLUDE_DIR})
 endif(${ENABLE_TRANSFORM})
 
 option(ENABLE_EPOLL_RECEIVE "Receive packets with epoll() instead of select()" OFF)
@@ -156,6 +154,7 @@ if(rclcpp_FOUND)
   find_package(pcl_conversions REQUIRED)
   find_package(tf2_ros REQUIRED)
   find_package(tf2_eigen REQUIRED)
+  find_package(Eigen3 REQUIRED)
   find_package(CUDA REQUIRED)
 
   include_directories(
@@ -163,6 +162,7 @@ if(rclcpp_FOUND)
     ${pcl_conversions_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/src/core
     ${CUDA_INCLUDE_DIRS}
+    ${EIGEN3_INCLUDE_DIR}
   )
 
 else(rclcpp_FOUND)
@@ -209,7 +209,8 @@ target_link_libraries(multi_lidar_node
                       ${rs_driver_LIBRARIES}
                       ${PCL_LIBRARIES}
                       ${pcl_conversions_LIBRARIES}
-                      ${CUDA_LIBRARIES})
+                      ${CUDA_LIBRARIES}
+                      Eigen3::Eigen)
 
 #Ros#
 if(roscpp_FOUND)
