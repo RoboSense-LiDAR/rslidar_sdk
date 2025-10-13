@@ -1,6 +1,6 @@
 
 #include "multi_lidar_node.hpp"
-#include <rslidar_sdk/utility/yaml_reader.hpp>
+#include <utility/yaml_reader.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <pcl/registration/icp.h>
