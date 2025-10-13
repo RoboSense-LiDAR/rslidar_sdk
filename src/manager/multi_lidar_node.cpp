@@ -16,6 +16,7 @@
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2/exceptions.h>
 
+using namespace robosense::lidar;
 
 MultiLidarNode::MultiLidarNode(const rclcpp::NodeOptions& options)
   : Node("multi_lidar_node", options)
@@ -76,7 +77,7 @@ void MultiLidarNode::loadParameters()
       std::string frame_id = this->declare_parameter(lidar_prefix + "frame_id", lidar_name);
       lidar_frame_ids_.push_back(frame_id);
 
-      RsDriverParam driver_param;
+      RSDriverParam driver_param;
       driver_param.lidar_type = (LidarType)this->declare_parameter(lidar_prefix + "driver.lidar_type", (int)LidarType::RS16);
       driver_param.input_type = (InputType)this->declare_parameter(lidar_prefix + "driver.input_type", (int)InputType::ONLINE_LIDAR);
       driver_param.msop_port = this->declare_parameter(lidar_prefix + "driver.msop_port", 6699);

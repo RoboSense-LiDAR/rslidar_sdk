@@ -127,6 +127,3 @@ private:
   mutable std::mutex gpu_cloud_mutex_;
   mutable std::mutex transform_mutex_;
 };
-
-} // namespace lidar
-} // namespace robosense
