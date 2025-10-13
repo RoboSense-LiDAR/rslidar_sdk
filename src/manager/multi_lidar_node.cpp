@@ -109,7 +109,7 @@ void MultiLidarNode::loadFilterParameters()
   if (enable_roi_filter_)
   {
     RCLCPP_INFO(this->get_logger(), "[Filter] ROI filter enabled.");
-    auto roi_filters_param = this->declare_parameter<std::vector<rclcpp::Parameter>>("roi_filters", std::vector<rclcpp::Parameter>());
+    auto roi_filters_param = this->declare_parameter<std::vector<std::string>>("roi_filters", std::vector<std::string>());
 
     for (size_t i = 0; i < roi_filters_param.size(); ++i)
     {
