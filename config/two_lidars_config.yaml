@@ -20,13 +20,13 @@ multi_lidar_node:
     # FlatScan (LaserScan) parameters
     publish_flatscan: false
     flatscan_topic_name: "/flatscan"
-    flatscan_min_height: -0.1
-    flatscan_max_height: 0.1
+    flatscan_min_height: 0.1
+    flatscan_max_height: 1.0
     flatscan_angle_min: -3.14159
     flatscan_angle_max: 3.14159
     flatscan_angle_increment: 0.0087
     flatscan_range_min: 0.1
-    flatscan_range_max: 100.0
+    flatscan_range_max: 30.0
 
     # This list of strings determines the number of lidars. The content doesn't matter.
     lidars: ["lidar_1", "lidar_2"]
@@ -36,7 +36,7 @@ multi_lidar_node:
       name: "lidar_1"
       enabled: true
       driver:
-        lidar_type: "RS16"
+        lidar_type: "RSAIRY"
         input_type: "online"
         msop_port: 6668
         difop_port: 7778
@@ -55,14 +55,14 @@ multi_lidar_node:
       name: "lidar_2"
       enabled: true
       driver:
-        lidar_type: "RS16"
+        lidar_type: "RSAIRY"
         input_type: "online"
         msop_port: 6667
         difop_port: 7777
       pointcloud:
         frame_id: "lidar_2_link"
       tf:
-        x: 1.0
+        x: -1.0
         y: 0.0
         z: 0.0
         roll: 0.0
