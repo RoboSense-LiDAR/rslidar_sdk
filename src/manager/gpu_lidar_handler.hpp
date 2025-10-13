@@ -28,7 +28,7 @@ struct CudaFreeDeleter
 class GPULidarHandler
 {
 public:
-  GPULidarHandler(const robosense::lidar::RsDriverParam& driver_param, const Eigen::Matrix4f& transform)
+  GPULidarHandler(const robosense::lidar::RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
     : transform_(transform)
   {
     driver_.regPointCloudCallback(std::bind(&GPULidarHandler::pointCloudCallback, this, std::placeholders::_1));
