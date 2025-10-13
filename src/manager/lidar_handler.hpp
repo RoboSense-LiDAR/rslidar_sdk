@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <rslidar_sdk/rslidar_driver.hpp>
+#include <rs_driver/api/lidar_driver.hpp>
 #include <Eigen/Dense>
 
 using namespace robosense::rslidar;

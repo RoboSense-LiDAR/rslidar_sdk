@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rslidar_sdk/rslidar_driver.hpp>
+#include <rs_driver/api/lidar_driver.hpp>
 #include <Eigen/Dense>
 #include <mutex>
 #include <memory>
