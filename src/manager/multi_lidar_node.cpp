@@ -75,7 +75,8 @@ void MultiLidarNode::loadParameters()
       lidar_frame_ids_.push_back(frame_id);
 
       RSDriverParam driver_param;
-      driver_param.lidar_type = (LidarType)this->declare_parameter(lidar_prefix + "driver.lidar_type", (int)LidarType::RS16);
+      std::string lidar_type_str = this->declare_parameter(lidar_prefix + "driver.lidar_type", "RS16");
+      driver_param.lidar_type = strToLidarType(lidar_type_str);
       driver_param.input_type = (InputType)this->declare_parameter(lidar_prefix + "driver.input_type", (int)InputType::ONLINE_LIDAR);
       driver_param.input_param.msop_port = this->declare_parameter(lidar_prefix + "driver.msop_port", 6699);
       driver_param.input_param.difop_port = this->declare_parameter(lidar_prefix + "driver.difop_port", 7788);
