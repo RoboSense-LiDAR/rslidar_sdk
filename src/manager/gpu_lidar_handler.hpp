@@ -1,6 +1,8 @@
 #pragma once
 
 #include <rs_driver/api/lidar_driver.hpp>
+#include <rs_driver/driver/driver_param.hpp>
+#include <rs_driver/msg/point_cloud_msg.hpp>
 #include <Eigen/Dense>
 #include <mutex>
 #include <memory>
@@ -10,6 +12,8 @@
 #include <cuda_runtime.h>
 
 using namespace robosense::lidar;
+
+using PointCloudMsg = PointCloudT<PointXYZI>;
 
 // Custom deleter for unique_ptr to manage CUDA device memory
 struct CudaFreeDeleter
