@@ -80,8 +80,8 @@ void MultiLidarNode::loadParameters()
       RSDriverParam driver_param;
       driver_param.lidar_type = (LidarType)this->declare_parameter(lidar_prefix + "driver.lidar_type", (int)LidarType::RS16);
       driver_param.input_type = (InputType)this->declare_parameter(lidar_prefix + "driver.input_type", (int)InputType::ONLINE_LIDAR);
-      driver_param.msop_port = this->declare_parameter(lidar_prefix + "driver.msop_port", 6699);
-      driver_param.difop_port = this->declare_parameter(lidar_prefix + "driver.difop_port", 7788);
+      driver_param.input_param.msop_port = this->declare_parameter(lidar_prefix + "driver.msop_port", 6699);
+      driver_param.input_param.difop_port = this->declare_parameter(lidar_prefix + "driver.difop_port", 7788);
 
       double x = this->declare_parameter(lidar_prefix + "tf.x", 0.0);
       double y = this->declare_parameter(lidar_prefix + "tf.y", 0.0);
