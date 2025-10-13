@@ -1,0 +1,69 @@
+# config/two_lidars_config.yaml
+multi_lidar_node:
+  ros__parameters:
+    # The base frame for the merged point cloud
+    base_frame_id: "base_link"
+    # Topic for the merged point cloud
+    merged_topic_name: "/points_merged"
+    # Enable/Disable 3D PCD publishing
+    publish_3d_pcd: true
+    # Publishing frequency in Hz
+    publish_frequency: 10.0
+
+    # ROI Filter parameters - DISABLED
+    enable_roi_filter: false
+
+    # Voxel Grid Filter parameters - ENABLED
+    enable_voxel_filter: true
+    voxel_leaf_size: 0.01 # 1cm
+
+    # FlatScan (LaserScan) parameters
+    publish_flatscan: true
+    flatscan_topic_name: "/flatscan"
+    flatscan_min_height: 0.1
+    flatscan_max_height: 0.1
+    flatscan_angle_min: -3.14159
+    flatscan_angle_max: 3.14159
+    flatscan_angle_increment: 0.0087
+    flatscan_range_min: 0.1
+    flatscan_range_max: 30.0
+
+    # List of lidars to be configured
+    lidars:
+      # Lidar 1
+      - name: "lidar_F"
+        enabled: true
+        driver:
+          lidar_type: "RSAIRY"
+          input_type: "online"
+          msop_port: 6668
+          difop_port: 7778
+        pointcloud:
+          frame_id: "lidar_1_link"
+        # TF from base_frame_id to this lidar's frame_id
+        tf:
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          roll: 0.0
+          pitch: 0.0
+          yaw: 0.0
+
+      # Lidar 2
+      - name: "lidar_RR"
+        enabled: true
+        driver:
+          lidar_type: "RSAIRY"
+          input_type: "online"
+          msop_port: 6667
+          difop_port: 7777
+        pointcloud:
+          frame_id: "lidar_2_link"
+        # TF from base_frame_id to this lidar's frame_id
+        tf:
+          x: -1.0
+          y: 0.0
+          z: 0.0
+          roll: 0.0
+          pitch: 0.0
+          yaw: 0.0
