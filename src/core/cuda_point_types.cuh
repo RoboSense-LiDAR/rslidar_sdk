@@ -3,6 +3,11 @@
 
 #include <cstddef>
 
+#ifndef __CUDACC__
+#define __host__
+#define __device__
+#endif
+
 // Point structure for GPU memory
 struct CudaPointXYZI
 {
