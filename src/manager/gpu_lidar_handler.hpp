@@ -11,8 +11,6 @@
 // CUDA runtime API
 #include <cuda_runtime.h>
 
-using namespace robosense::lidar;
-
 using PointCloudMsg = PointCloudT<PointXYZI>;
 
 // Custom deleter for unique_ptr to manage CUDA device memory
@@ -30,7 +28,7 @@ struct CudaFreeDeleter
 class GPULidarHandler
 {
 public:
-  GPULidarHandler(const RsDriverParam& driver_param, const Eigen::Matrix4f& transform)
+  GPULidarHandler(const robosense::lidar::RsDriverParam& driver_param, const Eigen::Matrix4f& transform)
     : transform_(transform)
   {
     driver_.regPointCloudCallback(std::bind(&GPULidarHandler::pointCloudCallback, this, std::placeholders::_1));
