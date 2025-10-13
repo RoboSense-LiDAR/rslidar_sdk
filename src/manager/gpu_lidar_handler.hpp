@@ -12,6 +12,7 @@
 #include <cuda_runtime.h>
 
 using PointCloudMsg = PointCloudT<PointXYZI>;
+using RSDriver = LidarDriver<PointCloudMsg>;
 
 // Custom deleter for unique_ptr to manage CUDA device memory
 struct CudaFreeDeleter
