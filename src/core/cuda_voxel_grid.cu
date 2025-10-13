@@ -77,7 +77,7 @@ cudaError_t voxelGridDownsampleGPU(
     cudaError_t err;
 
     int min_grid_size;
-    int block_size;
+    int block_size = 256;
     cudaOccupancyMaxPotentialBlockSize(&min_grid_size, &block_size, computeVoxelIDsKernel, 0, 0);
     const int BLOCK_SIZE = block_size > 0 ? block_size : 256;
 

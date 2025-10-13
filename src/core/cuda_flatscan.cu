@@ -92,7 +92,7 @@ cudaError_t generateFlatScanGPU(
 
     // Get optimal block size
     int min_grid_size;
-    int block_size;
+    int block_size = 256;
     cudaOccupancyMaxPotentialBlockSize(&min_grid_size, &block_size, generateFlatScanKernelInt, 0, 0);
     const int BLOCK_SIZE = block_size > 0 ? block_size : 256; // Fallback block size
 
