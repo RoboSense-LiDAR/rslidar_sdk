@@ -8,7 +8,7 @@
 // Helper struct to accumulate point sums and count
 struct PointSum
 {
-    float x, y, z, intensity;
+    float x, y, z, max_intensity;
     int count;
 };
 
@@ -18,7 +18,7 @@ struct PointAdd
     __host__ __device__
     PointSum operator()(const PointSum& a, const PointSum& b) const
     {
-        return {a.x + b.x, a.y + b.y, a.z + b.z, a.intensity + b.intensity, a.count + b.count};
+        return {a.x + b.x, a.y + b.y, a.z + b.z, fmaxf(a.max_intensity, b.max_intensity), a.count + b.count};
     }
 };
 
@@ -55,7 +55,7 @@ __global__ void computeAveragesKernel(
     PointSum s = d_summed_values[idx];
     if (s.count > 0)
     {
-        d_output_cloud[idx] = {s.x / s.count, s.y / s.count, s.z / s.count, s.intensity / s.count};
+        d_output_cloud[idx] = {s.x / s.count, s.y / s.count, s.z / s.count, s.max_intensity};
     }
 }
 
