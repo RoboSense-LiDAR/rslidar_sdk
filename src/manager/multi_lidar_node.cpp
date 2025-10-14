@@ -6,6 +6,7 @@
 #include <pcl/registration/icp.h>
 #include <pcl/filters/crop_box.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/filter.h>
 #include <chrono>
 #include <thread>
 #include <algorithm>
@@ -281,11 +282,19 @@ void MultiLidarNode::runInitialCalibration()
 
           pcl_cloud->width = pcl_cloud->points.size();
           pcl_cloud->height = 1;
-          pcl_cloud->is_dense = true;
+          pcl_cloud->is_dense = false; // Assume it might have NaNs
 
-          initial_cpu_clouds[i] = pcl_cloud;
+          // The driver can produce NaN points. PCL's ICP asserts on these.
+          // We must remove them before proceeding.
+          pcl::PointCloud<pcl::PointXYZI>::Ptr filtered_cloud(new pcl::PointCloud<pcl::PointXYZI>);
+          std::vector<int> indices;
+          pcl::removeNaNFromPointCloud(*pcl_cloud, *filtered_cloud, indices);
+          filtered_cloud->is_dense = true; // Now it's actually dense
+
+          initial_cpu_clouds[i] = filtered_cloud; // Use the filtered cloud
           cloud_received[i] = true;
-          RCLCPP_INFO(this->get_logger(), "[ICP Calibration] Received initial cloud from LiDAR %zu.", i);
+          RCLCPP_INFO(this->get_logger(), "[ICP Calibration] Received initial cloud from LiDAR %zu (%zu points, %zu after NaN filter).", 
+            i, pcl_cloud->points.size(), filtered_cloud->points.size());
         }
       }
     }
