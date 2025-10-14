@@ -80,7 +80,24 @@ void MultiLidarNode::loadParameters()
       RSDriverParam driver_param;
       std::string lidar_type_str = this->declare_parameter(lidar_prefix + "driver.lidar_type", "RS16");
       driver_param.lidar_type = strToLidarType(lidar_type_str);
-      driver_param.input_type = (InputType)this->declare_parameter(lidar_prefix + "driver.input_type", (int)InputType::ONLINE_LIDAR);
+      std::string input_type_str = this->declare_parameter(lidar_prefix + "driver.input_type", "online");
+      if (input_type_str == "online")
+      {
+        driver_param.input_type = InputType::ONLINE_LIDAR;
+      }
+      else if (input_type_str == "pcap")
+      {
+        driver_param.input_type = InputType::PCAP_FILE;
+      }
+      else if (input_type_str == "raw")
+      {
+        driver_param.input_type = InputType::RAW_PACKET;
+      }
+      else
+      {
+        driver_param.input_type = InputType::ONLINE_LIDAR; // Default
+        RCLCPP_WARN(this->get_logger(), "Invalid input_type '%s' for %s. Defaulting to 'online'.", input_type_str.c_str(), lidar_name.c_str());
+      }
       driver_param.input_param.msop_port = this->declare_parameter(lidar_prefix + "driver.msop_port", 6699);
       driver_param.input_param.difop_port = this->declare_parameter(lidar_prefix + "driver.difop_port", 7788);
 
