@@ -50,6 +50,7 @@ private:
   std::vector<std::string> lidar_frame_ids_;
   std::vector<size_t> last_tf_hashes_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr merged_pub_;
+  bool publish_3d_pcd_;
   rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr flatscan_pub_;
 #ifdef WITH_NITROS
   std::shared_ptr<nvidia::isaac_ros::nitros::ManagedNitrosPublisher<nvidia::isaac_ros::nitros::NitrosPointCloud2>> nitros_pub_;
