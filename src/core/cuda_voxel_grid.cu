@@ -8,8 +8,7 @@
 // Helper struct to accumulate point sums and count
 struct PointSum
 {
-    float x, y, z;
-    unsigned int intensity;
+    float x, y, z, intensity;
     int count;
 };
 
@@ -41,7 +40,7 @@ __global__ void convertToPointSumKernel(
     long long vz = static_cast<long long>(floorf(p.z * inv_leaf_size));
 
     d_keys[idx] = (vx & 0x1FFFFF) | ((vy & 0x1FFFFF) << 21) | ((vz & 0x1FFFFF) << 42);
-    d_values[idx] = {p.x, p.y, p.z, static_cast<unsigned int>(p.intensity), 1};
+    d_values[idx] = {p.x, p.y, p.z, p.intensity, 1};
 }
 
 // Kernel to compute the final average from the summed values
@@ -56,7 +55,7 @@ __global__ void computeAveragesKernel(
     PointSum s = d_summed_values[idx];
     if (s.count > 0)
     {
-        d_output_cloud[idx] = {s.x / s.count, s.y / s.count, s.z / s.count, static_cast<unsigned char>(s.intensity / s.count)};
+        d_output_cloud[idx] = {s.x / s.count, s.y / s.count, s.z / s.count, s.intensity / s.count};
     }
 }
 
