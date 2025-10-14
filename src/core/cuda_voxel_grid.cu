@@ -110,7 +110,8 @@ cudaError_t voxelGridDownsampleGPU(
     if (err != cudaSuccess) return err;
 
     // 4. Reduce by key to sum up points within each unique voxel.
-    // This is an in-place reduction: the unique keys will be written back into d_voxel_ids.
+    thrust::device_vector<PointSumAndCount> d_reduced_sums(num_input_points);
+    // This is an in-place reduction for the keys: the unique keys will be written back into d_voxel_ids.
     auto end_iterators = thrust::reduce_by_key(
         thrust::device,
         d_voxel_ids.begin(), d_voxel_ids.end(),
