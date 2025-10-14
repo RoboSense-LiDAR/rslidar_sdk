@@ -64,6 +64,7 @@ __global__ void computeCentroidsKernel(
     VoxelPoint* d_sorted_voxel_points,
     int* d_voxel_start_indices,
     size_t num_unique_voxels,
+    size_t num_input_points,
     CudaPointXYZI* d_output_cloud)
 {
     size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -71,7 +72,7 @@ __global__ void computeCentroidsKernel(
 
     int start_index = d_voxel_start_indices[idx];
     // The end index is the start of the next voxel, or the total number of points for the last voxel
-    int end_index = (idx == num_unique_voxels - 1) ? d_voxel_start_indices[num_unique_voxels] : d_voxel_start_indices[idx + 1];
+    int end_index = (idx == num_unique_voxels - 1) ? num_input_points : d_voxel_start_indices[idx + 1];
 
     float sum_x = 0.0f, sum_y = 0.0f, sum_z = 0.0f, sum_intensity = 0.0f;
     for (int i = start_index; i < end_index; ++i)
@@ -83,10 +84,13 @@ __global__ void computeCentroidsKernel(
     }
 
     int count = end_index - start_index;
-    d_output_cloud[idx].x = sum_x / count;
-    d_output_cloud[idx].y = sum_y / count;
-    d_output_cloud[idx].z = sum_z / count;
-    d_output_cloud[idx].intensity = sum_intensity / count;
+    if (count > 0)
+    {
+        d_output_cloud[idx].x = sum_x / count;
+        d_output_cloud[idx].y = sum_y / count;
+        d_output_cloud[idx].z = sum_z / count;
+        d_output_cloud[idx].intensity = sum_intensity / count;
+    }
 }
 
 
@@ -129,29 +133,45 @@ cudaError_t voxelGridDownsampleGPU(
     err = cudaGetLastError();
     if (err != cudaSuccess) return err;
 
-    // 4. Perform an exclusive scan (prefix sum) on the flags to get the start indices
-    thrust::device_vector<int> d_voxel_start_indices(num_input_points + 1);
-    thrust::exclusive_scan(thrust::device, d_voxel_start_flags.begin(), d_voxel_start_flags.end(), d_voxel_start_indices.begin());
+    // 4. Perform an exclusive scan (prefix sum) on the flags to get the number of unique voxels
+    thrust::device_vector<int> d_scan_output(num_input_points + 1);
+    thrust::exclusive_scan(thrust::device, d_voxel_start_flags.begin(), d_voxel_start_flags.end(), d_scan_output.begin());
     err = cudaGetLastError();
     if (err != cudaSuccess) return err;
 
-    // The total number of unique voxels is the sum of all flags
+    // The total number of unique voxels is the sum of all flags (the last element of the scan)
     int h_num_unique_voxels;
-    cudaMemcpy(&h_num_unique_voxels, thrust::raw_pointer_cast(d_voxel_start_indices.data()) + num_input_points, sizeof(int), cudaMemcpyDeviceToHost);
+    err = cudaMemcpy(&h_num_unique_voxels, thrust::raw_pointer_cast(d_scan_output.data()) + num_input_points, sizeof(int), cudaMemcpyDeviceToHost);
+    if (err != cudaSuccess) return err;
     *num_output_points = h_num_unique_voxels;
 
     if (*num_output_points > 0)
     {
-        // 5. Allocate output cloud
+        // 5. Get the start indices of each unique voxel using stream compaction
+        thrust::device_vector<int> d_indices(num_input_points);
+        thrust::sequence(thrust::device, d_indices.begin(), d_indices.end());
+
+        thrust::device_vector<int> d_voxel_start_indices(*num_output_points);
+        thrust::copy_if(thrust::device,
+                        d_indices.begin(),
+                        d_indices.end(),
+                        d_voxel_start_flags.begin(),
+                        d_voxel_start_indices.begin(),
+                        thrust::identity<int>());
+        err = cudaGetLastError();
+        if (err != cudaSuccess) return err;
+
+        // 6. Allocate output cloud
         err = cudaMalloc((void**)d_output_cloud, *num_output_points * sizeof(CudaPointXYZI));
         if (err != cudaSuccess) return err;
 
-        // 6. Launch kernel to compute centroids
+        // 7. Launch kernel to compute centroids
         int num_blocks_3 = (*num_output_points + block_size - 1) / block_size;
         computeCentroidsKernel<<<num_blocks_3, block_size>>>(
             thrust::raw_pointer_cast(d_voxel_points.data()),
             thrust::raw_pointer_cast(d_voxel_start_indices.data()),
             *num_output_points,
+            num_input_points,
             *d_output_cloud);
         err = cudaGetLastError();
         if (err != cudaSuccess) { cudaFree(*d_output_cloud); return err; }
