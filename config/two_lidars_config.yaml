@@ -13,8 +13,8 @@ multi_lidar_node:
     # Enable/Disable initial ICP calibration. Set to false to skip.
     enable_icp_calibration: true
 
-    # ROI Filter parameters - ENABLED
-    enable_roi_filter: true
+    # ROI Filter parameters - DISABLED
+    enable_roi_filter: false
     # This list of strings determines the number of filters. The content can be anything.
     roi_filters: ["exclude_base_link_box"]
 
@@ -64,7 +64,7 @@ multi_lidar_node:
         x: 0.6
         y: -0.35
         z: 0.8
-        roll: -0.5236
+        roll: -0.1745
         pitch: 1.5708
         yaw: 0.0
 
@@ -87,4 +87,4 @@ multi_lidar_node:
         z: 0.0
         roll: 0.0
         pitch: 0.0
-        yaw: -2.3562
+        yaw: 2.3562
