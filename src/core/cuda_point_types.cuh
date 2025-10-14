@@ -13,14 +13,11 @@
   #endif
 #endif
 
-#pragma pack(push, 1)
-// Point structure for GPU memory
+// Point structure for GPU memory, layout-compatible with pcl::PointXYZI
 struct CudaPointXYZI
 {
-    float x, y, z;
-    uint8_t intensity;
+    float x, y, z, intensity;
 };
-#pragma pack(pop)
 
 // Simple 4x4 matrix structure for CUDA kernels
 struct CudaMatrix4f
