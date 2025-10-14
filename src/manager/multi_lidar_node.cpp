@@ -167,6 +167,7 @@ void MultiLidarNode::loadParameters()
       info.frame_id = frame_id;
       info.original_index = i;
       info.last_tf_hash = 0;
+      info.icp_correction = Eigen::Matrix4f::Identity();
       lidar_info_.push_back(info);
 
       // Get a reference to the new element to modify it in place
@@ -358,26 +359,28 @@ void MultiLidarNode::runInitialCalibration()
       Eigen::Matrix4f final_source_to_target_tf = icp.getFinalTransformation();
       
       // Calculate the new transform for source_lidar_link to base_link
-      // This is: (base_link -> target_lidar_link) * (target_lidar_link -> source_lidar_link)
       Eigen::Matrix4f calibrated_source_to_base_tf = base_to_target_tf * final_source_to_target_tf;
 
-      source_handler->setTransform(calibrated_source_to_base_tf);
+      // Calculate and store the correction
+      Eigen::Matrix4f correction = initial_source_to_base_tf.inverse() * calibrated_source_to_base_tf;
+      lidar_info_[i].icp_correction = correction;
+
       RCLCPP_INFO(this->get_logger(), "[ICP Calibration] LiDAR %zu calibrated successfully. Fitness score: %f", i, icp.getFitnessScore());
       
       // Decompose and print the new transform
       Eigen::Vector3f translation = calibrated_source_to_base_tf.block<3,1>(0,3);
       Eigen::Matrix3f rotation = calibrated_source_to_base_tf.block<3,3>(0,0);
-      Eigen::Vector3f euler = rotation.eulerAngles(2, 1, 0); // ZYX order for yaw, pitch, roll
-
+      Eigen::Vector3f euler = rotation.eulerAngles(0, 1, 2); // XYZ order for roll, pitch, yaw from Eigen
+      
       double calibrated_x = translation.x();
       double calibrated_y = translation.y();
       double calibrated_z = translation.z();
-      double calibrated_yaw = euler[0];
+      double calibrated_roll = euler[0];
       double calibrated_pitch = euler[1];
-      double calibrated_roll = euler[2];
+      double calibrated_yaw = euler[2];
 
       RCLCPP_INFO(this->get_logger(), "[ICP Calibration] New TF for LiDAR %zu: [x: %.4f, y: %.4f, z: %.4f, roll: %.4f, pitch: %.4f, yaw: %.4f]",
-        i, calibrated_x, calibrated_y, calibrated_z, calibrated_roll, calibrated_pitch, calibrated_yaw);
+        lidar_info_[i].original_index, calibrated_x, calibrated_y, calibrated_z, calibrated_roll, calibrated_pitch, calibrated_yaw);
 
       // Update the ROS parameters with the new TF values
       size_t original_index = lidar_info_[i].original_index;
@@ -1049,17 +1052,107 @@ rcl_interfaces::msg::SetParametersResult MultiLidarNode::parametersCallback(cons
 
       size_t dot_pos = name.find(".", prefix.length());
 
-                  if (dot_pos != std::string::npos)
+                        if (dot_pos != std::string::npos)
 
-                  {
+                        {
 
-                    // TF parameters are now handled exclusively by checkTfUpdates.
+                          std::string index_str = name.substr(prefix.length(), dot_pos - prefix.length());
 
-                    // We no longer need to handle them here to avoid conflicts.
+                          try
 
-                  }
+                          {
 
-                }
+                            size_t config_index = std::stoul(index_str);
+
+                            for (size_t i = 0; i < lidar_info_.size(); ++i)
+
+                            {
+
+                              if (lidar_info_[i].original_index != config_index)
+
+                              {
+
+                                continue;
+
+                              }
+
+                  
+
+                              std::string tf_prefix = prefix + index_str + ".tf.";
+
+                              if (name.rfind(tf_prefix, 0) == 0)
+
+                              {
+
+                                double x = this->get_parameter(tf_prefix + "x").as_double();
+
+                                double y = this->get_parameter(tf_prefix + "y").as_double();
+
+                                double z = this->get_parameter(tf_prefix + "z").as_double();
+
+                                double roll = this->get_parameter(tf_prefix + "roll").as_double();
+
+                                double pitch = this->get_parameter(tf_prefix + "pitch").as_double();
+
+                                double yaw = this->get_parameter(tf_prefix + "yaw").as_double();
+
+                  
+
+                                if (name == tf_prefix + "x") x = parameter.as_double();
+
+                                if (name == tf_prefix + "y") y = parameter.as_double();
+
+                                if (name == tf_prefix + "z") z = parameter.as_double();
+
+                                if (name == tf_prefix + "roll") roll = parameter.as_double();
+
+                                if (name == tf_prefix + "pitch") pitch = parameter.as_double();
+
+                                if (name == tf_prefix + "yaw") yaw = parameter.as_double();
+
+                  
+
+                                Eigen::Matrix4f transform = Eigen::Matrix4f::Identity();
+
+                                Eigen::Translation3f translation(x, y, z);
+
+                                Eigen::AngleAxisf rot_x(roll, Eigen::Vector3f::UnitX());
+
+                                Eigen::AngleAxisf rot_y(pitch, Eigen::Vector3f::UnitY());
+
+                                Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
+
+                                transform = (translation * rot_x * rot_y * rot_z).matrix();
+
+                  
+
+                                // When parameters are updated (e.g., by ICP), we apply the new transform directly.
+
+                                // The dynamic TF updates will then be applied on top of this new base.
+
+                                lidar_info_[i].handler->setTransform(transform);
+
+                                RCLCPP_INFO(this->get_logger(), "Updated TF for lidar (config index %zu) from parameters.", config_index);
+
+                              }
+
+                              break; // Found the right lidar, no need to check others
+
+                            }
+
+                          }
+
+                          catch (const std::exception &e)
+
+                          {
+
+                            RCLCPP_WARN(this->get_logger(), "Could not parse lidar index from parameter name: %s", name.c_str());
+
+                          }
+
+                        }
+
+                      }
 
               }
 
@@ -1181,7 +1274,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-            if (new_hash != lidar_info_[i].last_tf_hash)
+                  if (new_hash != lidar_info_[i].last_tf_hash)
 
 
 
@@ -1189,7 +1282,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-            {
+                  {
 
 
 
@@ -1197,7 +1290,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-              lidar_info_[i].last_tf_hash = new_hash;
+                    lidar_info_[i].last_tf_hash = new_hash;
 
 
 
@@ -1205,7 +1298,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-      
+            
 
 
 
@@ -1213,7 +1306,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-              Eigen::Affine3d affine_transform = tf2::transformToEigen(transform_stamped);
+                    Eigen::Affine3d affine_transform = tf2::transformToEigen(transform_stamped);
 
 
 
@@ -1221,7 +1314,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-              Eigen::Matrix4f eigen_matrix = affine_transform.matrix().cast<float>();
+                    Eigen::Matrix4f dynamic_transform = affine_transform.matrix().cast<float>();
 
 
 
@@ -1229,7 +1322,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-      
+            
 
 
 
@@ -1237,7 +1330,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-              lidar_info_[i].handler->setTransform(eigen_matrix);
+                    // Apply the ICP correction to the dynamic transform
 
 
 
@@ -1245,7 +1338,7 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-              RCLCPP_INFO(this->get_logger(), "Updated TF for lidar (config index %zu) directly from TF tree.", lidar_info_[i].original_index);
+                    Eigen::Matrix4f final_transform = dynamic_transform * lidar_info_[i].icp_correction;
 
 
 
@@ -1253,7 +1346,31 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-            }
+            
+
+
+
+
+
+
+
+                    lidar_info_[i].handler->setTransform(final_transform);
+
+
+
+
+
+
+
+                    RCLCPP_INFO(this->get_logger(), "Updated TF for lidar (config index %zu) from TF tree with ICP correction.", lidar_info_[i].original_index);
+
+
+
+
+
+
+
+                  }
 
 
 

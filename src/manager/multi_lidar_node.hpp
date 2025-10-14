@@ -31,6 +31,7 @@ struct LidarInfo
   size_t original_index;
   size_t last_tf_hash;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr raw_pub;
+  Eigen::Matrix4f icp_correction;
 };
 
 class MultiLidarNode : public rclcpp::Node
