@@ -357,6 +357,7 @@ void MultiLidarNode::mergeAndPublish()
   std::vector<size_t> h_prefix_sums;
   std::vector<CudaMatrix4f> h_transforms;
   size_t total_points_to_merge = 0;
+  std::vector<std::shared_ptr<GPUPointCloudData>> alive_gpu_clouds; // Keep pointers alive
 
   for (const auto& handler : lidar_handlers_)
   {
@@ -371,7 +372,8 @@ void MultiLidarNode::mergeAndPublish()
       // This is a simplified check. A proper one would be a kernel to calculate the bounding box.
       // For now, we assume that if we have points, they are valid enough to proceed.
       // A more robust check could be added here if needed.
-
+      
+      alive_gpu_clouds.push_back(gpu_cloud_data); // Keep the shared_ptr alive
       d_input_clouds.push_back(gpu_cloud_data->d_points_ptr.get());
       h_input_counts.push_back(gpu_cloud_data->num_points);
       total_points_to_merge += gpu_cloud_data->num_points;
