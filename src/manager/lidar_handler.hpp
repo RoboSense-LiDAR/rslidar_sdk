@@ -62,7 +62,7 @@ public:
     driver_.stop();
   }
 
-private:
+protected:
   void pointCloudCallback(std::shared_ptr<PointCloudMsg> pointcloud_msg)
   {
     // Defense code: Check if the point cloud is valid before storing it.
@@ -82,8 +82,7 @@ private:
       std::lock_guard<std::mutex> lock(pointcloud_mutex_);
       pointcloud_ = pointcloud_msg;
     }
-    {
-      std::lock_guard<std::mutex> lock(timestamp_mutex_);
+    {n      std::lock_guard<std::mutex> lock(timestamp_mutex_);
       last_cloud_timestamp_ = clock_->now();
     }
   }

@@ -105,7 +105,7 @@ public:
 
     auto gpu_data = std::make_shared<GPUPointCloudData>();
     gpu_data->num_points = num_points;
-    gpu_data->timestamp = rclcpp::Time(static_cast<int64_t>(cpu_cloud_msg->timestamp * 1e9));
+    gpu_data->timestamp = rclcpp::Time(static_cast<int64_t>(cpu_cloud_msg->timestamp * 1e9), clock_->get_clock_type());
     gpu_data->d_points_ptr = std::shared_ptr<CudaPointXYZI>(d_new_buffer, [logger](CudaPointXYZI* ptr) {
       DEBUG_LOG(logger, "Custom deleter freeing GPU pointer: %p", ptr);
       cudaFree(ptr);
