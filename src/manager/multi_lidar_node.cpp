@@ -311,6 +311,11 @@ void MultiLidarNode::mergeAndPublish()
 
   for (const auto& handler : lidar_handlers_)
   {
+    if (!handler->isGPUReady())
+    {
+      continue; // Skip this lidar if its GPU resources are not ready
+    }
+
     auto gpu_cloud_data = handler->getGPUPointCloud();
     if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 0)
     {

@@ -39,6 +39,7 @@ public:
         std::bind(&GPULidarHandler::pointCloudCallback, this, std::placeholders::_1));
     driver_.init(driver_param);
     driver_.start();
+    initGPU();
   }
 
   ~GPULidarHandler()
@@ -76,7 +77,27 @@ public:
     transform_ = transform;
   }
 
+  void initGPU()
+  {
+    if (initGPU_())
+    {
+      is_gpu_ready_ = true;
+      RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "GPU resources initialized successfully.");
+    }
+    else
+    {
+      is_gpu_ready_ = false;
+      RCLCPP_ERROR(rclcpp::get_logger("GPULidarHandler"), "Failed to initialize GPU resources.");
+    }
+  }
+
+  bool isGPUReady() const
+  {
+    return is_gpu_ready_;
+  }
+
 private:
+  bool is_gpu_ready_ = false;
   void pointCloudCallback(std::shared_ptr<PointCloudMsg> pointcloud_msg)
   {
     if (!pointcloud_msg || pointcloud_msg->points.empty())
