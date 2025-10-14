@@ -91,9 +91,9 @@ private:
   RSDriver driver_;
   std::shared_ptr<PointCloudMsg> pointcloud_;
   Eigen::Matrix4f transform_;
+  rclcpp::Time last_cloud_timestamp_;
   rclcpp::Clock::SharedPtr clock_;
   mutable std::mutex pointcloud_mutex_;
   mutable std::mutex transform_mutex_;
   mutable std::mutex timestamp_mutex_;
-  rclcpp::Time last_cloud_timestamp_;
 };
