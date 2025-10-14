@@ -15,18 +15,21 @@ __global__ void transformAndMergeKernel(
 {
     size_t global_idx = blockIdx.x * blockDim.x + threadIdx.x;
 
-    // Find which lidar this global_idx belongs to using prefix sums
-    // thrust::upper_bound is not directly available in __global__ function, 
-    // but we can simulate its logic or use a simple loop for small num_lidars
-    // For optimal performance, a device-side binary search is better.
-    // For now, a simple loop is used as num_lidars is typically small.
+    // Find which lidar this global_idx belongs to using a manual binary search (like thrust::upper_bound)
+    // This correctly interprets d_prefix_sums as starting offsets.
     size_t lidar_idx = 0;
-    for (size_t i = 0; i < num_lidars; ++i)
+    size_t low = 0, high = num_lidars;
+    while (low < high)
     {
-        if (global_idx < d_prefix_sums[i])
+        size_t mid = low + (high - low) / 2;
+        if (global_idx >= d_prefix_sums[mid])
         {
-            lidar_idx = i;
-            break;
+            lidar_idx = mid;
+            low = mid + 1;
+        }
+        else
+        {
+            high = mid;
         }
     }
 
