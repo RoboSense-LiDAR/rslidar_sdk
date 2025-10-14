@@ -54,8 +54,8 @@ multi_lidar_node:
       driver:
         lidar_type: "RSAIRY"
         input_type: "online"
-        msop_port: 6667
-        difop_port: 7777
+        msop_port: 6668
+        difop_port: 7778
       pointcloud:
         frame_id: "lidar_0_link"
         publish_raw: true
@@ -75,8 +75,8 @@ multi_lidar_node:
       driver:
         lidar_type: "RSAIRY"
         input_type: "online"
-        msop_port: 6668
-        difop_port: 7778
+        msop_port: 6667
+        difop_port: 7777
       pointcloud:
         frame_id: "lidar_1_link"
         publish_raw: true
