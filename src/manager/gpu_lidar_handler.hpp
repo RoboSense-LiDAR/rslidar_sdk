@@ -33,12 +33,12 @@ public:
   std::shared_ptr<GPUPointCloudData> getGPUPointCloud()
   {
     auto cpu_cloud_msg = LidarHandler::getPointCloud();
-    if (!cpu_cloud_msg || !cpu_cloud_msg->point_cloud || cpu_cloud_msg->point_cloud->points.empty())
+    if (!cpu_cloud_msg || cpu_cloud_msg->points.empty())
     {
       return nullptr;
     }
 
-    const auto& cpu_points = cpu_cloud_msg->point_cloud->points;
+    const auto& cpu_points = cpu_cloud_msg->points;
     size_t num_points = cpu_points.size();
 
     if (num_points > max_points_)
