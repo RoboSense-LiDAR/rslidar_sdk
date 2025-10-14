@@ -64,7 +64,7 @@ multi_lidar_node:
         x: 0.6
         y: -0.35
         z: 0.8
-        roll: -0.1745
+        roll: 3.14159
         pitch: 1.5708
         yaw: 0.0
 

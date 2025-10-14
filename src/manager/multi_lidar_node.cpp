@@ -154,7 +154,7 @@ void MultiLidarNode::loadParameters()
       Eigen::AngleAxisf rot_x(roll, Eigen::Vector3f::UnitX());
       Eigen::AngleAxisf rot_y(pitch, Eigen::Vector3f::UnitY());
       Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
-      transform = (translation * rot_z * rot_y * rot_x).matrix();
+      transform = (translation * rot_x * rot_y * rot_z).matrix();
 
 #ifndef NDEBUG
       // Diagnostic logging to check CUDA state around handler creation
@@ -1049,105 +1049,19 @@ rcl_interfaces::msg::SetParametersResult MultiLidarNode::parametersCallback(cons
 
       size_t dot_pos = name.find(".", prefix.length());
 
-            if (dot_pos != std::string::npos)
-
-            {
-
-              std::string index_str = name.substr(prefix.length(), dot_pos - prefix.length());
-
-              try
-
-              {
-
-                size_t config_index = std::stoul(index_str);
-
-                for (size_t i = 0; i < lidar_info_.size(); ++i)
-
-                {
-
-                  if (lidar_info_[i].original_index != config_index)
+                  if (dot_pos != std::string::npos)
 
                   {
 
-                    continue;
+                    // TF parameters are now handled exclusively by checkTfUpdates.
+
+                    // We no longer need to handle them here to avoid conflicts.
 
                   }
-
-      
-
-                  std::string tf_prefix = prefix + index_str + ".tf.";
-
-                  if (name.rfind(tf_prefix, 0) == 0)
-
-                  {
-
-                    double x = this->get_parameter(tf_prefix + "x").as_double();
-
-                    double y = this->get_parameter(tf_prefix + "y").as_double();
-
-                    double z = this->get_parameter(tf_prefix + "z").as_double();
-
-                    double roll = this->get_parameter(tf_prefix + "roll").as_double();
-
-                    double pitch = this->get_parameter(tf_prefix + "pitch").as_double();
-
-                    double yaw = this->get_parameter(tf_prefix + "yaw").as_double();
-
-      
-
-                    if (name == tf_prefix + "x") x = parameter.as_double();
-
-                    if (name == tf_prefix + "y") y = parameter.as_double();
-
-                    if (name == tf_prefix + "z") z = parameter.as_double();
-
-                    if (name == tf_prefix + "roll") roll = parameter.as_double();
-
-                    if (name == tf_prefix + "pitch") pitch = parameter.as_double();
-
-                    if (name == tf_prefix + "yaw") yaw = parameter.as_double();
-
-      
-
-                    Eigen::Matrix4f transform = Eigen::Matrix4f::Identity();
-
-                    Eigen::Translation3f translation(x, y, z);
-
-                    Eigen::AngleAxisf rot_x(roll, Eigen::Vector3f::UnitX());
-
-                    Eigen::AngleAxisf rot_y(pitch, Eigen::Vector3f::UnitY());
-
-                    Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
-
-                    transform = (translation * rot_z * rot_y * rot_x).matrix();
-
-      
-
-                    lidar_info_[i].handler->setTransform(transform);
-
-                    RCLCPP_INFO(this->get_logger(), "Updated TF for lidar (config index %zu)", config_index);
-
-                  }
-
-                  break; // Found the right lidar, no need to check others
 
                 }
 
               }
-
-              catch (const std::exception &e)
-
-              {
-
-                RCLCPP_WARN(this->get_logger(), "Could not parse lidar index from parameter name: %s", name.c_str());
-
-              }
-
-            }
-
-          }
-
-        }
 
 
 
@@ -1267,139 +1181,127 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-      if (new_hash != lidar_info_[i].last_tf_hash)
+            if (new_hash != lidar_info_[i].last_tf_hash)
 
 
 
-      {
 
 
 
-        lidar_info_[i].last_tf_hash = new_hash;
 
+            {
 
 
 
 
 
 
-        tf2::Quaternion q(transform_stamped.transform.rotation.x,
 
+              lidar_info_[i].last_tf_hash = new_hash;
 
 
-                          transform_stamped.transform.rotation.y,
 
 
 
-                          transform_stamped.transform.rotation.z,
 
 
+      
 
-                          transform_stamped.transform.rotation.w);
 
 
 
-        tf2::Matrix3x3 m(q);
 
 
 
-        double roll, pitch, yaw;
+              Eigen::Affine3d affine_transform = tf2::transformToEigen(transform_stamped);
 
 
 
-        m.getRPY(roll, pitch, yaw);
 
 
 
 
+              Eigen::Matrix4f eigen_matrix = affine_transform.matrix().cast<float>();
 
 
 
-        double x = transform_stamped.transform.translation.x;
 
 
 
-        double y = transform_stamped.transform.translation.y;
 
+      
 
 
-        double z = transform_stamped.transform.translation.z;
 
 
 
 
 
+              lidar_info_[i].handler->setTransform(eigen_matrix);
 
 
-        size_t original_index = lidar_info_[i].original_index;
 
 
 
-        std::string tf_prefix = "lidars." + std::to_string(original_index) + ".tf.";
 
 
+              RCLCPP_INFO(this->get_logger(), "Updated TF for lidar (config index %zu) directly from TF tree.", lidar_info_[i].original_index);
 
-        this->set_parameters({
 
 
 
-          rclcpp::Parameter(tf_prefix + "x", x),
 
 
 
-          rclcpp::Parameter(tf_prefix + "y", y),
+            }
 
 
 
-          rclcpp::Parameter(tf_prefix + "z", z),
 
 
 
-          rclcpp::Parameter(tf_prefix + "roll", roll),
 
+          }
 
 
-          rclcpp::Parameter(tf_prefix + "pitch", pitch),
 
 
 
-          rclcpp::Parameter(tf_prefix + "yaw", yaw)
 
 
+          catch (const tf2::TransformException &ex)
 
-        });
 
 
 
-        RCLCPP_INFO(this->get_logger(), "Updated parameters for lidar (config index %zu) from TF.", original_index);
+
+
+
+          {
+
+
+
+
+
+
+
+          }
+
+
+
+
+
+
+
+        }
+
+
+
+
 
 
 
       }
-
-
-
-    }
-
-
-
-    catch (const tf2::TransformException &ex)
-
-
-
-    {
-
-
-
-    }
-
-
-
-  }
-
-
-
-}
 
 
 
