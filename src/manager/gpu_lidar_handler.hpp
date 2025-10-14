@@ -68,40 +68,36 @@ public:
       return nullptr;
     }
 
-    const auto& cpu_points = cpu_cloud_msg->points;
-    size_t num_points = cpu_points.size();
+    const auto& driver_points = cpu_cloud_msg->points;
+    size_t num_points = driver_points.size();
     auto logger = rclcpp::get_logger("GPULidarHandler");
 
-    std::stringstream ss;
-    ss << std::this_thread::get_id();
-    DEBUG_LOG(logger, "getGPUPointCloud called in thread %s for %zu points.", ss.str().c_str(), num_points);
-
-    cudaError_t last_err = cudaGetLastError();
-    if (last_err != cudaSuccess)
+    // Create a temporary CPU buffer with the correct CudaPointXYZI layout
+    std::vector<CudaPointXYZI> host_points(num_points);
+    for (size_t i = 0; i < num_points; ++i)
     {
-        RCLCPP_ERROR(logger, "CUDA error detected before cudaMalloc: %s", cudaGetErrorString(last_err));
+      host_points[i].x = driver_points[i].x;
+      host_points[i].y = driver_points[i].y;
+      host_points[i].z = driver_points[i].z;
+      host_points[i].intensity = static_cast<float>(driver_points[i].intensity);
     }
 
     CudaPointXYZI* d_new_buffer = nullptr;
-    DEBUG_LOG(logger, "Attempting cudaMalloc...");
     cudaError_t err = cudaMalloc((void**)&d_new_buffer, num_points * sizeof(CudaPointXYZI));
     if (err != cudaSuccess)
     {
       RCLCPP_ERROR(logger, "cudaMalloc for %zu points failed: %s", num_points, cudaGetErrorString(err));
       return nullptr;
     }
-    DEBUG_LOG(logger, "cudaMalloc successful. Pointer: %p", d_new_buffer);
 
-    DEBUG_LOG(logger, "Attempting cudaMemcpy...");
-    err = cudaMemcpy(d_new_buffer, cpu_points.data(), 
-                     num_points * sizeof(PointXYZI), cudaMemcpyHostToDevice);
+    err = cudaMemcpy(d_new_buffer, host_points.data(), 
+                     num_points * sizeof(CudaPointXYZI), cudaMemcpyHostToDevice);
     if (err != cudaSuccess)
     {
       RCLCPP_ERROR(logger, "cudaMemcpy (Host to Device) for %zu points failed: %s", num_points, cudaGetErrorString(err));
       cudaFree(d_new_buffer);
       return nullptr;
     }
-    DEBUG_LOG(logger, "cudaMemcpy successful.");
 
     auto gpu_data = std::make_shared<GPUPointCloudData>();
     gpu_data->num_points = num_points;
