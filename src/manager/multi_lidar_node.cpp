@@ -260,13 +260,23 @@ void MultiLidarNode::runInitialCalibration()
           pcl::PointCloud<pcl::PointXYZI>::Ptr pcl_cloud(new pcl::PointCloud<pcl::PointXYZI>);
           pcl_cloud->points.resize(gpu_cloud_data->num_points);
 
-          // Copy from GPU to CPU for PCL ICP
-          cudaError_t err = cudaMemcpy(pcl_cloud->points.data(), gpu_cloud_data->d_points_ptr.get(), 
+          // Copy from GPU to a temporary CPU buffer first, as PCL and CUDA structs may have different padding.
+          std::vector<CudaPointXYZI> temp_cpu_buffer(gpu_cloud_data->num_points);
+          cudaError_t err = cudaMemcpy(temp_cpu_buffer.data(), gpu_cloud_data->d_points_ptr.get(), 
                                        gpu_cloud_data->num_points * sizeof(CudaPointXYZI), cudaMemcpyDeviceToHost);
           if (err != cudaSuccess)
           {
               RCLCPP_ERROR(this->get_logger(), "cudaMemcpy (GPU to CPU for ICP) failed: %s", cudaGetErrorString(err));
               continue;
+          }
+
+          // Manually copy from the temporary buffer to the PCL cloud to handle struct differences.
+          for (size_t j = 0; j < gpu_cloud_data->num_points; ++j)
+          {
+            pcl_cloud->points[j].x = temp_cpu_buffer[j].x;
+            pcl_cloud->points[j].y = temp_cpu_buffer[j].y;
+            pcl_cloud->points[j].z = temp_cpu_buffer[j].z;
+            pcl_cloud->points[j].intensity = temp_cpu_buffer[j].intensity;
           }
 
           pcl_cloud->width = pcl_cloud->points.size();
@@ -388,6 +398,19 @@ void MultiLidarNode::mergeAndPublish()
       RCLCPP_ERROR(this->get_logger(), "cudaMalloc for merged cloud failed: %s", cudaGetErrorString(err));
       return;
   }
+
+  // --- Sanity Check Logging ---
+  RCLCPP_INFO(this->get_logger(), "--- Pre-Kernel Sanity Check ---");
+  RCLCPP_INFO(this->get_logger(), "Total points to merge: %zu", total_points_to_merge);
+  RCLCPP_INFO(this->get_logger(), "Number of LiDARs to merge: %zu", d_input_clouds.size());
+  for (size_t i = 0; i < d_input_clouds.size(); ++i)
+  {
+    std::stringstream ss;
+    for(int j=0; j<16; ++j) ss << h_transforms[i].data[j] << " ";
+    RCLCPP_INFO(this->get_logger(), "Lidar %zu: Points=%zu, Offset=%zu, Transform=[%s]", 
+      i, h_input_counts[i], h_prefix_sums[i], ss.str().c_str());
+  }
+  RCLCPP_INFO(this->get_logger(), "-----------------------------");
 
   // Sequentially launch a simple kernel for each LiDAR. This is more robust than a single complex kernel.
   for (size_t i = 0; i < d_input_clouds.size(); ++i)
