@@ -2,64 +2,78 @@
 #include <cuda_runtime.h>
 #include <thrust/device_vector.h>
 #include <thrust/sort.h>
-#include <thrust/unique.h>
-#include <thrust/transform.h>
-#include <thrust/execution_policy.h>
+#include <thrust/reduce.h>
+#include <thrust/iterator/zip_iterator.h>
+#include <thrust/tuple.h>
 
-// Struct to hold point and its voxel ID
-struct VoxelPoint
+// Voxel ID (key)
+using VoxelId = long long;
+
+// Point Sum and Count (value for reduction)
+struct PointSumAndCount
 {
-    long long voxel_id;
-    CudaPointXYZI point;
+    float x, y, z, intensity;
+    unsigned int count;
 
     __host__ __device__
-    bool operator<(const VoxelPoint& other) const
-    {
-        return voxel_id < other.voxel_id;
-    }
+    PointSumAndCount() : x(0), y(0), z(0), intensity(0), count(0) {}
+
+    __host__ __device__
+    PointSumAndCount(float px, float py, float pz, float pint, unsigned int c)
+        : x(px), y(py), z(pz), intensity(pint), count(c) {}
 };
 
-// Functor for thrust::unique to compare VoxelPoints by voxel_id
-struct VoxelIdComparator
+// Binary operator for thrust::reduce_by_key
+struct PointSumFunctor
 {
     __host__ __device__
-    bool operator()(const VoxelPoint& a, const VoxelPoint& b) const
+    PointSumAndCount operator()(const PointSumAndCount& a, const PointSumAndCount& b) const
     {
-        return a.voxel_id == b.voxel_id;
-    }
-};
-
-// Functor for thrust::transform to extract the point from a VoxelPoint
-struct VoxelPointExtractor
-{
-    __host__ __device__
-    CudaPointXYZI operator()(const VoxelPoint& vp) const
-    {
-        return vp.point;
+        return PointSumAndCount(a.x + b.x, a.y + b.y, a.z + b.z, a.intensity + b.intensity, a.count + b.count);
     }
 };
 
 // Kernel to compute voxel ID for each point
-__global__ void computeVoxelIDsKernel(
+__global__ void computeVoxelDataKernel(
     CudaPointXYZI* d_input_cloud,
     size_t num_input_points,
     float inv_leaf_size,
-    VoxelPoint* d_voxel_points)
+    VoxelId* d_voxel_ids,
+    PointSumAndCount* d_point_sums)
 {
     size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx >= num_input_points) return;
 
     CudaPointXYZI p = d_input_cloud[idx];
 
-    long long vx = static_cast<long long>(floor(p.x * inv_leaf_size));
-    long long vy = static_cast<long long>(floor(p.y * inv_leaf_size));
-    long long vz = static_cast<long long>(floor(p.z * inv_leaf_size));
+    long long vx = static_cast<long long>(floorf(p.x * inv_leaf_size));
+    long long vy = static_cast<long long>(floorf(p.y * inv_leaf_size));
+    long long vz = static_cast<long long>(floorf(p.z * inv_leaf_size));
 
-    d_voxel_points[idx].voxel_id = (vx & 0x1FFFFF) | ((vy & 0x1FFFFF) << 21) | ((vz & 0x1FFFFF) << 42);
-    d_voxel_points[idx].point = p;
+    d_voxel_ids[idx] = (vx & 0x1FFFFF) | ((vy & 0x1FFFFF) << 21) | ((vz & 0x1FFFFF) << 42);
+    d_point_sums[idx] = PointSumAndCount(p.x, p.y, p.z, p.intensity, 1);
 }
 
-// Host-side function to launch the CUDA kernel for voxel grid downsampling
+// Kernel to compute the final centroid from the sum and count
+__global__ void computeCentroidKernel(
+    PointSumAndCount* d_reduced_sums,
+    size_t num_unique_voxels,
+    CudaPointXYZI* d_output_cloud)
+{
+    size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx >= num_unique_voxels) return;
+
+    PointSumAndCount psc = d_reduced_sums[idx];
+    if (psc.count > 0)
+    {
+        d_output_cloud[idx].x = psc.x / psc.count;
+        d_output_cloud[idx].y = psc.y / psc.count;
+        d_output_cloud[idx].z = psc.z / psc.count;
+        d_output_cloud[idx].intensity = psc.intensity / psc.count;
+    }
+}
+
+// Host-side function for voxel grid downsampling
 cudaError_t voxelGridDownsampleGPU(
     CudaPointXYZI* d_input_cloud,
     size_t num_input_points,
@@ -75,47 +89,59 @@ cudaError_t voxelGridDownsampleGPU(
     }
 
     cudaError_t err;
+    const int block_size = 256;
+    int num_blocks = (num_input_points + block_size - 1) / block_size;
 
-    int min_grid_size;
-    int block_size = 256;
-    cudaOccupancyMaxPotentialBlockSize(&min_grid_size, &block_size, computeVoxelIDsKernel, 0, 0);
-    const int BLOCK_SIZE = block_size > 0 ? block_size : 256;
-
-    int num_blocks = (num_input_points + BLOCK_SIZE - 1) / BLOCK_SIZE;
-
-    // 1. Compute Voxel IDs
-    thrust::device_vector<VoxelPoint> d_voxel_points(num_input_points);
-    computeVoxelIDsKernel<<<num_blocks, BLOCK_SIZE>>>(
-        d_input_cloud, num_input_points, 1.0f / leaf_size, thrust::raw_pointer_cast(d_voxel_points.data()));
+    // 1. Allocate temporary storage
+    thrust::device_vector<VoxelId> d_voxel_ids(num_input_points);
+    thrust::device_vector<PointSumAndCount> d_point_sums(num_input_points);
+    
+    // 2. Compute Voxel ID and initial sum (count=1) for each point
+    computeVoxelDataKernel<<<num_blocks, block_size>>>(
+        d_input_cloud, num_input_points, 1.0f / leaf_size, 
+        thrust::raw_pointer_cast(d_voxel_ids.data()), 
+        thrust::raw_pointer_cast(d_point_sums.data()));
     err = cudaGetLastError();
     if (err != cudaSuccess) return err;
-    err = cudaDeviceSynchronize();
-    
-    // 2. Sort by Voxel ID
-    thrust::sort(thrust::device, d_voxel_points.begin(), d_voxel_points.end());
 
-    // 3. Unique by Voxel ID (select first point in each voxel)
-    auto new_end = thrust::unique(
-        thrust::device, d_voxel_points.begin(), d_voxel_points.end(),
-        VoxelIdComparator());
+    // 3. Sort by Voxel ID to group points in the same voxel together
+    thrust::sort_by_key(thrust::device, d_voxel_ids.begin(), d_voxel_ids.end(), d_point_sums.begin());
+    err = cudaGetLastError();
+    if (err != cudaSuccess) return err;
 
-    size_t unique_voxels = thrust::distance(d_voxel_points.begin(), new_end);
+    // 4. Reduce by key to sum up points within each unique voxel
+    thrust::device_vector<VoxelId> d_unique_voxel_ids(num_input_points);
+    thrust::device_vector<PointSumAndCount> d_reduced_sums(num_input_points);
+
+    auto end_iterators = thrust::reduce_by_key(
+        thrust::device,
+        d_voxel_ids.begin(), d_voxel_ids.end(),
+        d_point_sums.begin(),
+        d_unique_voxel_ids.begin(),
+        d_reduced_sums.begin(),
+        thrust::equal_to<VoxelId>(),
+        PointSumFunctor());
+
+    size_t unique_voxels = thrust::distance(d_unique_voxel_ids.begin(), end_iterators.first);
     *num_output_points = unique_voxels;
 
     if (unique_voxels > 0)
     {
-        // 4. Copy unique points to output
+        // 5. Allocate final output buffer
         err = cudaMalloc((void**)d_output_cloud, unique_voxels * sizeof(CudaPointXYZI));
         if (err != cudaSuccess) return err;
 
-        thrust::transform(thrust::device, d_voxel_points.begin(), d_voxel_points.begin() + unique_voxels,
-                          thrust::raw_pointer_cast(*d_output_cloud),
-                          VoxelPointExtractor());
+        // 6. Compute the centroid for each voxel
+        int num_centroid_blocks = (unique_voxels + block_size - 1) / block_size;
+        computeCentroidKernel<<<num_centroid_blocks, block_size>>>(
+            thrust::raw_pointer_cast(d_reduced_sums.data()), unique_voxels, *d_output_cloud);
+        err = cudaGetLastError();
+        if (err != cudaSuccess) { cudaFree(*d_output_cloud); return err; }
     }
     else
     {
         *d_output_cloud = nullptr;
     }
 
-    return cudaSuccess;
+    return cudaDeviceSynchronize();
 }
