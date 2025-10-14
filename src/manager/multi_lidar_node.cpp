@@ -1,6 +1,7 @@
 
 #include "multi_lidar_node.hpp"
 #include <utility/yaml_reader.hpp>
+#include <yaml-cpp/emitter.h> // Required for YAML::Emitter
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <pcl/registration/icp.h>
@@ -25,7 +26,9 @@ MultiLidarNode::MultiLidarNode(const rclcpp::NodeOptions& options)
   runInitialCalibration();
   loadFilterParameters();
   loadFlatScanParameters(); // New call
-  
+
+  printCurrentParameters(); // Print all loaded parameters
+
   double publish_frequency = this->declare_parameter("publish_frequency", 10.0);
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(static_cast<int>(1000.0 / publish_frequency)),
@@ -479,6 +482,17 @@ void MultiLidarNode::mergeAndPublish()
 
   // Free the final GPU cloud after all potential uses
   if (d_voxel_filtered_cloud) cudaFree(d_voxel_filtered_cloud);
+}
+
+void MultiLidarNode::printCurrentParameters()
+{
+  RCLCPP_INFO(this->get_logger(), "--- Current ROS 2 Parameters ---");
+  auto parameters = this->get_parameters_by_prefix("");
+  for (const auto& param_pair : parameters)
+  {
+    RCLCPP_INFO(this->get_logger(), "  %s: %s", param_pair.first.c_str(), param_pair.second.value_to_string().c_str());
+  }
+  RCLCPP_INFO(this->get_logger(), "--------------------------------");
 }
 
 rcl_interfaces::msg::SetParametersResult MultiLidarNode::parametersCallback(const std::vector<rclcpp::Parameter> &parameters)

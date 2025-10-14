@@ -36,6 +36,7 @@ private:
   void checkTfUpdates();
   void runInitialCalibration();
   rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector<rclcpp::Parameter> &parameters);
+  void printCurrentParameters(); // New function to print all current parameters
 
   std::vector<std::shared_ptr<GPULidarHandler>> lidar_handlers_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr merged_pub_;
