@@ -18,7 +18,13 @@ struct PointAdd
     __host__ __device__
     PointSum operator()(const PointSum& a, const PointSum& b) const
     {
-        return {a.x + b.x, a.y + b.y, a.z + b.z, fmaxf(a.max_intensity, b.max_intensity), a.count + b.count};
+        PointSum result;
+        result.x = a.x + b.x;
+        result.y = a.y + b.y;
+        result.z = a.z + b.z;
+        result.count = a.count + b.count;
+        result.max_intensity = fmaxf(a.max_intensity, b.max_intensity);
+        return result;
     }
 };
 
