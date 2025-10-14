@@ -2,6 +2,7 @@
 #define CUDA_POINT_TYPES_CUH
 
 #include <cstddef>
+#include <cstdint>
 
 #ifndef __CUDACC__
   #ifndef __host__
