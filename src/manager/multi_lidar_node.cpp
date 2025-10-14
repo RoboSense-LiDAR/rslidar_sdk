@@ -167,6 +167,10 @@ void MultiLidarNode::loadParameters()
       info.frame_id = frame_id;
       info.original_index = i;
       info.last_tf_hash = 0;
+      lidar_info_.push_back(info);
+
+      // Get a reference to the new element to modify it in place
+      LidarInfo& new_info_ref = lidar_info_.back();
 
       // Check if raw pointcloud publishing is enabled
       bool publish_raw = this->declare_parameter(lidar_prefix + "pointcloud.publish_raw", false);
@@ -174,11 +178,9 @@ void MultiLidarNode::loadParameters()
       {
         std::string default_raw_topic = "/" + lidar_name + "/points_raw";
         std::string raw_topic = this->declare_parameter(lidar_prefix + "pointcloud.raw_topic", default_raw_topic);
-        info.raw_pub = this->create_publisher<sensor_msgs::msg::PointCloud2>(raw_topic, 10);
+        new_info_ref.raw_pub = this->create_publisher<sensor_msgs::msg::PointCloud2>(raw_topic, 10);
         RCLCPP_INFO(this->get_logger(), "Raw pointcloud publishing enabled for '%s' on topic '%s'", lidar_name.c_str(), raw_topic.c_str());
       }
-
-      lidar_info_.push_back(info);
       
 #ifndef NDEBUG
       cudaError_t err_after = cudaGetLastError();
@@ -1495,43 +1497,123 @@ void MultiLidarNode::logStatistics()
 
 
 
-    // Published Topics
-
-    RCLCPP_INFO(this->get_logger(), "Published Topics:");
-
-    if (publish_3d_pcd_ && merged_pub_)
-
-    {
-
-        RCLCPP_INFO(this->get_logger(), "  - PointCloud2: '%s'", merged_pub_->get_topic_name());
-
-    }
-
-    else
-
-    {
-
-        RCLCPP_INFO(this->get_logger(), "  - PointCloud2: Disabled");
-
-    }
+        // Published Topics
 
 
 
-    if (publish_flatscan_ && flatscan_pub_)
+        RCLCPP_INFO(this->get_logger(), "Published Topics:");
 
-    {
 
-        RCLCPP_INFO(this->get_logger(), "  - LaserScan: '%s'", flatscan_pub_->get_topic_name());
 
-    }
+        if (publish_3d_pcd_ && merged_pub_)
 
-    else
 
-    {
 
-        RCLCPP_INFO(this->get_logger(), "  - LaserScan: Disabled");
+        {
 
-    }
+
+
+            RCLCPP_INFO(this->get_logger(), "  - Merged PointCloud2: '%s'", merged_pub_->get_topic_name());
+
+
+
+        }
+
+
+
+        else
+
+
+
+        {
+
+
+
+            RCLCPP_INFO(this->get_logger(), "  - Merged PointCloud2: Disabled");
+
+
+
+        }
+
+
+
+    
+
+
+
+        if (publish_flatscan_ && flatscan_pub_)
+
+
+
+        {
+
+
+
+            RCLCPP_INFO(this->get_logger(), "  - LaserScan: '%s'", flatscan_pub_->get_topic_name());
+
+
+
+        }
+
+
+
+        else
+
+
+
+        {
+
+
+
+            RCLCPP_INFO(this->get_logger(), "  - LaserScan: Disabled");
+
+
+
+        }
+
+
+
+        for (const auto& info : lidar_info_)
+
+
+
+        {
+
+
+
+            if (info.raw_pub)
+
+
+
+            {
+
+
+
+                RCLCPP_INFO(this->get_logger(), "  - Raw PointCloud2 (Lidar %zu): '%s'", info.original_index, info.raw_pub->get_topic_name());
+
+
+
+            }
+
+
+
+            else
+
+
+
+            {
+
+
+
+                RCLCPP_INFO(this->get_logger(), "  - Raw PointCloud2 (Lidar %zu): Disabled", info.original_index);
+
+
+
+            }
+
+
+
+        }
 
 
 
