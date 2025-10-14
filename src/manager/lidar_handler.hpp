@@ -50,6 +50,11 @@ public:
     transform_ = transform;
   }
 
+  void stop()
+  {
+    driver_.stop();
+  }
+
 private:
   void pointCloudCallback(std::shared_ptr<PointCloudMsg> pointcloud_msg)
   {
