@@ -61,12 +61,12 @@ multi_lidar_node:
         publish_raw: true
         raw_topic: "/lidar_0/points_raw"
       tf:
-        x: 0.6
-        y: -0.35
-        z: 0.8
-        roll: 3.14159
-        pitch: 1.5708
-        yaw: 0.0
+        x: 0.687
+        y: -0.357
+        z: 0.709
+        roll: 1.277
+        pitch: -1.317
+        yaw: -4.417
 
     # Lidar 1 configuration block
     lidars.1:
@@ -82,9 +82,9 @@ multi_lidar_node:
         publish_raw: true
         raw_topic: "/lidar_1/points_raw"
       tf:
-        x: -0.3
-        y: 0.35
-        z: 0.0
-        roll: 0.0
-        pitch: 0.0
-        yaw: 2.3562
+        x: -0.300
+        y: 0.360
+        z: -0.000
+        roll: -0.006
+        pitch: 0.079
+        yaw: -3.945
