@@ -163,7 +163,7 @@ void MultiLidarNode::loadParameters()
       RCLCPP_INFO(this->get_logger(), "CUDA state before creating handler for '%s': %s", lidar_name.c_str(), cudaGetErrorString(err_before));
 #endif
 
-      lidar_handlers_.emplace_back(std::make_shared<GPULidarHandler>(driver_param, transform));
+      lidar_handlers_.emplace_back(std::make_shared<GPULidarHandler>(driver_param, transform, this->get_clock()));
       
 #ifndef NDEBUG
       cudaError_t err_after = cudaGetLastError();

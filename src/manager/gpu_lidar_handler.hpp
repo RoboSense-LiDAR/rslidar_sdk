@@ -24,8 +24,8 @@ struct GPUPointCloudData
 class GPULidarHandler : public LidarHandler
 {
 public:
-  GPULidarHandler(const RSDriverParam& param, const Eigen::Matrix4f& transform)
-    : LidarHandler(param, transform)
+  GPULidarHandler(const RSDriverParam& param, const Eigen::Matrix4f& transform, rclcpp::Clock::SharedPtr clock)
+    : LidarHandler(param, transform, clock)
   {
     auto logger = rclcpp::get_logger("GPULidarHandler");
     std::stringstream ss;

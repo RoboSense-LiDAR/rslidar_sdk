@@ -16,8 +16,8 @@ using RSDriver = LidarDriver<PointCloudMsg>;
 class LidarHandler
 {
 public:
-  LidarHandler(const RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
-    : transform_(transform), last_cloud_timestamp_(0, 0, RCL_ROS_TIME)
+  LidarHandler(const RSDriverParam& driver_param, const Eigen::Matrix4f& transform, rclcpp::Clock::SharedPtr clock)
+    : transform_(transform), last_cloud_timestamp_(0, 0, RCL_ROS_TIME), clock_(clock)
   {
     driver_.regPointCloudCallback(
         std::bind(&LidarHandler::getPointCloudForDriver, this),
@@ -84,13 +84,14 @@ private:
     }
     {
       std::lock_guard<std::mutex> lock(timestamp_mutex_);
-      last_cloud_timestamp_ = rclcpp::Clock().now();
+      last_cloud_timestamp_ = clock_->now();
     }
   }
 
   RSDriver driver_;
   std::shared_ptr<PointCloudMsg> pointcloud_;
   Eigen::Matrix4f transform_;
+  rclcpp::Clock::SharedPtr clock_;
   mutable std::mutex pointcloud_mutex_;
   mutable std::mutex transform_mutex_;
   mutable std::mutex timestamp_mutex_;
