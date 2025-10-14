@@ -27,7 +27,7 @@ multi_lidar_node:
 
     # Voxel Grid Filter parameters - ENABLED
     enable_voxel_filter: true
-    voxel_leaf_size: 0.01 # 1cm
+    voxel_leaf_size: 0.005 # 5mm
 
     # FlatScan (LaserScan) parameters
     publish_flatscan: true
