@@ -487,7 +487,7 @@ void MultiLidarNode::mergeAndPublish()
 void MultiLidarNode::printCurrentParameters()
 {
   RCLCPP_INFO(this->get_logger(), "--- Current ROS 2 Parameters ---");
-  auto parameters = this->get_parameters_by_prefix("");
+  auto parameters = this->get_node_parameters_interface()->get_parameters_by_prefix("");
   for (const auto& param_pair : parameters)
   {
     RCLCPP_INFO(this->get_logger(), "  %s: %s", param_pair.first.c_str(), param_pair.second.value_to_string().c_str());
