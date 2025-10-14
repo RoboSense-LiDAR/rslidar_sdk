@@ -365,34 +365,18 @@ void MultiLidarNode::runInitialCalibration()
       Eigen::Matrix4f correction = initial_source_to_base_tf.inverse() * calibrated_source_to_base_tf;
       lidar_info_[i].icp_correction = correction;
 
-      RCLCPP_INFO(this->get_logger(), "[ICP Calibration] LiDAR %zu calibrated successfully. Fitness score: %f", i, icp.getFitnessScore());
+      // Apply the calibrated transform directly to the handler
+      source_handler->setTransform(calibrated_source_to_base_tf);
+
+      RCLCPP_INFO(this->get_logger(), "[ICP Calibration] LiDAR %zu calibrated successfully. Fitness score: %f", lidar_info_[i].original_index, icp.getFitnessScore());
       
-      // Decompose and print the new transform
+      // Decompose and print the new transform for logging purposes
       Eigen::Vector3f translation = calibrated_source_to_base_tf.block<3,1>(0,3);
       Eigen::Matrix3f rotation = calibrated_source_to_base_tf.block<3,3>(0,0);
       Eigen::Vector3f euler = rotation.eulerAngles(0, 1, 2); // XYZ order for roll, pitch, yaw from Eigen
       
-      double calibrated_x = translation.x();
-      double calibrated_y = translation.y();
-      double calibrated_z = translation.z();
-      double calibrated_roll = euler[0];
-      double calibrated_pitch = euler[1];
-      double calibrated_yaw = euler[2];
-
       RCLCPP_INFO(this->get_logger(), "[ICP Calibration] New TF for LiDAR %zu: [x: %.4f, y: %.4f, z: %.4f, roll: %.4f, pitch: %.4f, yaw: %.4f]",
-        lidar_info_[i].original_index, calibrated_x, calibrated_y, calibrated_z, calibrated_roll, calibrated_pitch, calibrated_yaw);
-
-      // Update the ROS parameters with the new TF values
-      size_t original_index = lidar_info_[i].original_index;
-      std::string tf_prefix = "lidars." + std::to_string(original_index) + ".tf.";
-      this->set_parameters({
-        rclcpp::Parameter(tf_prefix + "x", calibrated_x),
-        rclcpp::Parameter(tf_prefix + "y", calibrated_y),
-        rclcpp::Parameter(tf_prefix + "z", calibrated_z),
-        rclcpp::Parameter(tf_prefix + "roll", calibrated_roll),
-        rclcpp::Parameter(tf_prefix + "pitch", calibrated_pitch),
-        rclcpp::Parameter(tf_prefix + "yaw", calibrated_yaw)
-      });
+        lidar_info_[i].original_index, translation.x(), translation.y(), translation.z(), euler[0], euler[1], euler[2]);
     }
     else
     {
