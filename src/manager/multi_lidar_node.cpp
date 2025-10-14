@@ -152,7 +152,15 @@ void MultiLidarNode::loadParameters()
       Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
       transform = (translation * rot_z * rot_y * rot_x).matrix();
 
+      // Diagnostic logging to check CUDA state around handler creation
+      cudaError_t err_before = cudaGetLastError();
+      RCLCPP_INFO(this->get_logger(), "CUDA state before creating handler for '%s': %s", lidar_name.c_str(), cudaGetErrorString(err_before));
+
       lidar_handlers_.emplace_back(std::make_shared<GPULidarHandler>(driver_param, transform));
+      
+      cudaError_t err_after = cudaGetLastError();
+      RCLCPP_INFO(this->get_logger(), "CUDA state after creating handler for '%s': %s", lidar_name.c_str(), cudaGetErrorString(err_after));
+
       RCLCPP_INFO(this->get_logger(), "Initialized lidar: %s", lidar_name.c_str());
   }
   last_tf_hashes_.resize(lidar_handlers_.size());
