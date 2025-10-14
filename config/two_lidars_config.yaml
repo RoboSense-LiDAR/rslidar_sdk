@@ -13,8 +13,17 @@ multi_lidar_node:
     # Enable/Disable initial ICP calibration. Set to false to skip.
     enable_icp_calibration: false
 
-    # ROI Filter parameters - DISABLED
-    enable_roi_filter: false
+    # ROI Filter parameters - ENABLED
+    enable_roi_filter: true
+    roi_filters:
+      - name: "exclude_base_link_box"
+        type: "negative"
+        min_x: -0.4
+        max_x: 0.7
+        min_y: -0.35
+        max_y: 0.35
+        min_z: 0.0
+        max_z: 1.0
 
     # Voxel Grid Filter parameters - ENABLED
     enable_voxel_filter: true
@@ -34,7 +43,7 @@ multi_lidar_node:
     # This list of strings determines the number of lidars. The content doesn't matter.
     lidars: ["lidar_1", "lidar_2"]
 
-    # Lidar 1 configuration block (indexed from 0)
+    # Lidar 0 configuration block
     lidars.0:
       name: "lidar_1"
       enabled: true
@@ -46,14 +55,14 @@ multi_lidar_node:
       pointcloud:
         frame_id: "lidar_1_link"
       tf:
-        x: 0.0
-        y: 0.0
-        z: 0.0
-        roll: 0.0
-        pitch: 0.0
+        x: 0.6
+        y: -0.35
+        z: 0.8
+        roll: -0.5236
+        pitch: 1.5708
         yaw: 0.0
 
-    # Lidar 2 configuration block (indexed from 1)
+    # Lidar 1 configuration block
     lidars.1:
       name: "lidar_2"
       enabled: true
@@ -65,9 +74,9 @@ multi_lidar_node:
       pointcloud:
         frame_id: "lidar_2_link"
       tf:
-        x: -1.0
-        y: 0.0
+        x: -0.3
+        y: 0.35
         z: 0.0
         roll: 0.0
         pitch: 0.0
-        yaw: 0.0
+        yaw: -2.3562
