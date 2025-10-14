@@ -52,6 +52,11 @@ public:
     }
   }
 
+  virtual ~GPULidarHandler() override
+  {
+    stop();
+  }
+
   std::shared_ptr<GPUPointCloudData> getGPUPointCloud()
   {
     if (!is_gpu_ready_) return nullptr;

@@ -25,6 +25,8 @@ public:
     driver_.start();
   }
 
+  virtual ~LidarHandler() = default;
+
   std::shared_ptr<PointCloudMsg> getPointCloudForDriver()
   {
       return std::make_shared<PointCloudMsg>();
