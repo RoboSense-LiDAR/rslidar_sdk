@@ -1,5 +1,6 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp> // For logging
 #include <rs_driver/api/lidar_driver.hpp>
 #include <rs_driver/driver/driver_param.hpp>
 #include <rs_driver/msg/point_cloud_msg.hpp>
@@ -50,6 +51,19 @@ public:
 private:
   void pointCloudCallback(std::shared_ptr<PointCloudMsg> pointcloud_msg)
   {
+    // Defense code: Check if the point cloud is valid before storing it.
+    // The driver may send point clouds full of zeros during initialization.
+    if (pointcloud_msg && !pointcloud_msg->points.empty())
+    {
+      const auto& first_point = pointcloud_msg->points[0];
+      if (first_point.x == 0.0f && first_point.y == 0.0f && first_point.z == 0.0f)
+      {
+        RCLCPP_WARN(rclcpp::get_logger("LidarHandler"), 
+                    "Discarding an invalid (all zeros) point cloud frame. This is normal during driver startup.");
+        return;
+      }
+    }
+
     std::lock_guard<std::mutex> lock(pointcloud_mutex_);
     pointcloud_ = pointcloud_msg;
   }

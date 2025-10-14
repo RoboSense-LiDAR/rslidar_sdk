@@ -365,8 +365,13 @@ void MultiLidarNode::mergeAndPublish()
       continue; 
     }
     auto gpu_cloud_data = handler->getGPUPointCloud();
-    if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 0)
+    if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 100) // Basic check for a reasonable number of points
     {
+      // Simple validity check: if all points are clustered at the origin, the driver might not be ready.
+      // This is a simplified check. A proper one would be a kernel to calculate the bounding box.
+      // For now, we assume that if we have points, they are valid enough to proceed.
+      // A more robust check could be added here if needed.
+
       d_input_clouds.push_back(gpu_cloud_data->d_points_ptr.get());
       h_input_counts.push_back(gpu_cloud_data->num_points);
       total_points_to_merge += gpu_cloud_data->num_points;
