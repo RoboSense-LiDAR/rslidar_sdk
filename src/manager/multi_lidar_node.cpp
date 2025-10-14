@@ -167,6 +167,17 @@ void MultiLidarNode::loadParameters()
       info.frame_id = frame_id;
       info.original_index = i;
       info.last_tf_hash = 0;
+
+      // Check if raw pointcloud publishing is enabled
+      bool publish_raw = this->declare_parameter(lidar_prefix + "pointcloud.publish_raw", false);
+      if (publish_raw)
+      {
+        std::string default_raw_topic = "/" + lidar_name + "/points_raw";
+        std::string raw_topic = this->declare_parameter(lidar_prefix + "pointcloud.raw_topic", default_raw_topic);
+        info.raw_pub = this->create_publisher<sensor_msgs::msg::PointCloud2>(raw_topic, 10);
+        RCLCPP_INFO(this->get_logger(), "Raw pointcloud publishing enabled for '%s' on topic '%s'", lidar_name.c_str(), raw_topic.c_str());
+      }
+
       lidar_info_.push_back(info);
       
 #ifndef NDEBUG
@@ -430,41 +441,83 @@ void MultiLidarNode::mergeAndPublish()
 
       }
 
-      auto gpu_cloud_data = info.handler->getGPUPointCloud();
+          auto gpu_cloud_data = info.handler->getGPUPointCloud();
 
-      if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 100) // Basic check for a reasonable number of points
+          if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 100) // Basic check for a reasonable number of points
 
-      {
+          {
 
-        // Simple validity check: if all points are clustered at the origin, the driver might not be ready.
+            // Publish raw pointcloud if enabled
 
-        // This is a simplified check. A proper one would be a kernel to calculate the bounding box.
+            if (info.raw_pub)
 
-        // For now, we assume that if we have points, they are valid enough to proceed.
+            {
 
-        // A more robust check could be added here if needed.
+              pcl::PointCloud<pcl::PointXYZI>::Ptr cpu_cloud(new pcl::PointCloud<pcl::PointXYZI>);
 
-        
+              cpu_cloud->points.resize(gpu_cloud_data->num_points);
 
-        alive_gpu_clouds.push_back(gpu_cloud_data); // Keep the shared_ptr alive
+              cudaError_t err = cudaMemcpy(cpu_cloud->points.data(), gpu_cloud_data->d_points_ptr.get(),
 
-        d_input_clouds.push_back(gpu_cloud_data->d_points_ptr.get());
+                                           gpu_cloud_data->num_points * sizeof(CudaPointXYZI), cudaMemcpyDeviceToHost);
 
-        h_input_counts.push_back(gpu_cloud_data->num_points);
+              if (err != cudaSuccess)
 
-        total_points_to_merge += gpu_cloud_data->num_points;
+              {
 
-        timestamps.push_back(gpu_cloud_data->timestamp);
+                RCLCPP_ERROR(this->get_logger(), "cudaMemcpy (GPU to CPU for raw publish) failed: %s", cudaGetErrorString(err));
 
-  
+              }
 
-        CudaMatrix4f cuda_transform;
+              else
 
-        cuda_transform.fromEigen(info.handler->getTransform().data());
+              {
 
-        h_transforms.push_back(cuda_transform);
+                sensor_msgs::msg::PointCloud2 output_msg;
 
-      }
+                pcl::toROSMsg(*cpu_cloud, output_msg);
+
+                output_msg.header.stamp = gpu_cloud_data->timestamp;
+
+                output_msg.header.frame_id = info.frame_id;
+
+                info.raw_pub->publish(output_msg);
+
+              }
+
+            }
+
+      
+
+            // Simple validity check: if all points are clustered at the origin, the driver might not be ready.
+
+            // This is a simplified check. A proper one would be a kernel to calculate the bounding box.
+
+            // For now, we assume that if we have points, they are valid enough to proceed.
+
+            // A more robust check could be added here if needed.
+
+            
+
+            alive_gpu_clouds.push_back(gpu_cloud_data); // Keep the shared_ptr alive
+
+            d_input_clouds.push_back(gpu_cloud_data->d_points_ptr.get());
+
+            h_input_counts.push_back(gpu_cloud_data->num_points);
+
+            total_points_to_merge += gpu_cloud_data->num_points;
+
+            timestamps.push_back(gpu_cloud_data->timestamp);
+
+      
+
+            CudaMatrix4f cuda_transform;
+
+            cuda_transform.fromEigen(info.handler->getTransform().data());
+
+            h_transforms.push_back(cuda_transform);
+
+          }
 
     }
 

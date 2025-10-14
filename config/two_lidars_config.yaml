@@ -58,6 +58,8 @@ multi_lidar_node:
         difop_port: 7777
       pointcloud:
         frame_id: "lidar_0_link"
+        publish_raw: true
+        raw_topic: "/lidar_0/points_raw"
       tf:
         x: 0.6
         y: -0.35
@@ -77,6 +79,8 @@ multi_lidar_node:
         difop_port: 7778
       pointcloud:
         frame_id: "lidar_1_link"
+        publish_raw: true
+        raw_topic: "/lidar_1/points_raw"
       tf:
         x: -0.3
         y: 0.35
