@@ -7,7 +7,6 @@
 #include <rs_driver/msg/point_cloud_msg.hpp>
 #include <Eigen/Dense>
 #include <mutex>
-#include <atomic>
 
 using namespace robosense::lidar;
 
@@ -42,7 +41,8 @@ public:
 
   rclcpp::Time getLastCloudTimestamp() const
   {
-    return last_cloud_timestamp_.load();
+    std::lock_guard<std::mutex> lock(timestamp_mutex_);
+    return last_cloud_timestamp_;
   }
 
   const Eigen::Matrix4f& getTransform() const
@@ -78,9 +78,14 @@ private:
       }
     }
 
-    std::lock_guard<std::mutex> lock(pointcloud_mutex_);
-    pointcloud_ = pointcloud_msg;
-    last_cloud_timestamp_.store(rclcpp::Clock().now());
+    {
+      std::lock_guard<std::mutex> lock(pointcloud_mutex_);
+      pointcloud_ = pointcloud_msg;
+    }
+    {
+      std::lock_guard<std::mutex> lock(timestamp_mutex_);
+      last_cloud_timestamp_ = rclcpp::Clock().now();
+    }
   }
 
   RSDriver driver_;
@@ -88,5 +93,6 @@ private:
   Eigen::Matrix4f transform_;
   mutable std::mutex pointcloud_mutex_;
   mutable std::mutex transform_mutex_;
-  std::atomic<rclcpp::Time> last_cloud_timestamp_;
+  mutable std::mutex timestamp_mutex_;
+  rclcpp::Time last_cloud_timestamp_;
 };
