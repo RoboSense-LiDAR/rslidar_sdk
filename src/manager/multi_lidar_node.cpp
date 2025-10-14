@@ -487,11 +487,30 @@ void MultiLidarNode::mergeAndPublish()
 void MultiLidarNode::printCurrentParameters()
 {
   RCLCPP_INFO(this->get_logger(), "--- Current ROS 2 Parameters ---");
-  auto parameters = this->get_node_parameters_interface()->get_parameters_by_prefix("");
-  for (const auto& param_pair : parameters)
+
+  // 1. 노드에 선언된 모든 파라미터의 '이름' 목록을 가져옵니다.
+  // 첫 번째 인자: 접두사 목록 (비어 있으면 모든 최상위 파라미터를 의미)
+  // 두 번째 인자: 탐색 깊이 (0은 모든 깊이를 의미)
+  auto parameter_names = this->list_parameters({}, 0).names;
+
+  if (parameter_names.empty())
   {
-    RCLCPP_INFO(this->get_logger(), "  %s: %s", param_pair.first.c_str(), param_pair.second.value_to_string().c_str());
+    RCLCPP_INFO(this->get_logger(), "  No parameters found for this node.");
   }
+  else
+  {
+    // 2. 이름 목록을 사용하여 실제 파라미터 객체(값 포함)들을 가져옵니다.
+    auto parameters = this->get_parameters(parameter_names);
+
+    // 3. 각 파라미터를 순회하며 이름과 값을 출력합니다.
+    for (const auto &param : parameters)
+    {
+      RCLCPP_INFO(this->get_logger(), "  %s: %s",
+        param.get_name().c_str(),
+        param.value_to_string().c_str()); // 이 방식에서는 .value_to_string()이 잘 동작합니다.
+    }
+  }
+
   RCLCPP_INFO(this->get_logger(), "--------------------------------");
 }
 
