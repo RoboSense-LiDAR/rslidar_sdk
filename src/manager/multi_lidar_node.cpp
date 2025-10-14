@@ -116,8 +116,7 @@ void MultiLidarNode::loadParameters()
       if (!enabled) continue;
 
       std::string lidar_name = this->declare_parameter(lidar_prefix + "name", "");
-      std::string frame_id = this->declare_parameter(lidar_prefix + "frame_id", lidar_name);
-      lidar_frame_ids_.push_back(frame_id);
+      std::string frame_id = this->declare_parameter(lidar_prefix + "pointcloud.frame_id", lidar_name);
 
       RSDriverParam driver_param;
       std::string lidar_type_str = this->declare_parameter(lidar_prefix + "driver.lidar_type", "RS16");
@@ -163,7 +162,12 @@ void MultiLidarNode::loadParameters()
       RCLCPP_INFO(this->get_logger(), "CUDA state before creating handler for '%s': %s", lidar_name.c_str(), cudaGetErrorString(err_before));
 #endif
 
-      lidar_handlers_.emplace_back(std::make_shared<GPULidarHandler>(driver_param, transform, this->get_clock()));
+      LidarInfo info;
+      info.handler = std::make_shared<GPULidarHandler>(driver_param, transform, this->get_clock());
+      info.frame_id = frame_id;
+      info.original_index = i;
+      info.last_tf_hash = 0;
+      lidar_info_.push_back(info);
       
 #ifndef NDEBUG
       cudaError_t err_after = cudaGetLastError();
@@ -172,7 +176,6 @@ void MultiLidarNode::loadParameters()
 
       RCLCPP_INFO(this->get_logger(), "Initialized lidar: %s", lidar_name.c_str());
   }
-  last_tf_hashes_.resize(lidar_handlers_.size());
 }
 
 void MultiLidarNode::loadFilterParameters()
@@ -233,16 +236,16 @@ void MultiLidarNode::loadFlatScanParameters()
 
 void MultiLidarNode::runInitialCalibration()
 {
-  if (lidar_handlers_.size() < 2)
+  if (lidar_info_.size() < 2)
   {
-    RCLCPP_INFO(this->get_logger(), "[ICP Calibration] Not enough LiDARs (%zu) for ICP calibration. Skipping.", lidar_handlers_.size());
+    RCLCPP_INFO(this->get_logger(), "[ICP Calibration] Not enough LiDARs (%zu) for ICP calibration. Skipping.", lidar_info_.size());
     return;
   }
 
   RCLCPP_INFO(this->get_logger(), "[ICP Calibration] Starting initial ICP calibration...");
 
-  std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> initial_cpu_clouds(lidar_handlers_.size());
-  std::vector<bool> cloud_received(lidar_handlers_.size(), false);
+  std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> initial_cpu_clouds(lidar_info_.size());
+  std::vector<bool> cloud_received(lidar_info_.size(), false);
   auto start_time = std::chrono::high_resolution_clock::now();
   const std::chrono::seconds timeout(15); // 15 seconds to collect initial clouds
 
@@ -256,11 +259,11 @@ void MultiLidarNode::runInitialCalibration()
       return;
     }
 
-    for (size_t i = 0; i < lidar_handlers_.size(); ++i)
+    for (size_t i = 0; i < lidar_info_.size(); ++i)
     {
       if (!cloud_received[i])
       {
-        auto gpu_cloud_data = lidar_handlers_[i]->getGPUPointCloud();
+        auto gpu_cloud_data = lidar_info_[i].handler->getGPUPointCloud();
         if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 0)
         {
           pcl::PointCloud<pcl::PointXYZI>::Ptr pcl_cloud(new pcl::PointCloud<pcl::PointXYZI>);
@@ -310,13 +313,13 @@ void MultiLidarNode::runInitialCalibration()
 
   // 2. Perform ICP for each source LiDAR against the first LiDAR (target)
   pcl::PointCloud<pcl::PointXYZI>::Ptr target_cloud = initial_cpu_clouds[0];
-  // The transform of the target LiDAR (lidar_handlers_[0]) relative to base_link
-  Eigen::Matrix4f base_to_target_tf = lidar_handlers_[0]->getTransform();
+  // The transform of the target LiDAR (lidar_info_[0].handler) relative to base_link
+  Eigen::Matrix4f base_to_target_tf = lidar_info_[0].handler->getTransform();
 
-  for (size_t i = 1; i < lidar_handlers_.size(); ++i)
+  for (size_t i = 1; i < lidar_info_.size(); ++i)
   {
     pcl::PointCloud<pcl::PointXYZI>::Ptr source_cloud = initial_cpu_clouds[i];
-    std::shared_ptr<GPULidarHandler> source_handler = lidar_handlers_[i];
+    std::shared_ptr<GPULidarHandler> source_handler = lidar_info_[i].handler;
 
     // Get the initial guess for source_lidar_link to base_link
     Eigen::Matrix4f initial_source_to_base_tf = source_handler->getTransform();
@@ -364,7 +367,8 @@ void MultiLidarNode::runInitialCalibration()
         i, calibrated_x, calibrated_y, calibrated_z, calibrated_roll, calibrated_pitch, calibrated_yaw);
 
       // Update the ROS parameters with the new TF values
-      std::string tf_prefix = "lidars." + std::to_string(i) + ".tf.";
+      size_t original_index = lidar_info_[i].original_index;
+      std::string tf_prefix = "lidars." + std::to_string(original_index) + ".tf.";
       this->set_parameters({
         rclcpp::Parameter(tf_prefix + "x", calibrated_x),
         rclcpp::Parameter(tf_prefix + "y", calibrated_y),
@@ -402,67 +406,67 @@ void MultiLidarNode::mergeAndPublish()
 
   std::vector<size_t> h_input_counts;
 
-  std::vector<size_t> h_prefix_sums;
+    std::vector<size_t> h_prefix_sums;
 
-  std::vector<CudaMatrix4f> h_transforms;
+    std::vector<CudaMatrix4f> h_transforms;
 
-  std::vector<rclcpp::Time> timestamps;
+    std::vector<rclcpp::Time> timestamps;
 
-  size_t total_points_to_merge = 0;
+    size_t total_points_to_merge = 0;
 
-  std::vector<std::shared_ptr<GPUPointCloudData>> alive_gpu_clouds; // Keep pointers alive
+    std::vector<std::shared_ptr<GPUPointCloudData>> alive_gpu_clouds; // Keep pointers alive
 
+  
 
-
-  for (const auto& handler : lidar_handlers_)
-
-  {
-
-    if (!handler->isGPUReady())
+    for (const auto& info : lidar_info_)
 
     {
 
-      continue; 
+      if (!info.handler->isGPUReady())
+
+      {
+
+        continue; 
+
+      }
+
+      auto gpu_cloud_data = info.handler->getGPUPointCloud();
+
+      if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 100) // Basic check for a reasonable number of points
+
+      {
+
+        // Simple validity check: if all points are clustered at the origin, the driver might not be ready.
+
+        // This is a simplified check. A proper one would be a kernel to calculate the bounding box.
+
+        // For now, we assume that if we have points, they are valid enough to proceed.
+
+        // A more robust check could be added here if needed.
+
+        
+
+        alive_gpu_clouds.push_back(gpu_cloud_data); // Keep the shared_ptr alive
+
+        d_input_clouds.push_back(gpu_cloud_data->d_points_ptr.get());
+
+        h_input_counts.push_back(gpu_cloud_data->num_points);
+
+        total_points_to_merge += gpu_cloud_data->num_points;
+
+        timestamps.push_back(gpu_cloud_data->timestamp);
+
+  
+
+        CudaMatrix4f cuda_transform;
+
+        cuda_transform.fromEigen(info.handler->getTransform().data());
+
+        h_transforms.push_back(cuda_transform);
+
+      }
 
     }
-
-    auto gpu_cloud_data = handler->getGPUPointCloud();
-
-    if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 100) // Basic check for a reasonable number of points
-
-    {
-
-      // Simple validity check: if all points are clustered at the origin, the driver might not be ready.
-
-      // This is a simplified check. A proper one would be a kernel to calculate the bounding box.
-
-      // For now, we assume that if we have points, they are valid enough to proceed.
-
-      // A more robust check could be added here if needed.
-
-      
-
-      alive_gpu_clouds.push_back(gpu_cloud_data); // Keep the shared_ptr alive
-
-      d_input_clouds.push_back(gpu_cloud_data->d_points_ptr.get());
-
-      h_input_counts.push_back(gpu_cloud_data->num_points);
-
-      total_points_to_merge += gpu_cloud_data->num_points;
-
-      timestamps.push_back(gpu_cloud_data->timestamp);
-
-
-
-      CudaMatrix4f cuda_transform;
-
-      cuda_transform.fromEigen(handler->getTransform().data());
-
-      h_transforms.push_back(cuda_transform);
-
-    }
-
-  }
 
 
 
@@ -990,93 +994,105 @@ rcl_interfaces::msg::SetParametersResult MultiLidarNode::parametersCallback(cons
 
       size_t dot_pos = name.find(".", prefix.length());
 
-      if (dot_pos != std::string::npos)
-
-      {
-
-        std::string index_str = name.substr(prefix.length(), dot_pos - prefix.length());
-
-        try
-
-        {
-
-          size_t lidar_index = std::stoul(index_str);
-
-          if (lidar_index < lidar_handlers_.size())
-
-          {
-
-            std::string tf_prefix = prefix + index_str + ".tf.";
-
-            if (name.rfind(tf_prefix, 0) == 0)
+            if (dot_pos != std::string::npos)
 
             {
 
-              double x = this->get_parameter(tf_prefix + "x").as_double();
+              std::string index_str = name.substr(prefix.length(), dot_pos - prefix.length());
 
-              double y = this->get_parameter(tf_prefix + "y").as_double();
+              try
 
-              double z = this->get_parameter(tf_prefix + "z").as_double();
+              {
 
-              double roll = this->get_parameter(tf_prefix + "roll").as_double();
+                size_t config_index = std::stoul(index_str);
 
-              double pitch = this->get_parameter(tf_prefix + "pitch").as_double();
+                for (size_t i = 0; i < lidar_info_.size(); ++i)
 
-              double yaw = this->get_parameter(tf_prefix + "yaw").as_double();
+                {
 
+                  if (lidar_info_[i].original_index != config_index)
 
+                  {
 
-              if (name == tf_prefix + "x") x = parameter.as_double();
+                    continue;
 
-              if (name == tf_prefix + "y") y = parameter.as_double();
+                  }
 
-              if (name == tf_prefix + "z") z = parameter.as_double();
+      
 
-              if (name == tf_prefix + "roll") roll = parameter.as_double();
+                  std::string tf_prefix = prefix + index_str + ".tf.";
 
-              if (name == tf_prefix + "pitch") pitch = parameter.as_double();
+                  if (name.rfind(tf_prefix, 0) == 0)
 
-              if (name == tf_prefix + "yaw") yaw = parameter.as_double();
+                  {
 
+                    double x = this->get_parameter(tf_prefix + "x").as_double();
 
+                    double y = this->get_parameter(tf_prefix + "y").as_double();
 
-              Eigen::Matrix4f transform = Eigen::Matrix4f::Identity();
+                    double z = this->get_parameter(tf_prefix + "z").as_double();
 
-              Eigen::Translation3f translation(x, y, z);
+                    double roll = this->get_parameter(tf_prefix + "roll").as_double();
 
-              Eigen::AngleAxisf rot_x(roll, Eigen::Vector3f::UnitX());
+                    double pitch = this->get_parameter(tf_prefix + "pitch").as_double();
 
-              Eigen::AngleAxisf rot_y(pitch, Eigen::Vector3f::UnitY());
+                    double yaw = this->get_parameter(tf_prefix + "yaw").as_double();
 
-              Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
+      
 
-              transform = (translation * rot_z * rot_y * rot_x).matrix();
+                    if (name == tf_prefix + "x") x = parameter.as_double();
 
+                    if (name == tf_prefix + "y") y = parameter.as_double();
 
+                    if (name == tf_prefix + "z") z = parameter.as_double();
 
-              lidar_handlers_[lidar_index]->setTransform(transform);
+                    if (name == tf_prefix + "roll") roll = parameter.as_double();
 
-              RCLCPP_INFO(this->get_logger(), "Updated TF for lidar %zu", lidar_index);
+                    if (name == tf_prefix + "pitch") pitch = parameter.as_double();
+
+                    if (name == tf_prefix + "yaw") yaw = parameter.as_double();
+
+      
+
+                    Eigen::Matrix4f transform = Eigen::Matrix4f::Identity();
+
+                    Eigen::Translation3f translation(x, y, z);
+
+                    Eigen::AngleAxisf rot_x(roll, Eigen::Vector3f::UnitX());
+
+                    Eigen::AngleAxisf rot_y(pitch, Eigen::Vector3f::UnitY());
+
+                    Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
+
+                    transform = (translation * rot_z * rot_y * rot_x).matrix();
+
+      
+
+                    lidar_info_[i].handler->setTransform(transform);
+
+                    RCLCPP_INFO(this->get_logger(), "Updated TF for lidar (config index %zu)", config_index);
+
+                  }
+
+                  break; // Found the right lidar, no need to check others
+
+                }
+
+              }
+
+              catch (const std::exception &e)
+
+              {
+
+                RCLCPP_WARN(this->get_logger(), "Could not parse lidar index from parameter name: %s", name.c_str());
+
+              }
 
             }
 
           }
 
         }
-
-        catch (const std::exception &e)
-
-        {
-
-          RCLCPP_WARN(this->get_logger(), "Could not parse lidar index from parameter name: %s", name.c_str());
-
-        }
-
-      }
-
-    }
-
-  }
 
 
 
@@ -1134,29 +1150,57 @@ namespace
 
 void MultiLidarNode::checkTfUpdates()
 
+
+
 {
 
-  for (size_t i = 0; i < lidar_frame_ids_.size(); ++i)
+
+
+  for (size_t i = 0; i < lidar_info_.size(); ++i)
+
+
 
   {
 
-    if (lidar_frame_ids_[i].empty())
+
+
+    if (lidar_info_[i].frame_id.empty())
+
+
 
     {
 
+
+
       continue;
+
+
 
     }
 
 
 
+
+
+
+
     try
+
+
 
     {
 
+
+
       geometry_msgs::msg::TransformStamped transform_stamped = tf_buffer_->lookupTransform(
 
-        base_frame_id_, lidar_frame_ids_[i], tf2::TimePointZero);
+
+
+        base_frame_id_, lidar_info_[i].frame_id, tf2::TimePointZero);
+
+
+
+
 
 
 
@@ -1164,69 +1208,141 @@ void MultiLidarNode::checkTfUpdates()
 
 
 
-      if (new_hash != last_tf_hashes_[i])
+
+
+
+
+      if (new_hash != lidar_info_[i].last_tf_hash)
+
+
 
       {
 
-        last_tf_hashes_[i] = new_hash;
+
+
+        lidar_info_[i].last_tf_hash = new_hash;
+
+
+
+
 
 
 
         tf2::Quaternion q(transform_stamped.transform.rotation.x,
 
+
+
                           transform_stamped.transform.rotation.y,
+
+
 
                           transform_stamped.transform.rotation.z,
 
+
+
                           transform_stamped.transform.rotation.w);
+
+
 
         tf2::Matrix3x3 m(q);
 
+
+
         double roll, pitch, yaw;
+
+
 
         m.getRPY(roll, pitch, yaw);
 
 
 
+
+
+
+
         double x = transform_stamped.transform.translation.x;
 
+
+
         double y = transform_stamped.transform.translation.y;
+
+
 
         double z = transform_stamped.transform.translation.z;
 
 
 
-        std::string tf_prefix = "lidars." + std::to_string(i) + ".tf.";
+
+
+
+
+        size_t original_index = lidar_info_[i].original_index;
+
+
+
+        std::string tf_prefix = "lidars." + std::to_string(original_index) + ".tf.";
+
+
 
         this->set_parameters({
 
+
+
           rclcpp::Parameter(tf_prefix + "x", x),
+
+
 
           rclcpp::Parameter(tf_prefix + "y", y),
 
+
+
           rclcpp::Parameter(tf_prefix + "z", z),
+
+
 
           rclcpp::Parameter(tf_prefix + "roll", roll),
 
+
+
           rclcpp::Parameter(tf_prefix + "pitch", pitch),
+
+
 
           rclcpp::Parameter(tf_prefix + "yaw", yaw)
 
+
+
         });
 
-        RCLCPP_INFO(this->get_logger(), "Updated parameters for lidar %zu from TF.", i);
+
+
+        RCLCPP_INFO(this->get_logger(), "Updated parameters for lidar (config index %zu) from TF.", original_index);
+
+
 
       }
 
+
+
     }
+
+
 
     catch (const tf2::TransformException &ex)
 
+
+
     {
+
+
 
     }
 
+
+
   }
+
+
 
 }
 
@@ -1258,39 +1374,71 @@ void MultiLidarNode::logStatistics()
 
 
 
-    // LiDAR Status
+        // LiDAR Status
 
-    RCLCPP_INFO(this->get_logger(), "LiDAR Status:");
 
-    for (size_t i = 0; i < lidar_handlers_.size(); ++i)
 
-    {
+        RCLCPP_INFO(this->get_logger(), "LiDAR Status:");
 
-        auto last_cloud_time = lidar_handlers_[i]->getLastCloudTimestamp();
 
-        // Check for a very old timestamp, indicating no cloud has ever been received
 
-        if (last_cloud_time.seconds() == 0)
+        for (size_t i = 0; i < lidar_info_.size(); ++i)
+
+
 
         {
 
-            RCLCPP_INFO(this->get_logger(), "  - LiDAR %zu: Waiting for data...", i);
+
+
+            auto last_cloud_time = lidar_info_[i].handler->getLastCloudTimestamp();
+
+
+
+            // Check for a very old timestamp, indicating no cloud has ever been received
+
+
+
+            if (last_cloud_time.seconds() == 0)
+
+
+
+            {
+
+
+
+                RCLCPP_INFO(this->get_logger(), "  - LiDAR %zu (Config Index): Waiting for data...", lidar_info_[i].original_index);
+
+
+
+            }
+
+
+
+            else
+
+
+
+            {
+
+
+
+                double time_since_last_cloud = (now - last_cloud_time).seconds();
+
+
+
+                std::string status = (time_since_last_cloud < 2.0) ? "Connected" : "Disconnected"; // 2-second timeout
+
+
+
+                RCLCPP_INFO(this->get_logger(), "  - LiDAR %zu (Config Index): %s (Last cloud: %.2f s ago)", lidar_info_[i].original_index, status.c_str(), time_since_last_cloud);
+
+
+
+            }
+
+
 
         }
-
-        else
-
-        {
-
-            double time_since_last_cloud = (now - last_cloud_time).seconds();
-
-            std::string status = (time_since_last_cloud < 2.0) ? "Connected" : "Disconnected"; // 2-second timeout
-
-            RCLCPP_INFO(this->get_logger(), "  - LiDAR %zu: %s (Last cloud: %.2f s ago)", i, status.c_str(), time_since_last_cloud);
-
-        }
-
-    }
 
 
 

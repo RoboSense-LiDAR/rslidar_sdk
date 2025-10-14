@@ -23,6 +23,15 @@ struct RoiFilterConfig
   float min_x, max_x, min_y, max_y, min_z, max_z;
 };
 
+// Struct to hold all info for a single lidar
+struct LidarInfo
+{
+  std::shared_ptr<GPULidarHandler> handler;
+  std::string frame_id;
+  size_t original_index;
+  size_t last_tf_hash;
+};
+
 class MultiLidarNode : public rclcpp::Node
 {
 public:
@@ -46,9 +55,7 @@ private:
   void logStatistics();
   rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector<rclcpp::Parameter> &parameters);
 
-  std::vector<std::shared_ptr<GPULidarHandler>> lidar_handlers_;
-  std::vector<std::string> lidar_frame_ids_;
-  std::vector<size_t> last_tf_hashes_;
+  std::vector<LidarInfo> lidar_info_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr merged_pub_;
   bool publish_3d_pcd_;
   rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr flatscan_pub_;
