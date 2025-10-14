@@ -75,5 +75,6 @@ private:
   std::atomic<size_t> last_points_after_roi_{0};
   std::atomic<size_t> last_points_after_voxel_{0};
   std::atomic<uint64_t> merge_publish_count_{0};
+  std::atomic<double> last_processing_latency_{0.0};
   rclcpp::Time last_statistics_log_time_;
 };
