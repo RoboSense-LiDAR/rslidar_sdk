@@ -11,7 +11,7 @@ multi_lidar_node:
     publish_frequency: 10.0
 
     # Enable/Disable initial ICP calibration. Set to false to skip.
-    enable_icp_calibration: false
+    enable_icp_calibration: true
 
     # ROI Filter parameters - ENABLED
     enable_roi_filter: true
@@ -40,43 +40,38 @@ multi_lidar_node:
     flatscan_range_min: 0.1
     flatscan_range_max: 30.0
 
-    # This list of strings determines the number of lidars. The content doesn't matter.
-    lidars: ["lidar_1", "lidar_2"]
+    # List of lidars to be configured
+    lidars:
+      - name: "lidar_0"
+        enabled: true
+        driver:
+          lidar_type: "RSAIRY"
+          input_type: "online"
+          msop_port: 6668
+          difop_port: 7778
+        pointcloud:
+          frame_id: "lidar_0_link"
+        tf:
+          x: 0.6
+          y: -0.35
+          z: 0.8
+          roll: -0.5236
+          pitch: 1.5708
+          yaw: 0.0
 
-    # Lidar 0 configuration block
-    lidars.0:
-      name: "lidar_1"
-      enabled: true
-      driver:
-        lidar_type: "RSAIRY"
-        input_type: "online"
-        msop_port: 6668
-        difop_port: 7778
-      pointcloud:
-        frame_id: "lidar_1_link"
-      tf:
-        x: 0.6
-        y: -0.35
-        z: 0.8
-        roll: -0.5236
-        pitch: 1.5708
-        yaw: 0.0
-
-    # Lidar 1 configuration block
-    lidars.1:
-      name: "lidar_2"
-      enabled: true
-      driver:
-        lidar_type: "RSAIRY"
-        input_type: "online"
-        msop_port: 6667
-        difop_port: 7777
-      pointcloud:
-        frame_id: "lidar_2_link"
-      tf:
-        x: -0.3
-        y: 0.35
-        z: 0.0
-        roll: 0.0
-        pitch: 0.0
-        yaw: -2.3562
+      - name: "lidar_1"
+        enabled: true
+        driver:
+          lidar_type: "RSAIRY"
+          input_type: "online"
+          msop_port: 6667
+          difop_port: 7777
+        pointcloud:
+          frame_id: "lidar_1_link"
+        tf:
+          x: -0.3
+          y: 0.35
+          z: 0.0
+          roll: 0.0
+          pitch: 0.0
+          yaw: -2.3562

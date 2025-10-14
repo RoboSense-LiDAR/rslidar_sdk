@@ -333,8 +333,32 @@ void MultiLidarNode::runInitialCalibration()
 
       source_handler->setTransform(calibrated_source_to_base_tf);
       RCLCPP_INFO(this->get_logger(), "[ICP Calibration] LiDAR %zu calibrated successfully. Fitness score: %f", i, icp.getFitnessScore());
-      // Optionally print the new transform matrix
-      // RCLCPP_INFO(this->get_logger(), "New transform for LiDAR %zu:\n%s", i, Eigen::Matrix4f(calibrated_source_to_base_tf).format(Eigen::IOFormat(Eigen::StreamPrecision, 0, ", ", ";\n", "[", "]", "", "")).c_str());
+      
+      // Decompose and print the new transform
+      Eigen::Vector3f translation = calibrated_source_to_base_tf.block<3,1>(0,3);
+      Eigen::Matrix3f rotation = calibrated_source_to_base_tf.block<3,3>(0,0);
+      Eigen::Vector3f euler = rotation.eulerAngles(2, 1, 0); // ZYX order for yaw, pitch, roll
+
+      double calibrated_x = translation.x();
+      double calibrated_y = translation.y();
+      double calibrated_z = translation.z();
+      double calibrated_yaw = euler[0];
+      double calibrated_pitch = euler[1];
+      double calibrated_roll = euler[2];
+
+      RCLCPP_INFO(this->get_logger(), "[ICP Calibration] New TF for LiDAR %zu: [x: %.4f, y: %.4f, z: %.4f, roll: %.4f, pitch: %.4f, yaw: %.4f]",
+        i, calibrated_x, calibrated_y, calibrated_z, calibrated_roll, calibrated_pitch, calibrated_yaw);
+
+      // Update the ROS parameters with the new TF values
+      std::string tf_prefix = "lidars." + std::to_string(i) + ".tf.";
+      this->set_parameters({
+        rclcpp::Parameter(tf_prefix + "x", calibrated_x),
+        rclcpp::Parameter(tf_prefix + "y", calibrated_y),
+        rclcpp::Parameter(tf_prefix + "z", calibrated_z),
+        rclcpp::Parameter(tf_prefix + "roll", calibrated_roll),
+        rclcpp::Parameter(tf_prefix + "pitch", calibrated_pitch),
+        rclcpp::Parameter(tf_prefix + "yaw", calibrated_yaw)
+      });
     }
     else
     {
