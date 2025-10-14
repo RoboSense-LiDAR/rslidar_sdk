@@ -1,11 +1,13 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp> // For logging
+#include <rclcpp/time.hpp>
 #include <rs_driver/api/lidar_driver.hpp>
 #include <rs_driver/driver/driver_param.hpp>
 #include <rs_driver/msg/point_cloud_msg.hpp>
 #include <Eigen/Dense>
 #include <mutex>
+#include <atomic>
 
 using namespace robosense::lidar;
 
@@ -16,7 +18,7 @@ class LidarHandler
 {
 public:
   LidarHandler(const RSDriverParam& driver_param, const Eigen::Matrix4f& transform)
-    : transform_(transform)
+    : transform_(transform), last_cloud_timestamp_(0, 0, RCL_ROS_TIME)
   {
     driver_.regPointCloudCallback(
         std::bind(&LidarHandler::getPointCloudForDriver, this),
@@ -36,6 +38,11 @@ public:
   {
     std::lock_guard<std::mutex> lock(pointcloud_mutex_);
     return pointcloud_;
+  }
+
+  rclcpp::Time getLastCloudTimestamp() const
+  {
+    return last_cloud_timestamp_.load();
   }
 
   const Eigen::Matrix4f& getTransform() const
@@ -73,6 +80,7 @@ private:
 
     std::lock_guard<std::mutex> lock(pointcloud_mutex_);
     pointcloud_ = pointcloud_msg;
+    last_cloud_timestamp_.store(rclcpp::Clock().now());
   }
 
   RSDriver driver_;
@@ -80,4 +88,5 @@ private:
   Eigen::Matrix4f transform_;
   mutable std::mutex pointcloud_mutex_;
   mutable std::mutex transform_mutex_;
+  std::atomic<rclcpp::Time> last_cloud_timestamp_;
 };
