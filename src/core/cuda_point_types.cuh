@@ -12,11 +12,14 @@
   #endif
 #endif
 
+#pragma pack(push, 1)
 // Point structure for GPU memory
 struct CudaPointXYZI
 {
-    float x, y, z, intensity;
+    float x, y, z;
+    uint8_t intensity;
 };
+#pragma pack(pop)
 
 // Simple 4x4 matrix structure for CUDA kernels
 struct CudaMatrix4f
