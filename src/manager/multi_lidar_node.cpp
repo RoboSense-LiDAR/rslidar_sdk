@@ -1052,107 +1052,17 @@ rcl_interfaces::msg::SetParametersResult MultiLidarNode::parametersCallback(cons
 
       size_t dot_pos = name.find(".", prefix.length());
 
-                        if (dot_pos != std::string::npos)
-
-                        {
-
-                          std::string index_str = name.substr(prefix.length(), dot_pos - prefix.length());
-
-                          try
-
-                          {
-
-                            size_t config_index = std::stoul(index_str);
-
-                            for (size_t i = 0; i < lidar_info_.size(); ++i)
-
-                            {
-
-                              if (lidar_info_[i].original_index != config_index)
+                              if (dot_pos != std::string::npos)
 
                               {
 
-                                continue;
+                                // TF parameters are now handled exclusively by checkTfUpdates.
+
+                                // We no longer need to handle them here to avoid conflicts.
 
                               }
-
-                  
-
-                              std::string tf_prefix = prefix + index_str + ".tf.";
-
-                              if (name.rfind(tf_prefix, 0) == 0)
-
-                              {
-
-                                double x = this->get_parameter(tf_prefix + "x").as_double();
-
-                                double y = this->get_parameter(tf_prefix + "y").as_double();
-
-                                double z = this->get_parameter(tf_prefix + "z").as_double();
-
-                                double roll = this->get_parameter(tf_prefix + "roll").as_double();
-
-                                double pitch = this->get_parameter(tf_prefix + "pitch").as_double();
-
-                                double yaw = this->get_parameter(tf_prefix + "yaw").as_double();
-
-                  
-
-                                if (name == tf_prefix + "x") x = parameter.as_double();
-
-                                if (name == tf_prefix + "y") y = parameter.as_double();
-
-                                if (name == tf_prefix + "z") z = parameter.as_double();
-
-                                if (name == tf_prefix + "roll") roll = parameter.as_double();
-
-                                if (name == tf_prefix + "pitch") pitch = parameter.as_double();
-
-                                if (name == tf_prefix + "yaw") yaw = parameter.as_double();
-
-                  
-
-                                Eigen::Matrix4f transform = Eigen::Matrix4f::Identity();
-
-                                Eigen::Translation3f translation(x, y, z);
-
-                                Eigen::AngleAxisf rot_x(roll, Eigen::Vector3f::UnitX());
-
-                                Eigen::AngleAxisf rot_y(pitch, Eigen::Vector3f::UnitY());
-
-                                Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
-
-                                transform = (translation * rot_x * rot_y * rot_z).matrix();
-
-                  
-
-                                // When parameters are updated (e.g., by ICP), we apply the new transform directly.
-
-                                // The dynamic TF updates will then be applied on top of this new base.
-
-                                lidar_info_[i].handler->setTransform(transform);
-
-                                RCLCPP_INFO(this->get_logger(), "Updated TF for lidar (config index %zu) from parameters.", config_index);
-
-                              }
-
-                              break; // Found the right lidar, no need to check others
 
                             }
-
-                          }
-
-                          catch (const std::exception &e)
-
-                          {
-
-                            RCLCPP_WARN(this->get_logger(), "Could not parse lidar index from parameter name: %s", name.c_str());
-
-                          }
-
-                        }
-
-                      }
 
               }
 
