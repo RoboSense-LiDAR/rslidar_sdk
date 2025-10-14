@@ -7,6 +7,13 @@
 #include <thread>
 #include <sstream>
 
+// Macro for debug-only logging
+#ifndef NDEBUG
+  #define DEBUG_LOG(logger, ...) RCLCPP_INFO(logger, __VA_ARGS__)
+#else
+  #define DEBUG_LOG(logger, ...)
+#endif
+
 // A struct to hold GPU point cloud data.
 struct GPUPointCloudData
 {
@@ -20,15 +27,15 @@ public:
   GPULidarHandler(const RSDriverParam& param, const Eigen::Matrix4f& transform)
     : LidarHandler(param, transform)
   {
+    auto logger = rclcpp::get_logger("GPULidarHandler");
     std::stringstream ss;
     ss << std::this_thread::get_id();
-    RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "Constructor called in thread %s.", ss.str().c_str());
+    DEBUG_LOG(logger, "Constructor called in thread %s.", ss.str().c_str());
 
-    // Check for any pre-existing CUDA errors before we do anything.
     cudaError_t last_err = cudaGetLastError();
     if (last_err != cudaSuccess)
     {
-        RCLCPP_ERROR(rclcpp::get_logger("GPULidarHandler"), "A CUDA error existed before constructor: %s", cudaGetErrorString(last_err));
+        RCLCPP_ERROR(logger, "A CUDA error existed before constructor: %s", cudaGetErrorString(last_err));
     }
 
     int device_count = 0;
@@ -36,12 +43,12 @@ public:
     if (err == cudaSuccess && device_count > 0)
     {
       is_gpu_ready_ = true;
-      RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "Constructor confirmed GPU is ready.");
+      DEBUG_LOG(logger, "Constructor confirmed GPU is ready.");
     }
     else
     {
       is_gpu_ready_ = false;
-      RCLCPP_ERROR(rclcpp::get_logger("GPULidarHandler"), "Constructor failed to find a CUDA-enabled GPU. Error: %s", cudaGetErrorString(err));
+      RCLCPP_ERROR(logger, "Constructor failed to find a CUDA-enabled GPU. Error: %s", cudaGetErrorString(err));
     }
   }
 
@@ -57,43 +64,43 @@ public:
 
     const auto& cpu_points = cpu_cloud_msg->points;
     size_t num_points = cpu_points.size();
+    auto logger = rclcpp::get_logger("GPULidarHandler");
 
     std::stringstream ss;
     ss << std::this_thread::get_id();
-    RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "getGPUPointCloud called in thread %s for %zu points.", ss.str().c_str(), num_points);
+    DEBUG_LOG(logger, "getGPUPointCloud called in thread %s for %zu points.", ss.str().c_str(), num_points);
 
-    // Check for errors from previous CUDA operations before allocating new memory
     cudaError_t last_err = cudaGetLastError();
     if (last_err != cudaSuccess)
     {
-        RCLCPP_ERROR(rclcpp::get_logger("GPULidarHandler"), "CUDA error detected before cudaMalloc: %s", cudaGetErrorString(last_err));
+        RCLCPP_ERROR(logger, "CUDA error detected before cudaMalloc: %s", cudaGetErrorString(last_err));
     }
 
     CudaPointXYZI* d_new_buffer = nullptr;
-    RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "Attempting cudaMalloc...");
+    DEBUG_LOG(logger, "Attempting cudaMalloc...");
     cudaError_t err = cudaMalloc((void**)&d_new_buffer, num_points * sizeof(CudaPointXYZI));
     if (err != cudaSuccess)
     {
-      RCLCPP_ERROR(rclcpp::get_logger("GPULidarHandler"), "cudaMalloc for %zu points failed: %s", num_points, cudaGetErrorString(err));
+      RCLCPP_ERROR(logger, "cudaMalloc for %zu points failed: %s", num_points, cudaGetErrorString(err));
       return nullptr;
     }
-    RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "cudaMalloc successful. Pointer: %p", d_new_buffer);
+    DEBUG_LOG(logger, "cudaMalloc successful. Pointer: %p", d_new_buffer);
 
-    RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "Attempting cudaMemcpy...");
+    DEBUG_LOG(logger, "Attempting cudaMemcpy...");
     err = cudaMemcpy(d_new_buffer, cpu_points.data(), 
                      num_points * sizeof(PointXYZI), cudaMemcpyHostToDevice);
     if (err != cudaSuccess)
     {
-      RCLCPP_ERROR(rclcpp::get_logger("GPULidarHandler"), "cudaMemcpy (Host to Device) for %zu points failed: %s", num_points, cudaGetErrorString(err));
+      RCLCPP_ERROR(logger, "cudaMemcpy (Host to Device) for %zu points failed: %s", num_points, cudaGetErrorString(err));
       cudaFree(d_new_buffer);
       return nullptr;
     }
-    RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "cudaMemcpy successful.");
+    DEBUG_LOG(logger, "cudaMemcpy successful.");
 
     auto gpu_data = std::make_shared<GPUPointCloudData>();
     gpu_data->num_points = num_points;
-    gpu_data->d_points_ptr = std::shared_ptr<CudaPointXYZI>(d_new_buffer, [](CudaPointXYZI* ptr) {
-      RCLCPP_INFO(rclcpp::get_logger("GPULidarHandler"), "Custom deleter freeing GPU pointer: %p", ptr);
+    gpu_data->d_points_ptr = std::shared_ptr<CudaPointXYZI>(d_new_buffer, [logger](CudaPointXYZI* ptr) {
+      DEBUG_LOG(logger, "Custom deleter freeing GPU pointer: %p", ptr);
       cudaFree(ptr);
     });
 

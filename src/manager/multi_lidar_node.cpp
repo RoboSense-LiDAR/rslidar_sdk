@@ -1,4 +1,3 @@
-
 #include "multi_lidar_node.hpp"
 #include <utility/yaml_reader.hpp>
 #include <yaml-cpp/emitter.h> // Required for YAML::Emitter
@@ -126,7 +125,7 @@ void MultiLidarNode::loadParameters()
       {
         driver_param.input_type = InputType::PCAP_FILE;
       }
-      else if (input_type_str == "raw")
+      else if (input_type_str == "rosbag")
       {
         driver_param.input_type = InputType::RAW_PACKET;
       }
@@ -152,14 +151,18 @@ void MultiLidarNode::loadParameters()
       Eigen::AngleAxisf rot_z(yaw, Eigen::Vector3f::UnitZ());
       transform = (translation * rot_z * rot_y * rot_x).matrix();
 
+#ifndef NDEBUG
       // Diagnostic logging to check CUDA state around handler creation
       cudaError_t err_before = cudaGetLastError();
       RCLCPP_INFO(this->get_logger(), "CUDA state before creating handler for '%s': %s", lidar_name.c_str(), cudaGetErrorString(err_before));
+#endif
 
       lidar_handlers_.emplace_back(std::make_shared<GPULidarHandler>(driver_param, transform));
       
+#ifndef NDEBUG
       cudaError_t err_after = cudaGetLastError();
       RCLCPP_INFO(this->get_logger(), "CUDA state after creating handler for '%s': %s", lidar_name.c_str(), cudaGetErrorString(err_after));
+#endif
 
       RCLCPP_INFO(this->get_logger(), "Initialized lidar: %s", lidar_name.c_str());
   }
@@ -336,13 +339,12 @@ void MultiLidarNode::mergeAndPublish()
   // --- Early Exit if no publishing is enabled ---
   if (!publish_3d_pcd_ && !publish_flatscan_)
   {
-    RCLCPP_DEBUG(this->get_logger(), "Neither 3D PCD nor FlatScan publishing enabled. Skipping all processing.");
     return;
   }
 
   std::vector<CudaPointXYZI*> d_input_clouds;
   std::vector<size_t> h_input_counts;
-  std::vector<size_t> h_prefix_sums; // New: prefix sums
+  std::vector<size_t> h_prefix_sums;
   std::vector<CudaMatrix4f> h_transforms;
   size_t total_points_to_merge = 0;
 
@@ -350,9 +352,8 @@ void MultiLidarNode::mergeAndPublish()
   {
     if (!handler->isGPUReady())
     {
-      continue; // Skip this lidar if its GPU resources are not ready
+      continue; 
     }
-
     auto gpu_cloud_data = handler->getGPUPointCloud();
     if (gpu_cloud_data && gpu_cloud_data->d_points_ptr && gpu_cloud_data->num_points > 0)
     {
@@ -368,7 +369,6 @@ void MultiLidarNode::mergeAndPublish()
 
   if (total_points_to_merge == 0)
   {
-    RCLCPP_WARN(this->get_logger(), "No points to merge. Not publishing.");
     return;
   }
 
@@ -389,7 +389,6 @@ void MultiLidarNode::mergeAndPublish()
       return;
   }
 
-  // Launch CUDA kernel for transform and merge
   err = transformAndMergeGPU(d_input_clouds, h_input_counts, h_prefix_sums, h_transforms, d_merged_cloud, total_points_to_merge);
   if (err != cudaSuccess)
   {
@@ -401,7 +400,6 @@ void MultiLidarNode::mergeAndPublish()
   CudaPointXYZI* d_roi_filtered_cloud = nullptr;
   size_t num_roi_filtered_points = 0;
 
-  // 1. Apply ROI Filters (multiple positive/negative with priority) on GPU
   if (enable_roi_filter_ && !roi_filters_.empty())
   {
     std::vector<CudaRoiFilterConfig> h_cuda_roi_filters;
@@ -424,18 +422,17 @@ void MultiLidarNode::mergeAndPublish()
         cudaFree(d_merged_cloud);
         return;
     }
-    cudaFree(d_merged_cloud); // Free merged cloud after filtering
+    cudaFree(d_merged_cloud);
   }
   else
   {
-    d_roi_filtered_cloud = d_merged_cloud; // No ROI filter, pass through
+    d_roi_filtered_cloud = d_merged_cloud;
     num_roi_filtered_points = total_points_to_merge;
   }
 
   CudaPointXYZI* d_voxel_filtered_cloud = nullptr;
   size_t num_voxel_filtered_points = 0;
 
-  // 2. Apply Voxel Grid Filter on GPU
   if (enable_voxel_filter_ && num_roi_filtered_points > 0)
   {
     err = voxelGridDownsampleGPU(d_roi_filtered_cloud, num_roi_filtered_points,
@@ -446,27 +443,25 @@ void MultiLidarNode::mergeAndPublish()
         cudaFree(d_roi_filtered_cloud);
         return;
     }
-    cudaFree(d_roi_filtered_cloud); // Free ROI filtered cloud after voxel filtering
+    cudaFree(d_roi_filtered_cloud);
   }
   else
   {
-    d_voxel_filtered_cloud = d_roi_filtered_cloud; // No Voxel filter, pass through
+    d_voxel_filtered_cloud = d_roi_filtered_cloud;
     num_voxel_filtered_points = num_roi_filtered_points;
   }
 
+  RCLCPP_INFO(this->get_logger(), "Point Processing: Merged: %zu -> ROI Filter: %zu -> Voxel Filter: %zu",
+    total_points_to_merge, num_roi_filtered_points, num_voxel_filtered_points);
+
   if (num_voxel_filtered_points == 0)
   {
-    RCLCPP_WARN(this->get_logger(), "Final filtered cloud is empty. Not publishing.");
     if (d_voxel_filtered_cloud) cudaFree(d_voxel_filtered_cloud);
     return;
   }
 
-  // --- Conditional Publishing --- 
-
-  // 1. Publish 3D PointCloud2 (if enabled)
   if (publish_3d_pcd_)
   {
-    // Copy final GPU cloud back to CPU for ROS publishing
     pcl::PointCloud<pcl::PointXYZI>::Ptr final_cpu_cloud(new pcl::PointCloud<pcl::PointXYZI>);
     final_cpu_cloud->points.resize(num_voxel_filtered_points);
     err = cudaMemcpy(final_cpu_cloud->points.data(), d_voxel_filtered_cloud, 
@@ -481,6 +476,8 @@ void MultiLidarNode::mergeAndPublish()
         pcl::toROSMsg(*final_cpu_cloud, output_msg);
         output_msg.header.stamp = this->get_clock()->now();
         output_msg.header.frame_id = base_frame_id_;
+        RCLCPP_INFO(this->get_logger(), "Publishing PointCloud2 on topic '%s' with %zu points.",
+          merged_pub_->get_topic_name(), num_voxel_filtered_points);
         merged_pub_->publish(output_msg);
 
 #ifdef WITH_NITROS
@@ -499,7 +496,6 @@ void MultiLidarNode::mergeAndPublish()
     }
   }
 
-  // 2. Publish FlatScan (LaserScan) (if enabled)
   if (publish_flatscan_)
   {
     CudaLaserScanParams flatscan_params;
@@ -517,7 +513,6 @@ void MultiLidarNode::mergeAndPublish()
     if (err != cudaSuccess)
     {
         RCLCPP_ERROR(this->get_logger(), "generateFlatScanGPU kernel launch failed: %s", cudaGetErrorString(err));
-        // Continue without publishing flatscan
     }
     else
     {
@@ -531,7 +526,6 @@ void MultiLidarNode::mergeAndPublish()
         scan_msg.range_max = flatscan_params.range_max;
         scan_msg.ranges.resize(flatscan_params.num_beams);
 
-        // Copy ranges from GPU to CPU
         err = cudaMemcpy(scan_msg.ranges.data(), d_ranges, flatscan_params.num_beams * sizeof(float), cudaMemcpyDeviceToHost);
         if (err != cudaSuccess)
         {
@@ -539,13 +533,14 @@ void MultiLidarNode::mergeAndPublish()
         }
         else
         {
+            RCLCPP_INFO(this->get_logger(), "Publishing LaserScan on topic '%s' with %zu ranges.",
+              flatscan_pub_->get_topic_name(), scan_msg.ranges.size());
             flatscan_pub_->publish(scan_msg);
         }
         cudaFree(d_ranges);
     }
   }
 
-  // Free the final GPU cloud after all potential uses
   if (d_voxel_filtered_cloud) cudaFree(d_voxel_filtered_cloud);
 }
 
@@ -553,9 +548,6 @@ void MultiLidarNode::printCurrentParameters()
 {
   RCLCPP_INFO(this->get_logger(), "--- Current ROS 2 Parameters ---");
 
-  // 1. 노드에 선언된 모든 파라미터의 '이름' 목록을 가져옵니다.
-  // 첫 번째 인자: 접두사 목록 (비어 있으면 모든 최상위 파라미터를 의미)
-  // 두 번째 인자: 탐색 깊이 (0은 모든 깊이를 의미)
   auto parameter_names = this->list_parameters({}, 0).names;
 
   if (parameter_names.empty())
@@ -564,15 +556,13 @@ void MultiLidarNode::printCurrentParameters()
   }
   else
   {
-    // 2. 이름 목록을 사용하여 실제 파라미터 객체(값 포함)들을 가져옵니다.
     auto parameters = this->get_parameters(parameter_names);
 
-    // 3. 각 파라미터를 순회하며 이름과 값을 출력합니다.
     for (const auto &param : parameters)
     {
       RCLCPP_INFO(this->get_logger(), "  %s: %s",
         param.get_name().c_str(),
-        param.value_to_string().c_str()); // 이 방식에서는 .value_to_string()이 잘 동작합니다.
+        param.value_to_string().c_str());
     }
   }
 
@@ -642,7 +632,6 @@ rcl_interfaces::msg::SetParametersResult MultiLidarNode::parametersCallback(cons
 
 namespace
 {
-  // Helper function to combine hashes
   template <class T>
   inline void hash_combine(std::size_t& seed, const T& v)
   {
@@ -684,7 +673,6 @@ void MultiLidarNode::checkTfUpdates()
       {
         last_tf_hashes_[i] = new_hash;
 
-        // Convert transform to roll, pitch, yaw and x, y, z
         tf2::Quaternion q(transform_stamped.transform.rotation.x,
                           transform_stamped.transform.rotation.y,
                           transform_stamped.transform.rotation.z,
@@ -697,7 +685,6 @@ void MultiLidarNode::checkTfUpdates()
         double y = transform_stamped.transform.translation.y;
         double z = transform_stamped.transform.translation.z;
 
-        // Set parameters
         std::string tf_prefix = "lidars." + std::to_string(i) + ".tf.";
         this->set_parameters({
           rclcpp::Parameter(tf_prefix + "x", x),
@@ -712,7 +699,6 @@ void MultiLidarNode::checkTfUpdates()
     }
     catch (const tf2::TransformException &ex)
     {
-      //RCLCPP_WARN(this->get_logger(), "Could not get transform for %s: %s", lidar_frame_ids_[i].c_str(), ex.what());
     }
   }
 }
