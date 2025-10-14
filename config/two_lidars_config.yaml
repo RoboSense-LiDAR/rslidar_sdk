@@ -11,7 +11,7 @@ multi_lidar_node:
     publish_frequency: 10.0
 
     # Enable/Disable initial ICP calibration. Set to false to skip.
-    enable_icp_calibration: true
+    enable_icp_calibration: false
 
     # ROI Filter parameters - DISABLED
     enable_roi_filter: false
