@@ -389,12 +389,25 @@ void MultiLidarNode::mergeAndPublish()
       return;
   }
 
-  err = transformAndMergeGPU(d_input_clouds, h_input_counts, h_prefix_sums, h_transforms, d_merged_cloud, total_points_to_merge);
-  if (err != cudaSuccess)
+  // Sequentially launch a simple kernel for each LiDAR. This is more robust than a single complex kernel.
+  for (size_t i = 0; i < d_input_clouds.size(); ++i)
   {
-      RCLCPP_ERROR(this->get_logger(), "transformAndMergeGPU kernel launch failed: %s", cudaGetErrorString(err));
+    err = transformAndCopyToOffsetGPU(d_input_clouds[i], h_input_counts[i], h_transforms[i], d_merged_cloud, h_prefix_sums[i]);
+    if (err != cudaSuccess)
+    {
+      RCLCPP_ERROR(this->get_logger(), "transformAndCopyToOffsetGPU kernel launch for lidar %zu failed: %s", i, cudaGetErrorString(err));
       cudaFree(d_merged_cloud);
       return;
+    }
+  }
+
+  // Wait for all the above asynchronous kernels to complete before proceeding to the filter stage.
+  err = cudaDeviceSynchronize();
+  if (err != cudaSuccess)
+  {
+    RCLCPP_ERROR(this->get_logger(), "cudaDeviceSynchronize after merging failed: %s", cudaGetErrorString(err));
+    cudaFree(d_merged_cloud);
+    return;
   }
 
   CudaPointXYZI* d_roi_filtered_cloud = nullptr;
