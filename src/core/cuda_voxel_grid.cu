@@ -18,6 +18,16 @@ struct VoxelPoint
     }
 };
 
+// Predicate for copy_if, to select elements where the stencil is non-zero
+struct is_nonzero
+{
+    __host__ __device__
+    bool operator()(const int x) const
+    {
+        return x != 0;
+    }
+};
+
 // Kernel to compute voxel ID for each point
 __global__ void computeVoxelIDsKernel(
     CudaPointXYZI* d_input_cloud,
@@ -157,7 +167,7 @@ cudaError_t voxelGridDownsampleGPU(
                         d_indices.end(),
                         d_voxel_start_flags.begin(),
                         d_voxel_start_indices.begin(),
-                        thrust::identity<int>());
+                        is_nonzero());
         err = cudaGetLastError();
         if (err != cudaSuccess) return err;
 
