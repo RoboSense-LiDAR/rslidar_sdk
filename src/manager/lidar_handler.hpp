@@ -82,7 +82,8 @@ protected:
       std::lock_guard<std::mutex> lock(pointcloud_mutex_);
       pointcloud_ = pointcloud_msg;
     }
-    {n      std::lock_guard<std::mutex> lock(timestamp_mutex_);
+    {
+      std::lock_guard<std::mutex> lock(timestamp_mutex_);
       last_cloud_timestamp_ = clock_->now();
     }
   }
