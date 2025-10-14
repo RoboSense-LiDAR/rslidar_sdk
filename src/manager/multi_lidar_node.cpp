@@ -16,12 +16,31 @@
 #include "../core/cuda_flatscan.cuh"
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2/exceptions.h>
+#include <cuda_runtime.h> // For CUDA device check
 
 using namespace robosense::lidar;
 
 MultiLidarNode::MultiLidarNode(const rclcpp::NodeOptions& options)
   : Node("multi_lidar_node", options)
 {
+  // Explicitly check for CUDA device availability before doing anything else
+  int device_count = 0;
+  cudaError_t err = cudaGetDeviceCount(&device_count);
+  if (err != cudaSuccess)
+  {
+    RCLCPP_FATAL(this->get_logger(), "Failed to get CUDA device count: %s", cudaGetErrorString(err));
+    RCLCPP_FATAL(this->get_logger(), "Please ensure NVIDIA drivers are installed and the GPU is accessible.");
+    rclcpp::shutdown();
+    return;
+  }
+  if (device_count == 0)
+  {
+    RCLCPP_FATAL(this->get_logger(), "No CUDA-enabled GPU found. Aborting.");
+    rclcpp::shutdown();
+    return;
+  }
+  RCLCPP_INFO(this->get_logger(), "Found %d CUDA-enabled GPU(s).", device_count);
+
   bool enable_icp_calibration = this->declare_parameter("enable_icp_calibration", true);
   loadParameters();
   if (enable_icp_calibration)
