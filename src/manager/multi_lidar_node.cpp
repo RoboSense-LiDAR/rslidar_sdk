@@ -22,8 +22,16 @@ using namespace robosense::lidar;
 MultiLidarNode::MultiLidarNode(const rclcpp::NodeOptions& options)
   : Node("multi_lidar_node", options)
 {
+  bool enable_icp_calibration = this->declare_parameter("enable_icp_calibration", true);
   loadParameters();
-  runInitialCalibration();
+  if (enable_icp_calibration)
+  {
+    runInitialCalibration();
+  }
+  else
+  {
+    RCLCPP_INFO(this->get_logger(), "[ICP Calibration] ICP calibration is disabled by parameter.");
+  }
   loadFilterParameters();
   loadFlatScanParameters(); // New call
 

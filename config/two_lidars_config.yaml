@@ -10,6 +10,9 @@ multi_lidar_node:
     # Publishing frequency in Hz
     publish_frequency: 10.0
 
+    # Enable/Disable initial ICP calibration. Set to false to skip.
+    enable_icp_calibration: false
+
     # ROI Filter parameters - DISABLED
     enable_roi_filter: false
 
@@ -18,7 +21,7 @@ multi_lidar_node:
     voxel_leaf_size: 0.01 # 1cm
 
     # FlatScan (LaserScan) parameters
-    publish_flatscan: false
+    publish_flatscan: true
     flatscan_topic_name: "/flatscan"
     flatscan_min_height: 0.1
     flatscan_max_height: 1.0
