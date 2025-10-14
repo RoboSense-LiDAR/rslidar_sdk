@@ -372,15 +372,13 @@ void MultiLidarNode::mergeAndPublish()
     return;
   }
 
-  // Calculate prefix sums
-  h_prefix_sums.resize(h_input_counts.size());
-  if (!h_input_counts.empty())
+  // Calculate prefix sums (exclusive scan) to determine the starting offset for each cloud in the merged buffer
+  h_prefix_sums.resize(h_input_counts.size(), 0);
+  size_t running_total = 0;
+  for (size_t i = 0; i < h_input_counts.size(); ++i)
   {
-    h_prefix_sums[0] = h_input_counts[0];
-    for (size_t i = 1; i < h_input_counts.size(); ++i)
-    {
-      h_prefix_sums[i] = h_prefix_sums[i-1] + h_input_counts[i];
-    }
+    h_prefix_sums[i] = running_total;
+    running_total += h_input_counts[i];
   }
 
   CudaPointXYZI* d_merged_cloud = nullptr;
