@@ -116,7 +116,7 @@ void MultiLidarNode::loadParameters()
       transform = (translation * rot_z * rot_y * rot_x).matrix();
 
       lidar_handlers_.emplace_back(std::make_shared<GPULidarHandler>(driver_param, transform));
-      RCLCPP_INFO(this->get_logger(), "Initialized lidar: %s", this->declare_parameter(lidar_prefix + "name", "").c_str());
+      RCLCPP_INFO(this->get_logger(), "Initialized lidar: %s", lidar_name.c_str());
   }
   last_tf_hashes_.resize(lidar_handlers_.size());
 }
