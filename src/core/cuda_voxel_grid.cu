@@ -46,7 +46,14 @@ __global__ void convertToPointSumKernel(
     long long vz = static_cast<long long>(floorf(p.z * inv_leaf_size));
 
     d_keys[idx] = (vx & 0x1FFFFF) | ((vy & 0x1FFFFF) << 21) | ((vz & 0x1FFFFF) << 42);
-    d_values[idx] = {p.x, p.y, p.z, p.intensity, 1};
+    
+    PointSum ps;
+    ps.x = p.x;
+    ps.y = p.y;
+    ps.z = p.z;
+    ps.max_intensity = p.intensity;
+    ps.count = 1;
+    d_values[idx] = ps;
 }
 
 // Kernel to compute the final average from the summed values
