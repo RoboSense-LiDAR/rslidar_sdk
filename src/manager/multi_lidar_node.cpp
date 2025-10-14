@@ -41,6 +41,16 @@ MultiLidarNode::MultiLidarNode(const rclcpp::NodeOptions& options)
   }
   RCLCPP_INFO(this->get_logger(), "Found %d CUDA-enabled GPU(s).", device_count);
 
+  // Force initialization of the primary CUDA context on the main thread before any other threads (like the driver's) are created.
+  err = cudaFree(0);
+  if (err != cudaSuccess)
+  {
+    RCLCPP_FATAL(this->get_logger(), "Failed to initialize CUDA context: %s", cudaGetErrorString(err));
+    rclcpp::shutdown();
+    return;
+  }
+  RCLCPP_INFO(this->get_logger(), "CUDA context initialized successfully on the main thread.");
+
   bool enable_icp_calibration = this->declare_parameter("enable_icp_calibration", true);
   loadParameters();
   if (enable_icp_calibration)
