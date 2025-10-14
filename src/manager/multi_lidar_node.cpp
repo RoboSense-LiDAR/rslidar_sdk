@@ -406,18 +406,21 @@ void MultiLidarNode::mergeAndPublish()
       return;
   }
 
+
+#ifndef NDEBUG
   // --- Sanity Check Logging ---
-  RCLCPP_INFO(this->get_logger(), "--- Pre-Kernel Sanity Check ---");
-  RCLCPP_INFO(this->get_logger(), "Total points to merge: %zu", total_points_to_merge);
-  RCLCPP_INFO(this->get_logger(), "Number of LiDARs to merge: %zu", d_input_clouds.size());
+  RCLCPP_DEBUG(this->get_logger(), "--- Pre-Kernel Sanity Check ---");
+  RCLCPP_DEBUG(this->get_logger(), "Total points to merge: %zu", total_points_to_merge);
+  RCLCPP_DEBUG(this->get_logger(), "Number of LiDARs to merge: %zu", d_input_clouds.size());
   for (size_t i = 0; i < d_input_clouds.size(); ++i)
   {
     std::stringstream ss;
     for(int j=0; j<16; ++j) ss << h_transforms[i].data[j] << " ";
-    RCLCPP_INFO(this->get_logger(), "Lidar %zu: Points=%zu, Offset=%zu, Transform=[%s]", 
+    RCLCPP_DEBUG(this->get_logger(), "Lidar %zu: Points=%zu, Offset=%zu, Transform=[%s]", 
       i, h_input_counts[i], h_prefix_sums[i], ss.str().c_str());
   }
-  RCLCPP_INFO(this->get_logger(), "-----------------------------");
+  RCLCPP_DEBUG(this->get_logger(), "-----------------------------");
+#endif
 
   // Sequentially launch a simple kernel for each LiDAR. This is more robust than a single complex kernel.
   for (size_t i = 0; i < d_input_clouds.size(); ++i)
@@ -494,8 +497,11 @@ void MultiLidarNode::mergeAndPublish()
     num_voxel_filtered_points = num_roi_filtered_points;
   }
 
-  RCLCPP_INFO(this->get_logger(), "Point Processing: Merged: %zu -> ROI Filter: %zu -> Voxel Filter: %zu",
+
+#ifndef NDEBUG
+  RCLCPP_DEBUG(this->get_logger(), "Point Processing: Merged: %zu -> ROI Filter: %zu -> Voxel Filter: %zu",
     total_points_to_merge, num_roi_filtered_points, num_voxel_filtered_points);
+#endif
 
   if (num_voxel_filtered_points == 0)
   {
@@ -519,8 +525,10 @@ void MultiLidarNode::mergeAndPublish()
         pcl::toROSMsg(*final_cpu_cloud, output_msg);
         output_msg.header.stamp = this->get_clock()->now();
         output_msg.header.frame_id = base_frame_id_;
-        RCLCPP_INFO(this->get_logger(), "Publishing PointCloud2 on topic '%s' with %zu points.",
+#ifndef NDEBUG
+        RCLCPP_DEBUG(this->get_logger(), "Publishing PointCloud2 on topic '%s' with %zu points.",
           merged_pub_->get_topic_name(), num_voxel_filtered_points);
+#endif
         merged_pub_->publish(output_msg);
 
 #ifdef WITH_NITROS
@@ -576,8 +584,10 @@ void MultiLidarNode::mergeAndPublish()
         }
         else
         {
-            RCLCPP_INFO(this->get_logger(), "Publishing LaserScan on topic '%s' with %zu ranges.",
+#ifndef NDEBUG
+            RCLCPP_DEBUG(this->get_logger(), "Publishing LaserScan on topic '%s' with %zu ranges.",
               flatscan_pub_->get_topic_name(), scan_msg.ranges.size());
+#endif
             flatscan_pub_->publish(scan_msg);
         }
         cudaFree(d_ranges);
