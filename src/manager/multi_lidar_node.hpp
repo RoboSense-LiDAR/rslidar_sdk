@@ -32,6 +32,7 @@ struct LidarInfo
   size_t last_tf_hash;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr raw_pub;
   Eigen::Matrix4f icp_correction;
+  bool has_new_cloud = false;
 };
 
 class MultiLidarNode : public rclcpp::Node
@@ -40,7 +41,6 @@ public:
   MultiLidarNode(const rclcpp::NodeOptions& options);
 
 private:
-  rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::TimerBase::SharedPtr statistics_timer_;
   OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
@@ -56,8 +56,11 @@ private:
   void checkTfUpdates();
   void logStatistics();
   rcl_interfaces::msg::SetParametersResult parametersCallback(const std::vector<rclcpp::Parameter> &parameters);
+  void onNewCloudReceived(size_t lidar_index);
+  void checkAllCloudsReceived();
 
   std::vector<LidarInfo> lidar_info_;
+  std::mutex cloud_mutex_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr merged_pub_;
   bool publish_3d_pcd_;
   rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr flatscan_pub_;

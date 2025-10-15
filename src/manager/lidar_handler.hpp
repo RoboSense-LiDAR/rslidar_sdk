@@ -62,6 +62,11 @@ public:
     driver_.stop();
   }
 
+  void regNotificationCallback(std::function<void()> callback)
+  {
+    notification_callback_ = callback;
+  }
+
 protected:
   void pointCloudCallback(std::shared_ptr<PointCloudMsg> pointcloud_msg)
   {
@@ -86,6 +91,11 @@ protected:
       std::lock_guard<std::mutex> lock(timestamp_mutex_);
       last_cloud_timestamp_ = clock_->now();
     }
+
+    if (notification_callback_)
+    {
+      notification_callback_();
+    }
   }
 
   RSDriver driver_;
@@ -96,4 +106,5 @@ protected:
   mutable std::mutex pointcloud_mutex_;
   mutable std::mutex transform_mutex_;
   mutable std::mutex timestamp_mutex_;
+  std::function<void()> notification_callback_;
 };

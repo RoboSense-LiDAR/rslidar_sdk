@@ -66,11 +66,6 @@ MultiLidarNode::MultiLidarNode(const rclcpp::NodeOptions& options)
 
   printCurrentParameters(); // Print all loaded parameters
 
-  double publish_frequency = this->declare_parameter("publish_frequency", 10.0);
-  timer_ = this->create_wall_timer(
-      std::chrono::milliseconds(static_cast<int>(1000.0 / publish_frequency)),
-      std::bind(&MultiLidarNode::mergeAndPublish, this));
-
   param_callback_handle_ = this->add_on_set_parameters_callback(
       std::bind(&MultiLidarNode::parametersCallback, this, std::placeholders::_1));
 
@@ -168,6 +163,12 @@ void MultiLidarNode::loadParameters()
       info.original_index = i;
       info.last_tf_hash = 0;
       info.icp_correction = Eigen::Matrix4f::Identity();
+      
+      // Register the notification callback
+      size_t current_lidar_index = lidar_info_.size();
+      info.handler->regNotificationCallback(
+          [this, current_lidar_index]() { this->onNewCloudReceived(current_lidar_index); });
+
       lidar_info_.push_back(info);
 
       // Get a reference to the new element to modify it in place
@@ -189,6 +190,51 @@ void MultiLidarNode::loadParameters()
 #endif
 
       RCLCPP_INFO(this->get_logger(), "Initialized lidar: %s", lidar_name.c_str());
+  }
+}
+
+void MultiLidarNode::onNewCloudReceived(size_t lidar_index)
+{
+  std::lock_guard<std::mutex> lock(cloud_mutex_);
+  if (lidar_index < lidar_info_.size())
+  {
+    lidar_info_[lidar_index].has_new_cloud = true;
+  }
+  checkAllCloudsReceived();
+}
+
+void MultiLidarNode::checkAllCloudsReceived()
+{
+  // This function is called from onNewCloudReceived, which is already locked.
+  // No need to lock the mutex again.
+  bool all_received = true;
+  if (lidar_info_.empty())
+  {
+    all_received = false;
+  }
+  
+  for (const auto& info : lidar_info_)
+  {
+    if (!info.has_new_cloud)
+    {
+      all_received = false;
+      break;
+    }
+  }
+
+  if (all_received)
+  {
+    // Reset flags before processing to be ready for the next round
+    for (auto& info : lidar_info_)
+    {
+      info.has_new_cloud = false;
+    }
+    
+    // Unlock before calling mergeAndPublish to avoid potential deadlocks
+    // if mergeAndPublish were to ever need this mutex.
+    cloud_mutex_.unlock();
+    mergeAndPublish();
+    cloud_mutex_.lock(); // Re-lock to maintain state for the function exit
   }
 }
 
