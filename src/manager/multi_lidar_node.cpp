@@ -594,347 +594,879 @@ void MultiLidarNode::mergeAndPublish()
 
 
 
-  // Sequentially launch a simple kernel for each LiDAR. This is more robust than a single complex kernel.
+    auto stage_start_time = std::chrono::high_resolution_clock::now();
 
-  for (size_t i = 0; i < d_input_clouds.size(); ++i)
 
-  {
 
-    err = transformAndCopyToOffsetGPU(d_input_clouds[i], h_input_counts[i], h_transforms[i], d_merged_cloud, h_prefix_sums[i]);
+  
 
-    if (err != cudaSuccess)
+
+
+    // Sequentially launch a simple kernel for each LiDAR. This is more robust than a single complex kernel.
+
+
+
+    for (size_t i = 0; i < d_input_clouds.size(); ++i)
+
+
 
     {
 
-      RCLCPP_ERROR(this->get_logger(), "transformAndCopyToOffsetGPU kernel launch for lidar %zu failed: %s", i, cudaGetErrorString(err));
 
-      cudaFree(d_merged_cloud);
 
-      return;
-
-    }
-
-  }
+      err = transformAndCopyToOffsetGPU(d_input_clouds[i], h_input_counts[i], h_transforms[i], d_merged_cloud, h_prefix_sums[i]);
 
 
 
-  // Wait for all the above asynchronous kernels to complete before proceeding to the filter stage.
-
-  err = cudaDeviceSynchronize();
-
-  if (err != cudaSuccess)
-
-  {
-
-    RCLCPP_ERROR(this->get_logger(), "cudaDeviceSynchronize after merging failed: %s", cudaGetErrorString(err));
-
-    cudaFree(d_merged_cloud);
-
-    return;
-
-  }
+      if (err != cudaSuccess)
 
 
 
-  CudaPointXYZI* d_roi_filtered_cloud = nullptr;
-
-  size_t num_roi_filtered_points = 0;
+      {
 
 
 
-  if (enable_roi_filter_ && !roi_filters_.empty())
-
-  {
-
-    std::vector<CudaRoiFilterConfig> h_cuda_roi_filters;
-
-    for (const auto& config : roi_filters_)
-
-    {
-
-      CudaRoiFilterConfig cuda_config;
-
-      cuda_config.min_x = config.min_x; cuda_config.max_x = config.max_x;
-
-      cuda_config.min_y = config.min_y; cuda_config.max_y = config.max_y;
-
-      cuda_config.min_z = config.min_z; cuda_config.max_z = config.max_z;
-
-      cuda_config.type = (config.type == "positive") ? 0 : 1;
-
-      h_cuda_roi_filters.push_back(cuda_config);
-
-    }
+        RCLCPP_ERROR(this->get_logger(), "transformAndCopyToOffsetGPU kernel launch for lidar %zu failed: %s", i, cudaGetErrorString(err));
 
 
-
-    err = roiFilterGPU(d_merged_cloud, total_points_to_merge,
-
-                       h_cuda_roi_filters.data(), h_cuda_roi_filters.size(),
-
-                       &d_roi_filtered_cloud, &num_roi_filtered_points);
-
-    if (err != cudaSuccess)
-
-    {
-
-        RCLCPP_ERROR(this->get_logger(), "roiFilterGPU kernel launch failed: %s", cudaGetErrorString(err));
 
         cudaFree(d_merged_cloud);
 
-        return;
 
-    }
-
-    cudaFree(d_merged_cloud);
-
-  }
-
-  else
-
-  {
-
-    d_roi_filtered_cloud = d_merged_cloud;
-
-    num_roi_filtered_points = total_points_to_merge;
-
-  }
-
-
-
-  CudaPointXYZI* d_voxel_filtered_cloud = nullptr;
-
-  size_t num_voxel_filtered_points = 0;
-
-
-
-  if (enable_voxel_filter_ && num_roi_filtered_points > 0)
-
-  {
-
-    err = voxelGridDownsampleGPU(d_roi_filtered_cloud, num_roi_filtered_points,
-
-                                 voxel_leaf_size_, &d_voxel_filtered_cloud, &num_voxel_filtered_points);
-
-    if (err != cudaSuccess)
-
-    {
-
-        RCLCPP_ERROR(this->get_logger(), "voxelGridDownsampleGPU kernel launch failed: %s", cudaGetErrorString(err));
-
-        cudaFree(d_roi_filtered_cloud);
 
         return;
 
+
+
+      }
+
+
+
     }
 
-    cudaFree(d_roi_filtered_cloud);
 
-  }
 
-  else
-
-  {
-
-    d_voxel_filtered_cloud = d_roi_filtered_cloud;
-
-    num_voxel_filtered_points = num_roi_filtered_points;
-
-  }
+  
 
 
 
-
-
-#ifndef NDEBUG
-
-  RCLCPP_DEBUG(this->get_logger(), "Point Processing: Merged: %zu -> ROI Filter: %zu -> Voxel Filter: %zu",
-
-    total_points_to_merge, num_roi_filtered_points, num_voxel_filtered_points);
-
-#endif
+    // Wait for all the above asynchronous kernels to complete before proceeding to the filter stage.
 
 
 
-  if (num_voxel_filtered_points == 0)
-
-  {
-
-    if (d_voxel_filtered_cloud) cudaFree(d_voxel_filtered_cloud);
-
-    return;
-
-  }
+    err = cudaDeviceSynchronize();
 
 
-
-  if (publish_3d_pcd_)
-
-  {
-
-    pcl::PointCloud<pcl::PointXYZI>::Ptr final_cpu_cloud(new pcl::PointCloud<pcl::PointXYZI>);
-
-    final_cpu_cloud->points.resize(num_voxel_filtered_points);
-
-    err = cudaMemcpy(final_cpu_cloud->points.data(), d_voxel_filtered_cloud, 
-
-                     num_voxel_filtered_points * sizeof(CudaPointXYZI), cudaMemcpyDeviceToHost);
 
     if (err != cudaSuccess)
 
+
+
     {
 
-        RCLCPP_ERROR(this->get_logger(), "cudaMemcpy (GPU to CPU for ROS publish) failed: %s", cudaGetErrorString(err));
+
+
+      RCLCPP_ERROR(this->get_logger(), "cudaDeviceSynchronize after merging failed: %s", cudaGetErrorString(err));
+
+
+
+      cudaFree(d_merged_cloud);
+
+
+
+      return;
+
+
 
     }
+
+
+
+    auto merge_end_time = std::chrono::high_resolution_clock::now();
+
+
+
+    last_merge_time_.store(std::chrono::duration<double, std::milli>(merge_end_time - stage_start_time).count());
+
+
+
+    stage_start_time = merge_end_time;
+
+
+
+  
+
+
+
+    CudaPointXYZI* d_roi_filtered_cloud = nullptr;
+
+
+
+    size_t num_roi_filtered_points = 0;
+
+
+
+  
+
+
+
+    if (enable_roi_filter_ && !roi_filters_.empty())
+
+
+
+    {
+
+
+
+      std::vector<CudaRoiFilterConfig> h_cuda_roi_filters;
+
+
+
+      for (const auto& config : roi_filters_)
+
+
+
+      {
+
+
+
+        CudaRoiFilterConfig cuda_config;
+
+
+
+        cuda_config.min_x = config.min_x; cuda_config.max_x = config.max_x;
+
+
+
+        cuda_config.min_y = config.min_y; cuda_config.max_y = config.max_y;
+
+
+
+        cuda_config.min_z = config.min_z; cuda_config.max_z = config.max_z;
+
+
+
+        cuda_config.type = (config.type == "positive") ? 0 : 1;
+
+
+
+        h_cuda_roi_filters.push_back(cuda_config);
+
+
+
+      }
+
+
+
+  
+
+
+
+      err = roiFilterGPU(d_merged_cloud, total_points_to_merge,
+
+
+
+                         h_cuda_roi_filters.data(), h_cuda_roi_filters.size(),
+
+
+
+                         &d_roi_filtered_cloud, &num_roi_filtered_points);
+
+
+
+      if (err != cudaSuccess)
+
+
+
+      {
+
+
+
+          RCLCPP_ERROR(this->get_logger(), "roiFilterGPU kernel launch failed: %s", cudaGetErrorString(err));
+
+
+
+          cudaFree(d_merged_cloud);
+
+
+
+          return;
+
+
+
+      }
+
+
+
+      cudaFree(d_merged_cloud);
+
+
+
+    }
+
+
 
     else
 
+
+
     {
 
-        sensor_msgs::msg::PointCloud2 output_msg;
 
-        pcl::toROSMsg(*final_cpu_cloud, output_msg);
 
-        output_msg.header.stamp = earliest_timestamp;
-
-        output_msg.header.frame_id = base_frame_id_;
-
-#ifndef NDEBUG
-
-        RCLCPP_DEBUG(this->get_logger(), "Publishing PointCloud2 on topic '%s' with %zu points.",
-
-          merged_pub_->get_topic_name(), num_voxel_filtered_points);
-
-#endif
-
-        merged_pub_->publish(output_msg);
+      d_roi_filtered_cloud = d_merged_cloud;
 
 
 
-#ifdef WITH_NITROS
+      num_roi_filtered_points = total_points_to_merge;
 
-        if (nitros_pub_)
 
-        {
-
-          auto nitros_output_msg = output_msg;
-
-          nvidia::isaac_ros::nitros::NitrosPointCloud2 nitros_msg =
-
-            nvidia::isaac_ros::nitros::NitrosPointCloud2Builder()
-
-            .With(
-
-              std::move(nitros_output_msg)
-
-            )
-
-            .Build();
-
-          nitros_pub_->publish(nitros_msg);
-
-        }
-
-#endif
 
     }
 
-  }
+
+
+  
 
 
 
-  if (publish_flatscan_)
-
-  {
-
-    CudaLaserScanParams flatscan_params;
-
-    flatscan_params.angle_min = flatscan_angle_min_;
-
-    flatscan_params.angle_max = flatscan_angle_max_;
-
-    flatscan_params.angle_increment = flatscan_angle_increment_;
-
-    flatscan_params.range_min = flatscan_range_min_;
-
-    flatscan_params.range_max = flatscan_range_max_;
-
-    flatscan_params.min_height = flatscan_min_height_;
-
-    flatscan_params.max_height = flatscan_max_height_;
-
-    flatscan_params.num_beams = static_cast<size_t>((flatscan_angle_max_ - flatscan_angle_min_) / flatscan_angle_increment_) + 1;
+    err = cudaDeviceSynchronize();
 
 
-
-    float* d_ranges = nullptr;
-
-    err = generateFlatScanGPU(d_voxel_filtered_cloud, num_voxel_filtered_points, flatscan_params, &d_ranges);
 
     if (err != cudaSuccess)
 
+
+
     {
 
-        RCLCPP_ERROR(this->get_logger(), "generateFlatScanGPU kernel launch failed: %s", cudaGetErrorString(err));
+
+
+      RCLCPP_ERROR(this->get_logger(), "cudaDeviceSynchronize after ROI filter failed: %s", cudaGetErrorString(err));
+
+
+
+      cudaFree(d_roi_filtered_cloud);
+
+
+
+      return;
+
+
 
     }
+
+
+
+    auto roi_end_time = std::chrono::high_resolution_clock::now();
+
+
+
+    last_roi_filter_time_.store(std::chrono::duration<double, std::milli>(roi_end_time - stage_start_time).count());
+
+
+
+    stage_start_time = roi_end_time;
+
+
+
+  
+
+
+
+    CudaPointXYZI* d_voxel_filtered_cloud = nullptr;
+
+
+
+    size_t num_voxel_filtered_points = 0;
+
+
+
+  
+
+
+
+    if (enable_voxel_filter_ && num_roi_filtered_points > 0)
+
+
+
+    {
+
+
+
+      err = voxelGridDownsampleGPU(d_roi_filtered_cloud, num_roi_filtered_points,
+
+
+
+                                   voxel_leaf_size_, &d_voxel_filtered_cloud, &num_voxel_filtered_points);
+
+
+
+      if (err != cudaSuccess)
+
+
+
+      {
+
+
+
+          RCLCPP_ERROR(this->get_logger(), "voxelGridDownsampleGPU kernel launch failed: %s", cudaGetErrorString(err));
+
+
+
+          cudaFree(d_roi_filtered_cloud);
+
+
+
+          return;
+
+
+
+      }
+
+
+
+      cudaFree(d_roi_filtered_cloud);
+
+
+
+    }
+
+
 
     else
 
+
+
     {
 
-        sensor_msgs::msg::LaserScan scan_msg;
 
-        scan_msg.header.stamp = earliest_timestamp;
 
-        scan_msg.header.frame_id = base_frame_id_;
-
-        scan_msg.angle_min = flatscan_params.angle_min;
-
-        scan_msg.angle_max = flatscan_params.angle_max;
-
-        scan_msg.angle_increment = flatscan_params.angle_increment;
-
-        scan_msg.range_min = flatscan_params.range_min;
-
-        scan_msg.range_max = flatscan_params.range_max;
-
-        scan_msg.ranges.resize(flatscan_params.num_beams);
+      d_voxel_filtered_cloud = d_roi_filtered_cloud;
 
 
 
-        err = cudaMemcpy(scan_msg.ranges.data(), d_ranges, flatscan_params.num_beams * sizeof(float), cudaMemcpyDeviceToHost);
+      num_voxel_filtered_points = num_roi_filtered_points;
 
-        if (err != cudaSuccess)
 
-        {
-
-            RCLCPP_ERROR(this->get_logger(), "cudaMemcpy (GPU to CPU for LaserScan) failed: %s", cudaGetErrorString(err));
-
-        }
-
-        else
-
-        {
-
-#ifndef NDEBUG
-
-            RCLCPP_DEBUG(this->get_logger(), "Publishing LaserScan on topic '%s' with %zu ranges.",
-
-              flatscan_pub_->get_topic_name(), scan_msg.ranges.size());
-
-#endif
-
-            flatscan_pub_->publish(scan_msg);
-
-        }
-
-        cudaFree(d_ranges);
 
     }
 
-  }
+
+
+  
+
+
+
+    err = cudaDeviceSynchronize();
+
+
+
+    if (err != cudaSuccess)
+
+
+
+    {
+
+
+
+      RCLCPP_ERROR(this->get_logger(), "cudaDeviceSynchronize after voxel filter failed: %s", cudaGetErrorString(err));
+
+
+
+      cudaFree(d_voxel_filtered_cloud);
+
+
+
+      return;
+
+
+
+    }
+
+
+
+    auto voxel_end_time = std::chrono::high_resolution_clock::now();
+
+
+
+    last_voxel_filter_time_.store(std::chrono::duration<double, std::milli>(voxel_end_time - stage_start_time).count());
+
+
+
+    stage_start_time = voxel_end_time;
+
+
+
+  
+
+
+
+  
+
+
+
+  #ifndef NDEBUG
+
+
+
+    RCLCPP_DEBUG(this->get_logger(), "Point Processing: Merged: %zu -> ROI Filter: %zu -> Voxel Filter: %zu",
+
+
+
+      total_points_to_merge, num_roi_filtered_points, num_voxel_filtered_points);
+
+
+
+  #endif
+
+
+
+  
+
+
+
+    if (num_voxel_filtered_points == 0)
+
+
+
+    {
+
+
+
+      if (d_voxel_filtered_cloud) cudaFree(d_voxel_filtered_cloud);
+
+
+
+      return;
+
+
+
+    }
+
+
+
+  
+
+
+
+    auto flatscan_start_time = std::chrono::high_resolution_clock::now();
+
+
+
+    if (publish_flatscan_)
+
+
+
+    {
+
+
+
+      CudaLaserScanParams flatscan_params;
+
+
+
+      flatscan_params.angle_min = flatscan_angle_min_;
+
+
+
+      flatscan_params.angle_max = flatscan_angle_max_;
+
+
+
+      flatscan_params.angle_increment = flatscan_angle_increment_;
+
+
+
+      flatscan_params.range_min = flatscan_range_min_;
+
+
+
+      flatscan_params.range_max = flatscan_range_max_;
+
+
+
+      flatscan_params.min_height = flatscan_min_height_;
+
+
+
+      flatscan_params.max_height = flatscan_max_height_;
+
+
+
+      flatscan_params.num_beams = static_cast<size_t>((flatscan_angle_max_ - flatscan_angle_min_) / flatscan_angle_increment_) + 1;
+
+
+
+  
+
+
+
+      float* d_ranges = nullptr;
+
+
+
+      err = generateFlatScanGPU(d_voxel_filtered_cloud, num_voxel_filtered_points, flatscan_params, &d_ranges);
+
+
+
+      if (err != cudaSuccess)
+
+
+
+      {
+
+
+
+          RCLCPP_ERROR(this->get_logger(), "generateFlatScanGPU kernel launch failed: %s", cudaGetErrorString(err));
+
+
+
+      }
+
+
+
+      else
+
+
+
+      {
+
+
+
+          err = cudaDeviceSynchronize(); // Sync for timing
+
+
+
+          if (err != cudaSuccess) {
+
+
+
+              RCLCPP_ERROR(this->get_logger(), "cudaDeviceSynchronize after flatscan kernel failed: %s", cudaGetErrorString(err));
+
+
+
+          } else {
+
+
+
+              auto flatscan_kernel_end_time = std::chrono::high_resolution_clock::now();
+
+
+
+              last_flatscan_time_.store(std::chrono::duration<double, std::milli>(flatscan_kernel_end_time - flatscan_start_time).count());
+
+
+
+          }
+
+
+
+  
+
+
+
+          sensor_msgs::msg::LaserScan scan_msg;
+
+
+
+          scan_msg.header.stamp = earliest_timestamp;
+
+
+
+          scan_msg.header.frame_id = base_frame_id_;
+
+
+
+          scan_msg.angle_min = flatscan_params.angle_min;
+
+
+
+          scan_msg.angle_max = flatscan_params.angle_max;
+
+
+
+          scan_msg.angle_increment = flatscan_params.angle_increment;
+
+
+
+          scan_msg.range_min = flatscan_params.range_min;
+
+
+
+          scan_msg.range_max = flatscan_params.range_max;
+
+
+
+          scan_msg.ranges.resize(flatscan_params.num_beams);
+
+
+
+  
+
+
+
+          err = cudaMemcpy(scan_msg.ranges.data(), d_ranges, flatscan_params.num_beams * sizeof(float), cudaMemcpyDeviceToHost);
+
+
+
+          if (err != cudaSuccess)
+
+
+
+          {
+
+
+
+              RCLCPP_ERROR(this->get_logger(), "cudaMemcpy (GPU to CPU for LaserScan) failed: %s", cudaGetErrorString(err));
+
+
+
+          }
+
+
+
+          else
+
+
+
+          {
+
+
+
+  #ifndef NDEBUG
+
+
+
+              RCLCPP_DEBUG(this->get_logger(), "Publishing LaserScan on topic '%s' with %zu ranges.",
+
+
+
+                flatscan_pub_->get_topic_name(), scan_msg.ranges.size());
+
+
+
+  #endif
+
+
+
+              flatscan_pub_->publish(scan_msg);
+
+
+
+          }
+
+
+
+          cudaFree(d_ranges);
+
+
+
+      }
+
+
+
+    }
+
+
+
+    else
+
+
+
+    {
+
+
+
+      last_flatscan_time_.store(0.0);
+
+
+
+    }
+
+
+
+  
+
+
+
+    auto gpu_to_cpu_start_time = std::chrono::high_resolution_clock::now();
+
+
+
+    if (publish_3d_pcd_)
+
+
+
+    {
+
+
+
+      pcl::PointCloud<pcl::PointXYZI>::Ptr final_cpu_cloud(new pcl::PointCloud<pcl::PointXYZI>);
+
+
+
+      final_cpu_cloud->points.resize(num_voxel_filtered_points);
+
+
+
+      err = cudaMemcpy(final_cpu_cloud->points.data(), d_voxel_filtered_cloud, 
+
+
+
+                       num_voxel_filtered_points * sizeof(CudaPointXYZI), cudaMemcpyDeviceToHost);
+
+
+
+      if (err != cudaSuccess)
+
+
+
+      {
+
+
+
+          RCLCPP_ERROR(this->get_logger(), "cudaMemcpy (GPU to CPU for ROS publish) failed: %s", cudaGetErrorString(err));
+
+
+
+      }
+
+
+
+      else
+
+
+
+      {
+
+
+
+          auto gpu_to_cpu_end_time = std::chrono::high_resolution_clock::now();
+
+
+
+          last_gpu_to_cpu_time_.store(std::chrono::duration<double, std::milli>(gpu_to_cpu_end_time - gpu_to_cpu_start_time).count());
+
+
+
+  
+
+
+
+          sensor_msgs::msg::PointCloud2 output_msg;
+
+
+
+          pcl::toROSMsg(*final_cpu_cloud, output_msg);
+
+
+
+          output_msg.header.stamp = earliest_timestamp;
+
+
+
+          output_msg.header.frame_id = base_frame_id_;
+
+
+
+  #ifndef NDEBUG
+
+
+
+          RCLCPP_DEBUG(this->get_logger(), "Publishing PointCloud2 on topic '%s' with %zu points.",
+
+
+
+            merged_pub_->get_topic_name(), num_voxel_filtered_points);
+
+
+
+  #endif
+
+
+
+          merged_pub_->publish(output_msg);
+
+
+
+  
+
+
+
+  #ifdef WITH_NITROS
+
+
+
+          if (nitros_pub_)
+
+
+
+          {
+
+
+
+            auto nitros_output_msg = output_msg;
+
+
+
+            nvidia::isaac_ros::nitros::NitrosPointCloud2 nitros_msg =
+
+
+
+              nvidia::isaac_ros::nitros::NitrosPointCloud2Builder()
+
+
+
+              .With(
+
+
+
+                std::move(nitros_output_msg)
+
+
+
+              )
+
+
+
+              .Build();
+
+
+
+            nitros_pub_->publish(nitros_msg);
+
+
+
+          }
+
+
+
+  #endif
+
+
+
+      }
+
+
+
+    }
+
+
+
+    else
+
+
+
+    {
+
+
+
+        last_gpu_to_cpu_time_.store(0.0);
+
+
+
+    }
 
 
 
@@ -1318,27 +1850,89 @@ void MultiLidarNode::checkTfUpdates()
 
 void MultiLidarNode::logStatistics()
 
+
+
 {
+
+
 
     // Calculate frequency of the main processing loop
 
+
+
     auto now = this->get_clock()->now();
+
+
 
     double elapsed_sec = (now - last_statistics_log_time_).seconds();
 
+
+
     uint64_t current_count = merge_publish_count_.exchange(0); // Atomically get and reset counter
 
+
+
     double frequency = (elapsed_sec > 0) ? (current_count / elapsed_sec) : 0.0;
+
+
 
     last_statistics_log_time_ = now;
 
 
 
+    double total_processing_time = last_merge_time_.load() + last_roi_filter_time_.load() + 
+
+
+
+                                 last_voxel_filter_time_.load() + last_flatscan_time_.load() + 
+
+
+
+                                 last_gpu_to_cpu_time_.load();
+
+
+
+
+
+
+
     RCLCPP_INFO(this->get_logger(), "-------------------- Pipeline Statistics --------------------");
+
+
 
     RCLCPP_INFO(this->get_logger(), "Frequency: %.2f Hz", frequency);
 
+
+
     RCLCPP_INFO(this->get_logger(), "End-to-End Latency: %.3f ms", last_processing_latency_.load() * 1000.0);
+
+
+
+    RCLCPP_INFO(this->get_logger(), "Total GPU Processing Time: %.3f ms", total_processing_time);
+
+
+
+    RCLCPP_INFO(this->get_logger(), "  - Merge: %.3f ms", last_merge_time_.load());
+
+
+
+    RCLCPP_INFO(this->get_logger(), "  - ROI Filter: %.3f ms", last_roi_filter_time_.load());
+
+
+
+    RCLCPP_INFO(this->get_logger(), "  - Voxel Filter: %.3f ms", last_voxel_filter_time_.load());
+
+
+
+    RCLCPP_INFO(this->get_logger(), "  - FlatScan Gen: %.3f ms", last_flatscan_time_.load());
+
+
+
+    RCLCPP_INFO(this->get_logger(), "  - DtoH Copy: %.3f ms", last_gpu_to_cpu_time_.load());
+
+
+
+
 
 
 
@@ -1346,7 +1940,15 @@ void MultiLidarNode::logStatistics()
 
 
 
+
+
+
+
         RCLCPP_INFO(this->get_logger(), "LiDAR Status:");
+
+
+
+
 
 
 
@@ -1359,6 +1961,10 @@ void MultiLidarNode::logStatistics()
 
 
             auto last_cloud_time = lidar_info_[i].handler->getLastCloudTimestamp();
+
+
+
+
 
 
 
@@ -1410,11 +2016,23 @@ void MultiLidarNode::logStatistics()
 
 
 
+
+
+
+
         // Published Topics
 
 
 
+
+
+
+
         RCLCPP_INFO(this->get_logger(), "Published Topics:");
+
+
+
+
 
 
 
@@ -1530,16 +2148,32 @@ void MultiLidarNode::logStatistics()
 
 
 
+
+
+
+
     // Point Processing Stats for the last processed frame
+
+
 
     RCLCPP_INFO(this->get_logger(), "Point Processing (Last Frame):");
 
+
+
     RCLCPP_INFO(this->get_logger(), "  - Merged Raw: %zu points", last_total_points_merged_.load());
+
+
 
     RCLCPP_INFO(this->get_logger(), "  - After ROI Filter: %zu points", last_points_after_roi_.load());
 
+
+
     RCLCPP_INFO(this->get_logger(), "  - After Voxel Filter: %zu points", last_points_after_voxel_.load());
 
+
+
     RCLCPP_INFO(this->get_logger(), "---------------------------------------------------------");
+
+
 
 }

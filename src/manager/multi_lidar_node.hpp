@@ -85,5 +85,10 @@ private:
   std::atomic<size_t> last_points_after_voxel_{0};
   std::atomic<uint64_t> merge_publish_count_{0};
   std::atomic<double> last_processing_latency_{0.0};
+  std::atomic<double> last_merge_time_{0.0};
+  std::atomic<double> last_roi_filter_time_{0.0};
+  std::atomic<double> last_voxel_filter_time_{0.0};
+  std::atomic<double> last_flatscan_time_{0.0};
+  std::atomic<double> last_gpu_to_cpu_time_{0.0};
   rclcpp::Time last_statistics_log_time_;
 };
