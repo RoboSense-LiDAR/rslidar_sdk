@@ -40,6 +40,10 @@ namespace robosense
 namespace lidar
 {
 
+NodeManager::NodeManager(bool enable):enable_imu_data(enable)
+{
+}
+
 void NodeManager::init(const YAML::Node& config)
 {
   YAML::Node common_config = yamlSubNodeAbort(config, "common");
@@ -59,6 +63,7 @@ void NodeManager::init(const YAML::Node& config)
   bool send_packet_proto;
   yamlRead<bool>(common_config, "send_packet_proto", send_packet_proto, false);
 
+  
   YAML::Node lidar_config = yamlSubNodeAbort(config, "lidar");
 
   for (uint8_t i = 0; i < lidar_config.size(); ++i)
@@ -75,7 +80,7 @@ void NodeManager::init(const YAML::Node& config)
         RS_INFO << "Difop Port: " << lidar_config[i]["driver"]["difop_port"].as<uint16_t>() << RS_REND;
         RS_INFO << "------------------------------------------------------" << RS_REND;
 
-        source = std::make_shared<SourceDriver>(SourceType::MSG_FROM_LIDAR);
+        source = std::make_shared<SourceDriver>(SourceType::MSG_FROM_LIDAR, this->enable_imu_data);
         source->init(lidar_config[i]);
         break;
 

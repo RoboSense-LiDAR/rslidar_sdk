@@ -35,7 +35,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "msg/rs_msg/lidar_point_cloud_msg.hpp"
 #include "utility/yaml_reader.hpp"
 #include <rs_driver/msg/packet.hpp>
-
+#include <rs_driver/msg/imu_data_msg.hpp> 
 
 namespace robosense
 {
@@ -51,9 +51,7 @@ public:
   virtual void start() {}
   virtual void stop() {}
   virtual void sendPointCloud(const LidarPointCloudMsg& msg) = 0;
-#ifdef ENABLE_IMU_DATA_PARSE
   virtual void sendImuData(const std::shared_ptr<ImuData>& msg) = 0;
-#endif
   virtual ~DestinationPointCloud() = default;
 };
 
@@ -93,9 +91,7 @@ protected:
 
   void sendPacket(const Packet& msg);
   void sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg);
-#ifdef ENABLE_IMU_DATA_PARSE
   void sendImuData(const std::shared_ptr<ImuData>& msg);
-#endif
   SourceType src_type_;
   std::vector<DestinationPointCloud::Ptr> pc_cb_vec_;
   std::vector<DestinationPacket::Ptr> pkt_cb_vec_;
@@ -132,7 +128,6 @@ inline void Source::sendPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
   }
 }
 
-#ifdef ENABLE_IMU_DATA_PARSE
 inline void Source::sendImuData(const std::shared_ptr<ImuData>& msg)
 {
   for (auto iter : pc_cb_vec_)
@@ -140,7 +135,6 @@ inline void Source::sendImuData(const std::shared_ptr<ImuData>& msg)
     iter->sendImuData(msg);
   }
 }
-#endif
 
 }  // namespace lidar
 }  // namespace robosense

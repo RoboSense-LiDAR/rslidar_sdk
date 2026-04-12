@@ -50,9 +50,10 @@ public:
 
   ~NodeManager();
   NodeManager() = default;
+  NodeManager(bool enable_imu_data);
 
 private:
-
+  bool enable_imu_data;
   std::vector<Source::Ptr> sources_;
 };
 

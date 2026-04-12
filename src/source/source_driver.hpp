@@ -53,6 +53,7 @@ public:
   virtual ~SourceDriver();
 
   SourceDriver(SourceType src_type);
+  SourceDriver(SourceType src_type, bool enable_imu_data);
 
 protected:
 
@@ -65,20 +66,24 @@ protected:
   std::shared_ptr<lidar::LidarDriver<LidarPointCloudMsg>> driver_ptr_;
   SyncQueue<std::shared_ptr<LidarPointCloudMsg>> free_point_cloud_queue_;
   SyncQueue<std::shared_ptr<LidarPointCloudMsg>> point_cloud_queue_;
-#ifdef ENABLE_IMU_DATA_PARSE
   std::shared_ptr<ImuData> getImuData(void);
   void putImuData(const std::shared_ptr<ImuData>& msg);
   void processImuData();
   SyncQueue<std::shared_ptr<ImuData>> free_imu_data_queue_;
   SyncQueue<std::shared_ptr<ImuData>> imu_data_queue_;
   std::thread imu_data_process_thread_;
-#endif
   std::thread point_cloud_process_thread_;
   bool to_exit_process_;
+  bool enable_imu_data_; 
 };
 
 SourceDriver::SourceDriver(SourceType src_type)
-  : Source(src_type), to_exit_process_(false)
+  : Source(src_type), to_exit_process_(false), enable_imu_data_(false)
+{
+}
+
+SourceDriver::SourceDriver(SourceType src_type, bool enable_imu_data)
+  : Source(src_type), to_exit_process_(false), enable_imu_data_(enable_imu_data)
 {
 }
 
@@ -90,9 +95,9 @@ inline void SourceDriver::init(const YAML::Node& config)
   // input related
   yamlRead<uint16_t>(driver_config, "msop_port", driver_param.input_param.msop_port, 6699);
   yamlRead<uint16_t>(driver_config, "difop_port", driver_param.input_param.difop_port, 7788);
-#ifdef ENABLE_IMU_DATA_PARSE
-  yamlRead<uint16_t>(driver_config, "imu_port", driver_param.input_param.imu_port, 6688);
-#endif
+  if (this->enable_imu_data_) {
+    yamlRead<uint16_t>(driver_config, "imu_port", driver_param.input_param.imu_port, 6688);
+  }
   yamlRead<std::string>(driver_config, "host_address", driver_param.input_param.host_address, "0.0.0.0");
   yamlRead<std::string>(driver_config, "group_address", driver_param.input_param.group_address, "0.0.0.0");
   yamlRead<bool>(driver_config, "use_vlan", driver_param.input_param.use_vlan, false);
@@ -158,10 +163,11 @@ inline void SourceDriver::init(const YAML::Node& config)
       std::bind(&SourceDriver::putException, this, std::placeholders::_1));
   point_cloud_process_thread_ = std::thread(std::bind(&SourceDriver::processPointCloud, this));
 
-#ifdef ENABLE_IMU_DATA_PARSE
-  driver_ptr_->regImuDataCallback(std::bind(&SourceDriver::getImuData, this),std::bind(&SourceDriver::putImuData, this, std::placeholders::_1));
-  imu_data_process_thread_ = std::thread(std::bind(&SourceDriver::processImuData, this));
-#endif
+  // Only register IMU callback and thread when IMU function is enabled
+  if (this->enable_imu_data_) {
+    driver_ptr_->regImuDataCallback(std::bind(&SourceDriver::getImuData, this),std::bind(&SourceDriver::putImuData, this, std::placeholders::_1));
+    imu_data_process_thread_ = std::thread(std::bind(&SourceDriver::processImuData, this));
+  }
 
   if (!driver_ptr_->init(driver_param))
   {
@@ -186,6 +192,11 @@ inline void SourceDriver::stop()
 
   to_exit_process_ = true;
   point_cloud_process_thread_.join();
+  
+  // If IMU function is enabled, also stop the IMU processing thread
+  if (this->enable_imu_data_ && imu_data_process_thread_.joinable()) {
+    imu_data_process_thread_.join();
+  }
 }
 
 inline std::shared_ptr<LidarPointCloudMsg> SourceDriver::getPointCloud(void)
@@ -218,7 +229,6 @@ void SourceDriver::putPointCloud(std::shared_ptr<LidarPointCloudMsg> msg)
 {
   point_cloud_queue_.push(msg);
 }
-#ifdef ENABLE_IMU_DATA_PARSE
 inline std::shared_ptr<ImuData> SourceDriver::getImuData(void)
 {
   std::shared_ptr<ImuData> imuDataPtr = free_imu_data_queue_.pop();
@@ -228,6 +238,7 @@ inline std::shared_ptr<ImuData> SourceDriver::getImuData(void)
   }
   return std::make_shared<ImuData>();
 }
+
 void SourceDriver::putImuData(const std::shared_ptr<ImuData>& msg)
 {
   imu_data_queue_.push(msg);
@@ -247,7 +258,6 @@ void SourceDriver::processImuData()
     free_imu_data_queue_.push(msg);
   }
 }
-#endif
 void SourceDriver::processPointCloud()
 {
   while (!to_exit_process_)

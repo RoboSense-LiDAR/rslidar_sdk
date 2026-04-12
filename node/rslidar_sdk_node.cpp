@@ -88,13 +88,17 @@ int main(int argc, char** argv)
 
    config_path += "/config/config.yaml";
 
+// read the params from ROS server
 #ifdef ROS_FOUND
   ros::NodeHandle priv_hh("~");
   std::string path;
+  bool enable_imu_data;
   priv_hh.param("config_path", path, std::string(""));
+  priv_hh.getParam("enable_imu_data", enable_imu_data);
 #elif ROS2_FOUND
-  std::shared_ptr<rclcpp::Node> nd = rclcpp::Node::make_shared("param_handle");
+  std::shared_ptr<rclcpp::Node> nd = rclcpp::Node::make_shared("rslidar_sdk_node");
   std::string path = nd->declare_parameter<std::string>("config_path", "");
+  bool enable_imu_data = nd->declare_parameter<bool>("enable_imu_data", false);
 #endif
 
 #if defined(ROS_FOUND) || defined(ROS2_FOUND)
@@ -118,8 +122,7 @@ int main(int argc, char** argv)
     RS_ERROR << "The format of config file " << config_path << " is wrong. Please check (e.g. indentation)." << RS_REND;
     return -1;
   }
-
-  std::shared_ptr<NodeManager> demo_ptr = std::make_shared<NodeManager>();
+  std::shared_ptr<NodeManager> demo_ptr = std::make_shared<NodeManager>(enable_imu_data);
   demo_ptr->init(config);
   demo_ptr->start();
 
