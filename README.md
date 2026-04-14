@@ -33,6 +33,8 @@ To integrate the Lidar driver into your own projects, please use the rs_driver.
 - RS-LiDAR-E1
 - RS-LiDAR-MX
 - RS-LiDAR-AIRY
+- RS-LiDAR-EMX
+- RS-LiDAR-FAIRY
 
 ### 1.2 Point Type Supported
 

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.5.19 2026-04-03
+
+### Added
+
+- Support RSFAIRY, RSEMX.
+- Support QNX platform. Optimize input module performance.
+
 ## v1.5.18 2025-07-15
 
 ### Added
