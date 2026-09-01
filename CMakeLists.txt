@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 cmake_policy(SET CMP0048 NEW)
 project(rslidar_sdk)
 
@@ -68,7 +68,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
   add_definitions(-O3)
 endif()
 
-add_definitions(-std=c++17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_options(-Wall)
 
 #========================
@@ -136,8 +138,6 @@ if(rclcpp_FOUND)
 
   add_definitions(-DROS2_FOUND)
   include_directories(${rclcpp_INCLUDE_DIRS})
-  set(CMAKE_CXX_STANDARD 14)
-
   find_package(ament_cmake REQUIRED)
   find_package(sensor_msgs REQUIRED)
   find_package(rslidar_msg REQUIRED)
@@ -206,4 +206,3 @@ if(rclcpp_FOUND)
   ament_package()
 
 endif(rclcpp_FOUND)
-
