@@ -180,7 +180,8 @@ inline sensor_msgs::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, const
   return ros_msg;
 }
 #ifdef ENABLE_IMU_DATA_PARSE
-sensor_msgs::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::string& frame_id)
+sensor_msgs::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::string& frame_id,
+  double acceleration_scale)
 {
   sensor_msgs::Imu imu_msg;
 
@@ -191,9 +192,9 @@ sensor_msgs::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::strin
   imu_msg.angular_velocity.y = data->angular_velocity_y;
   imu_msg.angular_velocity.z = data->angular_velocity_z;
 
-  imu_msg.linear_acceleration.x = data->linear_acceleration_x;
-  imu_msg.linear_acceleration.y = data->linear_acceleration_y;
-  imu_msg.linear_acceleration.z = data->linear_acceleration_z;
+  imu_msg.linear_acceleration.x = data->linear_acceleration_x * acceleration_scale;
+  imu_msg.linear_acceleration.y = data->linear_acceleration_y * acceleration_scale;
+  imu_msg.linear_acceleration.z = data->linear_acceleration_z * acceleration_scale;
   return imu_msg;
 }
 #endif
@@ -209,9 +210,10 @@ public:
 #endif
 private:
   std::shared_ptr<ros::NodeHandle> nh_;
-  ros::Publisher pub_; 
+  ros::Publisher pub_;
 #ifdef ENABLE_IMU_DATA_PARSE
-  ros::Publisher imu_pub_; 
+  ros::Publisher imu_pub_;
+  double acceleration_scale_ = 1.0;
 #endif
   std::string frame_id_;
   bool send_by_rows_;
@@ -239,6 +241,10 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
   nh_ = std::unique_ptr<ros::NodeHandle>(new ros::NodeHandle());
   pub_ = nh_->advertise<sensor_msgs::PointCloud2>(ros_send_topic, 10);
 #ifdef ENABLE_IMU_DATA_PARSE
+  std::string lidar_type;
+  yamlReadAbort<std::string>(config["driver"], "lidar_type", lidar_type);
+  acceleration_scale_ = (lidar_type == "RSAIRY") ? 9.80665 : 1.0;
+
   std::string ros_send_imu_data_topic;
   yamlRead<std::string>(config["ros"], 
       "ros_send_imu_data_topic", ros_send_imu_data_topic, "rslidar_imu_data");
@@ -253,7 +259,7 @@ inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& m
 #ifdef ENABLE_IMU_DATA_PARSE
 inline void DestinationPointCloudRos::sendImuData(const std::shared_ptr<ImuData> & data)
 {
-  imu_pub_.publish(toRosMsg(data, frame_id_));
+  imu_pub_.publish(toRosMsg(data, frame_id_, acceleration_scale_));
 }
 #endif
 }  // namespace lidar
@@ -409,7 +415,8 @@ inline sensor_msgs::msg::PointCloud2 toRosMsg(const LidarPointCloudMsg& rs_msg, 
   return ros_msg;
 }
 #ifdef ENABLE_IMU_DATA_PARSE
-sensor_msgs::msg::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::string& frame_id)
+sensor_msgs::msg::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::string& frame_id,
+  double acceleration_scale)
 {
   sensor_msgs::msg::Imu imu_msg;
 
@@ -420,9 +427,9 @@ sensor_msgs::msg::Imu toRosMsg(const std::shared_ptr<ImuData>& data, const std::
   imu_msg.angular_velocity.y = data->angular_velocity_y;
   imu_msg.angular_velocity.z = data->angular_velocity_z;
 
-  imu_msg.linear_acceleration.x = data->linear_acceleration_x;
-  imu_msg.linear_acceleration.y = data->linear_acceleration_y;
-  imu_msg.linear_acceleration.z = data->linear_acceleration_z;
+  imu_msg.linear_acceleration.x = data->linear_acceleration_x * acceleration_scale;
+  imu_msg.linear_acceleration.y = data->linear_acceleration_y * acceleration_scale;
+  imu_msg.linear_acceleration.z = data->linear_acceleration_z * acceleration_scale;
   return imu_msg;
 }
 #endif
@@ -442,6 +449,7 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_;
 #ifdef ENABLE_IMU_DATA_PARSE
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
+  double acceleration_scale_ = 1.0;
 #endif
   std::string frame_id_;
   bool send_by_rows_;
@@ -476,6 +484,10 @@ inline void DestinationPointCloudRos::init(const YAML::Node& config)
   pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(ros_send_topic, ros_queue_length);
 
 #ifdef ENABLE_IMU_DATA_PARSE
+  std::string lidar_type;
+  yamlReadAbort<std::string>(config["driver"], "lidar_type", lidar_type);
+  acceleration_scale_ = (lidar_type == "RSAIRY") ? 9.80665 : 1.0;
+
   std::string ros_send_imu_data_topic;
   yamlRead<std::string>(config["ros"], 
       "ros_send_imu_data_topic", ros_send_imu_data_topic, "rslidar_imu_data");
@@ -491,7 +503,7 @@ inline void DestinationPointCloudRos::sendPointCloud(const LidarPointCloudMsg& m
 #ifdef ENABLE_IMU_DATA_PARSE
 inline void DestinationPointCloudRos::sendImuData(const std::shared_ptr<ImuData> & data)
 {
-  imu_pub_->publish(toRosMsg(data, frame_id_));
+  imu_pub_->publish(toRosMsg(data, frame_id_, acceleration_scale_));
 }
 #endif
 }  // namespace lidar
