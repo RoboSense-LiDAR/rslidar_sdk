@@ -306,6 +306,8 @@ class DestinationPacketRos : public DestinationPacket
 {
 public:
 
+  /// If node is null, a private node is created. Pass the hosting node to publish from a composed component.
+  explicit DestinationPacketRos(std::shared_ptr<rclcpp::Node> node = nullptr) : node_ptr_(node) {}
   virtual void init(const YAML::Node& config);
   virtual void sendPacket(const Packet& msg);
   virtual ~DestinationPacketRos() = default;
@@ -329,11 +331,14 @@ inline void DestinationPacketRos::init(const YAML::Node& config)
   size_t ros_queue_length;
   yamlRead<size_t>(config["ros"], "ros_queue_length", ros_queue_length, 100);
 
-  static int node_index = 0;
-  std::stringstream node_name;
-  node_name << "rslidar_packets_destination_" << node_index++;
+  if (!node_ptr_)
+  {
+    static int node_index = 0;
+    std::stringstream node_name;
+    node_name << "rslidar_packets_destination_" << node_index++;
 
-  node_ptr_.reset(new rclcpp::Node(node_name.str()));
+    node_ptr_.reset(new rclcpp::Node(node_name.str()));
+  }
   pkt_pub_ = node_ptr_->create_publisher<rslidar_msg::msg::RslidarPacket>(ros_send_topic, ros_queue_length);
 }
 

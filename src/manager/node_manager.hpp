@@ -35,6 +35,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "utility/yaml_reader.hpp"
 #include "source/source.hpp"
 
+#ifdef ROS2_FOUND
+#include <rclcpp/rclcpp.hpp>
+#endif
+
 namespace robosense
 {
 namespace lidar
@@ -44,7 +48,13 @@ class NodeManager
 {
 public:
 
+#ifdef ROS2_FOUND
+  /// If node is given, publishers are created on it instead of on private nodes, so a composed component shares its
+  /// context and intra-process communication.
+  void init(const YAML::Node& config, std::shared_ptr<rclcpp::Node> node = nullptr);
+#else
   void init(const YAML::Node& config);
+#endif
   void start();
   void stop();
 

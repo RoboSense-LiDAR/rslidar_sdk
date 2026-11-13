@@ -136,12 +136,13 @@ if(rclcpp_FOUND)
 
   add_definitions(-DROS2_FOUND)
   include_directories(${rclcpp_INCLUDE_DIRS})
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 20)
 
   find_package(ament_cmake REQUIRED)
   find_package(sensor_msgs REQUIRED)
   find_package(rslidar_msg REQUIRED)
-  find_package(std_msgs REQUIRED)                      
+  find_package(std_msgs REQUIRED)
+  find_package(rclcpp_components REQUIRED)
 
 else(rclcpp_FOUND)
   message(=============================================================)
@@ -164,13 +165,14 @@ include_directories(${rs_driver_INCLUDE_DIRS})
 # Build Setup
 #========================
 
-add_executable(rslidar_sdk_node
-               node/rslidar_sdk_node.cpp
-               src/manager/node_manager.cpp)
-
-target_link_libraries(rslidar_sdk_node                   
+add_library(rslidar_sdk_core STATIC src/manager/node_manager.cpp)
+set_target_properties(rslidar_sdk_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(rslidar_sdk_core
                       ${YAML_CPP_LIBRARIES}
                       ${rs_driver_LIBRARIES})
+
+add_executable(rslidar_sdk_node node/rslidar_sdk_node.cpp)
+target_link_libraries(rslidar_sdk_node rslidar_sdk_core)
 
 #Ros#
 if(roscpp_FOUND)
@@ -188,11 +190,29 @@ endif(roscpp_FOUND)
 #Ros2#
 if(rclcpp_FOUND)
 
-  ament_target_dependencies(rslidar_sdk_node 
-    rclcpp 
-    std_msgs 
-    sensor_msgs 
+  ament_target_dependencies(rslidar_sdk_core
+    rclcpp
+    std_msgs
+    sensor_msgs
     rslidar_msg)
+
+  ament_target_dependencies(rslidar_sdk_node
+    rclcpp
+    std_msgs
+    sensor_msgs
+    rslidar_msg)
+
+  add_library(rslidar_sdk_component SHARED src/component/rslidar_sdk_component.cpp)
+  target_link_libraries(rslidar_sdk_component rslidar_sdk_core)
+  ament_target_dependencies(rslidar_sdk_component rclcpp rclcpp_components)
+  rclcpp_components_register_node(rslidar_sdk_component
+    PLUGIN "robosense::lidar::RslidarSdkComponent"
+    EXECUTABLE rslidar_sdk_component_node)
+
+  install(TARGETS rslidar_sdk_component
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin)
 
   install(TARGETS
     rslidar_sdk_node

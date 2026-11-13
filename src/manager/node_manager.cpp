@@ -40,7 +40,11 @@ namespace robosense
 namespace lidar
 {
 
+#ifdef ROS2_FOUND
+void NodeManager::init(const YAML::Node& config, std::shared_ptr<rclcpp::Node> node)
+#else
 void NodeManager::init(const YAML::Node& config)
+#endif
 {
   YAML::Node common_config = yamlSubNodeAbort(config, "common");
 
@@ -114,7 +118,11 @@ void NodeManager::init(const YAML::Node& config)
       RS_DEBUG << "Msop Topic: " << lidar_config[i]["ros"]["ros_send_packet_topic"].as<std::string>() << RS_REND;
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
 
+      #ifdef ROS2_FOUND
+      std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketRos>(node);
+#else
       std::shared_ptr<DestinationPacket> dst = std::make_shared<DestinationPacketRos>();
+#endif
       dst->init(lidar_config[i]);
       source->regPacketCallback(dst);
     }
@@ -127,7 +135,11 @@ void NodeManager::init(const YAML::Node& config)
                << RS_REND;
       RS_DEBUG << "------------------------------------------------------" << RS_REND;
 
+      #ifdef ROS2_FOUND
+      std::shared_ptr<DestinationPointCloud> dst = std::make_shared<DestinationPointCloudRos>(node);
+#else
       std::shared_ptr<DestinationPointCloud> dst = std::make_shared<DestinationPointCloudRos>();
+#endif
       dst->init(lidar_config[i]);
       source->regPointCloudCallback(dst);
     }
