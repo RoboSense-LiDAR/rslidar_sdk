@@ -144,6 +144,41 @@ ros2 launch rslidar_sdk start.py
 
 Another version of start.py may be used, since it is different on different versios of ROS2. For example, elequent_start.py is used instead for ROS2 elequent.
 
+### 4.3 Run as a ROS2 composable node
+
+ROS2 builds also install `robosense::lidar::RslidarSdkComponent`, which runs the same driver inside a component container. It takes the `config_path` parameter (the same *config.yaml* as the standalone node) and publishes from the component's own node, so topics honor its namespace and can use intra-process communication.
+
+```sh
+ros2 run rclcpp_components component_container --ros-args -r __node:=rslidar_container &
+ros2 component load /rslidar_container rslidar_sdk robosense::lidar::RslidarSdkComponent \
+  -p config_path:=/path/to/config.yaml
+```
+
+Or from a Python launch file:
+
+```python
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+
+ComposableNodeContainer(
+    name='rslidar_container',
+    namespace='',
+    package='rclcpp_components',
+    executable='component_container',
+    composable_node_descriptions=[
+        ComposableNode(
+            package='rslidar_sdk',
+            plugin='robosense::lidar::RslidarSdkComponent',
+            name='rslidar_sdk',
+            parameters=[{'config_path': '/path/to/config.yaml'}],
+            extra_arguments=[{'use_intra_process_comms': True}],
+        )
+    ],
+)
+```
+
+The lidars start from the container's first executor callback, not in the constructor. Only the config file is read from `config_path`; the per-lidar settings are still the YAML, not ROS parameters.
+
 ## 5 Introduction to parameters
 
 To change behaviors of rslidar_sdk, change its parameters. please read the following links for detail information.
