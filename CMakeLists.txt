@@ -5,7 +5,8 @@ project(rslidar_sdk)
 #=======================================
 # Custom Point Type (XYZI,XYZIRT, XYZIF, XYZIRTF)
 #=======================================
-set(POINT_TYPE XYZI)
+set(POINT_TYPE "XYZI" CACHE STRING "Custom Point Type")
+set_property(CACHE POINT_TYPE PROPERTY STRINGS XYZI XYZIRT XYZIF XYZIRTF)
 
 option(ENABLE_TRANSFORM "Enable transform functions" OFF)
 if(${ENABLE_TRANSFORM})
@@ -74,13 +75,13 @@ add_compile_options(-Wall)
 #========================
 # Point Type Definition
 #========================
-if(${POINT_TYPE} STREQUAL "XYZI")
+if(POINT_TYPE STREQUAL "XYZI")
   add_definitions(-DPOINT_TYPE_XYZI)
-elseif(${POINT_TYPE} STREQUAL "XYZIRT")
+elseif(POINT_TYPE STREQUAL "XYZIRT")
   add_definitions(-DPOINT_TYPE_XYZIRT)
-elseif(${POINT_TYPE} STREQUAL "XYZIF")
+elseif(POINT_TYPE STREQUAL "XYZIF")
   add_definitions(-DPOINT_TYPE_XYZIF)
-elseif(${POINT_TYPE} STREQUAL "XYZIRTF")
+elseif(POINT_TYPE STREQUAL "XYZIRTF")
   add_definitions(-DPOINT_TYPE_XYZIRTF)
 endif()
 
