@@ -52,12 +52,12 @@ The `lidar` part needs to be adjusted for every LiDAR seperately.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSAIRYLITE_ETH, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX, RSFAIRY, RSEMX.
                                    
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar (Note that: For RSEMX, use the port num of DIFOP2 if both DIFOP1 & DIFOP2 exist. Default 7766.)
-      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSAIRYLITE_ETH, RSFAIRY, RSE1), 0 means no imu.
                                    #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
       tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
@@ -151,12 +151,12 @@ common:
   send_point_cloud_ros: true            # true: Send point cloud through ROS or ROS2
 lidar:
   - driver:
-      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSAIRYLITE_ETH, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX, RSFAIRY, RSEMX.
                                    
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar (Note that: For RSEMX, use the port num of DIFOP2 if both DIFOP1 & DIFOP2 exist. Default 7766.)
-      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSAIRYLITE_ETH, RSFAIRY, RSE1), 0 means no imu.
                                    #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
       tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
@@ -200,12 +200,12 @@ common:
   send_point_cloud_ros: true                           
 lidar:
   - driver:
-      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSAIRYLITE_ETH, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX, RSFAIRY, RSEMX.
                                    
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar (Note that: For RSEMX, use the port num of DIFOP2 if both DIFOP1 & DIFOP2 exist. Default 7766.)
-      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
+      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSAIRYLITE_ETH, RSFAIRY, RSE1), 0 means no imu.
                                    #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
       user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
       tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
@@ -236,7 +236,7 @@ lidar:
       ros_send_point_cloud_topic: /left/rslidar_points      #Topic used to send point cloud through ROS 
 
   - driver:
-      lidar_type: RSE1           #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RSE1           #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSAIRYLITE_ETH, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX, RSFAIRY, RSEMX.
       msop_port: 6699              #  Msop port of lidar
       difop_port: 7788             #  Difop port of lidar (Note that: For RSEMX, use the port num of DIFOP2 if both DIFOP1 & DIFOP2 exist. Default 7766.)

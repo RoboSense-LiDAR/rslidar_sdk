@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.5.20 2026-06-24
+
+### Added
+
+- Support RSAIRYLITE_ETH.
+
 ## v1.5.19 2026-04-03
 
 ### Added
