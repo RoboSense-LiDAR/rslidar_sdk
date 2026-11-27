@@ -12,6 +12,7 @@
 ## 2 Dependencies
 
 - ROS2 (follow set up tutorials in AS repo)
+- [rslidar_msg](https://github.com/RoboSense-LiDAR/rslidar_msg) package in the same workspace (already in the AS repo)
 - libpcap (already in dependencies script)
 - libyaml-cpp-dev (already in dependencies script)
 
@@ -29,7 +30,7 @@ ros2 launch rslidar_sdk start.py
 
 ## 4 Configure
 
-All configuration can be performed by editing the CMakeLists to change compilation mode, changing the package.xml between the ROS2 and ROS1 version and editing the [config.yaml file](./config/config.yaml) in config folder.
+All runtime configuration is done in the [config.yaml file](./config/config.yaml), which is set up for the RSEMX LiDAR. The ROS version is detected automatically from the `ROS_VERSION` environment variable, so there is no need to edit `CMakeLists.txt` or `package.xml`.
 
 ## 5 Introduction to parameters
 

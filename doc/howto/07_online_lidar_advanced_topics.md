@@ -37,9 +37,10 @@ common:
 
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       msop_port: 6699             
-      difop_port: 7788            
+      difop_port: 7788      
+      imu_port: 6688           
     ros:
       ros_frame_id: rslidar           
       ros_send_point_cloud_topic: /rslidar_points     
@@ -58,9 +59,10 @@ Below is how to configure `config.yaml`. In fact, it same with the broadcast mod
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       msop_port: 6699             
-      difop_port: 7788            
+      difop_port: 7788      
+      imu_port: 6688         
 ```
 
 ### 7.2.3 Multicast mode
@@ -75,9 +77,10 @@ Below is how to configure `config.yaml`.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       msop_port: 6699             
-      difop_port: 7788
+      difop_port: 7788      
+      imu_port: 6688 
       group_address: 224.1.1.1
       host_address: 192.168.1.102
 ```
@@ -98,13 +101,15 @@ Below is how to configure `config.yaml`.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       msop_port: 6699             
-      difop_port: 7788
+      difop_port: 7788        
+      imu_port: 6688   
   - driver:
-      lidar_type: RS32           
-      msop_port: 5599
-      difop_port: 6688
+      lidar_type: RSAIRY           
+      msop_port: 6698             
+      difop_port: 7789        
+      imu_port: 6689   
 ```
 
 ### 7.3.2 Different remote IPs
@@ -120,14 +125,16 @@ Below is how to configure `config.yaml`.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       msop_port: 6699             
-      difop_port: 7788
+      difop_port: 7788        
+      imu_port: 6688  
       host_address: 192.168.1.102
   - driver:
-      lidar_type: RS32           
-      msop_port: 6699
-      difop_port: 7788
+      lidar_type: RSAIRY           
+      msop_port: 6699             
+      difop_port: 7788        
+      imu_port: 6688  
       host_address: 192.168.1.103
 ```
 
@@ -160,9 +167,10 @@ Now the driver may take `eno1.80` as a general NIC, and receives packets without
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       msop_port: 6699             
-      difop_port: 7788            
+      difop_port: 7788        
+      imu_port: 6688           
 ```
 
 
@@ -182,10 +190,11 @@ In the following example, USER_LAYER is 8 bytes, and TAIL_LAYER is 4 bytes.
 ```yaml
 lidar:
   - driver:
-      lidar_type: RS32           
+      lidar_type: RSAIRY           
       msop_port: 6699             
-      difop_port: 7788
+      difop_port: 7788        
+      imu_port: 6688  
       user_layer_bytes: 8
-      tail_layer_bytes: 4      
+      tail_layer_bytes: 4       
 ```
 

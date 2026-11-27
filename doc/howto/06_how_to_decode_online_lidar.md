@@ -24,9 +24,7 @@ Please check the LiDAR user-guide, or use the 3rd-party tool(such as WireShark),
 common:
   msg_source: 1                                       
   send_packet_ros: false                                
-  send_point_cloud_ros: true                            
-  send_packet_proto: false                              
-  send_point_cloud_proto: false                         
+  send_point_cloud_ros: true                                                  
 ```
 
 The message come from the LiDAR, so set ```msg_source = 1```. 
@@ -40,17 +38,18 @@ lidar:
   - driver:
       lidar_type: RS128            
       msop_port: 6699             
-      difop_port: 7788           
+      difop_port: 7788     
+      imu_port: 6688         
       start_angle: 0               
       end_angle: 360              
       min_distance: 0.2            
       max_distance: 200           
-      use_lidar_clock: false    
+      use_lidar_clock: true     
 ```
 
 Set the ```lidar_type```  to your LiDAR type.
 
-Set the ```msop_port``` and ```difop_port```  to your LiDAR's port number. 
+Set the ```msop_port```,```difop_port``` and ```difop_port```  to your LiDAR's port number. 
 
 #### 6.2.2.3 lidar-ros part
 
@@ -59,10 +58,11 @@ ros:
   ros_frame_id: rslidar           
   ros_recv_packet_topic: /rslidar_packets    
   ros_send_packet_topic: /rslidar_packets   
+  ros_send_imu_data_topic: /rslidar_imu_data
   ros_send_point_cloud_topic: /rslidar_points      
 ```
 
-Set the ```ros_send_point_cloud_topic```  to the topic you want to send to. 
+Set the   ```rslidar_imu_data```  and ```ros_send_point_cloud_topic```  to the topic you want to send to. 
 
 ### 6.2.3 Run
 
